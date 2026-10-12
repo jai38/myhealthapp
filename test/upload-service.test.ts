@@ -63,7 +63,8 @@ describe('Mobile Document Upload & Extraction Pipeline Service', () => {
       return { data: {} } as any;
     });
 
-    const service = new MobileDocumentUploadService(mockClient);
+    const mockDirectUploader = vi.fn().mockResolvedValue(undefined);
+    const service = new MobileDocumentUploadService(mockClient, mockDirectUploader);
 
     const result = await service.uploadAndExtractPrescription({
       name: 'rx.pdf',
@@ -73,6 +74,7 @@ describe('Mobile Document Upload & Extraction Pipeline Service', () => {
 
     expect(result.document.id).toBe('doc-123');
     expect(result.job.id).toBe('job-456');
+    expect(mockDirectUploader).toHaveBeenCalledWith('https://storage/upload', expect.any(Object), 'application/pdf');
     expect(postSpy).toHaveBeenCalledTimes(3);
   });
 
