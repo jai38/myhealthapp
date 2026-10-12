@@ -119,6 +119,14 @@ export class ApiClient {
     });
   }
 
+  patch<T>(endpoint: string, body?: unknown, schema?: ZodSchema<T>): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+      schema,
+    });
+  }
+
   delete<T>(endpoint: string, schema?: ZodSchema<T>): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE', schema });
   }
