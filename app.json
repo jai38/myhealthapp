@@ -28,6 +28,9 @@
       "expo-router",
       "expo-asset"
     ],
+    "experiments": {
+      "baseUrl": "/myhealthapp"
+    },
     "extra": {
       "router": {
         "origin": false
