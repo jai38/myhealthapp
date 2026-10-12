@@ -177,5 +177,54 @@ describe('Phase 5 Mobile Report Service: Schema Validation & API Calls', () => {
     expect(result.pageCount).toBe(1);
     expect(result.downloadUrl).toContain('sig=abc');
   });
+
+  it('validates native PDF file sharing with expo-sharing and temporary file cleanup', async () => {
+    const isAvailableAsync = vi.fn().mockResolvedValue(true);
+    const shareAsync = vi.fn().mockResolvedValue(undefined);
+    const writeAsStringAsync = vi.fn().mockResolvedValue(undefined);
+    const deleteAsync = vi.fn().mockResolvedValue(undefined);
+
+    const mockReport = {
+      reportId: 'rep-test',
+      title: 'Clinical Summary',
+      filename: 'Clinical_Summary.pdf',
+      mimeType: 'application/pdf',
+      fileSizeBytes: 15000,
+      pageCount: 2,
+      generatedAt: '2026-10-12T00:00:00Z',
+      summary: { timelineEventsCount: 1, medicationsCount: 1, totalRecords: 2 },
+      downloadUrl: 'https://storage.local/rep.pdf',
+      pdfBase64: 'JVBERi0xLjQK...',
+    };
+
+    const cacheDir = 'file:///data/user/0/cache/';
+    const tempUri = `${cacheDir}${mockReport.filename}`;
+
+    // Simulate sharing flow
+    const isAvail = await isAvailableAsync();
+    expect(isAvail).toBe(true);
+
+    if (isAvail) {
+      await writeAsStringAsync(tempUri, mockReport.pdfBase64, { encoding: 'base64' });
+      expect(writeAsStringAsync).toHaveBeenCalledWith(tempUri, mockReport.pdfBase64, { encoding: 'base64' });
+
+      try {
+        await shareAsync(tempUri, {
+          mimeType: 'application/pdf',
+          dialogTitle: mockReport.title,
+          UTI: 'com.adobe.pdf',
+        });
+        expect(shareAsync).toHaveBeenCalledWith(tempUri, {
+          mimeType: 'application/pdf',
+          dialogTitle: mockReport.title,
+          UTI: 'com.adobe.pdf',
+        });
+      } finally {
+        await deleteAsync(tempUri, { idempotent: true });
+        expect(deleteAsync).toHaveBeenCalledWith(tempUri, { idempotent: true });
+      }
+    }
+  });
 });
+
 

@@ -16,6 +16,8 @@ import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import {
   DateRangePreset,
   ReportConfig,
@@ -142,19 +144,47 @@ export const ReportExportModal: React.FC<ReportExportModalProps> = ({
     }
   };
 
-  // Share report via platform Share sheet
+  // Share report via platform Share sheet (genuine native PDF file sharing with fallback)
   const handleShareReport = async () => {
     if (!generatedReport) return;
 
     try {
-      await Share.share({
-        title: generatedReport.title,
-        message: `My Health App -- ${generatedReport.title}\n` +
-          `Verified Records: ${generatedReport.summary.totalRecords} (Events: ${generatedReport.summary.timelineEventsCount}, Medications: ${generatedReport.summary.medicationsCount})\n` +
-          `Generated: ${new Date(generatedReport.generatedAt).toLocaleDateString()}\n` +
-          `Secure document access: ${generatedReport.downloadUrl}`,
-        url: generatedReport.downloadUrl,
-      });
+      const isSharingAvailable = await Sharing.isAvailableAsync().catch(() => false);
+
+      if (isSharingAvailable && FileSystem.cacheDirectory) {
+        const tempFilename = generatedReport.filename || `medical-report-${Date.now()}.pdf`;
+        const tempUri = `${FileSystem.cacheDirectory}${tempFilename}`;
+
+        if (generatedReport.pdfBase64) {
+          await FileSystem.writeAsStringAsync(tempUri, generatedReport.pdfBase64, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+        } else {
+          await FileSystem.downloadAsync(generatedReport.downloadUrl, tempUri);
+        }
+
+        try {
+          await Sharing.shareAsync(tempUri, {
+            mimeType: 'application/pdf',
+            dialogTitle: generatedReport.title,
+            UTI: 'com.adobe.pdf',
+          });
+        } finally {
+          // Clean up temporary local file after sharing
+          await FileSystem.deleteAsync(tempUri, { idempotent: true }).catch(() => {});
+        }
+      } else {
+        // Fallback for environments where native file sharing module is unavailable (e.g. web)
+        await Share.share({
+          title: generatedReport.title,
+          message:
+            `My Health App -- ${generatedReport.title}\n` +
+            `Verified Records: ${generatedReport.summary.totalRecords} (Events: ${generatedReport.summary.timelineEventsCount}, Medications: ${generatedReport.summary.medicationsCount})\n` +
+            `Generated: ${new Date(generatedReport.generatedAt).toLocaleDateString()}\n` +
+            `Secure document access: ${generatedReport.downloadUrl}`,
+          url: generatedReport.downloadUrl,
+        });
+      }
     } catch (err: any) {
       Alert.alert('Sharing Error', err?.message || 'Could not open system share sheet.');
     }
