@@ -21,6 +21,7 @@ import {
   formatMedicalEventDate,
 } from '../../services/timeline/timeline-service';
 import { TimelineDetailModal } from '../../features/timeline/TimelineDetailModal';
+import { ReportExportModal } from '../../features/reports/ReportExportModal';
 
 const CATEGORIES = [
   { label: 'All Categories', value: undefined },
@@ -50,6 +51,9 @@ export default function TimelineScreen() {
   // Detail Modal
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  // Report Export Modal
+  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const fetchTimelineData = useCallback(
     async (isRefresh = false, isLoadMore = false) => {
@@ -194,7 +198,15 @@ export default function TimelineScreen() {
       <View style={styles.container}>
         {/* Screen Title */}
         <View style={styles.header}>
-          <Text style={typography.h1}>Medical Timeline</Text>
+          <View style={styles.headerTopRow}>
+            <Text style={[typography.h1, { flex: 1 }]}>Medical Timeline</Text>
+            <Button
+              title="Export PDF"
+              variant="outline"
+              size="sm"
+              onPress={() => setExportModalVisible(true)}
+            />
+          </View>
           <Text style={[typography.bodyMuted, styles.subHeader]}>
             Chronological, verified history of your consultations and medications.
           </Text>
@@ -359,6 +371,12 @@ export default function TimelineScreen() {
           eventId={selectedEventId}
           onClose={() => setModalVisible(false)}
         />
+
+        {/* Report Export Modal */}
+        <ReportExportModal
+          visible={exportModalVisible}
+          onClose={() => setExportModalVisible(false)}
+        />
       </View>
     </ScreenLayout>
   );
@@ -370,6 +388,12 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: spacing.sm,
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   subHeader: {
     marginTop: spacing.xs / 2,

@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
+import { Button } from '../../components/Button';
 import { colors, spacing, typography } from '../../theme/index';
+import { ReportExportModal } from '../../features/reports/ReportExportModal';
 
 export default function ProfileScreen() {
+  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
+
   return (
     <ScreenLayout>
       <View style={styles.header}>
@@ -25,6 +29,21 @@ export default function ProfileScreen() {
       </Card>
 
       <Card style={styles.card}>
+        <View style={styles.cardHeader}>
+          <Text style={typography.h3}>Medical Reports & Export</Text>
+          <Badge label="Doctor Ready" variant="info" />
+        </View>
+        <Text style={[typography.bodyMuted, { marginBottom: spacing.md }]}>
+          Generate professional, doctor-ready PDF reports with verified timeline history, exact medication regimens, and patient notes.
+        </Text>
+        <Button
+          title="Generate Medical PDF Report"
+          variant="outline"
+          onPress={() => setExportModalVisible(true)}
+        />
+      </Card>
+
+      <Card style={styles.card}>
         <Text style={[typography.h3, styles.sectionTitle]}>Preferences</Text>
         <View style={styles.row}>
           <Text style={typography.body}>Timezone</Text>
@@ -41,6 +60,11 @@ export default function ProfileScreen() {
           Data Privacy & Ownership Notice: All medical documents and clinical event records belong to you. We do not sell personal data, train public AI models on your prescriptions, or share health information without your explicit direction.
         </Text>
       </Card>
+
+      <ReportExportModal
+        visible={exportModalVisible}
+        onClose={() => setExportModalVisible(false)}
+      />
     </ScreenLayout>
   );
 }
@@ -74,3 +98,4 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
 });
+
