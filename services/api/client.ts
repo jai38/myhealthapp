@@ -132,7 +132,18 @@ export class ApiClient {
   }
 }
 
-// Default client instance targeting local backend
+import { authService } from '../auth/auth-service';
+
+export const getApiBaseUrl = (): string => {
+  return process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
+};
+
+// Default production-ready client instance with dynamic URL and persisted token
 export const api = new ApiClient({
-  baseUrl: 'http://localhost:4000/api/v1',
+  baseUrl: getApiBaseUrl(),
+  getToken: () => authService.getToken(),
+  onUnauthorized: () => {
+    authService.logout();
+  },
 });
+
