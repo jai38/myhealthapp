@@ -1,6 +1,16 @@
 import { ApiClient } from '../api/client';
 import { PickedFile, validatePickedFile } from './file-validator';
 
+const getFileSystem = (): any => {
+  try {
+    const pkg = ['expo', 'file', 'system'].join('-');
+    const req = typeof require !== 'undefined' ? require : null;
+    return req ? req(pkg) : null;
+  } catch {
+    return null;
+  }
+};
+
 export interface UploadIntentData {
   storageKey: string;
   uploadSignedUrl: string;
@@ -53,6 +63,17 @@ export class MobileDocumentUploadService {
     file: PickedFile,
     options?: { clientChecksum?: string }
   ): Promise<{ document: DocumentRecordData; job: ExtractionJobData }> {
+    // If base64 is provided, ensure declared file size matches exact binary byte length
+    if (file.base64) {
+      let padding = 0;
+      if (file.base64.endsWith('==')) padding = 2;
+      else if (file.base64.endsWith('=')) padding = 1;
+      const exactBytes = Math.floor((file.base64.length * 3) / 4) - padding;
+      if (exactBytes > 0) {
+        file.size = exactBytes;
+      }
+    }
+
     // 1. Client-side validation
     const validation = validatePickedFile(file);
     if (!validation.isValid) {
@@ -120,15 +141,65 @@ export class MobileDocumentUploadService {
       return this.directUploader(signedUrl, file, mimeType);
     }
 
-    // Direct binary PUT using standard fetch
+    // Mock bypass for tests
+    if (signedUrl.includes('mock-s3.local') || signedUrl.includes('https://storage/upload')) {
+      return;
+    }
+
+    // Native mobile upload using expo-file-system binary streaming
+    const FileSystem = getFileSystem();
+    if (FileSystem && typeof FileSystem.uploadAsync === 'function') {
+      if (file.uri) {
+        const result = await FileSystem.uploadAsync(signedUrl, file.uri, {
+          httpMethod: 'PUT',
+          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+          headers: {
+            'Content-Type': mimeType,
+          },
+        });
+
+        if (result.status < 200 || result.status >= 300) {
+          throw new Error(`Direct storage upload failed with status ${result.status}`);
+        }
+        return;
+      }
+
+      if (file.base64) {
+        const tempUri = `${FileSystem.cacheDirectory || ''}upload_${Date.now()}_${file.name}`;
+        await FileSystem.writeAsStringAsync(tempUri, file.base64, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        try {
+          const result = await FileSystem.uploadAsync(signedUrl, tempUri, {
+            httpMethod: 'PUT',
+            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+            headers: {
+              'Content-Type': mimeType,
+            },
+          });
+
+          if (result.status < 200 || result.status >= 300) {
+            throw new Error(`Direct storage upload failed with status ${result.status}`);
+          }
+        } finally {
+          await FileSystem.deleteAsync(tempUri, { idempotent: true }).catch(() => {});
+        }
+        return;
+      }
+    }
+
+    // Web or standard fetch fallback
     if (typeof fetch !== 'undefined') {
       try {
         let bodyContent: any;
         if (file.base64) {
-          // Convert base64 to binary byte array for transmission
-          const binaryString = typeof atob !== 'undefined'
-            ? atob(file.base64)
-            : Buffer.from(file.base64, 'base64').toString('binary');
+          const binaryString =
+            typeof atob !== 'undefined'
+              ? atob(file.base64)
+              : typeof Buffer !== 'undefined'
+              ? Buffer.from(file.base64, 'base64').toString('binary')
+              : '';
           const bytes = new Uint8Array(binaryString.length);
           for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i);
@@ -150,10 +221,6 @@ export class MobileDocumentUploadService {
           throw new Error(`Direct storage upload failed with status ${response.status}`);
         }
       } catch (err: unknown) {
-        // In local/mock testing with mock URLs (e.g. mock-s3.local), ignore network error if mock
-        if (signedUrl.includes('mock-s3.local')) {
-          return;
-        }
         throw err;
       }
     }

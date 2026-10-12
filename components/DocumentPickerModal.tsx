@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Alert, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import { colors, spacing, typography, borderRadius } from '../theme/index';
 import { Button } from './Button';
 import { PickedFile, validatePickedFile } from '../services/documents/file-validator';
@@ -9,6 +11,14 @@ export interface DocumentPickerModalProps {
   onClose: () => void;
   onFileSelected: (file: PickedFile) => void;
 }
+
+// Valid, parser-verified 1-page sample PDF (921 bytes)
+const VALID_SAMPLE_PDF_B64 =
+  'JVBERi0xLjcKJYGBgYEKCjYgMCBvYmoKPDwKL0ZpbHRlciAvRmxhdGVEZWNvZGUKL0xlbmd0aCAxNjYKPj4Kc3RyZWFtCnicRU3LCsJADLznK3oWxHSTTXZBBK1bPHgR9gdEqih6UMTvN2kRCXlNZjJP2FTAxuN1gcVuuH+G9/V0nCvmxAk15SZwU8/gdQ/tSJ1qfcAykrSyVZROYkDOUoQlG1ZsI0MdyUIBI2qQqCRkPSuq83opq6beoM7sFUo7glGKMq1Nwi5QtsmFUcOfHDQ5hc1dek3uYdlNjgEpEhLaTX+SUuEAX63pM6oKZW5kc3RyZWFtCmVuZG9iagoKNyAwIG9iago8PAovRmlsdGVyIC9GbGF0ZURlY29kZQovVHlwZSAvT2JqU3RtCi9OIDUKL0ZpcnN0IDI2Ci9MZW5ndGggMzYyCj4+CnN0cmVhbQp4nNVSTUvDQBC976+Yox5kP/KxiZRC2yQKUpRWUBQPabKUSNmVZCv13zuTpJYexLOEx+7MvNl9m3kSBCgIQwhAJxBCFCiIQEsJkwnjj18fBvhDuTUd43dN3cErcgSs4I3xhdtbD5JNp+zEXZS+3LktG5pAEvnIeGhdva9MC5MiLwohtBAiDhGxECrDdYFIEQpjrKkE9wgdjsCcDoQIZlgrBsR66KF6z43G/hxX5MbEyQZumAzxz710Vz6cof7Sk04ZX7o6K72Bi+xaCRVLIZXUKg6Sl0v8Ha0pvfu/j+v1N87++sKzOdN4acitIQ/0U+Yr07l9W+HYiVc4rNDm1uw+jW+q8kqLNEGdOknRY6Mx+PP95t1UPZXC/OBv1p40DAnKLU3dlHN3QPcJ/KI0giRU5MGZtc6TK3s/Wo9qKIpHj55JJkGMr/cb34eUlIzPy870Uk86UYStXN3YLfCnxs5s1xwTdOI3K6PF+AplbmRzdHJlYW0KZW5kb2JqCgo4IDAgb2JqCjw8Ci9TaXplIDkKL1Jvb3QgMiAwIFIKL0luZm8gMyAwIFIKL0ZpbHRlciAvRmxhdGVEZWNvZGUKL1R5cGUgL1hSZWYKL0xlbmd0aCAzOQovVyBbIDEgMiAyIF0KL0luZGV4IFsgMCA5IF0KPj4Kc3RyZWFtCnicFcSxDQAgEAOxS0CiZf+lfqRAXBhIzIGm5rbaFhdEfh54ZAcEGQplbmRzdHJlYW0KZW5kb2JqCgpzdGFydHhyZWYKNzE5CiUlRU9G';
+
+// Valid, parser-verified 100x100 JPEG sample image (164 bytes)
+const VALID_SAMPLE_JPG_B64 =
+  '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAARCABkAGQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/9oADAMBAAIRAxEAPwD7/vKKKKKA/9k=';
 
 export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
   visible,
@@ -28,25 +38,113 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
     onFileSelected(file);
   };
 
-  // Sample quick-pickers for dev/simulator workflows
+  // 1. Native Camera Photo
+  const handleTakePhoto = async () => {
+    try {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Camera Permission', 'Camera permission is required to capture paper prescriptions.');
+          return;
+        }
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ['images'],
+        quality: 0.85,
+        allowsEditing: false,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        handleSelectFile({
+          name: asset.fileName || `Camera_Prescription_${Date.now()}.jpg`,
+          size: asset.fileSize || 500000,
+          mimeType: asset.mimeType || 'image/jpeg',
+          uri: asset.uri,
+        });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Could not launch camera';
+      Alert.alert('Camera Error', msg);
+    }
+  };
+
+  // 2. Native Photo Library / Gallery
+  const handlePickFromGallery = async () => {
+    try {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Gallery Permission', 'Photo library permission is required to select prescription photos.');
+          return;
+        }
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 0.85,
+        allowsEditing: false,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        handleSelectFile({
+          name: asset.fileName || `Gallery_Prescription_${Date.now()}.jpg`,
+          size: asset.fileSize || 500000,
+          mimeType: asset.mimeType || 'image/jpeg',
+          uri: asset.uri,
+        });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Could not select photo';
+      Alert.alert('Gallery Error', msg);
+    }
+  };
+
+  // 3. Native PDF Document Picker
+  const handlePickPdf = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['application/pdf', 'image/jpeg', 'image/png'],
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const asset = result.assets[0];
+        handleSelectFile({
+          name: asset.name || `Prescription_Document_${Date.now()}.pdf`,
+          size: asset.size || 100000,
+          mimeType: asset.mimeType || 'application/pdf',
+          uri: asset.uri,
+        });
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Could not pick document';
+      Alert.alert('Document Error', msg);
+    }
+  };
+
+  // 4. Sample Quick-Pickers (Instant simulation with parser-valid bytes)
   const handlePickSamplePdf = () => {
     handleSelectFile({
       name: 'Apollo_Clinic_Prescription.pdf',
-      size: 1024 * 320, // 320 KB
+      size: 921,
       mimeType: 'application/pdf',
-      base64: Buffer.from('%PDF-1.4 Simulated Indian Prescription Document', 'utf-8').toString('base64'),
+      base64: VALID_SAMPLE_PDF_B64,
     });
   };
 
   const handlePickSamplePhoto = () => {
     handleSelectFile({
       name: 'Clinic_Slip_Camera_Capture.jpg',
-      size: 1024 * 850, // 850 KB
+      size: 164,
       mimeType: 'image/jpeg',
-      base64: Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46]).toString('base64'),
+      base64: VALID_SAMPLE_JPG_B64,
     });
   };
 
+  // Validation boundary test triggers
   const handlePickOversizedSample = () => {
     handleSelectFile({
       name: 'oversized_scan_archive.pdf',
@@ -80,7 +178,7 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
           </View>
 
           <Text style={styles.subtitle}>
-            Capture your physical prescription or upload a PDF document. Max size 15 MB.
+            Capture a paper prescription, select from gallery, or upload a medical PDF. Max size 15 MB.
           </Text>
 
           {errorMessage && (
@@ -89,11 +187,11 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
             </View>
           )}
 
-          {/* Capture Options */}
+          {/* Real Device Capture Options */}
           <View style={styles.optionsList}>
             <TouchableOpacity
               style={styles.optionRow}
-              onPress={handlePickSamplePhoto}
+              onPress={handleTakePhoto}
             >
               <View style={styles.optionIconContainer}>
                 <Text style={styles.optionIcon}>📷</Text>
@@ -108,7 +206,7 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
             <TouchableOpacity
               style={styles.optionRow}
-              onPress={handlePickSamplePhoto}
+              onPress={handlePickFromGallery}
             >
               <View style={styles.optionIconContainer}>
                 <Text style={styles.optionIcon}>🖼️</Text>
@@ -123,7 +221,7 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
             <TouchableOpacity
               style={styles.optionRow}
-              onPress={handlePickSamplePdf}
+              onPress={handlePickPdf}
             >
               <View style={styles.optionIconContainer}>
                 <Text style={styles.optionIcon}>📄</Text>
@@ -137,21 +235,33 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
             </TouchableOpacity>
           </View>
 
-          {/* Validation Test Controls */}
+          {/* Instant Quick Test Samples */}
           <View style={styles.testSection}>
-            <Text style={styles.testSectionTitle}>Validation Verification (Test Suite)</Text>
+            <Text style={styles.testSectionTitle}>Instant Quick-Test Samples</Text>
             <View style={styles.testButtonsRow}>
+              <TouchableOpacity
+                style={styles.testButton}
+                onPress={handlePickSamplePdf}
+              >
+                <Text style={styles.testButtonText}>Sample Clinic PDF</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.testButton}
+                onPress={handlePickSamplePhoto}
+              >
+                <Text style={styles.testButtonText}>Sample Clinic Photo</Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={styles.testButton}
                 onPress={handlePickOversizedSample}
               >
-                <Text style={styles.testButtonText}>Test Exceeds 15MB</Text>
+                <Text style={styles.testButtonText}>Test &gt;15MB</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.testButton}
                 onPress={handlePickInvalidFormat}
               >
-                <Text style={styles.testButtonText}>Test Invalid Type</Text>
+                <Text style={styles.testButtonText}>Test .txt</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -217,7 +327,7 @@ const styles = StyleSheet.create({
   },
   optionsList: {
     gap: spacing.sm,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   optionRow: {
     flexDirection: 'row',
@@ -269,10 +379,10 @@ const styles = StyleSheet.create({
   },
   testButtonsRow: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: 6,
+    flexWrap: 'wrap',
   },
   testButton: {
-    flex: 1,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.sm,
