@@ -205,8 +205,12 @@ export class MobileDocumentUploadService {
             bytes[i] = binaryString.charCodeAt(i);
           }
           bodyContent = bytes;
+        } else if (file.uri) {
+          // Resolve blob: / data: / local URI to true binary Blob in browser/JS runtime
+          const blobRes = await fetch(file.uri);
+          bodyContent = await blobRes.blob();
         } else {
-          bodyContent = file.uri;
+          throw new Error('Selected file does not contain valid binary data or URI.');
         }
 
         const response = await fetch(signedUrl, {

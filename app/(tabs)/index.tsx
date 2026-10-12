@@ -17,6 +17,7 @@ export default function HomeScreen() {
   const [processingStatus, setProcessingStatus] = useState<string>('');
   const [activeReviewData, setActiveReviewData] = useState<any | null>(null);
   const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const uploadService = new MobileDocumentUploadService(api);
 
@@ -24,6 +25,7 @@ export default function HomeScreen() {
     setIsProcessing(true);
     setProcessingStatus('Uploading document securely with SHA-256 verification...');
     setConfirmationNotice(null);
+    setUploadError(null);
 
     try {
       // 1. Upload & trigger extraction job
@@ -54,6 +56,7 @@ export default function HomeScreen() {
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Upload failed';
+      setUploadError(msg);
       Alert.alert('Upload / Extraction Error', msg);
     } finally {
       setIsProcessing(false);
@@ -72,6 +75,22 @@ export default function HomeScreen() {
     setActiveReviewData(null);
   };
 
+  // If review data is ready, render review screen directly for seamless cross-platform reliability
+  if (activeReviewData) {
+    return (
+      <ReviewPrescriptionScreen
+        jobId={activeReviewData.jobId}
+        documentId={activeReviewData.documentId}
+        documentFilename={activeReviewData.documentFilename}
+        documentMimeType={activeReviewData.documentMimeType}
+        signedUrl={activeReviewData.signedUrl}
+        initialExtraction={activeReviewData.extractedPayload}
+        onConfirm={handleConfirmPrescription}
+        onDiscard={() => setActiveReviewData(null)}
+      />
+    );
+  }
+
   return (
     <ScreenLayout>
       <View style={styles.header}>
@@ -82,6 +101,12 @@ export default function HomeScreen() {
       {confirmationNotice && (
         <View style={styles.successBanner}>
           <Text style={styles.successText}>✓ {confirmationNotice}</Text>
+        </View>
+      )}
+
+      {uploadError && (
+        <View style={styles.errorBanner}>
+          <Text style={styles.errorText}>⚠️ {uploadError}</Text>
         </View>
       )}
 
@@ -205,6 +230,19 @@ const styles = StyleSheet.create({
   successText: {
     ...typography.caption,
     color: colors.success,
+    fontWeight: '700',
+  },
+  errorBanner: {
+    backgroundColor: colors.dangerLight,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  errorText: {
+    ...typography.caption,
+    color: colors.danger,
     fontWeight: '700',
   },
 });

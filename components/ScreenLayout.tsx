@@ -50,5 +50,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
+    maxWidth: 640,
+    width: '100%',
+    alignSelf: 'center',
   },
 });
