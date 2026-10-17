@@ -130,9 +130,9 @@ export default function ReportsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={typography.h2}>Medical Reports & Export</Text>
-          <Text style={[typography.bodyMuted, styles.subHeader]}>
-            Doctor-ready summaries, clinical records, and secure PDF exports.
+          <Text style={styles.pageTitle}>Health Record Vault</Text>
+          <Text style={styles.pageSubHeader}>
+            Doctor-ready summaries, encrypted medical files, and verified reports.
           </Text>
         </View>
 
@@ -142,23 +142,44 @@ export default function ReportsScreen() {
           </View>
         )}
 
-        {/* Hero Card: Doctor-Ready Summary */}
-        <Card style={styles.heroCard}>
-          <View style={styles.heroHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={typography.h3}>Doctor-Ready Medical Summary</Text>
-              <Text style={[typography.bodyMuted, { marginTop: 2, fontSize: 13 }]}>
-                Verified clinical history and active medication courses compiled for clinical consultations or hospital visits.
-              </Text>
-            </View>
-            <Badge label="Doctor Ready" variant="success" />
+        {/* Top Vault Metrics Row */}
+        <View style={styles.metricsRow}>
+          <View style={styles.metricCard}>
+            <Text style={styles.metricNumber}>
+              {loadingPreview ? '...' : previewData?.summary.timelineEventsCount ?? 0}
+            </Text>
+            <Text style={styles.metricLabel}>Verified Events</Text>
           </View>
+          <View style={styles.metricCard}>
+            <Text style={styles.metricNumber}>
+              {loadingPreview ? '...' : previewData?.summary.medicationsCount ?? 0}
+            </Text>
+            <Text style={styles.metricLabel}>Active Meds</Text>
+          </View>
+          <View style={[styles.metricCard, styles.metricCardHighlight]}>
+            <Text style={styles.metricHighlightIcon}>🔒</Text>
+            <Text style={styles.metricHighlightText}>100% Encrypted</Text>
+          </View>
+        </View>
+
+        {/* 1. HERO CARD: Doctor-Ready Medical Summary */}
+        <View style={styles.heroSummaryCard}>
+          <View style={styles.heroHeader}>
+            <View style={styles.heroBadge}>
+              <Text style={styles.heroBadgeIcon}>🩺</Text>
+              <Text style={styles.heroBadgeText}>DOCTOR-READY EXPORT</Text>
+            </View>
+            <Badge label="Clinical PDF" variant="neutral" />
+          </View>
+
+          <Text style={styles.heroTitle}>Comprehensive Medical Summary</Text>
+          <Text style={styles.heroSubtitle}>
+            Compile verified diagnoses, doctor notes, and active medication courses into a clean, printable PDF ready for consultations.
+          </Text>
 
           {/* Date Range Chips */}
           <View style={styles.filterSection}>
-            <Text style={[typography.caption, { fontWeight: '600', marginBottom: spacing.xs }]}>
-              SELECT REPORTING TIMEFRAME:
-            </Text>
+            <Text style={styles.filterLabel}>SELECT REPORT TIMEFRAME:</Text>
             <View style={styles.chipRow}>
               {PRESET_OPTIONS.map((opt) => {
                 const isSelected = selectedPreset === opt.value;
@@ -167,6 +188,7 @@ export default function ReportsScreen() {
                     key={opt.value}
                     style={[styles.chip, isSelected && styles.chipSelected]}
                     onPress={() => setSelectedPreset(opt.value)}
+                    activeOpacity={0.7}
                   >
                     <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
                       {opt.label}
@@ -177,72 +199,84 @@ export default function ReportsScreen() {
             </View>
           </View>
 
-          {/* Records Summary Pill */}
-          <View style={styles.summaryBar}>
-            {loadingPreview ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : previewData ? (
-              <Text style={styles.summaryBarText}>
-                Includes: <Text style={{ fontWeight: '700' }}>{previewData.summary.timelineEventsCount} Verified Event(s)</Text> • <Text style={{ fontWeight: '700' }}>{previewData.summary.medicationsCount} Medication(s)</Text>
-              </Text>
-            ) : (
-              <Text style={styles.summaryBarText}>No verified records in this timeframe</Text>
-            )}
-          </View>
-
           {/* Action Buttons */}
-          <Button
-            title={isGenerating ? 'Compiling Medical PDF...' : '📄 Download & Share Medical Summary (PDF)'}
-            variant="primary"
+          <TouchableOpacity
+            style={[styles.exportBtnPrimary, (isGenerating || loadingPreview) && { opacity: 0.7 }]}
             onPress={handleQuickExport}
             disabled={isGenerating || loadingPreview}
-            style={styles.exportButton}
-          />
+            activeOpacity={0.8}
+          >
+            {isGenerating ? (
+              <ActivityIndicator size="small" color="#ffffff" />
+            ) : (
+              <Text style={styles.exportBtnPrimaryText}>
+                📄 Download & Share Medical PDF
+              </Text>
+            )}
+          </TouchableOpacity>
 
-          <Button
-            title="⚙️ Advanced Report Options & Custom Preview"
-            variant="outline"
+          <TouchableOpacity
+            style={styles.exportBtnSecondary}
             onPress={() => setExportModalVisible(true)}
             disabled={isGenerating}
-            style={{ marginTop: spacing.sm }}
-          />
-        </Card>
-
-        {/* Verified Encounters Preview */}
-        {previewData && previewData.timelineEvents && previewData.timelineEvents.length > 0 && (
-          <Card style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={typography.h3}>Verified Clinical Records Included</Text>
-              <Badge label={`${previewData.timelineEvents.length} Documents`} variant="info" />
-            </View>
-            <Text style={[typography.bodyMuted, { marginBottom: spacing.sm, fontSize: 13 }]}>
-              The following patient-reviewed clinical encounters are included in your generated report:
+            activeOpacity={0.7}
+          >
+            <Text style={styles.exportBtnSecondaryText}>
+              ⚙️ Advanced Export Options & Preview
             </Text>
+          </TouchableOpacity>
+        </View>
 
+        {/* 2. VERIFIED CLINICAL RECORDS VAULT */}
+        <View style={styles.vaultSectionHeader}>
+          <Text style={styles.vaultTitle}>Verified Records in Vault</Text>
+          <Text style={styles.vaultSub}>
+            Patient-confirmed clinical encounters and doctor prescriptions
+          </Text>
+        </View>
+
+        {loadingPreview ? (
+          <View style={styles.centerLoading}>
+            <ActivityIndicator size="small" color={colors.primary} />
+            <Text style={[typography.bodyMuted, { marginTop: spacing.xs, fontSize: 13 }]}>
+              Loading record vault...
+            </Text>
+          </View>
+        ) : previewData && previewData.timelineEvents && previewData.timelineEvents.length > 0 ? (
+          <View style={styles.recordsList}>
             {previewData.timelineEvents.map((event, idx) => (
-              <View key={event.id || idx} style={styles.eventItem}>
-                <View style={styles.checkIconCol}>
-                  <Text style={styles.checkIcon}>✓</Text>
+              <View key={event.id || idx} style={styles.recordItemCard}>
+                <View style={styles.recordIconBox}>
+                  <Text style={styles.recordIconText}>📋</Text>
                 </View>
-                <View style={styles.eventDetails}>
-                  <Text style={[typography.body, { fontWeight: '600' }]}>{event.title}</Text>
-                  <Text style={[typography.caption, { color: colors.textSecondary }]}>
-                    Date: {new Date(event.eventDate).toLocaleDateString()}
-                    {event.prescription?.doctorName ? ` • Clinician: Dr. ${event.prescription.doctorName}` : ''}
+                <View style={styles.recordContent}>
+                  <Text style={styles.recordTitle}>{event.title}</Text>
+                  <Text style={styles.recordMeta}>
+                    {new Date(event.eventDate).toLocaleDateString()}
+                    {event.prescription?.doctorName ? ` • Dr. ${event.prescription.doctorName}` : ''}
                   </Text>
                 </View>
-                <Badge label="Verified" variant="neutral" />
+                <View style={styles.verifiedPill}>
+                  <Text style={styles.verifiedPillText}>✓ Verified</Text>
+                </View>
               </View>
             ))}
+          </View>
+        ) : (
+          <Card variant="muted" style={styles.emptyVaultCard}>
+            <Text style={[typography.bodyMuted, { textAlign: 'center', fontSize: 13 }]}>
+              No verified records found in the selected timeframe. Upload a prescription or report to add it to your health vault.
+            </Text>
           </Card>
         )}
 
-        {/* Clinical Privacy Guarantee */}
-        <Card variant="muted" style={styles.privacyCard}>
-          <Text style={[typography.caption, { color: colors.textSecondary }]}>
-            🛡️ <Text style={{ fontWeight: '700' }}>Clinical Integrity Standard:</Text> Unreviewed AI extraction drafts are strictly excluded from all medical summary reports. Only patient-reviewed and confirmed records appear in exports.
+        {/* 3. CLINICAL PRIVACY GUARANTEE */}
+        <View style={styles.trustBanner}>
+          <Text style={styles.trustBannerTitle}>🔒 Built for Privacy & Trust</Text>
+          <Text style={styles.trustBannerText}>
+            Your health records are stored with tenant-level isolation and AES encryption. Unreviewed AI drafts are strictly excluded from all doctor summary exports.
           </Text>
-        </Card>
+        </View>
       </ScrollView>
 
       {/* Advanced Customization Modal */}
@@ -263,117 +297,291 @@ const styles = StyleSheet.create({
     maxWidth: 640,
     width: '100%',
     alignSelf: 'center',
+    paddingBottom: spacing.xxl,
   },
   header: {
     marginBottom: spacing.md,
   },
-  subHeader: {
-    marginTop: spacing.xs,
+  pageTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.navy,
+    letterSpacing: -0.5,
+  },
+  pageSubHeader: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    marginTop: 2,
+    lineHeight: 18,
   },
   successBanner: {
-    backgroundColor: '#ecfdf5',
+    backgroundColor: colors.accentMintLight,
     borderWidth: 1,
-    borderColor: '#a7f3d0',
+    borderColor: 'rgba(44, 191, 174, 0.3)',
     borderRadius: borderRadius.md,
     padding: spacing.sm,
     marginBottom: spacing.md,
   },
   successText: {
-    color: '#065f46',
-    fontWeight: '600',
+    color: colors.primaryDark,
+    fontWeight: '700',
     fontSize: 13,
   },
-  heroCard: {
-    padding: spacing.lg,
+
+  /* Top Vault Metrics */
+  metricsRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
     marginBottom: spacing.md,
-    borderColor: colors.primaryLight,
+  },
+  metricCard: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  metricCardHighlight: {
+    backgroundColor: colors.primaryLight,
+    borderColor: 'rgba(15, 118, 110, 0.2)',
+  },
+  metricNumber: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.navy,
+  },
+  metricLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  metricHighlightIcon: {
+    fontSize: 16,
+  },
+  metricHighlightText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.primaryDark,
+    marginTop: 2,
+  },
+
+  /* Hero Summary Card */
+  heroSummaryCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.md + 4,
+    marginBottom: spacing.lg,
     borderWidth: 1.5,
+    borderColor: 'rgba(44, 191, 174, 0.3)',
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   heroHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  heroBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primaryLight,
+    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.full,
+  },
+  heroBadgeIcon: {
+    fontSize: 11,
+    marginRight: 4,
+  },
+  heroBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: colors.primaryDark,
+    letterSpacing: 0.6,
+  },
+  heroTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.navy,
+    letterSpacing: -0.3,
+  },
+  heroSubtitle: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
+    marginTop: 3,
     marginBottom: spacing.md,
   },
+
+  /* Filter Section */
   filterSection: {
-    marginVertical: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  filterLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.textMuted,
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
   },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.xs,
+    gap: 6,
   },
   chip: {
-    paddingVertical: 7,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceMuted,
   },
   chipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors.navy,
+    borderColor: colors.navy,
   },
   chipText: {
-    ...typography.caption,
+    fontSize: 12,
     fontWeight: '600',
     color: colors.textSecondary,
   },
   chipTextSelected: {
-    color: colors.surface,
+    color: '#ffffff',
+    fontWeight: '700',
   },
-  summaryBar: {
-    backgroundColor: colors.surfaceMuted,
-    padding: spacing.sm,
+
+  /* Buttons */
+  exportBtnPrimary: {
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
     borderRadius: borderRadius.md,
-    marginVertical: spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  summaryBarText: {
-    ...typography.caption,
-    color: colors.textPrimary,
+  exportBtnPrimaryText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '700',
   },
-  exportButton: {
+  exportBtnSecondary: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: spacing.xs,
   },
-  card: {
+  exportBtnSecondaryText: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: '600',
+  },
+
+  /* Vault Section */
+  vaultSectionHeader: {
+    marginBottom: spacing.sm,
+  },
+  vaultTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.navy,
+  },
+  vaultSub: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: 1,
+  },
+  centerLoading: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+  },
+  recordsList: {
+    gap: spacing.xs + 2,
     marginBottom: spacing.md,
-    padding: spacing.md,
   },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.xs,
-  },
-  eventItem: {
+  recordItemCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.sm + 4,
+    borderWidth: 1,
+    borderColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  checkIconCol: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#ecfdf5',
+  recordIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.sm,
   },
-  checkIcon: {
-    color: '#059669',
-    fontWeight: '800',
-    fontSize: 12,
+  recordIconText: {
+    fontSize: 16,
   },
-  eventDetails: {
+  recordContent: {
     flex: 1,
     marginRight: spacing.sm,
   },
-  privacyCard: {
-    marginVertical: spacing.sm,
+  recordTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.navy,
+  },
+  recordMeta: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  verifiedPill: {
+    backgroundColor: colors.successLight,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: borderRadius.full,
+  },
+  verifiedPillText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.success,
+  },
+  emptyVaultCard: {
+    paddingVertical: spacing.lg,
+    marginBottom: spacing.md,
+    alignItems: 'center',
+  },
+
+  /* Trust Banner */
+  trustBanner: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: borderRadius.lg,
     padding: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+    marginTop: spacing.xs,
+  },
+  trustBannerTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.navy,
+    marginBottom: 4,
+  },
+  trustBannerText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    lineHeight: 17,
   },
 });

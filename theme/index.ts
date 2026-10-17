@@ -12,6 +12,16 @@ export const colors = {
   primaryLight: '#CCFBF1', // Soft badge background (teal-100)
   primaryDark: '#134E4A',
 
+  // Landing Page Elevated Palette
+  teal: '#2CBFAE',
+  tealDark: '#24A396',
+  navy: '#102A43',
+  navyLight: '#1A3A5C',
+  accentMint: '#9BE7C7',
+  accentMintLight: '#E6F9F3',
+  amberGold: '#FFC857',
+  amberGoldLight: '#FEF3C7',
+
   // Secondary Accent
   secondary: '#0284C7', // Medical informational blue (sky-600)
   secondaryLight: '#E0F2FE',
