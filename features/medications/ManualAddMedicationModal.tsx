@@ -16,6 +16,7 @@ import { Input } from '../../components/Input';
 import { CustomTimePicker } from '../../components/CustomTimePicker';
 import { medicationService } from '../../services/medications/medication-service';
 import { formatTime12Hour, getTimePeriodIcon } from './reminder-time-utils';
+import { scheduleMedicationReminder } from '../../services/notifications/notification-service';
 
 export interface ManualAddMedicationModalProps {
   visible: boolean;
@@ -104,7 +105,7 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
     setSubmitting(true);
 
     try {
-      await medicationService.createMedication({
+      const created = await medicationService.createMedication({
         nameAsWritten: name.trim(),
         dosageForm,
         strength: strength.trim() || undefined,
@@ -113,6 +114,13 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
         startDate: startDate.trim() || undefined,
         notes: notes.trim() || undefined,
       });
+
+      // Schedule device notifications / alarms if enabled
+      if (enableReminders && created?.id) {
+        for (const t of selectedTimes) {
+          scheduleMedicationReminder(created.id, name.trim(), t, instructions.trim()).catch(() => {});
+        }
+      }
 
       Alert.alert(
         'Medication Added',

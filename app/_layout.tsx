@@ -6,6 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { colors, typography, spacing } from '../theme/index';
 import { authService, UserSession } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { requestNotificationPermissions } from '../services/notifications/notification-service';
 
 export default function RootLayout() {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
@@ -14,13 +16,21 @@ export default function RootLayout() {
   useEffect(() => {
     // Wait for AsyncStorage persisted session load
     authService.waitForInitialization().then(() => {
-      setSession(authService.getSession());
+      const current = authService.getSession();
+      setSession(current);
       setInitialized(true);
+      if (current) {
+        // Prompt for notification permissions on startup if authenticated
+        requestNotificationPermissions().catch(() => {});
+      }
     });
 
     const unsubscribe = authService.subscribe((currentSession) => {
       setSession(currentSession);
       setInitialized(true);
+      if (currentSession) {
+        requestNotificationPermissions().catch(() => {});
+      }
     });
 
     return unsubscribe;
@@ -46,7 +56,9 @@ export default function RootLayout() {
     return (
       <SafeAreaProvider>
         <StatusBar style="dark" backgroundColor={colors.background} />
-        <AuthScreen />
+        <ErrorBoundary>
+          <AuthScreen />
+        </ErrorBoundary>
       </SafeAreaProvider>
     );
   }
@@ -55,17 +67,19 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" backgroundColor={colors.background} />
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.surface },
-          headerTintColor: colors.textPrimary,
-          headerTitleStyle: { fontWeight: '600' },
-          contentStyle: { backgroundColor: colors.background },
-          headerShadowVisible: false,
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <ErrorBoundary>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.textPrimary,
+            headerTitleStyle: { fontWeight: '600' },
+            contentStyle: { backgroundColor: colors.background },
+            headerShadowVisible: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native';
 import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { Button } from '../../components/Button';
@@ -59,37 +60,68 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
   onConfirm,
   onDiscard,
 }) => {
+  // Safely parse initialExtraction in case of stringified JSON, null, or missing fields
+  const safeExtraction = React.useMemo(() => {
+    let raw = initialExtraction as any;
+    if (typeof raw === 'string') {
+      try {
+        raw = JSON.parse(raw);
+      } catch {
+        raw = {};
+      }
+    }
+    return raw && typeof raw === 'object' ? raw : {};
+  }, [initialExtraction]);
+
   const [prescriptionDate, setPrescriptionDate] = useState<string>(
-    initialExtraction.prescription_date || ''
+    safeExtraction.prescription_date || ''
   );
   const [dateIsUncertain, setDateIsUncertain] = useState<boolean>(
-    initialExtraction.date_is_uncertain || !initialExtraction.prescription_date
+    Boolean(safeExtraction.date_is_uncertain || !safeExtraction.prescription_date)
   );
   const [doctorName, setDoctorName] = useState<string>(
-    initialExtraction.doctor_name || ''
+    safeExtraction.doctor_name || ''
   );
   const [clinicName, setClinicName] = useState<string>(
-    initialExtraction.clinic_hospital_name || ''
+    safeExtraction.clinic_hospital_name || ''
   );
   const [diagnosis, setDiagnosis] = useState<string>(
-    initialExtraction.documented_diagnosis || ''
+    safeExtraction.documented_diagnosis || ''
   );
 
-  const [medicines, setMedicines] = useState<EditableMedicine[]>(
-    initialExtraction.medicines.map((m, idx) => ({
-      id: m.id || `med-${idx + 1}`,
-      name_as_written: m.name_as_written || '',
-      normalized_medicine_name: m.normalized_medicine_name || '',
-      strength: m.strength || '',
-      dosage_form: m.dosage_form || 'TABLET',
-      frequency_text: m.frequency_text || '',
-      duration_text: m.duration_text || '',
-      route: m.route || 'ORAL',
-      instructions: m.instructions || '',
-      confidence: m.confidence || 'HIGH',
-      is_active_medication: m.is_active_medication !== undefined ? Boolean(m.is_active_medication) : true,
-    }))
-  );
+  const [medicines, setMedicines] = useState<EditableMedicine[]>(() => {
+    const rawMeds = Array.isArray(safeExtraction.medicines) ? safeExtraction.medicines : [];
+    if (rawMeds.length === 0) {
+      return [
+        {
+          id: 'med-1',
+          name_as_written: '',
+          normalized_medicine_name: '',
+          strength: '',
+          dosage_form: 'TABLET',
+          frequency_text: '',
+          duration_text: '',
+          route: 'ORAL',
+          instructions: '',
+          confidence: 'HIGH',
+          is_active_medication: true,
+        },
+      ];
+    }
+    return rawMeds.map((m: any, idx: number) => ({
+      id: m?.id || `med-${idx + 1}`,
+      name_as_written: m?.name_as_written || '',
+      normalized_medicine_name: m?.normalized_medicine_name || '',
+      strength: m?.strength || '',
+      dosage_form: m?.dosage_form || 'TABLET',
+      frequency_text: m?.frequency_text || '',
+      duration_text: m?.duration_text || '',
+      route: m?.route || 'ORAL',
+      instructions: m?.instructions || '',
+      confidence: m?.confidence || 'HIGH',
+      is_active_medication: m?.is_active_medication !== undefined ? Boolean(m.is_active_medication) : true,
+    }));
+  });
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -172,6 +204,18 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Top Bar with Cancel / Dismiss */}
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          onPress={onDiscard}
+          style={styles.cancelTopButton}
+          accessibilityLabel="Discard review and return to home"
+        >
+          <Text style={styles.cancelTopText}>✕ Discard</Text>
+        </TouchableOpacity>
+        <Badge label="Clinical Review" variant="warning" />
+      </View>
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.screenTitle}>Patient Review & Correction</Text>
@@ -190,11 +234,11 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
       />
 
       {/* Warnings Banner if AI had uncertainties */}
-      {initialExtraction.validation_warnings &&
-        initialExtraction.validation_warnings.length > 0 && (
+      {Array.isArray(safeExtraction.validation_warnings) &&
+        safeExtraction.validation_warnings.length > 0 && (
           <View style={styles.warningBanner}>
             <Text style={styles.warningTitle}>⚠️ Ambiguity Detected by AI:</Text>
-            {initialExtraction.validation_warnings.map((w, i) => (
+            {safeExtraction.validation_warnings.map((w: string, i: number) => (
               <Text key={i} style={styles.warningItem}>
                 • {w}
               </Text>
@@ -418,6 +462,26 @@ const styles = StyleSheet.create({
     maxWidth: 640,
     width: '100%',
     alignSelf: 'center',
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+    paddingTop: Platform.OS === 'android' ? spacing.sm : 0,
+  },
+  cancelTopButton: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  cancelTopText: {
+    ...typography.caption,
+    fontWeight: '600',
+    color: colors.textSecondary,
   },
   header: {
     marginBottom: spacing.md,

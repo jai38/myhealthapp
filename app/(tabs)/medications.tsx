@@ -24,6 +24,7 @@ import { MedicationDetailModal } from '../../features/medications/MedicationDeta
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 import { formatTime12Hour } from '../../features/medications/reminder-time-utils';
 import { authService } from '../../services/auth/auth-service';
+import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
 
 type TabType = 'active' | 'inactive' | 'past';
 
@@ -56,6 +57,17 @@ export default function MedicationsScreen() {
 
       setMedications(allMeds);
       setTodayDoses(doses);
+
+      // Synchronize device alarms with all active medications
+      syncAllMedicationReminders(
+        allMeds.map((m) => ({
+          id: m.id,
+          name: m.nameAsWritten,
+          isActive: m.status === 'ACTIVE',
+          reminderTimes: m.reminderTimes || [],
+          instructions: m.prescribedInstructions || undefined,
+        }))
+      ).catch(() => {});
     } catch (err: any) {
       setError(err?.message || 'Failed to load medication records.');
     } finally {

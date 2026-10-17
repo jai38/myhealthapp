@@ -1,11 +1,10 @@
 import { ApiClient } from '../api/client';
 import { PickedFile, validatePickedFile } from './file-validator';
 
-const getFileSystem = (): any => {
+const getNativeFileSystem = (): any => {
   try {
-    const pkg = ['expo', 'file', 'system'].join('-');
-    const req = typeof require !== 'undefined' ? require : null;
-    return req ? req(pkg) : null;
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return typeof require !== 'undefined' ? require('expo-file-system') : null;
   } catch {
     return null;
   }
@@ -147,7 +146,7 @@ export class MobileDocumentUploadService {
     }
 
     // Native mobile upload using expo-file-system binary streaming
-    const FileSystem = getFileSystem();
+    const FileSystem = getNativeFileSystem();
     if (FileSystem && typeof FileSystem.uploadAsync === 'function') {
       if (file.uri) {
         const result = await FileSystem.uploadAsync(signedUrl, file.uri, {

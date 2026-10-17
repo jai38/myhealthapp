@@ -28,6 +28,10 @@ import {
   FREQUENCY_PRESETS,
   QUICK_TIME_PRESETS,
 } from './reminder-time-utils';
+import {
+  scheduleMedicationReminder,
+  cancelAllRemindersForMedication,
+} from '../../services/notifications/notification-service';
 
 export interface MedicationDetailModalProps {
   visible: boolean;
@@ -151,6 +155,18 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
       await medicationService.activateMedication(medicationId, {
         reminderTimes: selectedTimes,
       });
+
+      // Synchronize alarms for activated medication
+      cancelAllRemindersForMedication(medicationId).catch(() => {});
+      for (const t of selectedTimes) {
+        scheduleMedicationReminder(
+          medicationId,
+          medication?.nameAsWritten || 'Medication',
+          t,
+          medication?.prescribedInstructions || undefined
+        ).catch(() => {});
+      }
+
       setShowScheduleForm(false);
       await loadMedication(medicationId);
       onStatusChanged?.();
@@ -174,6 +190,18 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
       await medicationService.updateReminderPreferences(medicationId, {
         reminderTimes: selectedTimes,
       });
+
+      // Reschedule alarms for new reminder times
+      cancelAllRemindersForMedication(medicationId).catch(() => {});
+      for (const t of selectedTimes) {
+        scheduleMedicationReminder(
+          medicationId,
+          medication?.nameAsWritten || 'Medication',
+          t,
+          medication?.prescribedInstructions || undefined
+        ).catch(() => {});
+      }
+
       setShowScheduleForm(false);
       await loadMedication(medicationId);
       onStatusChanged?.();
@@ -199,6 +227,7 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
             setSubmittingAction(true);
             try {
               await medicationService.pauseMedication(medicationId);
+              cancelAllRemindersForMedication(medicationId).catch(() => {});
               await loadMedication(medicationId);
               onStatusChanged?.();
             } catch (err: any) {
@@ -217,6 +246,14 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
     setSubmittingAction(true);
     try {
       await medicationService.resumeMedication(medicationId);
+      for (const t of selectedTimes) {
+        scheduleMedicationReminder(
+          medicationId,
+          medication?.nameAsWritten || 'Medication',
+          t,
+          medication?.prescribedInstructions || undefined
+        ).catch(() => {});
+      }
       await loadMedication(medicationId);
       onStatusChanged?.();
       Alert.alert('Medication Resumed', 'Upcoming reminders have been rescheduled.');
@@ -240,6 +277,7 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
             setSubmittingAction(true);
             try {
               await medicationService.completeMedication(medicationId);
+              cancelAllRemindersForMedication(medicationId).catch(() => {});
               await loadMedication(medicationId);
               onStatusChanged?.();
             } catch (err: any) {
@@ -258,6 +296,7 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
     setSubmittingAction(true);
     try {
       await medicationService.discontinueMedication(medicationId, discontinueReason);
+      cancelAllRemindersForMedication(medicationId).catch(() => {});
       setShowDiscontinuePrompt(false);
       await loadMedication(medicationId);
       onStatusChanged?.();

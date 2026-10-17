@@ -51,9 +51,9 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ['images'],
-        quality: 0.85,
+        quality: 0.7,
         allowsEditing: false,
-        base64: true,
+        base64: false,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -63,7 +63,6 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
           size: asset.fileSize || 500000,
           mimeType: asset.mimeType || 'image/jpeg',
           uri: asset.uri,
-          base64: asset.base64 || undefined,
         });
       }
     } catch (err: unknown) {
@@ -85,9 +84,9 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
-        quality: 0.85,
+        quality: 0.7,
         allowsEditing: false,
-        base64: true,
+        base64: false,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -97,7 +96,6 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
           size: asset.fileSize || 500000,
           mimeType: asset.mimeType || 'image/jpeg',
           uri: asset.uri,
-          base64: asset.base64 || undefined,
         });
       }
     } catch (err: unknown) {
