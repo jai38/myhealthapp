@@ -130,9 +130,9 @@ export default function ReportsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.pageTitle}>Health Record Vault</Text>
+          <Text style={styles.pageTitle}>Health Vault 💎</Text>
           <Text style={styles.pageSubHeader}>
-            Doctor-ready summaries, encrypted medical files, and verified reports.
+            Doctor-ready summaries, encrypted health records, and trend analysis.
           </Text>
         </View>
 
@@ -377,15 +377,17 @@ const styles = StyleSheet.create({
 
   /* Hero Summary Card */
   heroSummaryCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
     padding: spacing.md + 4,
     marginBottom: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 12px 36px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
@@ -402,6 +404,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(202, 138, 4, 0.2)',
   },
   heroBadgeIcon: {
     fontSize: 11,
@@ -449,16 +453,11 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surface,
-    ...(Platform.OS === 'web'
-      ? ({
-          boxShadow: '0 2px 8px rgba(17, 20, 24, 0.02)',
-        } as any)
-      : {}),
+    backgroundColor: colors.surfaceSecondary,
   },
   chipSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors.accentCoral,
+    borderColor: colors.accentCoral,
   },
   chipText: {
     fontSize: 12,
@@ -467,19 +466,19 @@ const styles = StyleSheet.create({
   },
   chipTextSelected: {
     color: colors.textInverse,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 
   /* Buttons */
   exportBtnPrimary: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
+    backgroundColor: colors.accentCoral,
+    paddingVertical: 13,
     borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.15)',
+          boxShadow: '0 4px 16px rgba(255, 91, 34, 0.35)',
         } as any)
       : {}),
   },
@@ -487,6 +486,7 @@ const styles = StyleSheet.create({
     color: colors.textInverse,
     fontSize: 14,
     fontWeight: '800',
+    letterSpacing: 0.3,
   },
   exportBtnSecondary: {
     paddingVertical: 10,

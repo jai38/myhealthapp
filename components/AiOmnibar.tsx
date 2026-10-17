@@ -11,7 +11,7 @@ export interface AiOmnibarProps {
 export const AiOmnibar: React.FC<AiOmnibarProps> = ({
   onScanPress,
   onSubmitPrompt,
-  placeholder = 'Ask AI or scan prescription...',
+  placeholder = 'Ask coach, log stack, or snap Rx 📸',
 }) => {
   const [query, setQuery] = useState('');
 
@@ -66,16 +66,18 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceGlass,
     borderRadius: borderRadius.xxl,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs + 2,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.05)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 8px 30px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : {}),
   },
@@ -83,7 +85,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: colors.accentCoralLight,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 91, 34, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -96,17 +100,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textPrimary,
     minHeight: 40,
+    fontWeight: '500',
   },
   actionButton: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surfaceObsidian,
     alignItems: 'center',
     justifyContent: 'center',
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 12px rgba(14, 17, 22, 0.15)',
+        } as any)
+      : {}),
   },
   actionButtonActive: {
     backgroundColor: colors.accentCoral,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 14px rgba(255, 91, 34, 0.4)',
+        } as any)
+      : {}),
   },
   actionArrow: {
     fontSize: 16,

@@ -14,14 +14,14 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
   percentage = 100,
   takenCount = 0,
   totalCount = 0,
-  label = 'Today\'s Regimen',
-  subLabel = 'Medication Adherence',
+  label = 'Daily Momentum',
+  subLabel = 'Routine Consistency',
 }) => {
   const clampedPct = Math.min(100, Math.max(0, percentage));
   const remainingCount = Math.max(0, totalCount - takenCount);
 
   // SVG parameters
-  const size = 130;
+  const size = 140;
   const strokeWidth = 14;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -33,11 +33,11 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
     <View style={styles.card}>
       <View style={styles.headerRow}>
         <View style={styles.titleBadge}>
-          <View style={styles.dotCoral} />
-          <Text style={styles.titleBadgeText}>DAILY ADHERENCE TARGET</Text>
+          <Text style={styles.streakFlame}>🔥</Text>
+          <Text style={styles.titleBadgeText}>DAILY MOMENTUM</Text>
         </View>
         <Text style={styles.adjustedTime}>
-          {totalCount === 0 ? 'No routine today' : `${takenCount} of ${totalCount} taken`}
+          {totalCount === 0 ? 'No routine today' : `${takenCount} of ${totalCount} completed`}
         </Text>
       </View>
 
@@ -48,15 +48,29 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
             <svg
               width={size}
               height={size}
-              style={{ transform: 'rotate(135deg)', overflow: 'visible' }}
+              style={{
+                transform: 'rotate(135deg)',
+                overflow: 'visible',
+                filter: clampedPct > 0 ? 'drop-shadow(0px 4px 12px rgba(255, 91, 34, 0.25))' : 'none',
+              }}
             >
+              <defs>
+                <linearGradient id="donutCoralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FF5B22" />
+                  <stop offset="100%" stopColor="#FF8C42" />
+                </linearGradient>
+                <linearGradient id="donutMintGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#10B981" />
+                  <stop offset="100%" stopColor="#34D399" />
+                </linearGradient>
+              </defs>
               {/* Background track arc */}
               <circle
                 cx={size / 2}
                 cy={size / 2}
                 r={radius}
                 fill="none"
-                stroke={colors.surfaceSecondary}
+                stroke="rgba(17, 24, 39, 0.07)"
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${arcLength} ${circumference}`}
                 strokeLinecap="round"
@@ -67,19 +81,19 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
                 cy={size / 2}
                 r={radius}
                 fill="none"
-                stroke={colors.accentCoral}
+                stroke={clampedPct >= 100 ? 'url(#donutMintGradient)' : 'url(#donutCoralGradient)'}
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${arcLength} ${circumference}`}
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
                 style={{
-                  transition: 'stroke-dashoffset 0.6s ease-in-out',
+                  transition: 'stroke-dashoffset 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               />
             </svg>
           ) : (
             <View style={styles.nativeRingPlaceholder}>
-              <View style={[styles.nativeRingBorder, { borderColor: colors.accentCoral }]} />
+              <View style={[styles.nativeRingBorder, { borderColor: clampedPct >= 100 ? colors.accentMint : colors.accentCoral }]} />
             </View>
           )}
 
@@ -90,9 +104,9 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
             </Text>
             <Text style={styles.centerLabel}>
               {remainingCount === 0 && totalCount > 0
-                ? 'All Done'
+                ? 'All Done! 🔥'
                 : remainingCount === 1
-                ? '1 dose left'
+                ? '1 left today'
                 : `${remainingCount} doses left`}
             </Text>
           </View>
@@ -102,26 +116,26 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
         <View style={styles.breakdownContainer}>
           <Text style={styles.breakdownTitle}>{label}</Text>
           <Text style={styles.breakdownBigNumber}>
-            {totalCount > 0 ? `${takenCount}/${totalCount}` : '0 active'}
+            {totalCount > 0 ? `${takenCount}/${totalCount}` : 'All Clear'}
           </Text>
 
           <View style={styles.statsList}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Completed</Text>
               <Text style={[styles.statValue, { color: colors.accentMint }]}>
-                {takenCount} doses
+                {takenCount} done
               </Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Remaining</Text>
               <Text style={[styles.statValue, { color: colors.accentCoral }]}>
-                {remainingCount} doses
+                {remainingCount} left
               </Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Status</Text>
-              <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                {clampedPct >= 80 ? 'On Track' : 'Attention'}
+              <Text style={[styles.statValue, { color: clampedPct >= 80 ? colors.accentMint : colors.accentCoral }]}>
+                {clampedPct >= 100 ? 'Flawless ⚡' : clampedPct >= 80 ? 'Crushing It 🔥' : 'Keep Going 💪'}
               </Text>
             </View>
           </View>
@@ -131,19 +145,19 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
       {/* Mini timeline capsules row */}
       <View style={styles.footerCapsules}>
         <View style={styles.capsuleSlot}>
-          <Text style={styles.capsuleTime}>Morning</Text>
+          <Text style={styles.capsuleTime}>Morning ☀️</Text>
           <View style={[styles.capsuleBar, takenCount > 0 ? styles.capsuleTaken : styles.capsulePending]}>
             <Text style={styles.capsuleCheck}>{takenCount > 0 ? '✓' : '•'}</Text>
           </View>
         </View>
         <View style={styles.capsuleSlot}>
-          <Text style={styles.capsuleTime}>Afternoon</Text>
+          <Text style={styles.capsuleTime}>Midday ⚡</Text>
           <View style={[styles.capsuleBar, takenCount > 1 ? styles.capsuleTaken : styles.capsulePending]}>
             <Text style={styles.capsuleCheck}>{takenCount > 1 ? '✓' : '•'}</Text>
           </View>
         </View>
         <View style={styles.capsuleSlot}>
-          <Text style={styles.capsuleTime}>Evening</Text>
+          <Text style={styles.capsuleTime}>Night 🌙</Text>
           <View style={[styles.capsuleBar, takenCount >= totalCount && totalCount > 0 ? styles.capsuleTaken : styles.capsulePending]}>
             <Text style={styles.capsuleCheck}>{takenCount >= totalCount && totalCount > 0 ? '✓' : '•'}</Text>
           </View>
@@ -155,15 +169,17 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.md,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.md + 2,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 24px rgba(17, 20, 24, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 12px 36px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : {}),
   },
@@ -177,9 +193,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.accentCoralLight,
-    paddingHorizontal: spacing.sm + 2,
+    paddingHorizontal: spacing.sm + 4,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 91, 34, 0.15)',
+  },
+  streakFlame: {
+    fontSize: 12,
+    marginRight: 4,
   },
   dotCoral: {
     width: 6,
@@ -190,22 +212,22 @@ const styles = StyleSheet.create({
   },
   titleBadgeText: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.accentCoral,
-    letterSpacing: 0.4,
+    letterSpacing: 0.5,
   },
   adjustedTime: {
     fontSize: 12,
     color: colors.textMuted,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   contentRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   donutContainer: {
-    width: 130,
-    height: 130,
+    width: 140,
+    height: 140,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',

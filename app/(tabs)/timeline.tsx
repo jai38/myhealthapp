@@ -27,11 +27,11 @@ import { ReportExportModal } from '../../features/reports/ReportExportModal';
 import { authService } from '../../services/auth/auth-service';
 
 const CATEGORIES = [
-  { label: 'All Categories', value: undefined },
-  { label: 'Prescriptions', value: 'PRESCRIPTION' },
-  { label: 'Consultations', value: 'CONSULTATION' },
-  { label: 'Lab & Diagnostics', value: 'INVESTIGATION' },
-  { label: 'Procedures', value: 'PROCEDURE' },
+  { label: 'All Milestones', value: undefined },
+  { label: 'Prescriptions 💊', value: 'PRESCRIPTION' },
+  { label: 'Doctor Visits 🩺', value: 'CONSULTATION' },
+  { label: 'Lab & Diagnostics 🧪', value: 'INVESTIGATION' },
+  { label: 'Procedures ⚡', value: 'PROCEDURE' },
 ];
 
 const COMMON_YEARS = [undefined, 2026, 2025, 2024, 2023];
@@ -209,16 +209,16 @@ export default function TimelineScreen() {
         {/* Screen Title */}
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
-            <Text style={[typography.h1, { flex: 1, color: colors.textPrimary }]}>Activity Stream</Text>
+            <Text style={[typography.h1, { flex: 1, color: colors.textPrimary }]}>Health Journey 🚀</Text>
             <Button
-              title="Export PDF"
+              title="Share PDF"
               variant="outline"
               size="sm"
               onPress={() => setExportModalVisible(true)}
             />
           </View>
           <Text style={[typography.bodyMuted, styles.subHeader]}>
-            Chronological, verified history of consultations, tests, and prescriptions.
+            Your complete chronological milestones, tests, and prescriptions.
           </Text>
         </View>
 

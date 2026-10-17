@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import { colors, spacing, borderRadius, typography } from '../theme/index';
+import { colors, spacing, borderRadius, shadows } from '../theme/index';
 
 export interface DayItem {
   dayLabel: string; // 'M', 'T', 'W', etc.
@@ -43,7 +43,6 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
       const isToday = d.toDateString() === today.toDateString();
       const dateString = d.toISOString().split('T')[0];
 
-      // Simulated adherence status for display
       let adherenceStatus: DayItem['adherenceStatus'] = 'none';
       if (d < today) {
         adherenceStatus = 'complete';
@@ -64,7 +63,8 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
     return result;
   }, [days]);
 
-  const activeDate = selectedDate || weekDays.find((d) => d.isToday)?.dateString || weekDays[0]?.dateString;
+  const activeDate =
+    selectedDate || weekDays.find((d) => d.isToday)?.dateString || weekDays[0]?.dateString;
 
   return (
     <View style={styles.container}>
@@ -74,12 +74,9 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
         return (
           <TouchableOpacity
             key={item.dateString}
-            style={[
-              styles.dayCard,
-              isSelected && styles.dayCardSelected,
-            ]}
+            style={[styles.dayCard, isSelected && styles.dayCardSelected]}
             onPress={() => onSelectDate?.(item.dateString)}
-            activeOpacity={0.8}
+            activeOpacity={0.75}
             accessibilityRole="button"
             accessibilityLabel={`${item.dayLabel} ${item.dateNumber}${item.isToday ? ' (Today)' : ''}`}
           >
@@ -90,7 +87,7 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
               {item.dateNumber}
             </Text>
 
-            {/* Adherence indicator dot */}
+            {/* Glowing Adherence indicator */}
             <View
               style={[
                 styles.dot,
@@ -110,18 +107,22 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    paddingVertical: spacing.sm + 2,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
+    paddingVertical: spacing.sm + 4,
     paddingHorizontal: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.borderSubtle,
+    borderColor: 'rgba(255, 255, 255, 0.75)',
+    borderTopColor: '#FFFFFF',
+    borderTopWidth: 1.5,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 18px rgba(17, 20, 24, 0.03)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 10px 28px rgba(14, 17, 22, 0.05)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   dayCard: {
     flex: 1,
@@ -129,47 +130,65 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: spacing.sm,
     paddingHorizontal: 2,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
+    marginHorizontal: 2,
   },
   dayCardSelected: {
     backgroundColor: colors.primary,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 16px rgba(17, 20, 24, 0.22)',
+          boxShadow: '0 8px 20px rgba(14, 17, 22, 0.3)',
         } as any)
-      : {}),
+      : shadows.md),
   },
   dayLabel: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '700',
     color: colors.textMuted,
     marginBottom: 4,
+    textTransform: 'uppercase',
   },
   dayLabelSelected: {
-    color: 'rgba(255, 255, 255, 0.75)',
+    color: 'rgba(255, 255, 255, 0.7)',
   },
   dateNumber: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.textPrimary,
     marginBottom: 6,
+    letterSpacing: -0.3,
   },
   dateNumberSelected: {
     color: colors.textInverse,
   },
   dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.borderStrong,
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
   },
   dotComplete: {
     backgroundColor: colors.accentMint,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 0 8px rgba(16, 185, 129, 0.7)',
+        } as any)
+      : {}),
   },
   dotPartial: {
     backgroundColor: colors.accentCoral,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 0 8px rgba(255, 91, 34, 0.7)',
+        } as any)
+      : {}),
   },
   dotSelected: {
     backgroundColor: colors.accentCoral,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
 });

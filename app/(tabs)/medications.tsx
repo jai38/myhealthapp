@@ -342,21 +342,21 @@ export default function MedicationsScreen() {
 
             {/* 3. TODAY'S SCHEDULE (Matching Landing Page List Layout) */}
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Today's Schedule</Text>
+              <Text style={styles.sectionTitle}>Today's Power Routine ⚡</Text>
               <Text style={styles.sectionSub}>
                 {actionableDoses.length === 0
-                  ? 'All tasks completed'
-                  : `${actionableDoses.length} reminder(s) pending`}
+                  ? 'All tasks completed 🔥 Streak protected!'
+                  : `${actionableDoses.length} reminder(s) pending today`}
               </Text>
             </View>
 
             {todayDoses.length === 0 ? (
               <Card variant="muted" style={styles.emptyDoseCard}>
                 <Text style={[typography.bodyMuted, { textAlign: 'center', marginBottom: spacing.sm }]}>
-                  No doses scheduled for today. Add a medicine or prescription to start reminders.
+                  No doses scheduled for today. Add a medicine or supplement to activate reminders.
                 </Text>
                 <Button
-                  title="+ Add Medication & Reminders"
+                  title="+ Add Routine / Medicine"
                   variant="outline"
                   onPress={() => setAddModalVisible(true)}
                 />
@@ -405,7 +405,7 @@ export default function MedicationsScreen() {
                         </Text>
                         <Text style={styles.scheduleMedMeta}>
                           {med?.strength ? `${med.strength} • ` : ''}
-                          <Text style={{ fontWeight: '600' }}>{timeStr}</Text>
+                          <Text style={{ fontWeight: '700' }}>{timeStr}</Text>
                         </Text>
                       </View>
                     </View>
@@ -447,9 +447,9 @@ export default function MedicationsScreen() {
 
             {/* 4. MY MEDICATIONS & REGIMENS VAULT */}
             <View style={styles.vaultHeaderRow}>
-              <Text style={styles.vaultSectionTitle}>Medication Vault</Text>
+              <Text style={styles.vaultSectionTitle}>Daily Stacks & Treatments 💊</Text>
               <Text style={styles.vaultSectionSub}>
-                Organized prescriptions, dosages, and active courses
+                Organized vitamins, prescriptions, and active routines
               </Text>
             </View>
 
@@ -780,22 +780,35 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   heroBtnTaken: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentCoral,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 14px rgba(255, 91, 34, 0.35)',
+        } as any)
+      : {}),
   },
   heroBtnTakenText: {
     color: colors.textInverse,
     fontSize: 14,
     fontWeight: '800',
+    letterSpacing: 0.3,
   },
 
   /* All Caught Up Card */
   allCaughtUpCard: {
-    backgroundColor: colors.accentMintLight,
+    backgroundColor: colors.surfaceGlass,
     borderWidth: 1,
-    borderColor: 'rgba(22, 163, 74, 0.25)',
-    borderRadius: borderRadius.xl,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+    borderRadius: borderRadius.xxl,
     padding: spacing.md,
     marginBottom: spacing.md,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
+        } as any)
+      : {}),
   },
   allCaughtUpHeader: {
     flexDirection: 'row',
@@ -806,7 +819,7 @@ const styles = StyleSheet.create({
   },
   allCaughtUpTitle: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.accentMint,
   },
   allCaughtUpSub: {
@@ -818,15 +831,17 @@ const styles = StyleSheet.create({
 
   /* 2. WEEKLY ADHERENCE CARD (Ronald Olsen Capsule Bars) */
   adherenceCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.md,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.md + 2,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 12px 32px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
@@ -910,18 +925,20 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   scheduleItemCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
     padding: spacing.sm + 4,
     marginBottom: spacing.xs + 4,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 6px 18px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
@@ -970,9 +987,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.accentMintLight,
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
+    paddingHorizontal: spacing.sm + 2,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
   },
   takenCheckIcon: {
     color: colors.accentMint,
@@ -982,7 +1001,7 @@ const styles = StyleSheet.create({
   },
   takenCheckText: {
     color: colors.accentMint,
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 11,
   },
   skippedBadge: {
@@ -1001,15 +1020,21 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   quickTakeBtn: {
-    backgroundColor: colors.primary,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    backgroundColor: colors.accentCoral,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
     borderRadius: borderRadius.full,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 12px rgba(255, 91, 34, 0.35)',
+        } as any)
+      : {}),
   },
   quickTakeBtnText: {
     color: colors.textInverse,
     fontSize: 12,
     fontWeight: '800',
+    letterSpacing: 0.3,
   },
   quickSkipBtn: {
     backgroundColor: colors.surfaceSecondary,

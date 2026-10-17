@@ -219,29 +219,29 @@ export default function HomeScreen() {
           <View style={styles.statusRow}>
             <Text style={styles.dateText}>{todayDateStr}</Text>
             <View style={styles.streakPill}>
-              <Text style={styles.streakPillText}>🔥 7 DAYS</Text>
+              <Text style={styles.streakPillText}>🔥 7-DAY STREAK</Text>
             </View>
           </View>
           <Text style={styles.greeting}>
-            {session?.fullName ? `Good Morning, ${session.fullName.split(' ')[0]}` : 'Good Morning'}
+            {session?.fullName ? `Hey, ${session.fullName.split(' ')[0]} ⚡` : 'Hey Champion ⚡'}
           </Text>
-          <Text style={styles.subGreeting}>Daily clinical performance & active vitals</Text>
+          <Text style={styles.subGreeting}>Track routines, hit your goals, and stay unstoppable.</Text>
         </View>
 
         <TouchableOpacity
           style={styles.avatarButton}
           onPress={() => setIsAccountModalVisible(true)}
-          accessibilityLabel="Open Patient Account Settings"
+          accessibilityLabel="Open Account Settings"
           activeOpacity={0.8}
         >
           <Text style={styles.avatarButtonText}>
             {session?.fullName
               ? session.fullName
-                  .split(' ')
-                  .map((n: string) => n[0])
-                  .join('')
-                  .slice(0, 2)
-                  .toUpperCase()
+              .split(' ')
+              .map((n: string) => n[0])
+              .join('')
+              .slice(0, 2)
+              .toUpperCase()
               : '⚡'}
           </Text>
         </TouchableOpacity>
@@ -291,7 +291,7 @@ export default function HomeScreen() {
           <View style={styles.heroDoseHeader}>
             <View style={styles.heroBadgeRow}>
               <View style={styles.heroDoseBadge}>
-                <Text style={styles.heroDoseBadgeText}>NEXT UPCOMING DOSE</Text>
+                <Text style={styles.heroDoseBadgeText}>NEXT IN YOUR STACK ⚡</Text>
               </View>
               {nextDose.status === 'SNOOZED' && (
                 <View style={styles.heroSnoozedBadge}>
@@ -352,9 +352,9 @@ export default function HomeScreen() {
           <View style={styles.streakRow}>
             <Text style={styles.streakIcon}>🎯</Text>
             <View style={{ flex: 1, marginLeft: spacing.sm }}>
-              <Text style={styles.streakTitle}>All Doses Logged Today!</Text>
+              <Text style={styles.streakTitle}>All Doses Logged Today! 🔥</Text>
               <Text style={styles.streakSub}>
-                100% adherence logged on time. Your daily health streak is protected!
+                100% adherence logged on time. Your daily health streak is unstoppable!
               </Text>
             </View>
           </View>
@@ -373,10 +373,10 @@ export default function HomeScreen() {
             <Text style={styles.metricIcon}>⚡</Text>
           </View>
           <Text style={[styles.metricValue, { color: colors.accentMint }]}>{adherenceTodayPct}%</Text>
-          <Text style={styles.metricLabel}>Daily Adherence</Text>
+          <Text style={styles.metricLabel}>Power Streak</Text>
           <View style={styles.metricFooter}>
             <Text style={styles.metricSubText}>
-              {takenDosesToday}/{totalDosesToday || 0} Doses
+              {takenDosesToday}/{totalDosesToday || 0} Doses Done
             </Text>
           </View>
         </TouchableOpacity>
@@ -387,15 +387,15 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/medications')}
           activeOpacity={0.85}
         >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCyanLight }]}>
+          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCoralLight }]}>
             <Text style={styles.metricIcon}>💊</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.accentCyan }]}>
+          <Text style={[styles.metricValue, { color: colors.accentCoral }]}>
             {activeMedsCount} Active
           </Text>
-          <Text style={styles.metricLabel}>Regimens</Text>
+          <Text style={styles.metricLabel}>Daily Stacks</Text>
           <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>Active Prescriptions</Text>
+            <Text style={styles.metricSubText}>Active Routines</Text>
           </View>
         </TouchableOpacity>
 
@@ -406,22 +406,22 @@ export default function HomeScreen() {
           activeOpacity={0.85}
         >
           <View style={[styles.metricIconBox, { backgroundColor: colors.accentCustardLight }]}>
-            <Text style={styles.metricIcon}>🛡️</Text>
+            <Text style={styles.metricIcon}>💎</Text>
           </View>
           <Text style={[styles.metricValue, { color: colors.accentCustard }]}>
             {totalRecordsCount} Recs
           </Text>
           <Text style={styles.metricLabel}>Health Vault</Text>
           <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>SHA-256 Verified</Text>
+            <Text style={styles.metricSubText}>100% Private</Text>
           </View>
         </TouchableOpacity>
       </View>
 
       {/* 7. THREE-TILE ACTION HUB */}
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <Text style={styles.sectionSub}>Instant tools for prescriptions & records</Text>
+        <Text style={styles.sectionTitle}>Quick Actions ⚡</Text>
+        <Text style={styles.sectionSub}>Instant AI tools, vitamins & health records</Text>
       </View>
 
       <View style={styles.actionHubGrid}>
@@ -435,7 +435,7 @@ export default function HomeScreen() {
           <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCoralLight }]}>
             <Text style={styles.actionHubEmoji}>📸</Text>
           </View>
-          <Text style={styles.actionHubTitle}>Scan Prescription</Text>
+          <Text style={styles.actionHubTitle}>Snap Rx or Labs</Text>
           <Text style={styles.actionHubDesc}>AI OCR extraction & automated dose schedules</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCoralLight }]}>
             <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>Instant AI</Text>
@@ -450,12 +450,12 @@ export default function HomeScreen() {
           disabled={isProcessing}
         >
           <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCyanLight }]}>
-            <Text style={styles.actionHubEmoji}>💊</Text>
+            <Text style={styles.actionHubEmoji}>⚡</Text>
           </View>
-          <Text style={styles.actionHubTitle}>Log Medication</Text>
-          <Text style={styles.actionHubDesc}>Custom timing, custom dose alarms & strength</Text>
+          <Text style={styles.actionHubTitle}>Quick Add Stack</Text>
+          <Text style={styles.actionHubDesc}>Custom timing, dose alarms, vitamins & meds</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCyanLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ Manual Add</Text>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ 1-Tap Add</Text>
           </View>
         </TouchableOpacity>
 
@@ -468,10 +468,10 @@ export default function HomeScreen() {
           <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCustardLight }]}>
             <Text style={styles.actionHubEmoji}>📄</Text>
           </View>
-          <Text style={styles.actionHubTitle}>Doctor PDF Export</Text>
-          <Text style={styles.actionHubDesc}>One-click shareable verified medical summary</Text>
+          <Text style={styles.actionHubTitle}>Doctor Summary</Text>
+          <Text style={styles.actionHubDesc}>One-click shareable verified medical overview</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCustardLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Clinical PDF</Text>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Instant PDF</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -698,14 +698,16 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
     padding: spacing.sm + 4,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 8px 24px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
@@ -745,15 +747,17 @@ const styles = StyleSheet.create({
 
   // Hero Dose Card
   heroDoseCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.md,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.md + 2,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 12px 36px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
@@ -773,6 +777,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 91, 34, 0.15)',
   },
   heroDoseBadgeText: {
     fontSize: 11,
@@ -792,10 +798,12 @@ const styles = StyleSheet.create({
     color: colors.accentCustard,
   },
   heroTimeChip: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: 'rgba(17, 24, 39, 0.05)',
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
   },
   heroTimeChipText: {
     fontSize: 13,
@@ -804,7 +812,7 @@ const styles = StyleSheet.create({
   },
   heroMedName: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.textPrimary,
     marginTop: 4,
   },
@@ -815,15 +823,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   instructionsBox: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: 'rgba(17, 24, 39, 0.03)',
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(17, 24, 39, 0.05)',
   },
   instructionsText: {
     fontSize: 12,
     color: colors.textSecondary,
     lineHeight: 16,
+    fontWeight: '500',
   },
   heroActionsRow: {
     flexDirection: 'row',
@@ -831,13 +842,13 @@ const styles = StyleSheet.create({
   },
   heroActionBtn: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 11,
     borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroActionSkip: {
-    backgroundColor: colors.surfaceSecondary,
+    backgroundColor: 'rgba(17, 24, 39, 0.04)',
     borderWidth: 1,
     borderColor: colors.borderSubtle,
   },
@@ -857,22 +868,35 @@ const styles = StyleSheet.create({
     color: colors.accentCustard,
   },
   heroActionTaken: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentCoral,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 16px rgba(255, 91, 34, 0.35)',
+        } as any)
+      : {}),
   },
   heroActionTakenText: {
     fontSize: 13,
     fontWeight: '800',
     color: colors.textInverse,
+    letterSpacing: 0.3,
   },
 
   // Streak celebration
   streakCelebrationCard: {
-    backgroundColor: colors.accentMintLight,
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
     padding: spacing.md,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(22, 163, 74, 0.25)',
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
+        } as any)
+      : {}),
   },
   streakRow: {
     flexDirection: 'row',
@@ -883,7 +907,7 @@ const styles = StyleSheet.create({
   },
   streakTitle: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.accentMint,
   },
   streakSub: {
@@ -898,7 +922,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
     color: colors.textPrimary,
   },
   sectionSub: {
@@ -913,15 +937,17 @@ const styles = StyleSheet.create({
   },
   actionHubTile: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.surfaceGlass,
+    borderRadius: borderRadius.xxl,
     padding: spacing.sm + 4,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderGlass,
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 6px 20px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
         } as any)
       : shadows.sm),
   },
