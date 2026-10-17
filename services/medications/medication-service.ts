@@ -112,6 +112,28 @@ export class MedicationService {
   }
 
   /**
+   * Manually creates a new medication record with optional reminder schedule.
+   */
+  async createMedication(input: {
+    nameAsWritten: string;
+    dosageForm: string;
+    strength?: string;
+    route?: string;
+    prescribedInstructions?: string;
+    reminderTimes?: string[];
+    startDate?: string;
+    endDate?: string;
+    notes?: string;
+  }): Promise<MedicationRecord> {
+    const res = await this.client.post<{ data: MedicationRecord; message: string }>(
+      '/medications',
+      input,
+      z.object({ data: MedicationRecordSchema, message: z.string().optional() })
+    );
+    return res.data;
+  }
+
+  /**
    * Retrieves full details, provenance, and dose history for a medication.
    */
   async getMedicationDetails(id: string): Promise<MedicationDetail> {

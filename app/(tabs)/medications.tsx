@@ -21,6 +21,7 @@ import {
   MedicationStatus,
 } from '../../services/medications/medication-service';
 import { MedicationDetailModal } from '../../features/medications/MedicationDetailModal';
+import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 
 type TabType = 'active' | 'inactive' | 'past';
 
@@ -36,6 +37,9 @@ export default function MedicationsScreen() {
   // Selected medication modal
   const [selectedMedicationId, setSelectedMedicationId] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  // Manual Add Medication Modal
+  const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
 
   // Dose action in-flight state
   const [actionDoseId, setActionDoseId] = useState<string | null>(null);
@@ -114,12 +118,20 @@ export default function MedicationsScreen() {
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={typography.h2}>Medication Centre</Text>
-          <Text style={[typography.bodyMuted, styles.subHeader]}>
-            Manage active courses, reminder times, and patient-reported doses.
-          </Text>
+        {/* Header with Quick Action */}
+        <View style={styles.headerRow}>
+          <View style={{ flex: 1, paddingRight: spacing.sm }}>
+            <Text style={typography.h2}>Medication Centre</Text>
+            <Text style={[typography.bodyMuted, styles.subHeader]}>
+              Manage active courses, reminder times, and patient-reported doses.
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.addMedHeaderBtn}
+            onPress={() => setAddModalVisible(true)}
+          >
+            <Text style={styles.addMedHeaderBtnText}>+ Add Medicine</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Local Reminder Reliability Notice */}
@@ -156,9 +168,14 @@ export default function MedicationsScreen() {
 
             {todayDoses.length === 0 ? (
               <Card variant="muted" style={styles.emptyDoseCard}>
-                <Text style={[typography.bodyMuted, { textAlign: 'center' }]}>
+                <Text style={[typography.bodyMuted, { textAlign: 'center', marginBottom: spacing.sm }]}>
                   No doses scheduled for the current window.
                 </Text>
+                <Button
+                  title="+ Add Medication & Reminders"
+                  variant="outline"
+                  onPress={() => setAddModalVisible(true)}
+                />
               </Card>
             ) : (
               todayDoses.slice(0, 6).map((dose) => {
@@ -296,13 +313,18 @@ export default function MedicationsScreen() {
                     ? 'No Pending Prescriptions'
                     : 'No Historical Regimens'}
                 </Text>
-                <Text style={[typography.bodyMuted, styles.emptyDescription]}>
+                <Text style={[typography.bodyMuted, styles.emptyDescription, { marginBottom: spacing.md }]}>
                   {activeTab === 'active'
-                    ? 'You have no active medications running reminders. Go to the "Prescribed" tab to set reminder times and activate an eligible medication.'
+                    ? 'You have no active medications running reminders. Add a medication manually or upload a prescription to get started.'
                     : activeTab === 'inactive'
                     ? 'Prescriptions you upload and confirm will appear here as inactive medications ready for reminder configuration.'
                     : 'Completed and discontinued medication regimens will be preserved here in your historical health record.'}
                 </Text>
+                <Button
+                  title="+ Add Medication Manually"
+                  variant="primary"
+                  onPress={() => setAddModalVisible(true)}
+                />
               </Card>
             ) : (
               filteredMedications.map((item) => (
@@ -376,6 +398,13 @@ export default function MedicationsScreen() {
         onClose={() => setModalVisible(false)}
         onStatusChanged={loadData}
       />
+
+      {/* Manual Add Medication Modal */}
+      <ManualAddMedicationModal
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+        onMedicationCreated={loadData}
+      />
     </ScreenLayout>
   );
 }
@@ -389,6 +418,23 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: spacing.xs,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  addMedHeaderBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+  },
+  addMedHeaderBtnText: {
+    ...typography.caption,
+    color: colors.textInverse,
+    fontWeight: '700',
   },
   subHeader: {
     marginTop: spacing.xs,

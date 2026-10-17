@@ -49,7 +49,7 @@ export interface ReviewPrescriptionScreenProps {
 
 export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> = ({
   jobId,
-  documentId: _documentId,
+  documentId,
   documentFilename,
   documentMimeType,
   signedUrl,
@@ -85,7 +85,7 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
       route: m.route || 'ORAL',
       instructions: m.instructions || '',
       confidence: m.confidence || 'HIGH',
-      is_active_medication: Boolean(m.is_active_medication), // Default false for historical rx
+      is_active_medication: m.is_active_medication !== undefined ? Boolean(m.is_active_medication) : true,
     }))
   );
 
@@ -131,9 +131,18 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
     setIsSubmitting(true);
 
     try {
+      let cleanDate: string | undefined = prescriptionDate.trim() || undefined;
+      if (cleanDate) {
+        const dmy = cleanDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+        if (dmy) {
+          cleanDate = `${dmy[3]}-${dmy[2].padStart(2, '0')}-${dmy[1].padStart(2, '0')}`;
+        }
+      }
+
       const payload = {
-        prescription_date: prescriptionDate.trim() || undefined,
-        date_is_uncertain: dateIsUncertain,
+        documentId,
+        prescription_date: cleanDate,
+        date_is_uncertain: dateIsUncertain || !cleanDate,
         doctor_name: doctorName.trim() || undefined,
         clinic_hospital_name: clinicName.trim() || undefined,
         documented_diagnosis: diagnosis.trim() || undefined,

@@ -7,6 +7,7 @@ import { Badge } from '../../components/Badge';
 import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
 import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPrescriptionScreen';
+import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 import { PickedFile } from '../../services/documents/file-validator';
 import { MobileDocumentUploadService } from '../../services/documents/upload-service';
 import { api } from '../../services/api/client';
@@ -18,6 +19,7 @@ export default function HomeScreen() {
   const [activeReviewData, setActiveReviewData] = useState<any | null>(null);
   const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isManualAddVisible, setIsManualAddVisible] = useState<boolean>(false);
 
   const uploadService = new MobileDocumentUploadService(api);
 
@@ -137,6 +139,13 @@ export default function HomeScreen() {
           onPress={() => setIsPickerVisible(true)}
           disabled={isProcessing}
         />
+        <Button
+          title="+ Add Medication Manually"
+          variant="outline"
+          onPress={() => setIsManualAddVisible(true)}
+          disabled={isProcessing}
+          style={{ marginTop: spacing.sm }}
+        />
       </Card>
 
       {/* Medical Timeline Shortcut Card */}
@@ -162,6 +171,15 @@ export default function HomeScreen() {
         visible={isPickerVisible}
         onClose={() => setIsPickerVisible(false)}
         onFileSelected={handleFileSelected}
+      />
+
+      {/* Manual Add Medication Modal */}
+      <ManualAddMedicationModal
+        visible={isManualAddVisible}
+        onClose={() => setIsManualAddVisible(false)}
+        onMedicationCreated={() =>
+          setConfirmationNotice('Medication added successfully and scheduled for reminders!')
+        }
       />
 
       {/* Interactive Review Modal */}
