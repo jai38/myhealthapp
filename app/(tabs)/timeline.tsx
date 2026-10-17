@@ -15,7 +15,8 @@ import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
-import { colors, spacing, typography, borderRadius } from '../../theme/index';
+import { HorizontalDateStrip } from '../../components/HorizontalDateStrip';
+import { colors, spacing, typography, borderRadius, shadows } from '../../theme/index';
 import {
   TimelineEvent,
   timelineService,
@@ -221,6 +222,9 @@ export default function TimelineScreen() {
           </Text>
         </View>
 
+        {/* Weekday Strip */}
+        <HorizontalDateStrip />
+
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Input
@@ -425,78 +429,68 @@ const styles = StyleSheet.create({
   },
   filterChip: {
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.xs + 2,
     borderRadius: borderRadius.full,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          boxShadow: '0 2px 8px rgba(17, 20, 24, 0.02)',
         } as any)
       : {}),
   },
   filterChipSelected: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
-    borderTopColor: 'rgba(255, 255, 255, 0.6)',
   },
   filterChipText: {
     ...typography.caption,
     color: colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   filterChipTextSelected: {
     color: colors.textInverse,
     fontWeight: '700',
   },
   yearChip: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.surfaceMuted,
+    paddingHorizontal: spacing.sm + 4,
+    paddingVertical: spacing.xs / 2 + 2,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.surfaceSecondary,
     borderWidth: 1,
-    borderColor: colors.border,
-    borderTopColor: 'rgba(255, 255, 255, 0.2)',
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-        } as any)
-      : {}),
+    borderColor: colors.borderSubtle,
   },
   yearChipSelected: {
-    backgroundColor: colors.secondary,
-    borderColor: colors.secondary,
-    borderTopColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: colors.accentCyan,
+    borderColor: colors.accentCyan,
   },
   yearChipText: {
     ...typography.caption,
     fontSize: 12,
     color: colors.textSecondary,
+    fontWeight: '600',
   },
   yearChipTextSelected: {
     color: colors.textInverse,
     fontWeight: '700',
   },
   clearFilterButton: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing.sm + 4,
+    paddingVertical: spacing.xs / 2 + 2,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.dangerLight,
     borderWidth: 1,
-    borderColor: 'rgba(255, 71, 87, 0.35)',
+    borderColor: 'rgba(225, 29, 72, 0.2)',
   },
   clearFilterText: {
     ...typography.caption,
     fontSize: 12,
     color: colors.danger,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   listContent: {
-    paddingBottom: 110, // Ensure space for floating glass dock
+    paddingBottom: 110, // Ensure space for floating dock
     paddingTop: spacing.xs,
   },
   eventItemWrapper: {
@@ -512,11 +506,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentCoral,
     marginRight: spacing.sm,
   },
   periodHeaderText: {
     color: colors.textPrimary,
+    fontWeight: '700',
   },
   cardWithLineRow: {
     flexDirection: 'row',
@@ -530,9 +525,9 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentCoral,
     borderWidth: 2,
-    borderColor: '#0C1220',
+    borderColor: colors.surface,
     marginTop: 18,
     zIndex: 1,
   },
@@ -541,7 +536,7 @@ const styles = StyleSheet.create({
     top: 24,
     bottom: -12,
     width: 2,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: colors.border,
   },
   cardTouchable: {
     flex: 1,
@@ -549,6 +544,15 @@ const styles = StyleSheet.create({
   eventCard: {
     marginBottom: spacing.sm,
     padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
+        } as any)
+      : shadows.sm),
   },
   eventCardHeader: {
     flexDirection: 'row',
@@ -567,39 +571,41 @@ const styles = StyleSheet.create({
   eventDateText: {
     ...typography.caption,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.accentCyan,
   },
   eventTitle: {
     marginBottom: 4,
     color: colors.textPrimary,
+    fontWeight: '700',
   },
   eventSummary: {
     marginBottom: spacing.sm,
     lineHeight: 20,
+    color: colors.textSecondary,
   },
   eventFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: spacing.xs,
+    borderTopColor: colors.borderSubtle,
+    paddingTop: spacing.xs + 2,
   },
   provenanceTag: {
-    backgroundColor: colors.surfaceMuted,
-    paddingHorizontal: spacing.xs,
+    backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
   provenanceTagText: {
     fontSize: 11,
     color: colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   viewDetailLink: {
     ...typography.caption,
-    color: colors.primary,
-    fontWeight: '600',
+    color: colors.accentCyan,
+    fontWeight: '700',
   },
   centerContainer: {
     flex: 1,

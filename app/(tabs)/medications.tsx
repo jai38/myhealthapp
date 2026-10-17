@@ -14,7 +14,7 @@ import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
-import { colors, spacing, borderRadius, typography } from '../../theme/index';
+import { colors, spacing, borderRadius, typography, shadows } from '../../theme/index';
 import {
   MedicationRecord,
   DoseLog,
@@ -672,19 +672,19 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   },
 
-  /* 1. HERO REMINDER CARD (Dark Obsidian Canvas with Neon Mint Border) */
+  /* 1. HERO REMINDER CARD (Porcelain Canvas with Squircle Geometry) */
   heroReminderCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     padding: spacing.md + 2,
     marginBottom: spacing.md,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 6,
-    borderWidth: 1.5,
-    borderColor: 'rgba(0, 245, 160, 0.3)',
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
+        } as any)
+      : shadows.sm),
   },
   heroTopRow: {
     flexDirection: 'row',
@@ -695,12 +695,10 @@ const styles = StyleSheet.create({
   heroBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 200, 87, 0.18)',
+    backgroundColor: colors.accentCoralLight,
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 200, 87, 0.35)',
   },
   heroBadgeIcon: {
     fontSize: 11,
@@ -709,44 +707,44 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.amberGold,
+    color: colors.accentCoral,
     letterSpacing: 0.8,
   },
   heroTimeChip: {
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    backgroundColor: colors.surfaceSecondary,
     paddingVertical: 3,
     paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
   heroTimeChipText: {
-    color: '#ffffff',
+    color: colors.textPrimary,
     fontSize: 12,
     fontWeight: '700',
   },
   heroMedTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#ffffff',
+    color: colors.textPrimary,
     letterSpacing: -0.3,
     marginTop: 4,
   },
   heroMedSubtitle: {
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.75)',
+    color: colors.textSecondary,
     marginTop: 3,
     marginBottom: spacing.md,
   },
   heroSnoozeBanner: {
-    backgroundColor: 'rgba(255, 200, 87, 0.2)',
+    backgroundColor: colors.accentCustardLight,
     paddingVertical: 6,
     paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.md,
     marginBottom: spacing.sm,
     borderLeftWidth: 3,
-    borderLeftColor: colors.amberGold,
+    borderLeftColor: colors.accentCustard,
   },
   heroSnoozeText: {
-    color: colors.amberGold,
+    color: colors.accentCustard,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -757,37 +755,32 @@ const styles = StyleSheet.create({
   heroBtn: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroBtnSkip: {
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    backgroundColor: colors.surfaceSecondary,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: colors.borderSubtle,
   },
   heroBtnSkipText: {
-    color: '#ffffff',
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   heroBtnSnooze: {
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    backgroundColor: colors.accentCustardLight,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderColor: 'rgba(202, 138, 4, 0.25)',
   },
   heroBtnSnoozeText: {
-    color: '#ffffff',
+    color: colors.accentCustard,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   heroBtnTaken: {
     backgroundColor: colors.primary,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
   },
   heroBtnTakenText: {
     color: colors.textInverse,
@@ -797,9 +790,9 @@ const styles = StyleSheet.create({
 
   /* All Caught Up Card */
   allCaughtUpCard: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.accentMintLight,
     borderWidth: 1,
-    borderColor: 'rgba(0, 245, 160, 0.3)',
+    borderColor: 'rgba(22, 163, 74, 0.25)',
     borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.md,
@@ -814,7 +807,7 @@ const styles = StyleSheet.create({
   allCaughtUpTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentMint,
   },
   allCaughtUpSub: {
     fontSize: 13,
@@ -823,7 +816,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  /* 2. WEEKLY ADHERENCE CARD */
+  /* 2. WEEKLY ADHERENCE CARD (Ronald Olsen Capsule Bars) */
   adherenceCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
@@ -831,11 +824,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: spacing.md,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 2,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
+        } as any)
+      : shadows.sm),
   },
   adherenceHeaderRow: {
     flexDirection: 'row',
@@ -918,21 +911,19 @@ const styles = StyleSheet.create({
   },
   scheduleItemCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     marginBottom: spacing.xs + 4,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   scheduleLeftCol: {
     flexDirection: 'row',
@@ -947,13 +938,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   scheduleIconBoxActive: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.accentCyanLight,
   },
   scheduleIconBoxTaken: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
   },
   scheduleIconBoxSnoozed: {
-    backgroundColor: colors.amberGoldLight,
+    backgroundColor: colors.accentCustardLight,
   },
   scheduleIconEmoji: {
     fontSize: 18,
@@ -978,19 +969,19 @@ const styles = StyleSheet.create({
   takenCheckBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.successLight,
+    backgroundColor: colors.accentMintLight,
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
   },
   takenCheckIcon: {
-    color: colors.success,
+    color: colors.accentMint,
     fontWeight: '900',
     fontSize: 12,
     marginRight: 4,
   },
   takenCheckText: {
-    color: colors.success,
+    color: colors.accentMint,
     fontWeight: '700',
     fontSize: 11,
   },
@@ -1011,9 +1002,9 @@ const styles = StyleSheet.create({
   },
   quickTakeBtn: {
     backgroundColor: colors.primary,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: borderRadius.sm,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: borderRadius.full,
   },
   quickTakeBtnText: {
     color: colors.textInverse,
@@ -1021,12 +1012,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   quickSkipBtn: {
-    backgroundColor: colors.surfaceMuted,
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-    borderRadius: borderRadius.sm,
+    backgroundColor: colors.surfaceSecondary,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderSubtle,
   },
   quickSkipBtnText: {
     color: colors.textSecondary,
@@ -1051,43 +1042,33 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: borderRadius.full,
     padding: 3,
     marginVertical: spacing.sm,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderTopColor: 'rgba(255, 255, 255, 0.18)',
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-        } as any)
-      : {}),
+    borderColor: colors.borderSubtle,
   },
   tabButton: {
     flex: 1,
     paddingVertical: spacing.sm - 2,
     alignItems: 'center',
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
   tabButtonActive: {
-    backgroundColor: colors.surfaceGlassProminent,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderTopColor: 'rgba(255, 255, 255, 0.32)',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
+    backgroundColor: colors.primary,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 2px 8px rgba(17, 20, 24, 0.15)',
+        } as any)
+      : shadows.sm),
   },
   tabText: {
     fontSize: 12,
     fontWeight: '600',
   },
   tabTextActive: {
-    color: colors.primary,
+    color: colors.textInverse,
     fontWeight: '700',
   },
   tabTextInactive: {
@@ -1114,15 +1095,13 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     backgroundColor: colors.surface,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   medCardHeader: {
     flexDirection: 'row',
@@ -1171,7 +1150,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   reminderChip: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.accentCyanLight,
     paddingVertical: 2,
     paddingHorizontal: 8,
     borderRadius: borderRadius.full,
@@ -1179,18 +1158,18 @@ const styles = StyleSheet.create({
   reminderChipText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.accentCyan,
   },
   activateNoticeRow: {
     marginTop: spacing.xs,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.sm,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: borderRadius.md,
   },
   activateNoticeText: {
     fontSize: 12,
-    color: colors.primary,
+    color: colors.accentCyan,
     fontWeight: '600',
   },
 });

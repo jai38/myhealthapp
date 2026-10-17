@@ -8,18 +8,18 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: 'rgba(7, 12, 24, 0.82)',
+          backgroundColor: colors.background,
           borderBottomWidth: 1,
-          borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+          borderBottomColor: colors.borderSubtle,
           ...(Platform.OS === 'web'
             ? ({
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
               } as any)
             : {}),
         },
         headerTintColor: colors.textPrimary,
-        headerTitleStyle: { ...typography.h3, fontSize: 18, color: colors.textPrimary, fontWeight: '700' },
+        headerTitleStyle: { ...typography.h3, fontSize: 17, color: colors.textPrimary, fontWeight: '700' },
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         tabBarStyle: {
@@ -30,30 +30,29 @@ export default function TabLayout() {
           marginHorizontal: 'auto',
           maxWidth: 580,
           borderRadius: 28,
-          backgroundColor: 'rgba(12, 18, 32, 0.82)',
+          backgroundColor: Platform.OS === 'web' ? 'rgba(255, 255, 255, 0.92)' : '#FFFFFF',
           borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.14)',
-          borderTopColor: 'rgba(255, 255, 255, 0.38)', // Specular light refraction rim
-          height: 62,
+          borderColor: 'rgba(0, 0, 0, 0.07)',
+          height: 64,
           paddingBottom: 6,
           paddingTop: 6,
-          elevation: 12,
-          shadowColor: '#000000',
-          shadowOffset: { width: 0, height: 12 },
-          shadowOpacity: 0.5,
-          shadowRadius: 24,
+          elevation: 8,
+          shadowColor: '#111418',
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.08,
+          shadowRadius: 20,
           ...(Platform.OS === 'web'
             ? ({
-                backdropFilter: 'blur(30px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(30px) saturate(180%)',
-                boxShadow: '0 20px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
+                backdropFilter: 'blur(24px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+                boxShadow: '0 14px 40px rgba(17, 20, 24, 0.08), 0 2px 10px rgba(17, 20, 24, 0.04)',
               } as any)
             : {}),
         },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: '700',
           marginTop: -2,
         },

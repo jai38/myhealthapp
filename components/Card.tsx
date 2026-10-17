@@ -34,33 +34,34 @@ export const Card: React.FC<CardProps> = ({
 const styles = StyleSheet.create({
   base: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass, // Liquid Glass specular highlight
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(20px) saturate(150%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(150%)',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.35)',
+          boxShadow: '0 4px 18px rgba(17, 20, 24, 0.03), 0 1px 2px rgba(17, 20, 24, 0.02)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   elevated: {
-    backgroundColor: colors.surfaceGlassProminent,
-    borderTopColor: 'rgba(255, 255, 255, 0.42)',
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 10px 30px rgba(17, 20, 24, 0.05), 0 2px 6px rgba(17, 20, 24, 0.03)',
+        } as any)
+      : shadows.md),
   },
   outlined: {
     borderWidth: 1.5,
     borderColor: colors.borderStrong,
-    borderTopColor: 'rgba(255, 255, 255, 0.45)',
+    backgroundColor: colors.surface,
   },
   muted: {
     backgroundColor: colors.surfaceMuted,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
-    borderTopColor: 'rgba(255, 255, 255, 0.16)',
+    borderColor: colors.borderSubtle,
   },
 });
 

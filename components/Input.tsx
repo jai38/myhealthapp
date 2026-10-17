@@ -61,23 +61,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: 'rgba(255, 255, 255, 0.24)',
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 2,
     minHeight: 48,
     color: colors.textPrimary,
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        } as any)
-      : {}),
   },
   inputError: {
     borderColor: colors.danger,
-    borderTopColor: colors.danger,
-    backgroundColor: colors.dangerLight + '20', // subtle 12% tint
+    backgroundColor: colors.dangerLight,
   },
   errorText: {
     ...typography.caption,

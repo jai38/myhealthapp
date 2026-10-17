@@ -7,14 +7,16 @@ import {
   ActivityIndicator,
   Alert,
   TouchableOpacity,
-  RefreshControl,
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
-import { colors, spacing, typography, borderRadius } from '../../theme/index';
+import { colors, spacing, typography, borderRadius, shadows } from '../../theme/index';
+import { HorizontalDateStrip } from '../../components/HorizontalDateStrip';
+import { AdherenceDonut } from '../../components/AdherenceDonut';
+import { AiOmnibar } from '../../components/AiOmnibar';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
 import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPrescriptionScreen';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
@@ -52,7 +54,6 @@ export default function HomeScreen() {
   const [todayDoses, setTodayDoses] = useState<DoseLog[]>([]);
   const [recentEvents, setRecentEvents] = useState<TimelineEvent[]>([]);
   const [totalRecordsCount, setTotalRecordsCount] = useState<number>(0);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [actionDoseId, setActionDoseId] = useState<string | null>(null);
 
   const uploadService = new MobileDocumentUploadService(api);
@@ -85,12 +86,6 @@ export default function HomeScreen() {
     });
     return unsubscribe;
   }, [loadDashboardData]);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadDashboardData();
-    setRefreshing(false);
-  };
 
   const handleFileSelected = async (file: PickedFile) => {
     setIsProcessing(true);
@@ -194,6 +189,12 @@ export default function HomeScreen() {
   const adherenceTodayPct = totalDosesToday > 0 ? Math.round((takenDosesToday / totalDosesToday) * 100) : 100;
   const activeMedsCount = medications.filter((m) => m.status === 'ACTIVE').length;
 
+  const todayDateStr = new Date().toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+
   if (activeReviewData) {
     return (
       <ReviewPrescriptionScreen
@@ -212,20 +213,19 @@ export default function HomeScreen() {
 
   return (
     <ScreenLayout>
-      {/* 1. ATHLETIC / PERFORMANCE HEADER */}
+      {/* 1. HEALTH BASELINE OS HEADER */}
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <View style={styles.statusRow}>
-            <View style={styles.liveIndicatorDot} />
-            <Text style={styles.liveIndicatorText}>LIVE TELEMETRY</Text>
+            <Text style={styles.dateText}>{todayDateStr}</Text>
             <View style={styles.streakPill}>
-              <Text style={styles.streakPillText}>🔥 7-DAY STREAK</Text>
+              <Text style={styles.streakPillText}>🔥 7 DAYS</Text>
             </View>
           </View>
           <Text style={styles.greeting}>
-            {session?.fullName ? `Hey, ${session.fullName.split(' ')[0]}` : 'Health Pulse'}
+            {session?.fullName ? `Good Morning, ${session.fullName.split(' ')[0]}` : 'Good Morning'}
           </Text>
-          <Text style={styles.subGreeting}>Daily performance & active vitals</Text>
+          <Text style={styles.subGreeting}>Daily clinical performance & active vitals</Text>
         </View>
 
         <TouchableOpacity
@@ -263,70 +263,29 @@ export default function HomeScreen() {
       {isProcessing && (
         <Card style={styles.processingCard}>
           <View style={styles.loadingRow}>
-            <ActivityIndicator size="small" color={colors.primary} />
+            <ActivityIndicator size="small" color={colors.accentCoral} />
             <Text style={styles.processingText}>{processingStatus}</Text>
           </View>
         </Card>
       )}
 
-      {/* 2. THREE-TILE TELEMETRY STATS MATRIX */}
-      <View style={styles.metricsGrid}>
-        {/* Adherence Rate */}
-        <TouchableOpacity
-          style={styles.metricCard}
-          onPress={() => router.push('/(tabs)/medications')}
-          activeOpacity={0.85}
-        >
-          <View style={styles.metricIconBox}>
-            <Text style={styles.metricIcon}>⚡</Text>
-          </View>
-          <Text style={styles.metricValue}>{adherenceTodayPct}%</Text>
-          <Text style={styles.metricLabel}>Daily Adherence</Text>
-          <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>
-              {takenDosesToday}/{totalDosesToday || 0} Doses
-            </Text>
-          </View>
-        </TouchableOpacity>
+      {/* 2. HORIZONTAL WEEKDAY ADHERENCE CAROUSEL (Ronald Olsen signature) */}
+      <HorizontalDateStrip onSelectDate={() => router.push('/(tabs)/timeline')} />
 
-        {/* Active Regimens */}
-        <TouchableOpacity
-          style={styles.metricCard}
-          onPress={() => router.push('/(tabs)/medications')}
-          activeOpacity={0.85}
-        >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.secondaryLight }]}>
-            <Text style={styles.metricIcon}>💊</Text>
-          </View>
-          <Text style={[styles.metricValue, { color: colors.secondary }]}>
-            {activeMedsCount} Active
-          </Text>
-          <Text style={styles.metricLabel}>Regimens</Text>
-          <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>Medications & Routine</Text>
-          </View>
-        </TouchableOpacity>
+      {/* 3. AI PRESCRIPTION SCANNER & OMNIBAR (Baseline AI signature) */}
+      <AiOmnibar
+        onScanPress={() => setIsPickerVisible(true)}
+        onSubmitPrompt={() => router.push('/(tabs)/medications')}
+      />
 
-        {/* Encrypted Vault */}
-        <TouchableOpacity
-          style={styles.metricCard}
-          onPress={() => router.push('/(tabs)/reports')}
-          activeOpacity={0.85}
-        >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.amberGoldLight }]}>
-            <Text style={styles.metricIcon}>🛡️</Text>
-          </View>
-          <Text style={[styles.metricValue, { color: colors.amberGold }]}>
-            {totalRecordsCount} Recs
-          </Text>
-          <Text style={styles.metricLabel}>Health Vault</Text>
-          <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>AES-256 Verified</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      {/* 4. HERO ADHERENCE DONUT TARGET (Baseline AI + Ronald Olsen signature) */}
+      <AdherenceDonut
+        percentage={adherenceTodayPct}
+        takenCount={takenDosesToday}
+        totalCount={totalDosesToday}
+      />
 
-      {/* 3. HERO UPCOMING DOSE CARD (Direct 1-Tap Execution) */}
+      {/* 5. 1-TAP UPCOMING DOSE CARD (Direct 1-Tap Execution) */}
       {nextDose && nextMed ? (
         <View style={styles.heroDoseCard}>
           <View style={styles.heroDoseHeader}>
@@ -402,7 +361,64 @@ export default function HomeScreen() {
         </View>
       ) : null}
 
-      {/* 4. THREE-TILE CYBER ACTION HUB */}
+      {/* 6. THREE-TILE TELEMETRY STATS MATRIX */}
+      <View style={styles.metricsGrid}>
+        {/* Adherence Rate */}
+        <TouchableOpacity
+          style={styles.metricCard}
+          onPress={() => router.push('/(tabs)/medications')}
+          activeOpacity={0.85}
+        >
+          <View style={[styles.metricIconBox, { backgroundColor: colors.accentMintLight }]}>
+            <Text style={styles.metricIcon}>⚡</Text>
+          </View>
+          <Text style={[styles.metricValue, { color: colors.accentMint }]}>{adherenceTodayPct}%</Text>
+          <Text style={styles.metricLabel}>Daily Adherence</Text>
+          <View style={styles.metricFooter}>
+            <Text style={styles.metricSubText}>
+              {takenDosesToday}/{totalDosesToday || 0} Doses
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Active Regimens */}
+        <TouchableOpacity
+          style={styles.metricCard}
+          onPress={() => router.push('/(tabs)/medications')}
+          activeOpacity={0.85}
+        >
+          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCyanLight }]}>
+            <Text style={styles.metricIcon}>💊</Text>
+          </View>
+          <Text style={[styles.metricValue, { color: colors.accentCyan }]}>
+            {activeMedsCount} Active
+          </Text>
+          <Text style={styles.metricLabel}>Regimens</Text>
+          <View style={styles.metricFooter}>
+            <Text style={styles.metricSubText}>Active Prescriptions</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Encrypted Vault */}
+        <TouchableOpacity
+          style={styles.metricCard}
+          onPress={() => router.push('/(tabs)/reports')}
+          activeOpacity={0.85}
+        >
+          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCustardLight }]}>
+            <Text style={styles.metricIcon}>🛡️</Text>
+          </View>
+          <Text style={[styles.metricValue, { color: colors.accentCustard }]}>
+            {totalRecordsCount} Recs
+          </Text>
+          <Text style={styles.metricLabel}>Health Vault</Text>
+          <View style={styles.metricFooter}>
+            <Text style={styles.metricSubText}>SHA-256 Verified</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* 7. THREE-TILE ACTION HUB */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <Text style={styles.sectionSub}>Instant tools for prescriptions & records</Text>
@@ -416,13 +432,13 @@ export default function HomeScreen() {
           activeOpacity={0.8}
           disabled={isProcessing}
         >
-          <View style={styles.actionHubIconBadge}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCoralLight }]}>
             <Text style={styles.actionHubEmoji}>📸</Text>
           </View>
           <Text style={styles.actionHubTitle}>Scan Prescription</Text>
           <Text style={styles.actionHubDesc}>AI OCR extraction & automated dose schedules</Text>
-          <View style={styles.actionHubTag}>
-            <Text style={styles.actionHubTagText}>Instant AI</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCoralLight }]}>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>Instant AI</Text>
           </View>
         </TouchableOpacity>
 
@@ -433,13 +449,13 @@ export default function HomeScreen() {
           activeOpacity={0.8}
           disabled={isProcessing}
         >
-          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.secondaryLight }]}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCyanLight }]}>
             <Text style={styles.actionHubEmoji}>💊</Text>
           </View>
           <Text style={styles.actionHubTitle}>Log Medication</Text>
           <Text style={styles.actionHubDesc}>Custom timing, custom dose alarms & strength</Text>
-          <View style={[styles.actionHubTag, { backgroundColor: colors.secondaryLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.secondary }]}>+ Manual Add</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCyanLight }]}>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ Manual Add</Text>
           </View>
         </TouchableOpacity>
 
@@ -449,18 +465,18 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/reports')}
           activeOpacity={0.8}
         >
-          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.amberGoldLight }]}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCustardLight }]}>
             <Text style={styles.actionHubEmoji}>📄</Text>
           </View>
           <Text style={styles.actionHubTitle}>Doctor PDF Export</Text>
           <Text style={styles.actionHubDesc}>One-click shareable verified medical summary</Text>
-          <View style={[styles.actionHubTag, { backgroundColor: colors.amberGoldLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.amberGold }]}>Clinical PDF</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCustardLight }]}>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Clinical PDF</Text>
           </View>
         </TouchableOpacity>
       </View>
 
-      {/* 5. LIVE RECENT ACTIVITY STREAM */}
+      {/* 8. LIVE RECENT ACTIVITY STREAM */}
       <View style={styles.sectionHeaderRow}>
         <View>
           <Text style={styles.sectionTitle}>Activity Stream</Text>
@@ -513,7 +529,7 @@ export default function HomeScreen() {
         })
       )}
 
-      {/* 6. ADVANCED ENCRYPTION & PRIVACY SHIELD FOOTER */}
+      {/* 9. ADVANCED ENCRYPTION & PRIVACY SHIELD FOOTER */}
       <View style={styles.securityFooter}>
         <Text style={styles.securityShieldIcon}>🔒</Text>
         <View style={{ flex: 1, marginLeft: spacing.sm }}>
@@ -586,30 +602,22 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     gap: 8,
   },
-  liveIndicatorDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-  },
-  liveIndicatorText: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    color: colors.primary,
+  dateText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textMuted,
+    letterSpacing: 0.2,
   },
   streakPill: {
-    backgroundColor: 'rgba(255, 183, 3, 0.15)',
+    backgroundColor: colors.accentCoralLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 183, 3, 0.3)',
   },
   streakPillText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.amberGold,
+    color: colors.accentCoral,
     letterSpacing: 0.5,
   },
   greeting: {
@@ -627,14 +635,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(0, 245, 160, 0.12)',
-    borderWidth: 2,
-    borderColor: colors.primary,
+    backgroundColor: colors.surfaceSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarButtonText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: colors.primary,
   },
@@ -666,8 +674,8 @@ const styles = StyleSheet.create({
   },
   processingCard: {
     marginBottom: spacing.md,
-    backgroundColor: colors.surfaceElevated,
-    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+    borderColor: colors.accentCoral,
   },
   loadingRow: {
     flexDirection: 'row',
@@ -691,23 +699,20 @@ const styles = StyleSheet.create({
   metricCard: {
     flex: 1,
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   metricIconBox: {
     width: 32,
     height: 32,
-    borderRadius: 8,
-    backgroundColor: colors.primaryLight,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xs,
@@ -718,7 +723,6 @@ const styles = StyleSheet.create({
   metricValue: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.primary,
     letterSpacing: -0.5,
   },
   metricLabel: {
@@ -731,7 +735,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     paddingTop: spacing.xs,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.borderSubtle,
   },
   metricSubText: {
     fontSize: 10,
@@ -741,20 +745,17 @@ const styles = StyleSheet.create({
 
   // Hero Dose Card
   heroDoseCard: {
-    backgroundColor: colors.surfaceGlassProminent,
+    backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     padding: spacing.md,
-    marginBottom: spacing.lg,
-    borderWidth: 1.5,
-    borderColor: 'rgba(0, 245, 160, 0.35)',
-    borderTopColor: 'rgba(0, 245, 160, 0.70)', // High-vitality mint specular refraction
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(24px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
-          boxShadow: '0 8px 30px rgba(0, 245, 160, 0.14)',
+          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   heroDoseHeader: {
     flexDirection: 'row',
@@ -768,7 +769,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   heroDoseBadge: {
-    backgroundColor: 'rgba(0, 245, 160, 0.15)',
+    backgroundColor: colors.accentCoralLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -776,11 +777,11 @@ const styles = StyleSheet.create({
   heroDoseBadgeText: {
     fontSize: 11,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.accentCoral,
     letterSpacing: 0.5,
   },
   heroSnoozedBadge: {
-    backgroundColor: 'rgba(255, 183, 3, 0.18)',
+    backgroundColor: colors.accentCustardLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -788,10 +789,10 @@ const styles = StyleSheet.create({
   heroSnoozedText: {
     fontSize: 11,
     fontWeight: '800',
-    color: colors.amberGold,
+    color: colors.accentCustard,
   },
   heroTimeChip: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
@@ -814,7 +815,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   instructionsBox: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     marginBottom: spacing.md,
@@ -831,14 +832,14 @@ const styles = StyleSheet.create({
   heroActionBtn: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroActionSkip: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderSubtle,
   },
   heroActionSkipText: {
     fontSize: 13,
@@ -846,14 +847,14 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   heroActionSnooze: {
-    backgroundColor: 'rgba(255, 183, 3, 0.15)',
+    backgroundColor: colors.accentCustardLight,
     borderWidth: 1,
-    borderColor: 'rgba(255, 183, 3, 0.35)',
+    borderColor: 'rgba(202, 138, 4, 0.2)',
   },
   heroActionSnoozeText: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.amberGold,
+    color: colors.accentCustard,
   },
   heroActionTaken: {
     backgroundColor: colors.primary,
@@ -866,19 +867,12 @@ const styles = StyleSheet.create({
 
   // Streak celebration
   streakCelebrationCard: {
-    backgroundColor: 'rgba(0, 245, 160, 0.08)',
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.accentMintLight,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(0, 245, 160, 0.35)',
-    borderTopColor: 'rgba(0, 245, 160, 0.65)',
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        } as any)
-      : {}),
+    borderColor: 'rgba(22, 163, 74, 0.25)',
   },
   streakRow: {
     flexDirection: 'row',
@@ -890,7 +884,7 @@ const styles = StyleSheet.create({
   streakTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentMint,
   },
   streakSub: {
     fontSize: 13,
@@ -920,24 +914,21 @@ const styles = StyleSheet.create({
   actionHubTile: {
     flex: 1,
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   actionHubIconBadge: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    backgroundColor: colors.primaryLight,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.xs,
@@ -959,15 +950,13 @@ const styles = StyleSheet.create({
   },
   actionHubTag: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
   actionHubTagText: {
     fontSize: 10,
     fontWeight: '700',
-    color: colors.primary,
   },
 
   // Activity Stream Section
@@ -980,7 +969,7 @@ const styles = StyleSheet.create({
   viewAllLink: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentCyan,
   },
   emptyFeedCard: {
     padding: spacing.lg,
@@ -1005,18 +994,16 @@ const styles = StyleSheet.create({
   },
   activityCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   activityTopRow: {
     flexDirection: 'row',
@@ -1035,15 +1022,15 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   verifiedPill: {
-    backgroundColor: 'rgba(0, 245, 160, 0.1)',
+    backgroundColor: colors.accentMintLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: borderRadius.sm,
+    borderRadius: borderRadius.full,
   },
   verifiedPillText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentMint,
   },
   activityTitle: {
     fontSize: 15,
@@ -1061,20 +1048,13 @@ const styles = StyleSheet.create({
   securityFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
     padding: spacing.md,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     marginTop: spacing.md,
     marginBottom: spacing.xl,
     borderWidth: 1,
-    borderColor: colors.border,
-    borderTopColor: 'rgba(255, 255, 255, 0.22)',
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        } as any)
-      : {}),
+    borderColor: colors.borderSubtle,
   },
   securityShieldIcon: {
     fontSize: 24,
@@ -1091,3 +1071,4 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
+

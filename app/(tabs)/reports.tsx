@@ -13,7 +13,7 @@ import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
-import { colors, spacing, typography, borderRadius } from '../../theme/index';
+import { colors, spacing, typography, borderRadius, shadows } from '../../theme/index';
 import {
   DateRangePreset,
   ReportConfig,
@@ -337,17 +337,22 @@ const styles = StyleSheet.create({
   metricCard: {
     flex: 1,
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 16px rgba(17, 20, 24, 0.03)',
+        } as any)
+      : shadows.sm),
   },
   metricCardHighlight: {
-    backgroundColor: colors.primaryLight,
-    borderColor: 'rgba(0, 245, 160, 0.3)',
+    backgroundColor: colors.accentCustardLight,
+    borderColor: 'rgba(202, 138, 4, 0.25)',
   },
   metricNumber: {
     fontSize: 18,
@@ -366,7 +371,7 @@ const styles = StyleSheet.create({
   metricHighlightText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentCustard,
     marginTop: 2,
   },
 
@@ -376,13 +381,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.xl,
     padding: spacing.md + 4,
     marginBottom: spacing.lg,
-    borderWidth: 1.5,
-    borderColor: 'rgba(0, 245, 160, 0.3)',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
+        } as any)
+      : shadows.sm),
   },
   heroHeader: {
     flexDirection: 'row',
@@ -393,7 +398,7 @@ const styles = StyleSheet.create({
   heroBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.accentCustardLight,
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
@@ -405,7 +410,7 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.accentCustard,
     letterSpacing: 0.6,
   },
   heroTitle: {
@@ -440,23 +445,20 @@ const styles = StyleSheet.create({
   },
   chip: {
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
-    borderTopColor: colors.borderTopGlass,
     backgroundColor: colors.surface,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          boxShadow: '0 2px 8px rgba(17, 20, 24, 0.02)',
         } as any)
       : {}),
   },
   chipSelected: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
-    borderTopColor: 'rgba(255, 255, 255, 0.6)',
   },
   chipText: {
     fontSize: 12,
@@ -472,20 +474,12 @@ const styles = StyleSheet.create({
   exportBtnPrimary: {
     backgroundColor: colors.primary,
     paddingVertical: 12,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    borderTopColor: 'rgba(255, 255, 255, 0.65)',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 20px rgba(0, 245, 160, 0.35)',
+          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.15)',
         } as any)
       : {}),
   },
@@ -501,9 +495,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   exportBtnSecondaryText: {
-    color: colors.primary,
+    color: colors.accentCyan,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 
   /* Vault Section */

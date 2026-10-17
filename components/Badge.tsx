@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ViewStyle, Platform } from 'react-native';
 import { colors, spacing, borderRadius, typography } from '../theme/index';
 
-export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'coral';
 
 export interface BadgeProps {
   label: string;
@@ -18,15 +18,17 @@ export const Badge: React.FC<BadgeProps> = ({
   const getColors = (): { bg: string; text: string; border: string } => {
     switch (variant) {
       case 'success':
-        return { bg: colors.successLight, text: colors.success, border: 'rgba(0, 245, 160, 0.32)' };
+        return { bg: colors.accentMintLight, text: colors.accentMint, border: 'rgba(22, 163, 74, 0.2)' };
       case 'warning':
-        return { bg: colors.warningLight, text: colors.warning, border: 'rgba(255, 183, 3, 0.38)' };
+        return { bg: colors.accentCustardLight, text: colors.accentCustard, border: 'rgba(202, 138, 4, 0.2)' };
       case 'danger':
-        return { bg: colors.dangerLight, text: colors.danger, border: 'rgba(255, 71, 87, 0.38)' };
+        return { bg: colors.dangerLight, text: colors.danger, border: 'rgba(225, 29, 72, 0.2)' };
       case 'info':
-        return { bg: colors.infoLight, text: colors.info, border: 'rgba(0, 229, 255, 0.32)' };
+        return { bg: colors.accentCyanLight, text: colors.accentCyan, border: 'rgba(2, 132, 199, 0.2)' };
+      case 'coral':
+        return { bg: colors.accentCoralLight, text: colors.accentCoral, border: 'rgba(255, 91, 34, 0.2)' };
       case 'neutral':
-        return { bg: colors.surfaceMuted, text: colors.textSecondary, border: 'rgba(255, 255, 255, 0.14)' };
+        return { bg: colors.surfaceSecondary, text: colors.textSecondary, border: colors.borderSubtle };
     }
   };
 
@@ -47,22 +49,16 @@ export const Badge: React.FC<BadgeProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs / 2 + 1,
     borderRadius: borderRadius.full,
     alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
-    borderTopColor: 'rgba(255, 255, 255, 0.3)',
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-        } as any)
-      : {}),
   },
   text: {
     ...typography.badge,
+    fontWeight: '600',
   },
 });
 

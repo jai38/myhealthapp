@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { colors, spacing, borderRadius, typography } from '../theme/index';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'glass';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'glass' | 'coral';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends TouchableOpacityProps {
@@ -39,33 +39,42 @@ export const Button: React.FC<ButtonProps> = ({
           ...base,
           backgroundColor: disabled ? colors.borderStrong : colors.primary,
           borderWidth: 1,
-          borderColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.3)',
-          borderTopColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.6)',
+          borderColor: disabled ? 'transparent' : 'rgba(0, 0, 0, 0.1)',
           ...(Platform.OS === 'web' && !disabled
             ? ({
-                boxShadow: '0 4px 16px rgba(0, 245, 160, 0.35)',
+                boxShadow: '0 4px 14px rgba(17, 20, 24, 0.14)',
+              } as any)
+            : {}),
+        };
+      case 'coral':
+        return {
+          ...base,
+          backgroundColor: disabled ? colors.border : colors.accentCoral,
+          borderWidth: 1,
+          borderColor: disabled ? 'transparent' : 'rgba(255, 91, 34, 0.2)',
+          ...(Platform.OS === 'web' && !disabled
+            ? ({
+                boxShadow: '0 4px 16px rgba(255, 91, 34, 0.28)',
               } as any)
             : {}),
         };
       case 'secondary':
         return {
           ...base,
-          backgroundColor: disabled ? colors.border : colors.secondaryLight,
+          backgroundColor: disabled ? colors.border : colors.surfaceSecondary,
           borderWidth: 1,
-          borderColor: disabled ? 'transparent' : 'rgba(0, 229, 255, 0.3)',
-          borderTopColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.4)',
+          borderColor: colors.borderSubtle,
         };
       case 'glass':
         return {
           ...base,
-          backgroundColor: disabled ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: disabled ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.8)',
           borderWidth: 1,
-          borderColor: disabled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.18)',
-          borderTopColor: disabled ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.38)',
+          borderColor: colors.border,
           ...(Platform.OS === 'web'
             ? ({
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
               } as any)
             : {}),
         };
@@ -74,7 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
           ...base,
           backgroundColor: 'transparent',
           borderWidth: 1.5,
-          borderColor: disabled ? colors.border : colors.primary,
+          borderColor: disabled ? colors.border : colors.borderStrong,
         };
       case 'ghost':
         return { ...base, backgroundColor: 'transparent' };
@@ -86,22 +95,21 @@ export const Button: React.FC<ButtonProps> = ({
   const getTextStyle = (): TextStyle => {
     switch (variant) {
       case 'primary':
+      case 'coral':
       case 'danger':
         return { ...typography.button, color: colors.textInverse };
       case 'secondary':
-        return { ...typography.button, color: disabled ? colors.textMuted : colors.secondary };
       case 'glass':
         return { ...typography.button, color: disabled ? colors.textMuted : colors.textPrimary };
       case 'outline':
-        return { ...typography.button, color: disabled ? colors.textMuted : colors.primary };
       case 'ghost':
-        return { ...typography.button, color: disabled ? colors.textMuted : colors.primary };
+        return { ...typography.button, color: disabled ? colors.textMuted : colors.textPrimary };
     }
   };
 
   const sizeStyles: Record<ButtonSize, ViewStyle> = {
-    sm: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, minHeight: 36 },
-    md: { paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md, minHeight: 48 }, // 48dp accessible minimum
+    sm: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm + 4, minHeight: 36 },
+    md: { paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md + 2, minHeight: 48 }, // 48dp accessible minimum
     lg: { paddingVertical: spacing.md, paddingHorizontal: spacing.lg, minHeight: 56 },
   };
 
@@ -117,7 +125,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {isLoading ? (
         <ActivityIndicator
-          color={variant === 'primary' || variant === 'danger' ? colors.textInverse : colors.primary}
+          color={variant === 'primary' || variant === 'coral' || variant === 'danger' ? colors.textInverse : colors.primary}
           size="small"
         />
       ) : (
@@ -129,7 +137,7 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full, // Pill buttons matching Ronald Olsen & Baseline AI
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
