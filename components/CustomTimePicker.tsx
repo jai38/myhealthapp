@@ -337,11 +337,14 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginTop: -14,
     minHeight: 40,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderTopColor: 'rgba(255, 255, 255, 0.65)',
   },
   addBtnText: {
-    color: '#ffffff',
+    color: colors.textInverse,
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   quickMinuteRow: {
     flexDirection: 'row',

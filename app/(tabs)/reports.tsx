@@ -444,11 +444,19 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surfaceMuted,
+    borderTopColor: colors.borderTopGlass,
+    backgroundColor: colors.surface,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        } as any)
+      : {}),
   },
   chipSelected: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+    borderTopColor: 'rgba(255, 255, 255, 0.6)',
   },
   chipText: {
     fontSize: 12,
@@ -467,11 +475,19 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderTopColor: 'rgba(255, 255, 255, 0.65)',
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 3,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 4px 20px rgba(0, 245, 160, 0.35)',
+        } as any)
+      : {}),
   },
   exportBtnPrimaryText: {
     color: colors.textInverse,
@@ -518,8 +534,15 @@ const styles = StyleSheet.create({
     padding: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
     flexDirection: 'row',
     alignItems: 'center',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   recordIconBox: {
     width: 36,
@@ -552,6 +575,8 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 245, 160, 0.35)',
   },
   verifiedPillText: {
     fontSize: 11,
@@ -569,9 +594,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderLeftWidth: 3,
     borderLeftColor: colors.primary,
+    borderTopColor: 'rgba(255, 255, 255, 0.22)',
     marginTop: spacing.xs,
+    marginBottom: spacing.xl,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        } as any)
+      : {}),
   },
   trustBannerTitle: {
     fontSize: 13,

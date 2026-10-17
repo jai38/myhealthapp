@@ -352,9 +352,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   confirmBox: {
-    backgroundColor: '#fff1f2',
+    backgroundColor: 'rgba(255, 71, 87, 0.15)',
     borderWidth: 1,
-    borderColor: '#fecdd3',
+    borderColor: 'rgba(255, 71, 87, 0.35)',
     borderRadius: borderRadius.md,
     padding: spacing.md,
     marginTop: spacing.xs,

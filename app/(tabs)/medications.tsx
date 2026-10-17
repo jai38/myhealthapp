@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
@@ -922,9 +923,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs + 4,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   scheduleLeftCol: {
     flexDirection: 'row',
@@ -1047,6 +1055,15 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     padding: 3,
     marginVertical: spacing.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderTopColor: 'rgba(255, 255, 255, 0.18)',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        } as any)
+      : {}),
   },
   tabButton: {
     flex: 1,
@@ -1055,11 +1072,14 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
   tabButtonActive: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceGlassProminent,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderTopColor: 'rgba(255, 255, 255, 0.32)',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
     elevation: 2,
   },
   tabText: {
@@ -1094,7 +1114,15 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
     borderRadius: borderRadius.lg,
+    backgroundColor: colors.surface,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   medCardHeader: {
     flexDirection: 'row',

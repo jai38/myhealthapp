@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
@@ -429,10 +430,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        } as any)
+      : {}),
   },
   filterChipSelected: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+    borderTopColor: 'rgba(255, 255, 255, 0.6)',
   },
   filterChipText: {
     ...typography.caption,
@@ -441,7 +450,7 @@ const styles = StyleSheet.create({
   },
   filterChipTextSelected: {
     color: colors.textInverse,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   yearChip: {
     paddingHorizontal: spacing.sm,
@@ -450,10 +459,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+        } as any)
+      : {}),
   },
   yearChipSelected: {
     backgroundColor: colors.secondary,
     borderColor: colors.secondary,
+    borderTopColor: 'rgba(255, 255, 255, 0.5)',
   },
   yearChipText: {
     ...typography.caption,
@@ -462,13 +479,15 @@ const styles = StyleSheet.create({
   },
   yearChipTextSelected: {
     color: colors.textInverse,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   clearFilterButton: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.sm,
     backgroundColor: colors.dangerLight,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 71, 87, 0.35)',
   },
   clearFilterText: {
     ...typography.caption,
@@ -477,7 +496,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   listContent: {
-    paddingBottom: spacing.xxl,
+    paddingBottom: 110, // Ensure space for floating glass dock
     paddingTop: spacing.xs,
   },
   eventItemWrapper: {

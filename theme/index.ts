@@ -6,16 +6,19 @@
  */
 
 export const colors = {
-  // Advanced Fitness Tracker Canvas (Whoop / Apple Fitness / Oura Obsidian)
-  background: '#0A0F1D', // Deep Obsidian Carbon screen canvas
-  surface: '#121A2D', // Polished dark card surface
-  surfaceMuted: '#19243C', // Container / chip / input background
-  surfaceElevated: '#1F2C47', // Raised elements
-  surfaceHighlight: '#2A3B5E', // Glow border highlight
+  // iOS 26 Liquid Glass Canvas
+  background: '#070C18', // Deep midnight canvas
+  surface: 'rgba(255, 255, 255, 0.06)', // Translucent Liquid Glass Card
+  surfaceGlass: 'rgba(255, 255, 255, 0.08)',
+  surfaceGlassProminent: 'rgba(255, 255, 255, 0.12)',
+  surfaceMuted: 'rgba(255, 255, 255, 0.04)', // Glass container / input background
+  surfaceElevated: 'rgba(255, 255, 255, 0.10)', // Raised glass modals
+  surfaceHighlight: 'rgba(255, 255, 255, 0.18)', // Specular light highlight
 
-  // High-Tech Subtle Borders
-  border: 'rgba(255, 255, 255, 0.08)',
-  borderStrong: 'rgba(255, 255, 255, 0.18)',
+  // Liquid Glass Specular Borders (Light refraction rim)
+  border: 'rgba(255, 255, 255, 0.12)',
+  borderStrong: 'rgba(255, 255, 255, 0.22)',
+  borderTopGlass: 'rgba(255, 255, 255, 0.32)', // Top specular reflection rim
 
   // Vitality Primary: Electric Mint / Neon Emerald
   primary: '#00F5A0', // Neon Mint (high-vitality streak, target, primary action)

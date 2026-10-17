@@ -1244,7 +1244,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   snoozeNoticeRow: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: 'rgba(255, 183, 3, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 183, 3, 0.35)',
     borderRadius: borderRadius.sm,
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
@@ -1253,8 +1255,8 @@ const styles = StyleSheet.create({
   },
   snoozeNoticeText: {
     fontSize: 12,
-    color: '#92400E',
-    fontWeight: '500',
+    color: colors.amberGold,
+    fontWeight: '600',
   },
   doseActionRow: {
     flexDirection: 'row',

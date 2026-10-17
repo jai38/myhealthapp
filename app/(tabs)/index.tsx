@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableOpacity,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenLayout } from '../../components/ScreenLayout';
@@ -694,6 +695,13 @@ const styles = StyleSheet.create({
     padding: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   metricIconBox: {
     width: 32,
@@ -733,12 +741,20 @@ const styles = StyleSheet.create({
 
   // Hero Dose Card
   heroDoseCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceGlassProminent,
     borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(0, 245, 160, 0.3)',
+    borderColor: 'rgba(0, 245, 160, 0.35)',
+    borderTopColor: 'rgba(0, 245, 160, 0.70)', // High-vitality mint specular refraction
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(24px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(160%)',
+          boxShadow: '0 8px 30px rgba(0, 245, 160, 0.14)',
+        } as any)
+      : {}),
   },
   heroDoseHeader: {
     flexDirection: 'row',
@@ -850,12 +866,19 @@ const styles = StyleSheet.create({
 
   // Streak celebration
   streakCelebrationCard: {
-    backgroundColor: 'rgba(0, 245, 160, 0.1)',
+    backgroundColor: 'rgba(0, 245, 160, 0.08)',
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.lg,
     borderWidth: 1,
     borderColor: 'rgba(0, 245, 160, 0.35)',
+    borderTopColor: 'rgba(0, 245, 160, 0.65)',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   streakRow: {
     flexDirection: 'row',
@@ -901,7 +924,14 @@ const styles = StyleSheet.create({
     padding: spacing.sm + 4,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
     justifyContent: 'space-between',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   actionHubIconBadge: {
     width: 36,
@@ -980,6 +1010,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: colors.borderTopGlass,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   activityTopRow: {
     flexDirection: 'row',
@@ -1031,6 +1068,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
     borderWidth: 1,
     borderColor: colors.border,
+    borderTopColor: 'rgba(255, 255, 255, 0.22)',
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        } as any)
+      : {}),
   },
   securityShieldIcon: {
     fontSize: 24,

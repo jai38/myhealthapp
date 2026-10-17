@@ -613,10 +613,10 @@ const styles = StyleSheet.create({
   emptyWarningBox: {
     marginTop: spacing.sm,
     padding: spacing.sm,
-    backgroundColor: '#fef2f2',
+    backgroundColor: 'rgba(255, 71, 87, 0.14)',
     borderRadius: borderRadius.md,
     borderWidth: 1,
-    borderColor: '#fecaca',
+    borderColor: 'rgba(255, 71, 87, 0.35)',
   },
   disclaimerCard: {
     marginBottom: spacing.md,
@@ -624,8 +624,10 @@ const styles = StyleSheet.create({
   errorBox: {
     marginBottom: spacing.md,
     padding: spacing.sm,
-    backgroundColor: '#fef2f2',
+    backgroundColor: 'rgba(255, 71, 87, 0.14)',
     borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 71, 87, 0.35)',
   },
   buttonContainer: {
     marginBottom: spacing.xl,

@@ -7,10 +7,11 @@ import {
   TouchableOpacityProps,
   ViewStyle,
   TextStyle,
+  Platform,
 } from 'react-native';
 import { colors, spacing, borderRadius, typography } from '../theme/index';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'glass';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends TouchableOpacityProps {
@@ -34,9 +35,40 @@ export const Button: React.FC<ButtonProps> = ({
 
     switch (variant) {
       case 'primary':
-        return { ...base, backgroundColor: disabled ? colors.borderStrong : colors.primary };
+        return {
+          ...base,
+          backgroundColor: disabled ? colors.borderStrong : colors.primary,
+          borderWidth: 1,
+          borderColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.3)',
+          borderTopColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.6)',
+          ...(Platform.OS === 'web' && !disabled
+            ? ({
+                boxShadow: '0 4px 16px rgba(0, 245, 160, 0.35)',
+              } as any)
+            : {}),
+        };
       case 'secondary':
-        return { ...base, backgroundColor: disabled ? colors.border : colors.secondaryLight };
+        return {
+          ...base,
+          backgroundColor: disabled ? colors.border : colors.secondaryLight,
+          borderWidth: 1,
+          borderColor: disabled ? 'transparent' : 'rgba(0, 229, 255, 0.3)',
+          borderTopColor: disabled ? 'transparent' : 'rgba(255, 255, 255, 0.4)',
+        };
+      case 'glass':
+        return {
+          ...base,
+          backgroundColor: disabled ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.08)',
+          borderWidth: 1,
+          borderColor: disabled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.18)',
+          borderTopColor: disabled ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.38)',
+          ...(Platform.OS === 'web'
+            ? ({
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+              } as any)
+            : {}),
+        };
       case 'outline':
         return {
           ...base,
@@ -58,6 +90,8 @@ export const Button: React.FC<ButtonProps> = ({
         return { ...typography.button, color: colors.textInverse };
       case 'secondary':
         return { ...typography.button, color: disabled ? colors.textMuted : colors.secondary };
+      case 'glass':
+        return { ...typography.button, color: disabled ? colors.textMuted : colors.textPrimary };
       case 'outline':
         return { ...typography.button, color: disabled ? colors.textMuted : colors.primary };
       case 'ghost':
@@ -104,3 +138,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
