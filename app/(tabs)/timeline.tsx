@@ -207,7 +207,7 @@ export default function TimelineScreen() {
         {/* Screen Title */}
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
-            <Text style={[typography.h1, { flex: 1 }]}>Medical Timeline</Text>
+            <Text style={[typography.h1, { flex: 1, color: colors.textPrimary }]}>Activity Stream</Text>
             <Button
               title="Export PDF"
               variant="outline"
@@ -216,7 +216,7 @@ export default function TimelineScreen() {
             />
           </View>
           <Text style={[typography.bodyMuted, styles.subHeader]}>
-            Chronological, verified history of your consultations and medications.
+            Chronological, verified history of consultations, tests, and prescriptions.
           </Text>
         </View>
 
@@ -508,12 +508,12 @@ const styles = StyleSheet.create({
     marginRight: spacing.xs,
   },
   timelineNode: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: colors.primary,
     borderWidth: 2,
-    borderColor: colors.surface,
+    borderColor: '#0C1220',
     marginTop: 18,
     zIndex: 1,
   },
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     top: 24,
     bottom: -12,
     width: 2,
-    backgroundColor: colors.border,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   cardTouchable: {
     flex: 1,

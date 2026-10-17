@@ -8,17 +8,17 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: colors.surface,
+          backgroundColor: '#0C1220',
           borderBottomWidth: 1,
-          borderBottomColor: colors.border,
+          borderBottomColor: 'rgba(255, 255, 255, 0.08)',
         },
         headerTintColor: colors.textPrimary,
-        headerTitleStyle: { ...typography.h3, fontSize: 18 },
+        headerTitleStyle: { ...typography.h3, fontSize: 18, color: colors.textPrimary, fontWeight: '700' },
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: '#0C1220',
+          borderTopColor: 'rgba(255, 255, 255, 0.08)',
           borderTopWidth: 1,
           height: Platform.OS === 'web' ? 64 : 60,
           paddingBottom: Platform.OS === 'web' ? 8 : 6,
@@ -38,10 +38,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          headerTitle: 'My Health App',
+          title: 'Pulse',
+          headerTitle: 'Health Pulse',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>🏠</Text>
+            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>⚡</Text>
           ),
         }}
       />
@@ -49,7 +49,7 @@ export default function TabLayout() {
         name="timeline"
         options={{
           title: 'Timeline',
-          headerTitle: 'Medical Timeline',
+          headerTitle: 'Activity Stream',
           tabBarIcon: ({ focused }) => (
             <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>📋</Text>
           ),
@@ -58,8 +58,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="medications"
         options={{
-          title: 'Medications',
-          headerTitle: 'Medication Centre',
+          title: 'Regimens',
+          headerTitle: 'Medications & Routine',
           tabBarIcon: ({ focused }) => (
             <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>💊</Text>
           ),
@@ -68,10 +68,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports"
         options={{
-          title: 'Reports',
-          headerTitle: 'Medical Reports',
+          title: 'Vault',
+          headerTitle: 'Health Record Vault',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>📄</Text>
+            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>🛡️</Text>
           ),
         }}
       />

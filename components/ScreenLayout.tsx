@@ -24,7 +24,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
 }) => {
   return (
     <SafeAreaView style={[styles.container, style]}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
       {scrollable ? (
         <ScrollView
           contentContainerStyle={[styles.contentContainer, contentContainerStyle]}

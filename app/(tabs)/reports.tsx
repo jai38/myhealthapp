@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
   },
   pageSubHeader: {
@@ -315,15 +315,15 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   successBanner: {
-    backgroundColor: colors.accentMintLight,
+    backgroundColor: colors.successLight,
     borderWidth: 1,
-    borderColor: 'rgba(44, 191, 174, 0.3)',
+    borderColor: colors.success,
     borderRadius: borderRadius.md,
     padding: spacing.sm,
     marginBottom: spacing.md,
   },
   successText: {
-    color: colors.primaryDark,
+    color: colors.success,
     fontWeight: '700',
     fontSize: 13,
   },
@@ -347,12 +347,12 @@ const styles = StyleSheet.create({
   },
   metricCardHighlight: {
     backgroundColor: colors.primaryLight,
-    borderColor: 'rgba(15, 118, 110, 0.2)',
+    borderColor: 'rgba(0, 245, 160, 0.3)',
   },
   metricNumber: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   metricLabel: {
     fontSize: 11,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   metricHighlightText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.primary,
     marginTop: 2,
   },
 
@@ -377,10 +377,10 @@ const styles = StyleSheet.create({
     padding: spacing.md + 4,
     marginBottom: spacing.lg,
     borderWidth: 1.5,
-    borderColor: 'rgba(44, 191, 174, 0.3)',
-    shadowColor: colors.navy,
+    borderColor: 'rgba(0, 245, 160, 0.3)',
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 3,
   },
@@ -405,13 +405,13 @@ const styles = StyleSheet.create({
   heroBadgeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.primaryDark,
+    color: colors.primary,
     letterSpacing: 0.6,
   },
   heroTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
     letterSpacing: -0.3,
   },
   heroSubtitle: {
@@ -447,8 +447,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
   },
   chipSelected: {
-    backgroundColor: colors.navy,
-    borderColor: colors.navy,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   chipText: {
     fontSize: 12,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   chipTextSelected: {
-    color: '#ffffff',
+    color: colors.textInverse,
     fontWeight: '700',
   },
 
@@ -474,9 +474,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   exportBtnPrimaryText: {
-    color: '#ffffff',
+    color: colors.textInverse,
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   exportBtnSecondary: {
     paddingVertical: 10,
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   vaultTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   vaultSub: {
     fontSize: 12,
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   recordTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   recordMeta: {
     fontSize: 12,
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
   trustBannerTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   trustBannerText: {

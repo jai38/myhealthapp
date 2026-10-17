@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
   },
   pageSubHeader: {
@@ -657,9 +657,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   addMedHeaderBtnText: {
-    color: '#ffffff',
+    color: colors.textInverse,
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   centerBox: {
     alignItems: 'center',
@@ -671,19 +671,19 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   },
 
-  /* 1. HERO REMINDER CARD (Dark Navy / Teal with Golden Clock Badge) */
+  /* 1. HERO REMINDER CARD (Dark Obsidian Canvas with Neon Mint Border) */
   heroReminderCard: {
-    backgroundColor: colors.navy,
+    backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
     padding: spacing.md + 2,
     marginBottom: spacing.md,
-    shadowColor: colors.navy,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0, 245, 160, 0.3)',
   },
   heroTopRow: {
     flexDirection: 'row',
@@ -781,24 +781,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   heroBtnTaken: {
-    backgroundColor: '#ffffff',
-    shadowColor: '#000000',
+    backgroundColor: colors.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 3,
   },
   heroBtnTakenText: {
-    color: colors.tealDark,
+    color: colors.textInverse,
     fontSize: 14,
     fontWeight: '800',
   },
 
   /* All Caught Up Card */
   allCaughtUpCard: {
-    backgroundColor: colors.accentMintLight,
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: 'rgba(44, 191, 174, 0.25)',
+    borderColor: 'rgba(0, 245, 160, 0.3)',
     borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.md,
@@ -813,7 +813,7 @@ const styles = StyleSheet.create({
   allCaughtUpTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.primary,
   },
   allCaughtUpSub: {
     fontSize: 13,
@@ -830,9 +830,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     marginBottom: spacing.md,
-    shadowColor: colors.navy,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.15,
     shadowRadius: 6,
     elevation: 2,
   },
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
   adherenceTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   adherenceSubtitle: {
     fontSize: 12,
@@ -861,7 +861,7 @@ const styles = StyleSheet.create({
   adherenceRateText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.primaryDark,
+    color: colors.primary,
   },
   adherenceBarsRow: {
     flexDirection: 'row',
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   adherenceDayLabelToday: {
-    color: colors.navy,
+    color: colors.primary,
     fontWeight: '800',
   },
 
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   sectionSub: {
     fontSize: 12,
@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
   scheduleMedName: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   scheduleMedNameTaken: {
     textDecorationLine: 'line-through',
@@ -1008,9 +1008,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
   quickTakeBtnText: {
-    color: '#ffffff',
+    color: colors.textInverse,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   quickSkipBtn: {
     backgroundColor: colors.surfaceMuted,
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
   vaultSectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   vaultSectionSub: {
     fontSize: 12,
@@ -1056,7 +1056,7 @@ const styles = StyleSheet.create({
   },
   tabButtonActive: {
     backgroundColor: colors.surface,
-    shadowColor: colors.navy,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -1105,7 +1105,7 @@ const styles = StyleSheet.create({
   medName: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.textPrimary,
   },
   medNormalized: {
     fontSize: 12,
