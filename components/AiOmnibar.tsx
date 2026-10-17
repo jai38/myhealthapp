@@ -11,7 +11,7 @@ export interface AiOmnibarProps {
 export const AiOmnibar: React.FC<AiOmnibarProps> = ({
   onScanPress,
   onSubmitPrompt,
-  placeholder = 'Ask coach, log stack, or snap Rx 📸',
+  placeholder = 'Search medicines, records, or snap a prescription 📸',
 }) => {
   const [query, setQuery] = useState('');
 

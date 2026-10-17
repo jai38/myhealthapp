@@ -130,9 +130,9 @@ export default function ReportsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.pageTitle}>Health Vault 💎</Text>
+          <Text style={styles.pageTitle}>Health Records & Reports 📄</Text>
           <Text style={styles.pageSubHeader}>
-            Doctor-ready summaries, encrypted health records, and trend analysis.
+            Doctor-ready summaries, verified health documents, and clinical history.
           </Text>
         </View>
 

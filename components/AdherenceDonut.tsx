@@ -14,8 +14,8 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
   percentage = 100,
   takenCount = 0,
   totalCount = 0,
-  label = 'Daily Momentum',
-  subLabel = 'Routine Consistency',
+  label = 'Medication Adherence',
+  subLabel = 'Daily Schedule',
 }) => {
   const clampedPct = Math.min(100, Math.max(0, percentage));
   const remainingCount = Math.max(0, totalCount - takenCount);
@@ -33,11 +33,11 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
     <View style={styles.card}>
       <View style={styles.headerRow}>
         <View style={styles.titleBadge}>
-          <Text style={styles.streakFlame}>🔥</Text>
-          <Text style={styles.titleBadgeText}>DAILY MOMENTUM</Text>
+          <Text style={styles.streakFlame}>⏱️</Text>
+          <Text style={styles.titleBadgeText}>TODAY'S SCHEDULE</Text>
         </View>
         <Text style={styles.adjustedTime}>
-          {totalCount === 0 ? 'No routine today' : `${takenCount} of ${totalCount} completed`}
+          {totalCount === 0 ? 'No doses scheduled today' : `${takenCount} of ${totalCount} doses taken`}
         </Text>
       </View>
 
@@ -104,24 +104,24 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
             </Text>
             <Text style={styles.centerLabel}>
               {remainingCount === 0 && totalCount > 0
-                ? 'All Done! 🔥'
+                ? 'All Taken Today ✓'
                 : remainingCount === 1
-                ? '1 left today'
+                ? '1 dose left'
                 : `${remainingCount} doses left`}
             </Text>
           </View>
         </View>
 
-        {/* Right side breakdown decomposition (Baseline AI style) */}
+        {/* Right side breakdown decomposition */}
         <View style={styles.breakdownContainer}>
           <Text style={styles.breakdownTitle}>{label}</Text>
           <Text style={styles.breakdownBigNumber}>
-            {totalCount > 0 ? `${takenCount}/${totalCount}` : 'All Clear'}
+            {totalCount > 0 ? `${takenCount} of ${totalCount}` : 'All Clear'}
           </Text>
 
           <View style={styles.statsList}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Completed</Text>
+              <Text style={styles.statLabel}>Taken</Text>
               <Text style={[styles.statValue, { color: colors.accentMint }]}>
                 {takenCount} done
               </Text>
@@ -135,7 +135,7 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Status</Text>
               <Text style={[styles.statValue, { color: clampedPct >= 80 ? colors.accentMint : colors.accentCoral }]}>
-                {clampedPct >= 100 ? 'Flawless ⚡' : clampedPct >= 80 ? 'Crushing It 🔥' : 'Keep Going 💪'}
+                {clampedPct >= 100 ? 'On Track ✓' : clampedPct >= 80 ? 'Good Progress' : 'Pending'}
               </Text>
             </View>
           </View>

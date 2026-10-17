@@ -82,7 +82,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
   build-android-apk:
-    name: Trigger EAS Android APK Build
+    name: Build Android APK
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -97,6 +97,12 @@ jobs:
           node-version: 22
           cache: 'npm'
 
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Install Dependencies
         run: npm ci
 
@@ -106,15 +112,25 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Run EAS Build for Android APK
+      - name: Try EAS Cloud Build (if quota available)
         run: |
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
-            echo "Starting EAS Build for Android APK (preview profile)..."
-            eas build --platform android --profile preview --non-interactive --no-wait
-            echo "EAS Build successfully submitted to Expo Cloud!"
-          else
-            echo "EXPO_TOKEN secret not found in repository secrets."
-            echo "To enable automated EAS APK builds on every git push:"
-            echo "1. Go to https://expo.dev/settings/access-tokens and create an access token."
-            echo "2. Add it to GitHub repository Secrets as 'EXPO_TOKEN'."
+            echo "Attempting EAS Cloud Build..."
+            eas build --platform android --profile preview --non-interactive --no-wait || echo "EAS Cloud quota reached or failed; will compile APK locally on runner."
           fi
+
+      - name: Prebuild Native Android Project
+        env:
+          EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
+        run: npx expo prebuild --platform android --clean --no-install
+
+      - name: Build Android APK with Gradle
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myhealthapp-preview-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          retention-days: 14

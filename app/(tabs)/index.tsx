@@ -213,19 +213,19 @@ export default function HomeScreen() {
 
   return (
     <ScreenLayout>
-      {/* 1. HEALTH BASELINE OS HEADER */}
+      {/* 1. HEALTH OS HEADER */}
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <View style={styles.statusRow}>
             <Text style={styles.dateText}>{todayDateStr}</Text>
             <View style={styles.streakPill}>
-              <Text style={styles.streakPillText}>🔥 7-DAY STREAK</Text>
+              <Text style={styles.streakPillText}>⏱️ 7-DAY ADHERENCE</Text>
             </View>
           </View>
           <Text style={styles.greeting}>
-            {session?.fullName ? `Hey, ${session.fullName.split(' ')[0]} ⚡` : 'Hey Champion ⚡'}
+            {session?.fullName ? `Hello, ${session.fullName.split(' ')[0]}` : 'Welcome Back'}
           </Text>
-          <Text style={styles.subGreeting}>Track routines, hit your goals, and stay unstoppable.</Text>
+          <Text style={styles.subGreeting}>Keep your medications and health records on track today.</Text>
         </View>
 
         <TouchableOpacity
@@ -242,7 +242,7 @@ export default function HomeScreen() {
               .join('')
               .slice(0, 2)
               .toUpperCase()
-              : '⚡'}
+              : '👤'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -269,29 +269,29 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {/* 2. HORIZONTAL WEEKDAY ADHERENCE CAROUSEL (Ronald Olsen signature) */}
+      {/* 2. HORIZONTAL WEEKDAY ADHERENCE CAROUSEL */}
       <HorizontalDateStrip onSelectDate={() => router.push('/(tabs)/timeline')} />
 
-      {/* 3. AI PRESCRIPTION SCANNER & OMNIBAR (Baseline AI signature) */}
+      {/* 3. PRESCRIPTION SCANNER & OMNIBAR */}
       <AiOmnibar
         onScanPress={() => setIsPickerVisible(true)}
         onSubmitPrompt={() => router.push('/(tabs)/medications')}
       />
 
-      {/* 4. HERO ADHERENCE DONUT TARGET (Baseline AI + Ronald Olsen signature) */}
+      {/* 4. HERO ADHERENCE DONUT */}
       <AdherenceDonut
         percentage={adherenceTodayPct}
         takenCount={takenDosesToday}
         totalCount={totalDosesToday}
       />
 
-      {/* 5. 1-TAP UPCOMING DOSE CARD (Direct 1-Tap Execution) */}
+      {/* 5. 1-TAP UPCOMING DOSE CARD */}
       {nextDose && nextMed ? (
         <View style={styles.heroDoseCard}>
           <View style={styles.heroDoseHeader}>
             <View style={styles.heroBadgeRow}>
               <View style={styles.heroDoseBadge}>
-                <Text style={styles.heroDoseBadgeText}>NEXT IN YOUR STACK ⚡</Text>
+                <Text style={styles.heroDoseBadgeText}>UPCOMING DOSE ⏰</Text>
               </View>
               {nextDose.status === 'SNOOZED' && (
                 <View style={styles.heroSnoozedBadge}>
@@ -306,7 +306,7 @@ export default function HomeScreen() {
 
           <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
           <Text style={styles.heroMedMeta}>
-            {nextMed.strength ? `${nextMed.strength} • ` : ''}Scheduled at {nextTimeStr} • Daily Routine
+            {nextMed.strength ? `${nextMed.strength} • ` : ''}Scheduled at {nextTimeStr} • Daily Medication
           </Text>
 
           {nextMed.prescribedInstructions ? (
@@ -352,16 +352,16 @@ export default function HomeScreen() {
           <View style={styles.streakRow}>
             <Text style={styles.streakIcon}>🎯</Text>
             <View style={{ flex: 1, marginLeft: spacing.sm }}>
-              <Text style={styles.streakTitle}>All Doses Logged Today! 🔥</Text>
+              <Text style={styles.streakTitle}>All Doses Taken Today! ✓</Text>
               <Text style={styles.streakSub}>
-                100% adherence logged on time. Your daily health streak is unstoppable!
+                100% adherence today. Great job staying consistent with your prescribed medication schedule.
               </Text>
             </View>
           </View>
         </View>
       ) : null}
 
-      {/* 6. THREE-TILE TELEMETRY STATS MATRIX */}
+      {/* 6. THREE-TILE STATS MATRIX */}
       <View style={styles.metricsGrid}>
         {/* Adherence Rate */}
         <TouchableOpacity
@@ -370,18 +370,18 @@ export default function HomeScreen() {
           activeOpacity={0.85}
         >
           <View style={[styles.metricIconBox, { backgroundColor: colors.accentMintLight }]}>
-            <Text style={styles.metricIcon}>⚡</Text>
+            <Text style={styles.metricIcon}>⏱️</Text>
           </View>
           <Text style={[styles.metricValue, { color: colors.accentMint }]}>{adherenceTodayPct}%</Text>
-          <Text style={styles.metricLabel}>Power Streak</Text>
+          <Text style={styles.metricLabel}>Adherence Rate</Text>
           <View style={styles.metricFooter}>
             <Text style={styles.metricSubText}>
-              {takenDosesToday}/{totalDosesToday || 0} Doses Done
+              {takenDosesToday}/{totalDosesToday || 0} Doses Taken
             </Text>
           </View>
         </TouchableOpacity>
 
-        {/* Active Regimens */}
+        {/* Active Medications */}
         <TouchableOpacity
           style={styles.metricCard}
           onPress={() => router.push('/(tabs)/medications')}
@@ -393,35 +393,35 @@ export default function HomeScreen() {
           <Text style={[styles.metricValue, { color: colors.accentCoral }]}>
             {activeMedsCount} Active
           </Text>
-          <Text style={styles.metricLabel}>Daily Stacks</Text>
+          <Text style={styles.metricLabel}>Medications</Text>
           <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>Active Routines</Text>
+            <Text style={styles.metricSubText}>Prescriptions & Meds</Text>
           </View>
         </TouchableOpacity>
 
-        {/* Encrypted Vault */}
+        {/* Verified Health Records */}
         <TouchableOpacity
           style={styles.metricCard}
           onPress={() => router.push('/(tabs)/reports')}
           activeOpacity={0.85}
         >
           <View style={[styles.metricIconBox, { backgroundColor: colors.accentCustardLight }]}>
-            <Text style={styles.metricIcon}>💎</Text>
+            <Text style={styles.metricIcon}>📋</Text>
           </View>
           <Text style={[styles.metricValue, { color: colors.accentCustard }]}>
-            {totalRecordsCount} Recs
+            {totalRecordsCount} Records
           </Text>
-          <Text style={styles.metricLabel}>Health Vault</Text>
+          <Text style={styles.metricLabel}>Health Records</Text>
           <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>100% Private</Text>
+            <Text style={styles.metricSubText}>Labs & Summaries</Text>
           </View>
         </TouchableOpacity>
       </View>
 
       {/* 7. THREE-TILE ACTION HUB */}
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Quick Actions ⚡</Text>
-        <Text style={styles.sectionSub}>Instant AI tools, vitamins & health records</Text>
+        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <Text style={styles.sectionSub}>Prescription scanner, medicine logs & health records</Text>
       </View>
 
       <View style={styles.actionHubGrid}>
@@ -435,10 +435,10 @@ export default function HomeScreen() {
           <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCoralLight }]}>
             <Text style={styles.actionHubEmoji}>📸</Text>
           </View>
-          <Text style={styles.actionHubTitle}>Snap Rx or Labs</Text>
-          <Text style={styles.actionHubDesc}>AI OCR extraction & automated dose schedules</Text>
+          <Text style={styles.actionHubTitle}>Scan Prescription</Text>
+          <Text style={styles.actionHubDesc}>Instant OCR extraction to verify medicines & schedules</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCoralLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>Instant AI</Text>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>Smart OCR</Text>
           </View>
         </TouchableOpacity>
 
@@ -450,16 +450,16 @@ export default function HomeScreen() {
           disabled={isProcessing}
         >
           <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCyanLight }]}>
-            <Text style={styles.actionHubEmoji}>⚡</Text>
+            <Text style={styles.actionHubEmoji}>💊</Text>
           </View>
-          <Text style={styles.actionHubTitle}>Quick Add Stack</Text>
-          <Text style={styles.actionHubDesc}>Custom timing, dose alarms, vitamins & meds</Text>
+          <Text style={styles.actionHubTitle}>Add Medication</Text>
+          <Text style={styles.actionHubDesc}>Custom timing, dose reminders & instructions</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCyanLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ 1-Tap Add</Text>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ Add Med</Text>
           </View>
         </TouchableOpacity>
 
-        {/* Tile 3: Vault Export */}
+        {/* Tile 3: Doctor Summary Export */}
         <TouchableOpacity
           style={styles.actionHubTile}
           onPress={() => router.push('/(tabs)/reports')}
@@ -469,9 +469,9 @@ export default function HomeScreen() {
             <Text style={styles.actionHubEmoji}>📄</Text>
           </View>
           <Text style={styles.actionHubTitle}>Doctor Summary</Text>
-          <Text style={styles.actionHubDesc}>One-click shareable verified medical overview</Text>
+          <Text style={styles.actionHubDesc}>Shareable overview for your next clinic appointment</Text>
           <View style={[styles.actionHubTag, { backgroundColor: colors.accentCustardLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Instant PDF</Text>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Export PDF</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -479,8 +479,8 @@ export default function HomeScreen() {
       {/* 8. LIVE RECENT ACTIVITY STREAM */}
       <View style={styles.sectionHeaderRow}>
         <View>
-          <Text style={styles.sectionTitle}>Activity Stream</Text>
-          <Text style={styles.sectionSub}>Verified consultations, tests & records</Text>
+          <Text style={styles.sectionTitle}>Recent Health Activity</Text>
+          <Text style={styles.sectionSub}>Verified prescriptions, doctor visits & lab tests</Text>
         </View>
         <TouchableOpacity onPress={() => router.push('/(tabs)/timeline')}>
           <Text style={styles.viewAllLink}>View All ›</Text>

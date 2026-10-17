@@ -340,12 +340,12 @@ export default function MedicationsScreen() {
               </View>
             </View>
 
-            {/* 3. TODAY'S SCHEDULE (Matching Landing Page List Layout) */}
+            {/* 3. TODAY'S SCHEDULE */}
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Today's Power Routine ⚡</Text>
+              <Text style={styles.sectionTitle}>Today's Schedule ⏱️</Text>
               <Text style={styles.sectionSub}>
                 {actionableDoses.length === 0
-                  ? 'All tasks completed 🔥 Streak protected!'
+                  ? 'All doses taken for today ✓'
                   : `${actionableDoses.length} reminder(s) pending today`}
               </Text>
             </View>
@@ -445,11 +445,11 @@ export default function MedicationsScreen() {
               })
             )}
 
-            {/* 4. MY MEDICATIONS & REGIMENS VAULT */}
+            {/* 4. MY MEDICATIONS & SUPPLEMENTS */}
             <View style={styles.vaultHeaderRow}>
-              <Text style={styles.vaultSectionTitle}>Daily Stacks & Treatments 💊</Text>
+              <Text style={styles.vaultSectionTitle}>My Medications & Supplements 💊</Text>
               <Text style={styles.vaultSectionSub}>
-                Organized vitamins, prescriptions, and active routines
+                Verified prescriptions, dosages, and reminder schedules
               </Text>
             </View>
 

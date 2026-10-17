@@ -209,7 +209,7 @@ export default function TimelineScreen() {
         {/* Screen Title */}
         <View style={styles.header}>
           <View style={styles.headerTopRow}>
-            <Text style={[typography.h1, { flex: 1, color: colors.textPrimary }]}>Health Journey 🚀</Text>
+            <Text style={[typography.h1, { flex: 1, color: colors.textPrimary }]}>Health Timeline 📋</Text>
             <Button
               title="Share PDF"
               variant="outline"
@@ -218,7 +218,7 @@ export default function TimelineScreen() {
             />
           </View>
           <Text style={[typography.bodyMuted, styles.subHeader]}>
-            Your complete chronological milestones, tests, and prescriptions.
+            Chronological record of prescriptions, doctor consultations, and lab results.
           </Text>
         </View>
 
