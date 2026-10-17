@@ -5,16 +5,16 @@ export const TimelineEventSchema = z.object({
   id: z.string(),
   patientProfileId: z.string(),
   eventType: z.string(),
-  eventDate: z.string(),
-  dateIsUncertain: z.boolean(),
-  datePrecision: z.string(),
+  eventDate: z.union([z.string(), z.date()]).transform((val) => (typeof val === 'string' ? val : val.toISOString().split('T')[0])),
+  dateIsUncertain: z.boolean().optional().default(false),
+  datePrecision: z.string().optional().default('EXACT'),
   title: z.string(),
   summary: z.string(),
-  sourceDocumentId: z.string(),
+  sourceDocumentId: z.string().nullable().optional(),
   sourcePrescriptionId: z.string().nullable().optional(),
-  isVerified: z.boolean(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  isVerified: z.boolean().optional().default(false),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+  updatedAt: z.union([z.string(), z.date()]).optional(),
 });
 
 export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
@@ -37,12 +37,12 @@ export const PrescriptionItemDetailSchema = z.object({
   nameAsWritten: z.string(),
   normalizedMedicineName: z.string().nullable().optional(),
   strength: z.string().nullable().optional(),
-  dosageForm: z.string(),
+  dosageForm: z.string().optional().default('TABLET'),
   frequencyText: z.string().nullable().optional(),
   durationText: z.string().nullable().optional(),
-  route: z.string().optional(),
+  route: z.string().nullable().optional(),
   instructions: z.string().nullable().optional(),
-  isActiveMedication: z.boolean(),
+  isActiveMedication: z.boolean().optional().default(false),
 });
 
 export type PrescriptionItemDetail = z.infer<typeof PrescriptionItemDetailSchema>;
@@ -54,24 +54,26 @@ export const TimelineDetailSchema = z.object({
         id: z.string(),
         originalFilename: z.string(),
         mimeType: z.string(),
-        fileSizeBytes: z.number(),
+        fileSizeBytes: z.number().optional().default(0),
         pageCount: z.number().nullable().optional(),
-        uploadedAt: z.string(),
+        uploadedAt: z.union([z.string(), z.date()]).optional(),
       })
+      .nullable()
       .optional(),
     prescription: z
       .object({
         id: z.string(),
         prescriptionDate: z.string().nullable().optional(),
-        dateIsUncertain: z.boolean(),
+        dateIsUncertain: z.boolean().optional().default(false),
         doctorName: z.string().nullable().optional(),
         clinicHospitalName: z.string().nullable().optional(),
         diagnosis: z.string().nullable().optional(),
-        reviewStatus: z.string(),
-        confirmedAt: z.string(),
-        confirmedByUserId: z.string(),
-        items: z.array(PrescriptionItemDetailSchema),
+        reviewStatus: z.string().nullable().optional(),
+        confirmedAt: z.union([z.string(), z.date()]).nullable().optional(),
+        confirmedByUserId: z.string().nullable().optional(),
+        items: z.array(PrescriptionItemDetailSchema).optional().default([]),
       })
+      .nullable()
       .optional(),
   }),
 });

@@ -14,6 +14,7 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { medicationService } from '../../services/medications/medication-service';
+import { formatTime12Hour, getTimePeriodIcon } from './reminder-time-utils';
 
 export interface ManualAddMedicationModalProps {
   visible: boolean;
@@ -33,10 +34,10 @@ const DOSAGE_FORMS = [
 ];
 
 const PRESET_TIMES = [
-  { label: 'Morning (08:00)', time: '08:00' },
-  { label: 'Afternoon (14:00)', time: '14:00' },
-  { label: 'Evening (18:00)', time: '18:00' },
-  { label: 'Night (20:00)', time: '20:00' },
+  { label: '🌅 Morning (8:00 AM)', time: '08:00' },
+  { label: '☀️ Noon (1:00 PM)', time: '13:00' },
+  { label: '🌇 Evening (6:00 PM)', time: '18:00' },
+  { label: '🌙 Bedtime (9:00 PM)', time: '21:00' },
 ];
 
 export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> = ({
@@ -268,7 +269,9 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
                   ) : (
                     selectedTimes.map((t) => (
                       <View key={t} style={styles.timeTag}>
-                        <Text style={styles.timeTagText}>⏰ {t}</Text>
+                        <Text style={styles.timeTagText}>
+                          {getTimePeriodIcon(t)} {formatTime12Hour(t)}
+                        </Text>
                         <TouchableOpacity
                           onPress={() => handleRemoveTime(t)}
                           style={styles.timeTagRemove}

@@ -174,7 +174,7 @@ export const TimelineDetailModal: React.FC<TimelineDetailModalProps> = ({
                     </Text>
                   )}
                 </View>
-                {eventDetail.sourceDocument && (
+                {eventDetail.sourceDocument?.uploadedAt && (
                   <View style={styles.dateCol}>
                     <Text style={styles.dateMetaLabel}>Document Uploaded</Text>
                     <Text style={[typography.caption, styles.uploadedDateValue]}>
@@ -229,12 +229,14 @@ export const TimelineDetailModal: React.FC<TimelineDetailModalProps> = ({
                   </View>
                 ) : null}
 
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Confirmation Date:</Text>
-                  <Text style={styles.infoValue}>
-                    {new Date(eventDetail.prescription.confirmedAt).toLocaleDateString()}
-                  </Text>
-                </View>
+                {eventDetail.prescription.confirmedAt ? (
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoLabel}>Confirmation Date:</Text>
+                    <Text style={styles.infoValue}>
+                      {new Date(eventDetail.prescription.confirmedAt).toLocaleDateString()}
+                    </Text>
+                  </View>
+                ) : null}
               </Card>
             )}
 

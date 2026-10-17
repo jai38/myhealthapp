@@ -22,6 +22,7 @@ import {
 } from '../../services/medications/medication-service';
 import { MedicationDetailModal } from '../../features/medications/MedicationDetailModal';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
+import { formatTime12Hour } from '../../features/medications/reminder-time-utils';
 
 type TabType = 'active' | 'inactive' | 'past';
 
@@ -373,7 +374,7 @@ export default function MedicationsScreen() {
                       <View style={styles.scheduleSummaryRow}>
                         <Text style={styles.scheduleSummaryLabel}>Reminders:</Text>
                         <Text style={styles.scheduleSummaryTimes}>
-                          {item.reminderTimes.join(', ')}
+                          {item.reminderTimes.map(formatTime12Hour).join(', ')}
                         </Text>
                       </View>
                     ) : item.status === 'INACTIVE' ? (

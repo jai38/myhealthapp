@@ -21,6 +21,12 @@ import {
   medicationService,
   MedicationStatus,
 } from '../../services/medications/medication-service';
+import {
+  formatTime12Hour,
+  getTimePeriodIcon,
+  FREQUENCY_PRESETS,
+  QUICK_TIME_PRESETS,
+} from './reminder-time-utils';
 
 export interface MedicationDetailModalProps {
   visible: boolean;
@@ -47,7 +53,10 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
 
   // Schedule / Action Sub-views
   const [showScheduleForm, setShowScheduleForm] = useState<boolean>(false);
-  const [reminderTimesInput, setReminderTimesInput] = useState<string>('08:00');
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(['08:00', '20:00']);
+  const [customHour, setCustomHour] = useState<string>('08');
+  const [customMinute, setCustomMinute] = useState<string>('00');
+  const [customPeriod, setCustomPeriod] = useState<'AM' | 'PM'>('AM');
   const [submittingAction, setSubmittingAction] = useState<boolean>(false);
 
   // Discontinue reason input
@@ -74,7 +83,9 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
       const detail = await medicationService.getMedicationDetails(id);
       setMedication(detail);
       if (detail.reminderTimes && detail.reminderTimes.length > 0) {
-        setReminderTimesInput(detail.reminderTimes.join(', '));
+        setSelectedTimes(detail.reminderTimes);
+      } else {
+        setSelectedTimes(['08:00', '20:00']);
       }
     } catch (err: any) {
       setError(err?.message || 'Failed to load medication details.');
@@ -98,22 +109,61 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
     }
   };
 
+  const handleSelectFrequency = (times: readonly string[]) => {
+    setSelectedTimes([...times]);
+  };
+
+  const handleTogglePresetTime = (time24: string) => {
+    if (selectedTimes.includes(time24)) {
+      if (selectedTimes.length === 1) {
+        Alert.alert('Reminder Required', 'Please keep at least one reminder time.');
+        return;
+      }
+      setSelectedTimes(selectedTimes.filter((t) => t !== time24));
+    } else {
+      setSelectedTimes([...selectedTimes, time24].sort());
+    }
+  };
+
+  const handleRemoveTime = (time24: string) => {
+    if (selectedTimes.length <= 1) {
+      Alert.alert('Reminder Required', 'Please keep at least one reminder time.');
+      return;
+    }
+    setSelectedTimes(selectedTimes.filter((t) => t !== time24));
+  };
+
+  const handleAddCustomTime = () => {
+    let h = parseInt(customHour, 10);
+    const m = parseInt(customMinute, 10);
+    if (isNaN(h) || h < 1 || h > 12 || isNaN(m) || m < 0 || m > 59) {
+      Alert.alert('Invalid Time', 'Please choose a valid hour (1-12) and minute (0-59).');
+      return;
+    }
+    if (customPeriod === 'PM' && h !== 12) h += 12;
+    if (customPeriod === 'AM' && h === 12) h = 0;
+    const hFormatted = h < 10 ? `0${h}` : `${h}`;
+    const mFormatted = m < 10 ? `0${m}` : `${m}`;
+    const time24 = `${hFormatted}:${mFormatted}`;
+
+    if (selectedTimes.includes(time24)) {
+      Alert.alert('Already Added', `Reminder for ${formatTime12Hour(time24)} is already in your schedule.`);
+      return;
+    }
+    setSelectedTimes([...selectedTimes, time24].sort());
+  };
+
   const handleActivate = async () => {
     if (!medicationId) return;
-    const times = reminderTimesInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    if (times.length === 0) {
-      Alert.alert('Reminder Time Required', 'Please provide at least one reminder time (e.g. 08:00).');
+    if (selectedTimes.length === 0) {
+      Alert.alert('Reminder Time Required', 'Please choose at least one reminder time.');
       return;
     }
 
     setSubmittingAction(true);
     try {
       await medicationService.activateMedication(medicationId, {
-        reminderTimes: times,
+        reminderTimes: selectedTimes,
       });
       setShowScheduleForm(false);
       await loadMedication(medicationId);
@@ -128,20 +178,15 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
 
   const handleUpdateSchedule = async () => {
     if (!medicationId) return;
-    const times = reminderTimesInput
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    if (times.length === 0) {
-      Alert.alert('Reminder Time Required', 'Please enter at least one reminder time (e.g. 08:00).');
+    if (selectedTimes.length === 0) {
+      Alert.alert('Reminder Time Required', 'Please select at least one reminder time.');
       return;
     }
 
     setSubmittingAction(true);
     try {
       await medicationService.updateReminderPreferences(medicationId, {
-        reminderTimes: times,
+        reminderTimes: selectedTimes,
       });
       setShowScheduleForm(false);
       await loadMedication(medicationId);
@@ -378,7 +423,15 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
 
             {/* Reminder Schedule & Preferences Card */}
             <Card style={styles.card}>
-              <Text style={styles.sectionHeader}>Reminder Preferences</Text>
+              <View style={styles.sectionHeaderRow}>
+                <Text style={styles.sectionHeader}>Reminder Preferences</Text>
+                {medication.reminderTimes && medication.reminderTimes.length > 0 && (
+                  <Badge
+                    label={`${medication.reminderTimes.length} reminder${medication.reminderTimes.length > 1 ? 's' : ''} daily`}
+                    variant="neutral"
+                  />
+                )}
+              </View>
               <Text style={styles.disclaimerText}>
                 Times below are patient-selected reminder preferences, not clinician orders.
               </Text>
@@ -386,8 +439,9 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
               {medication.reminderTimes && medication.reminderTimes.length > 0 ? (
                 <View style={styles.timesList}>
                   {medication.reminderTimes.map((t, idx) => (
-                    <View key={idx} style={styles.timeChip}>
-                      <Text style={styles.timeChipText}>{t}</Text>
+                    <View key={idx} style={styles.friendlyTimeChip}>
+                      <Text style={styles.timePeriodIcon}>{getTimePeriodIcon(t)}</Text>
+                      <Text style={styles.friendlyTimeText}>{formatTime12Hour(t)}</Text>
                     </View>
                   ))}
                 </View>
@@ -406,17 +460,183 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
 
               {showScheduleForm ? (
                 <View style={styles.scheduleFormContainer}>
-                  <Text style={styles.formLabel}>
-                    Reminder Times (24-hour HH:mm, comma separated):
+                  <Text style={styles.scheduleFormHeading}>
+                    {medication.status === 'INACTIVE'
+                      ? 'Configure Daily Medication Timers'
+                      : 'Adjust Reminder Schedule'}
                   </Text>
-                  <TextInput
-                    style={styles.timeInput}
-                    value={reminderTimesInput}
-                    onChangeText={setReminderTimesInput}
-                    placeholder="e.g. 08:00, 20:00"
-                    placeholderTextColor={colors.textMuted}
-                    autoCapitalize="none"
-                  />
+                  <Text style={styles.scheduleFormSubtext}>
+                    Tap a frequency preset or pick times that best match your routine.
+                  </Text>
+
+                  {/* 1. Daily Frequency Presets */}
+                  <Text style={styles.subSectionTitle}>Daily Frequency</Text>
+                  <View style={styles.frequencyRow}>
+                    {FREQUENCY_PRESETS.map((p) => {
+                      const isSelected =
+                        selectedTimes.length === p.times.length &&
+                        p.times.every((t) => selectedTimes.includes(t));
+                      return (
+                        <TouchableOpacity
+                          key={p.label}
+                          style={[
+                            styles.frequencyBtn,
+                            isSelected && styles.frequencyBtnActive,
+                          ]}
+                          onPress={() => handleSelectFrequency(p.times)}
+                        >
+                          <Text
+                            style={[
+                              styles.frequencyBtnText,
+                              isSelected && styles.frequencyBtnTextActive,
+                            ]}
+                          >
+                            {p.label}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+
+                  {/* 2. Quick Preset Chips */}
+                  <Text style={styles.subSectionTitle}>Quick Add / Toggle Time</Text>
+                  <View style={styles.quickChipsRow}>
+                    {QUICK_TIME_PRESETS.map((q) => {
+                      const isActive = selectedTimes.includes(q.time);
+                      return (
+                        <TouchableOpacity
+                          key={q.time}
+                          style={[
+                            styles.quickChip,
+                            isActive && styles.quickChipActive,
+                          ]}
+                          onPress={() => handleTogglePresetTime(q.time)}
+                        >
+                          <Text style={styles.quickChipIcon}>{q.icon}</Text>
+                          <Text
+                            style={[
+                              styles.quickChipText,
+                              isActive && styles.quickChipTextActive,
+                            ]}
+                          >
+                            {q.label} ({q.display})
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+
+                  {/* 3. Selected Timers List */}
+                  <Text style={styles.subSectionTitle}>
+                    Scheduled Reminders ({selectedTimes.length})
+                  </Text>
+                  <View style={styles.activePillsContainer}>
+                    {selectedTimes.map((t) => (
+                      <View key={t} style={styles.activeTimePill}>
+                        <Text style={styles.activeTimePillIcon}>
+                          {getTimePeriodIcon(t)}
+                        </Text>
+                        <Text style={styles.activeTimePillText}>
+                          {formatTime12Hour(t)}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => handleRemoveTime(t)}
+                          style={styles.pillRemoveBtn}
+                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                          <Text style={styles.pillRemoveText}>✕</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+
+                  {/* 4. Add Custom Time */}
+                  <View style={styles.customTimeSection}>
+                    <Text style={styles.subSectionTitle}>Add Custom Time</Text>
+                    <View style={styles.customTimePickerRow}>
+                      {/* Hour selector */}
+                      <View style={styles.timeUnitBox}>
+                        <TextInput
+                          style={styles.timeDigitInput}
+                          value={customHour}
+                          onChangeText={(val) => {
+                            const cleaned = val.replace(/[^0-9]/g, '').slice(0, 2);
+                            setCustomHour(cleaned);
+                          }}
+                          keyboardType="number-pad"
+                          maxLength={2}
+                          placeholder="08"
+                          placeholderTextColor={colors.textMuted}
+                        />
+                        <Text style={styles.timeUnitLabel}>Hour (1-12)</Text>
+                      </View>
+
+                      <Text style={styles.timeColon}>:</Text>
+
+                      {/* Minute selector */}
+                      <View style={styles.timeUnitBox}>
+                        <TextInput
+                          style={styles.timeDigitInput}
+                          value={customMinute}
+                          onChangeText={(val) => {
+                            const cleaned = val.replace(/[^0-9]/g, '').slice(0, 2);
+                            setCustomMinute(cleaned);
+                          }}
+                          keyboardType="number-pad"
+                          maxLength={2}
+                          placeholder="00"
+                          placeholderTextColor={colors.textMuted}
+                        />
+                        <Text style={styles.timeUnitLabel}>Minute</Text>
+                      </View>
+
+                      {/* AM / PM Toggle */}
+                      <View style={styles.amPmToggleRow}>
+                        <TouchableOpacity
+                          style={[
+                            styles.amPmBtn,
+                            customPeriod === 'AM' && styles.amPmBtnActive,
+                          ]}
+                          onPress={() => setCustomPeriod('AM')}
+                        >
+                          <Text
+                            style={[
+                              styles.amPmBtnText,
+                              customPeriod === 'AM' && styles.amPmBtnTextActive,
+                            ]}
+                          >
+                            AM
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[
+                            styles.amPmBtn,
+                            customPeriod === 'PM' && styles.amPmBtnActive,
+                          ]}
+                          onPress={() => setCustomPeriod('PM')}
+                        >
+                          <Text
+                            style={[
+                              styles.amPmBtnText,
+                              customPeriod === 'PM' && styles.amPmBtnTextActive,
+                            ]}
+                          >
+                            PM
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      {/* Add button */}
+                      <TouchableOpacity
+                        style={styles.addCustomTimeBtn}
+                        onPress={handleAddCustomTime}
+                      >
+                        <Text style={styles.addCustomTimeBtnText}>+ Add</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  {/* Form Actions */}
                   <View style={styles.formButtonsRow}>
                     <Button
                       title="Cancel"
@@ -425,9 +645,15 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
                       style={{ flex: 1, marginRight: spacing.xs }}
                     />
                     <Button
-                      title={medication.status === 'INACTIVE' ? 'Confirm & Activate' : 'Save Times'}
+                      title={
+                        medication.status === 'INACTIVE'
+                          ? 'Confirm & Activate'
+                          : 'Save Times'
+                      }
                       onPress={
-                        medication.status === 'INACTIVE' ? handleActivate : handleUpdateSchedule
+                        medication.status === 'INACTIVE'
+                          ? handleActivate
+                          : handleUpdateSchedule
                       }
                       isLoading={submittingAction}
                       style={{ flex: 1, marginLeft: spacing.xs }}
@@ -746,31 +972,242 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  scheduleFormContainer: {
-    marginTop: spacing.md,
-    padding: spacing.sm,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.md,
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs,
   },
-  formLabel: {
+  friendlyTimeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    marginRight: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  timePeriodIcon: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  friendlyTimeText: {
     fontSize: 13,
     fontWeight: '600',
     color: colors.textPrimary,
-    marginBottom: spacing.xs,
   },
-  timeInput: {
+  scheduleFormContainer: {
+    marginTop: spacing.md,
+    padding: spacing.md,
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.md,
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  scheduleFormHeading: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  scheduleFormSubtext: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
+  },
+  subSectionTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  frequencyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  frequencyBtn: {
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  frequencyBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  frequencyBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  frequencyBtnTextActive: {
+    color: '#ffffff',
+  },
+  quickChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  quickChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  quickChipActive: {
+    backgroundColor: '#E6FFFA',
+    borderColor: colors.primary,
+  },
+  quickChipIcon: {
+    fontSize: 13,
+    marginRight: 5,
+  },
+  quickChipText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontWeight: '500',
+  },
+  quickChipTextActive: {
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  activePillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    padding: spacing.xs,
     backgroundColor: colors.surface,
     borderRadius: borderRadius.sm,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    fontSize: 14,
-    color: colors.textPrimary,
+    borderWidth: 1,
+    borderColor: colors.border,
+    minHeight: 44,
+    alignItems: 'center',
     marginBottom: spacing.sm,
+  },
+  activeTimePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#CCFBF1',
+    borderRadius: borderRadius.sm,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: '#99F6E4',
+  },
+  activeTimePillIcon: {
+    fontSize: 13,
+    marginRight: 4,
+  },
+  activeTimePillText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F766E',
+  },
+  pillRemoveBtn: {
+    marginLeft: 6,
+    paddingHorizontal: 4,
+  },
+  pillRemoveText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F766E',
+  },
+  customTimeSection: {
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  customTimePickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    padding: spacing.sm,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  timeUnitBox: {
+    alignItems: 'center',
+  },
+  timeDigitInput: {
+    width: 44,
+    height: 40,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.sm,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    backgroundColor: colors.background,
+  },
+  timeUnitLabel: {
+    fontSize: 10,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  timeColon: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginHorizontal: 2,
+  },
+  amPmToggleRow: {
+    flexDirection: 'row',
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: 'hidden',
+    marginLeft: 4,
+  },
+  amPmBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: colors.surface,
+  },
+  amPmBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  amPmBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  amPmBtnTextActive: {
+    color: '#ffffff',
+    fontWeight: '700',
+  },
+  addCustomTimeBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: borderRadius.sm,
+    marginLeft: 'auto',
+  },
+  addCustomTimeBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
   },
   formButtonsRow: {
     flexDirection: 'row',
+    marginTop: spacing.sm,
   },
   doseRow: {
     flexDirection: 'row',

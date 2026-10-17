@@ -39,6 +39,7 @@ export class ApiClient {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
+      'X-Timezone-Offset': String(new Date().getTimezoneOffset()),
       ...((customHeaders as Record<string, string>) || {}),
     };
 
