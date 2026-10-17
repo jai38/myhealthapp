@@ -14,6 +14,7 @@ import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { colors, spacing, borderRadius, typography, shadows } from '../../theme/index';
 import { authService, UserSession } from '../../services/auth/auth-service';
+import { LegalTermsModal } from '../legal/LegalTermsModal';
 
 export interface AuthModalProps {
   visible: boolean;
@@ -32,12 +33,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(false);
+  const [legalModalInitialTab, setLegalModalInitialTab] = useState<'terms' | 'privacy'>('terms');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleModeChange = (newMode: 'login' | 'signup') => {
     setMode(newMode);
     setErrorMessage(null);
+  };
+
+  const handleOpenLegal = (tab: 'terms' | 'privacy') => {
+    setLegalModalInitialTab(tab);
+    setShowLegalModal(true);
   };
 
   const handleSubmit = async () => {
@@ -55,6 +64,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     if (mode === 'signup' && password.length < 8) {
       setErrorMessage('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (mode === 'signup' && !agreedToTerms) {
+      setErrorMessage('You must review and agree to the Terms of Service & Health Privacy Policy before creating an account.');
       return;
     }
 
@@ -80,12 +94,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <>
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={onClose}
+      >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.overlay}
@@ -173,6 +188,38 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               }
             />
 
+            {mode === 'signup' ? (
+              <View style={styles.consentContainer}>
+                <TouchableOpacity
+                  style={[styles.checkbox, agreedToTerms && styles.checkboxActive]}
+                  onPress={() => setAgreedToTerms(!agreedToTerms)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: agreedToTerms }}
+                >
+                  {agreedToTerms ? <Text style={styles.checkmark}>✓</Text> : null}
+                </TouchableOpacity>
+                <View style={styles.consentTextContainer}>
+                  <Text style={styles.consentText}>
+                    I have read and agree to the{' '}
+                    <Text
+                      style={styles.legalLink}
+                      onPress={() => handleOpenLegal('terms')}
+                    >
+                      Terms of Service
+                    </Text>{' '}
+                    and acknowledge the{' '}
+                    <Text
+                      style={styles.legalLink}
+                      onPress={() => handleOpenLegal('privacy')}
+                    >
+                      Health Privacy Policy
+                    </Text>
+                    , including secure AI prescription extraction.
+                  </Text>
+                </View>
+              </View>
+            ) : null}
+
             <View style={styles.submitContainer}>
               <Button
                 title={mode === 'login' ? 'Sign In' : 'Create Account'}
@@ -206,6 +253,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         </View>
       </KeyboardAvoidingView>
     </Modal>
+
+    <LegalTermsModal
+      visible={showLegalModal}
+      initialTab={legalModalInitialTab}
+      onClose={() => setShowLegalModal(false)}
+    />
+  </>
   );
 };
 
@@ -293,6 +347,47 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     width: '100%',
+  },
+  consentContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginVertical: spacing.sm,
+    paddingHorizontal: 2,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+    marginTop: 2,
+  },
+  checkboxActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  consentTextContainer: {
+    flex: 1,
+  },
+  consentText: {
+    ...typography.caption,
+    fontSize: 12,
+    lineHeight: 18,
+    color: colors.textSecondary,
+  },
+  legalLink: {
+    color: colors.primary,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
   switchPrompt: {
     alignItems: 'center',

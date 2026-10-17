@@ -15,6 +15,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { authService, UserSession } from '../../services/auth/auth-service';
 import { AuthModal } from '../auth/AuthModal';
+import { LegalTermsModal } from '../legal/LegalTermsModal';
 
 export interface AccountModalProps {
   visible: boolean;
@@ -24,6 +25,8 @@ export interface AccountModalProps {
 export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) => {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
   const [authModalVisible, setAuthModalVisible] = useState<boolean>(false);
+  const [legalModalVisible, setLegalModalVisible] = useState<boolean>(false);
+  const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
   const [isConfirmingSignOut, setIsConfirmingSignOut] = useState<boolean>(false);
   const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
 
@@ -142,6 +145,37 @@ export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) 
                   </View>
                 </Card>
 
+                {/* Legal & Health Data Privacy */}
+                <Card style={styles.card}>
+                  <View style={styles.cardHeader}>
+                    <Text style={typography.h3}>Data Privacy & Terms</Text>
+                    <Badge label="HIPAA Aligned" variant="success" />
+                  </View>
+                  <Text style={[typography.bodyMuted, { marginBottom: spacing.md }]}>
+                    Your health records are protected with end-to-end encryption. We never sell your personal health information.
+                  </Text>
+                  <View style={styles.legalBtnRow}>
+                    <TouchableOpacity
+                      style={styles.legalButton}
+                      onPress={() => {
+                        setLegalModalTab('privacy');
+                        setLegalModalVisible(true);
+                      }}
+                    >
+                      <Text style={styles.legalButtonText}>Privacy Policy 🛡️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.legalButton}
+                      onPress={() => {
+                        setLegalModalTab('terms');
+                        setLegalModalVisible(true);
+                      }}
+                    >
+                      <Text style={styles.legalButtonText}>Terms of Service 📄</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Card>
+
                 {/* Account Actions */}
                 <Card style={styles.card}>
                   <View style={styles.cardHeader}>
@@ -232,6 +266,13 @@ export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) 
           setAuthModalVisible(false);
           setSession(authService.getSession());
         }}
+      />
+
+      {/* Embedded Legal & Privacy Modal */}
+      <LegalTermsModal
+        visible={legalModalVisible}
+        initialTab={legalModalTab}
+        onClose={() => setLegalModalVisible(false)}
       />
     </>
   );
@@ -401,5 +442,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#ffffff',
+  },
+  legalBtnRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  legalButton: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  legalButtonText: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: colors.textPrimary,
   },
 });
