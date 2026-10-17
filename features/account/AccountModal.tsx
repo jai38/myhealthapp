@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { Card } from '../../components/Card';
@@ -23,6 +24,8 @@ export interface AccountModalProps {
 export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) => {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
   const [authModalVisible, setAuthModalVisible] = useState<boolean>(false);
+  const [isConfirmingSignOut, setIsConfirmingSignOut] = useState<boolean>(false);
+  const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
 
   useEffect(() => {
     const unsubscribe = authService.subscribe((currentSession) => {
@@ -31,22 +34,25 @@ export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) 
     return unsubscribe;
   }, []);
 
-  const handleSignOut = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out? Your verified records remain safely stored on your cloud account.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Sign Out',
-          style: 'destructive',
-          onPress: async () => {
-            await authService.logout();
-            onClose();
-          },
-        },
-      ]
-    );
+  useEffect(() => {
+    if (!visible) {
+      setIsConfirmingSignOut(false);
+    }
+  }, [visible]);
+
+  const handleExecuteSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await authService.logout();
+      setSession(null);
+      setIsConfirmingSignOut(false);
+      onClose();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Sign out failed';
+      Alert.alert('Notice', msg);
+    } finally {
+      setIsSigningOut(false);
+    }
   };
 
   const getInitials = (name?: string, email?: string): string => {
@@ -144,11 +150,41 @@ export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) 
                   <Text style={[typography.bodyMuted, { marginBottom: spacing.md }]}>
                     Signing out will clear local session credentials from this device. All verified health records remain securely stored.
                   </Text>
-                  <Button
-                    title="Sign Out of MyHealth"
-                    variant="outline"
-                    onPress={handleSignOut}
-                  />
+
+                  {isConfirmingSignOut ? (
+                    <View style={styles.confirmBox}>
+                      <Text style={styles.confirmTitle}>Confirm Sign Out</Text>
+                      <Text style={styles.confirmDescription}>
+                        Are you sure you want to sign out from this device? Your records are safely saved on the cloud.
+                      </Text>
+                      <View style={styles.confirmButtonRow}>
+                        <TouchableOpacity
+                          style={[styles.confirmBtn, styles.cancelBtn]}
+                          onPress={() => setIsConfirmingSignOut(false)}
+                          disabled={isSigningOut}
+                        >
+                          <Text style={styles.cancelBtnText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.confirmBtn, styles.signOutBtn]}
+                          onPress={handleExecuteSignOut}
+                          disabled={isSigningOut}
+                        >
+                          {isSigningOut ? (
+                            <ActivityIndicator size="small" color="#ffffff" />
+                          ) : (
+                            <Text style={styles.signOutBtnText}>Yes, Sign Out</Text>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ) : (
+                    <Button
+                      title="Sign Out of MyHealth"
+                      variant="outline"
+                      onPress={() => setIsConfirmingSignOut(true)}
+                    />
+                  )}
                 </Card>
 
                 {/* App Version Info */}
@@ -314,5 +350,56 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 11,
     marginTop: 2,
+  },
+  confirmBox: {
+    backgroundColor: '#fff1f2',
+    borderWidth: 1,
+    borderColor: '#fecdd3',
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginTop: spacing.xs,
+  },
+  confirmTitle: {
+    ...typography.h3,
+    fontSize: 15,
+    color: colors.danger,
+    marginBottom: spacing.xs,
+  },
+  confirmDescription: {
+    ...typography.caption,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
+  },
+  confirmButtonRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  confirmBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelBtn: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  cancelBtnText: {
+    ...typography.body,
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  signOutBtn: {
+    backgroundColor: colors.danger,
+  },
+  signOutBtnText: {
+    ...typography.body,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#ffffff',
   },
 });

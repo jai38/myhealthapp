@@ -22,6 +22,7 @@ import {
 } from '../../services/timeline/timeline-service';
 import { TimelineDetailModal } from '../../features/timeline/TimelineDetailModal';
 import { ReportExportModal } from '../../features/reports/ReportExportModal';
+import { authService } from '../../services/auth/auth-service';
 
 const CATEGORIES = [
   { label: 'All Categories', value: undefined },
@@ -96,6 +97,13 @@ export default function TimelineScreen() {
   useEffect(() => {
     fetchTimelineData();
   }, [searchQuery, selectedCategory, selectedYear]);
+
+  useEffect(() => {
+    const unsubscribe = authService.subscribe(() => {
+      fetchTimelineData(true, false);
+    });
+    return unsubscribe;
+  }, [fetchTimelineData]);
 
   const handleRefresh = () => {
     fetchTimelineData(true, false);

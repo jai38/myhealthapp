@@ -21,23 +21,49 @@ const memoryStorage = new Map<string, string>();
 const safeStorage = {
   async getItem(key: string): Promise<string | null> {
     try {
-      return await AsyncStorage.getItem(key);
+      const val = await AsyncStorage.getItem(key);
+      if (val !== null && val !== undefined) return val;
     } catch {
-      return memoryStorage.get(key) || null;
+      // ignore
     }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const val = localStorage.getItem(key);
+        if (val !== null && val !== undefined) return val;
+      } catch {
+        // ignore
+      }
+    }
+    return memoryStorage.get(key) || null;
   },
   async setItem(key: string, value: string): Promise<void> {
+    memoryStorage.set(key, value);
     try {
       await AsyncStorage.setItem(key, value);
     } catch {
-      memoryStorage.set(key, value);
+      // ignore
+    }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // ignore
+      }
     }
   },
   async removeItem(key: string): Promise<void> {
+    memoryStorage.delete(key);
     try {
       await AsyncStorage.removeItem(key);
     } catch {
-      memoryStorage.delete(key);
+      // ignore
+    }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // ignore
+      }
     }
   },
 };

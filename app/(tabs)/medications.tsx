@@ -23,6 +23,7 @@ import {
 import { MedicationDetailModal } from '../../features/medications/MedicationDetailModal';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 import { formatTime12Hour } from '../../features/medications/reminder-time-utils';
+import { authService } from '../../services/auth/auth-service';
 
 type TabType = 'active' | 'inactive' | 'past';
 
@@ -65,6 +66,13 @@ export default function MedicationsScreen() {
 
   useEffect(() => {
     loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    const unsubscribe = authService.subscribe(() => {
+      loadData();
+    });
+    return unsubscribe;
   }, [loadData]);
 
   const onRefresh = () => {

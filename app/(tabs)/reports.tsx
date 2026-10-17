@@ -22,6 +22,7 @@ import {
   reportService,
 } from '../../services/reports/report-service';
 import { ReportExportModal } from '../../features/reports/ReportExportModal';
+import { authService } from '../../services/auth/auth-service';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 
@@ -64,6 +65,13 @@ export default function ReportsScreen() {
 
   useEffect(() => {
     loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    const unsubscribe = authService.subscribe(() => {
+      loadData();
+    });
+    return unsubscribe;
   }, [loadData]);
 
   const handleQuickExport = async () => {
