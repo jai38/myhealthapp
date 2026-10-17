@@ -14,6 +14,7 @@ import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
+import { CustomTimePicker } from '../../components/CustomTimePicker';
 import { DocumentPreview } from '../../components/DocumentPreview';
 import {
   MedicationDetail,
@@ -54,9 +55,6 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
   // Schedule / Action Sub-views
   const [showScheduleForm, setShowScheduleForm] = useState<boolean>(false);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(['08:00', '20:00']);
-  const [customHour, setCustomHour] = useState<string>('08');
-  const [customMinute, setCustomMinute] = useState<string>('00');
-  const [customPeriod, setCustomPeriod] = useState<'AM' | 'PM'>('AM');
   const [submittingAction, setSubmittingAction] = useState<boolean>(false);
 
   // Discontinue reason input
@@ -133,19 +131,7 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
     setSelectedTimes(selectedTimes.filter((t) => t !== time24));
   };
 
-  const handleAddCustomTime = () => {
-    let h = parseInt(customHour, 10);
-    const m = parseInt(customMinute, 10);
-    if (isNaN(h) || h < 1 || h > 12 || isNaN(m) || m < 0 || m > 59) {
-      Alert.alert('Invalid Time', 'Please choose a valid hour (1-12) and minute (0-59).');
-      return;
-    }
-    if (customPeriod === 'PM' && h !== 12) h += 12;
-    if (customPeriod === 'AM' && h === 12) h = 0;
-    const hFormatted = h < 10 ? `0${h}` : `${h}`;
-    const mFormatted = m < 10 ? `0${m}` : `${m}`;
-    const time24 = `${hFormatted}:${mFormatted}`;
-
+  const handleAddCustomTime = (time24: string) => {
     if (selectedTimes.includes(time24)) {
       Alert.alert('Already Added', `Reminder for ${formatTime12Hour(time24)} is already in your schedule.`);
       return;
@@ -551,90 +537,10 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
                   </View>
 
                   {/* 4. Add Custom Time */}
-                  <View style={styles.customTimeSection}>
-                    <Text style={styles.subSectionTitle}>Add Custom Time</Text>
-                    <View style={styles.customTimePickerRow}>
-                      {/* Hour selector */}
-                      <View style={styles.timeUnitBox}>
-                        <TextInput
-                          style={styles.timeDigitInput}
-                          value={customHour}
-                          onChangeText={(val) => {
-                            const cleaned = val.replace(/[^0-9]/g, '').slice(0, 2);
-                            setCustomHour(cleaned);
-                          }}
-                          keyboardType="number-pad"
-                          maxLength={2}
-                          placeholder="08"
-                          placeholderTextColor={colors.textMuted}
-                        />
-                        <Text style={styles.timeUnitLabel}>Hour (1-12)</Text>
-                      </View>
-
-                      <Text style={styles.timeColon}>:</Text>
-
-                      {/* Minute selector */}
-                      <View style={styles.timeUnitBox}>
-                        <TextInput
-                          style={styles.timeDigitInput}
-                          value={customMinute}
-                          onChangeText={(val) => {
-                            const cleaned = val.replace(/[^0-9]/g, '').slice(0, 2);
-                            setCustomMinute(cleaned);
-                          }}
-                          keyboardType="number-pad"
-                          maxLength={2}
-                          placeholder="00"
-                          placeholderTextColor={colors.textMuted}
-                        />
-                        <Text style={styles.timeUnitLabel}>Minute</Text>
-                      </View>
-
-                      {/* AM / PM Toggle */}
-                      <View style={styles.amPmToggleRow}>
-                        <TouchableOpacity
-                          style={[
-                            styles.amPmBtn,
-                            customPeriod === 'AM' && styles.amPmBtnActive,
-                          ]}
-                          onPress={() => setCustomPeriod('AM')}
-                        >
-                          <Text
-                            style={[
-                              styles.amPmBtnText,
-                              customPeriod === 'AM' && styles.amPmBtnTextActive,
-                            ]}
-                          >
-                            AM
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={[
-                            styles.amPmBtn,
-                            customPeriod === 'PM' && styles.amPmBtnActive,
-                          ]}
-                          onPress={() => setCustomPeriod('PM')}
-                        >
-                          <Text
-                            style={[
-                              styles.amPmBtnText,
-                              customPeriod === 'PM' && styles.amPmBtnTextActive,
-                            ]}
-                          >
-                            PM
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-
-                      {/* Add button */}
-                      <TouchableOpacity
-                        style={styles.addCustomTimeBtn}
-                        onPress={handleAddCustomTime}
-                      >
-                        <Text style={styles.addCustomTimeBtnText}>+ Add</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+                  <CustomTimePicker
+                    onAddTime={handleAddCustomTime}
+                    existingTimes={selectedTimes}
+                  />
 
                   {/* Form Actions */}
                   <View style={styles.formButtonsRow}>

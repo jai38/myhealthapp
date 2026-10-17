@@ -13,6 +13,7 @@ import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { CustomTimePicker } from '../../components/CustomTimePicker';
 import { medicationService } from '../../services/medications/medication-service';
 import { formatTime12Hour, getTimePeriodIcon } from './reminder-time-utils';
 
@@ -51,12 +52,10 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
   const [instructions, setInstructions] = useState<string>('');
   const [enableReminders, setEnableReminders] = useState<boolean>(true);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(['08:00', '20:00']);
-  const [customTime, setCustomTime] = useState<string>('');
   const [startDate, setStartDate] = useState<string>(
     new Date().toISOString().split('T')[0] as string
   );
   const [notes, setNotes] = useState<string>('');
-
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,7 +66,6 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
     setInstructions('');
     setEnableReminders(true);
     setSelectedTimes(['08:00', '20:00']);
-    setCustomTime('');
     setStartDate(new Date().toISOString().split('T')[0] as string);
     setNotes('');
     setError(null);
@@ -81,18 +79,10 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
     }
   };
 
-  const handleAddCustomTime = () => {
-    const trimmed = customTime.trim();
-    if (!trimmed) return;
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-    if (!timeRegex.test(trimmed)) {
-      Alert.alert('Invalid Format', 'Please enter time in 24-hour HH:mm format (e.g. 09:30).');
-      return;
+  const handleAddCustomTime = (time24: string) => {
+    if (!selectedTimes.includes(time24)) {
+      setSelectedTimes((prev) => [...prev, time24].sort());
     }
-    if (!selectedTimes.includes(trimmed)) {
-      setSelectedTimes((prev) => [...prev, trimmed].sort());
-    }
-    setCustomTime('');
   };
 
   const handleRemoveTime = (time: string) => {
@@ -283,23 +273,11 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
                   )}
                 </View>
 
-                {/* Add Custom Time */}
-                <View style={styles.customTimeRow}>
-                  <View style={{ flex: 1, marginRight: spacing.sm }}>
-                    <Input
-                      label="Add Custom Time (HH:mm 24h)"
-                      value={customTime}
-                      onChangeText={setCustomTime}
-                      placeholder="e.g. 07:30, 21:00"
-                    />
-                  </View>
-                  <TouchableOpacity
-                    style={styles.addTimeBtn}
-                    onPress={handleAddCustomTime}
-                  >
-                    <Text style={styles.addTimeBtnText}>+ Add</Text>
-                  </TouchableOpacity>
-                </View>
+                {/* Custom Time Picker */}
+                <CustomTimePicker
+                  onAddTime={handleAddCustomTime}
+                  existingTimes={selectedTimes}
+                />
               </View>
             )}
           </Card>
