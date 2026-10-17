@@ -54,6 +54,7 @@ export default function HomeScreen() {
         documentFilename: document.originalFilename,
         documentMimeType: document.mimeType,
         signedUrl,
+        localUri: file.uri,
         extractedPayload: completedJob.extractedPayload,
       });
     } catch (err: unknown) {
@@ -86,6 +87,7 @@ export default function HomeScreen() {
         documentFilename={activeReviewData.documentFilename}
         documentMimeType={activeReviewData.documentMimeType}
         signedUrl={activeReviewData.signedUrl}
+        localUri={activeReviewData.localUri}
         initialExtraction={activeReviewData.extractedPayload}
         onConfirm={handleConfirmPrescription}
         onDiscard={() => setActiveReviewData(null)}
@@ -195,6 +197,7 @@ export default function HomeScreen() {
             documentFilename={activeReviewData.documentFilename}
             documentMimeType={activeReviewData.documentMimeType}
             signedUrl={activeReviewData.signedUrl}
+            localUri={activeReviewData.localUri}
             initialExtraction={activeReviewData.extractedPayload}
             onConfirm={handleConfirmPrescription}
             onDiscard={() => setActiveReviewData(null)}

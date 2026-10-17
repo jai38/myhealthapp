@@ -34,6 +34,7 @@ export interface ReviewPrescriptionScreenProps {
   documentFilename: string;
   documentMimeType: string;
   signedUrl?: string;
+  localUri?: string;
   initialExtraction: {
     prescription_date?: string;
     date_is_uncertain: boolean;
@@ -53,6 +54,7 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
   documentFilename,
   documentMimeType,
   signedUrl,
+  localUri,
   initialExtraction,
   onConfirm,
   onDiscard,
@@ -183,6 +185,7 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
         filename={documentFilename}
         mimeType={documentMimeType}
         signedUrl={signedUrl}
+        localUri={localUri}
         style={styles.documentPreview}
       />
 

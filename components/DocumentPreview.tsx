@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  Platform,
+  Linking,
+  ScrollView,
+} from 'react-native';
 import { colors, spacing, typography, borderRadius } from '../theme/index';
 import { Badge } from './Badge';
 
@@ -7,6 +17,7 @@ export interface DocumentPreviewProps {
   filename: string;
   mimeType: string;
   signedUrl?: string;
+  localUri?: string;
   pageCount?: number;
   currentPage?: number;
   onPageChange?: (page: number) => void;
@@ -17,6 +28,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
   filename,
   mimeType,
   signedUrl,
+  localUri,
   pageCount = 1,
   currentPage = 1,
   onPageChange,
@@ -24,12 +36,31 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
 }) => {
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
 
-  const isPdf = mimeType === 'application/pdf';
+  const isPdf =
+    mimeType === 'application/pdf' ||
+    filename.toLowerCase().endsWith('.pdf');
 
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 25, 200));
+  // Choose the best image URI: local picked file URI (fast, offline, instant) or cloud signed URL
+  const activeUri =
+    localUri ||
+    (signedUrl && !signedUrl.includes('mock-s3.local') ? signedUrl : undefined) ||
+    signedUrl;
+
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 25, 250));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 25, 75));
   const handleResetZoom = () => setZoomLevel(100);
+
+  const handleOpenFull = () => {
+    if (!activeUri) return;
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.open(activeUri, '_blank');
+    } else {
+      Linking.openURL(activeUri).catch(() => {});
+    }
+  };
 
   return (
     <View style={[styles.container, style]}>
@@ -40,53 +71,105 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
             {filename}
           </Text>
           <Badge
-            label={isPdf ? 'PDF Document' : 'Camera Photo'}
+            label={isPdf ? 'PDF Document' : 'Prescription Photo'}
             variant="neutral"
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.expandButton}
-          onPress={() => setIsExpanded(!isExpanded)}
-        >
-          <Text style={styles.expandButtonText}>
-            {isExpanded ? 'Collapse' : 'Expand View'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.headerRight}>
+          {activeUri ? (
+            <TouchableOpacity style={styles.headerActionBtn} onPress={handleOpenFull}>
+              <Text style={styles.headerActionText}>Full View ↗</Text>
+            </TouchableOpacity>
+          ) : null}
 
-      {/* Preview Viewport */}
-      <View style={[styles.viewport, isExpanded && styles.viewportExpanded]}>
-        <View
-          style={[
-            styles.documentCanvas,
-            { transform: [{ scale: zoomLevel / 100 }] },
-          ]}
-        >
-          <View style={styles.documentPage}>
-            <View style={styles.stampBadge}>
-              <Text style={styles.stampText}>SOURCE EVIDENCE</Text>
-            </View>
-            <Text style={styles.documentHeaderPlaceholder}>
-              {isPdf ? '[ PDF Document Viewer ]' : '[ Prescription Photo ]'}
+          <TouchableOpacity
+            style={styles.expandButton}
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            <Text style={styles.expandButtonText}>
+              {isExpanded ? 'Collapse' : 'Expand'}
             </Text>
-            <Text style={styles.documentMetaPlaceholder}>
-              File: {filename} • Zoom: {zoomLevel}%
-            </Text>
-            <View style={styles.documentDivider} />
-            <Text style={styles.documentPreviewText}>
-              Original uploaded artifact preserved immutably.
-            </Text>
-            {signedUrl ? (
-              <Text style={styles.signedUrlNotice} numberOfLines={1}>
-                Secure Pre-signed URL Active (15m TTL)
-              </Text>
-            ) : null}
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Control Bar: Zoom & Page Navigation */}
+      {/* Preview Viewport */}
+      <View style={[styles.viewport, isExpanded ? styles.viewportExpanded : styles.viewportNormal]}>
+        {isPdf ? (
+          <View style={styles.pdfCard}>
+            <Text style={styles.pdfIcon}>📄</Text>
+            <Text style={styles.pdfTitle} numberOfLines={1}>
+              {filename}
+            </Text>
+            <Text style={styles.pdfSubtitle}>
+              PDF Document • Page {currentPage} of {pageCount}
+            </Text>
+            {activeUri ? (
+              <TouchableOpacity style={styles.openPdfBtn} onPress={handleOpenFull}>
+                <Text style={styles.openPdfBtnText}>Open PDF in Viewer ↗</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.pdfNote}>Original PDF archived securely</Text>
+            )}
+          </View>
+        ) : activeUri && !imageError ? (
+          <ScrollView
+            horizontal
+            contentContainerStyle={styles.scrollCanvas}
+            showsHorizontalScrollIndicator={true}
+            maximumZoomScale={3}
+            minimumZoomScale={0.5}
+          >
+            <View
+              style={[
+                styles.imageWrapper,
+                { transform: [{ scale: zoomLevel / 100 }] },
+              ]}
+            >
+              <Image
+                source={{ uri: activeUri }}
+                style={[
+                  styles.previewImage,
+                  isExpanded ? styles.previewImageExpanded : styles.previewImageNormal,
+                ]}
+                resizeMode="contain"
+                onLoadStart={() => setImageLoading(true)}
+                onLoadEnd={() => setImageLoading(false)}
+                onError={() => setImageError(true)}
+              />
+              {imageLoading && (
+                <View style={styles.loadingOverlay}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text style={styles.loadingText}>Loading prescription image...</Text>
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        ) : (
+          /* Fallback when image cannot be displayed */
+          <View style={styles.fallbackCard}>
+            <View style={styles.stampBadge}>
+              <Text style={styles.stampText}>SOURCE EVIDENCE</Text>
+            </View>
+            <Text style={styles.fallbackTitle}>
+              {imageError ? 'Could not render image preview' : 'Prescription Photo'}
+            </Text>
+            <Text style={styles.fallbackSubtitle}>File: {filename}</Text>
+            <View style={styles.documentDivider} />
+            <Text style={styles.fallbackNote}>
+              Original uploaded artifact preserved immutably.
+            </Text>
+            {activeUri ? (
+              <TouchableOpacity style={styles.openFallbackBtn} onPress={handleOpenFull}>
+                <Text style={styles.openFallbackBtnText}>Open Raw Document ↗</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        )}
+      </View>
+
+      {/* Control Bar: Zoom & Navigation */}
       <View style={styles.controlsBar}>
         <View style={styles.zoomControls}>
           <TouchableOpacity style={styles.controlButton} onPress={handleZoomOut}>
@@ -104,7 +187,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           </TouchableOpacity>
         </View>
 
-        {pageCount > 1 && (
+        {pageCount > 1 && isPdf && (
           <View style={styles.pageControls}>
             <TouchableOpacity
               style={[styles.controlButton, currentPage <= 1 && styles.disabledButton]}
@@ -157,11 +240,30 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     flex: 1,
   },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   filename: {
     ...typography.caption,
     fontWeight: '600',
     color: colors.textPrimary,
     maxWidth: 160,
+  },
+  headerActionBtn: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    backgroundColor: '#ffffff',
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  headerActionText: {
+    ...typography.caption,
+    color: colors.primary,
+    fontWeight: '600',
+    fontSize: 11,
   },
   expandButton: {
     paddingHorizontal: spacing.sm,
@@ -173,32 +275,99 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   viewport: {
-    height: 180,
-    backgroundColor: colors.background,
+    backgroundColor: '#0f172a',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
   },
-  viewportExpanded: {
-    height: 320,
+  viewportNormal: {
+    height: 240,
   },
-  documentCanvas: {
-    width: '90%',
+  viewportExpanded: {
+    height: 420,
+  },
+  scrollCanvas: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
+    padding: spacing.xs,
   },
-  documentPage: {
+  previewImage: {
+    width: 340,
+    backgroundColor: 'transparent',
+  },
+  previewImageNormal: {
+    height: 220,
+  },
+  previewImageExpanded: {
+    height: 400,
+    width: 500,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#ffffff',
+    fontSize: 12,
+    marginTop: spacing.xs,
+  },
+  pdfCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: borderRadius.md,
+    padding: spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '85%',
+    maxWidth: 320,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pdfIcon: {
+    fontSize: 36,
+    marginBottom: spacing.xs,
+  },
+  pdfTitle: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  pdfSubtitle: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
+    marginBottom: spacing.md,
+  },
+  openPdfBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    borderRadius: borderRadius.sm,
+  },
+  openPdfBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  pdfNote: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  fallbackCard: {
     backgroundColor: '#ffffff',
     borderRadius: borderRadius.sm,
     padding: spacing.md,
-    width: '100%',
+    width: '90%',
     minHeight: 120,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
     alignItems: 'center',
   },
   stampBadge: {
@@ -215,13 +384,13 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 0.5,
   },
-  documentHeaderPlaceholder: {
+  fallbackTitle: {
     ...typography.caption,
     fontWeight: '700',
     color: colors.textPrimary,
     marginTop: spacing.xs,
   },
-  documentMetaPlaceholder: {
+  fallbackSubtitle: {
     fontSize: 11,
     color: colors.textSecondary,
     marginTop: 2,
@@ -232,16 +401,24 @@ const styles = StyleSheet.create({
     width: '80%',
     marginVertical: spacing.sm,
   },
-  documentPreviewText: {
+  fallbackNote: {
     fontSize: 11,
     color: colors.textMuted,
     textAlign: 'center',
   },
-  signedUrlNotice: {
-    fontSize: 10,
-    color: colors.success,
-    marginTop: spacing.xs,
-    fontWeight: '500',
+  openFallbackBtn: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  openFallbackBtnText: {
+    fontSize: 11,
+    color: colors.primary,
+    fontWeight: '600',
   },
   controlsBar: {
     flexDirection: 'row',
