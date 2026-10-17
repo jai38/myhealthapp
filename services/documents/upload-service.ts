@@ -1,7 +1,11 @@
+import { Platform } from 'react-native';
 import { ApiClient } from '../api/client';
 import { PickedFile, validatePickedFile } from './file-validator';
 
 const getNativeFileSystem = (): any => {
+  if (Platform.OS === 'web') {
+    return null;
+  }
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     return typeof require !== 'undefined' ? require('expo-file-system') : null;
@@ -158,47 +162,59 @@ export class MobileDocumentUploadService {
       return;
     }
 
-    // Native mobile upload using expo-file-system binary streaming
-    const FileSystem = getNativeFileSystem();
-    if (FileSystem && typeof FileSystem.uploadAsync === 'function') {
-      if (file.uri) {
-        const result = await FileSystem.uploadAsync(signedUrl, file.uri, {
-          httpMethod: 'PUT',
-          uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-          headers: {
-            'Content-Type': mimeType,
-          },
-        });
-
-        if (result.status < 200 || result.status >= 300) {
-          const detail = result.body ? `: ${result.body}` : '';
-          throw new Error(`Direct storage upload failed with status ${result.status}${detail}`);
-        }
-        return;
-      }
-
-      if (file.base64) {
-        const tempUri = `${FileSystem.cacheDirectory || ''}upload_${Date.now()}_${file.name}`;
-        await FileSystem.writeAsStringAsync(tempUri, file.base64, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
+    // Native mobile upload using expo-file-system binary streaming (only on native iOS/Android)
+    if (Platform.OS !== 'web') {
+      const FileSystem = getNativeFileSystem();
+      if (FileSystem && typeof FileSystem.uploadAsync === 'function') {
         try {
-          const result = await FileSystem.uploadAsync(signedUrl, tempUri, {
-            httpMethod: 'PUT',
-            uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-            headers: {
-              'Content-Type': mimeType,
-            },
-          });
+          if (file.uri) {
+            const result = await FileSystem.uploadAsync(signedUrl, file.uri, {
+              httpMethod: 'PUT',
+              uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+              headers: {
+                'Content-Type': mimeType,
+              },
+            });
 
-          if (result.status < 200 || result.status >= 300) {
-            throw new Error(`Direct storage upload failed with status ${result.status}`);
+            if (result.status < 200 || result.status >= 300) {
+              const detail = result.body ? `: ${result.body}` : '';
+              throw new Error(`Direct storage upload failed with status ${result.status}${detail}`);
+            }
+            return;
           }
-        } finally {
-          await FileSystem.deleteAsync(tempUri, { idempotent: true }).catch(() => {});
+
+          if (file.base64) {
+            const tempUri = `${FileSystem.cacheDirectory || ''}upload_${Date.now()}_${file.name}`;
+            await FileSystem.writeAsStringAsync(tempUri, file.base64, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            try {
+              const result = await FileSystem.uploadAsync(signedUrl, tempUri, {
+                httpMethod: 'PUT',
+                uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+                headers: {
+                  'Content-Type': mimeType,
+                },
+              });
+
+              if (result.status < 200 || result.status >= 300) {
+                const detail = result.body ? `: ${result.body}` : '';
+                throw new Error(`Direct storage upload failed with status ${result.status}${detail}`);
+              }
+            } finally {
+              await FileSystem.deleteAsync(tempUri, { idempotent: true }).catch(() => {});
+            }
+            return;
+          }
+        } catch (nativeErr: any) {
+          const msg = nativeErr?.message || '';
+          if (msg.includes('not available') || msg.includes('UnavailabilityError')) {
+            console.warn('Native uploadAsync unavailable, falling back to fetch upload:', msg);
+          } else {
+            throw nativeErr;
+          }
         }
-        return;
       }
     }
 
@@ -235,7 +251,10 @@ export class MobileDocumentUploadService {
         });
 
         if (!response.ok && response.status !== 0) {
-          throw new Error(`Direct storage upload failed with status ${response.status}`);
+          const errorText = await response.text().catch(() => '');
+          throw new Error(
+            `Direct storage upload failed with status ${response.status}: ${errorText || response.statusText}`
+          );
         }
       } catch (err: unknown) {
         throw err;
