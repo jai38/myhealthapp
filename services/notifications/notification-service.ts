@@ -209,3 +209,113 @@ export async function syncAllMedicationReminders(
     console.warn('Failed to sync all medication reminders:', err);
   }
 }
+
+/**
+ * Schedules a one-time snooze alarm/notification for a dose occurrence.
+ * @param medicationId Unique medication ID
+ * @param medicationName Name of medication
+ * @param snoozeMinutes Snooze interval in minutes (default 15)
+ */
+export async function scheduleSnoozeReminder(
+  medicationId: string,
+  medicationName: string,
+  snoozeMinutes: number = 15
+): Promise<string | null> {
+  const Notifications = getNotificationsModule();
+  if (Platform.OS === 'web' || !Notifications) {
+    return null;
+  }
+
+  configureForegroundHandler(Notifications);
+
+  try {
+    await requestNotificationPermissions();
+
+    const identifier = `snooze-${medicationId}-${Date.now()}`;
+    const notifId = await Notifications.scheduleNotificationAsync({
+      identifier,
+      content: {
+        title: `⏰ Snoozed Medication: ${medicationName}`,
+        body: `Your ${snoozeMinutes}-minute snooze has ended. Tap to record your dose.`,
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.MAX,
+        data: { medicationId, type: 'medication_snooze' },
+        channelId: MEDICATION_CHANNEL_ID,
+      },
+      trigger: {
+        seconds: Math.max(snoozeMinutes * 60, 60),
+        channelId: MEDICATION_CHANNEL_ID,
+      },
+    });
+
+    return notifId;
+  } catch (err) {
+    console.warn(`Failed to schedule snooze reminder for ${medicationName}:`, err);
+    return null;
+  }
+}
+
+type NotificationResponseHandler = (data: { medicationId?: string; [key: string]: any }) => void;
+const responseHandlers = new Set<NotificationResponseHandler>();
+
+/**
+ * Subscribes to notification response events (e.g. when patient taps notification).
+ */
+export function onNotificationResponse(handler: NotificationResponseHandler): () => void {
+  responseHandlers.add(handler);
+  return () => {
+    responseHandlers.delete(handler);
+  };
+}
+
+/**
+ * Registers the global Expo Notifications response listener.
+ * Handles both background/foreground taps and cold-start app launches from notification.
+ */
+export function registerNotificationResponseListener(
+  navigationCallback?: (medicationId: string) => void
+): () => void {
+  const Notifications = getNotificationsModule();
+  if (Platform.OS === 'web' || !Notifications) {
+    return () => {};
+  }
+
+  const handleResponse = (response: any) => {
+    const data = response?.notification?.request?.content?.data;
+    if (data?.medicationId) {
+      if (navigationCallback) {
+        navigationCallback(data.medicationId);
+      }
+      for (const h of responseHandlers) {
+        try {
+          h(data);
+        } catch (e) {
+          console.warn('Error in notification response handler:', e);
+        }
+      }
+    }
+  };
+
+  // Cold start: Check if the application was opened by tapping a notification
+  if (typeof Notifications.getLastNotificationResponseAsync === 'function') {
+    Notifications.getLastNotificationResponseAsync()
+      .then((response: any) => {
+        if (response) {
+          handleResponse(response);
+        }
+      })
+      .catch(() => {});
+  }
+
+  // Active listener: Listen for user tapping a notification while app is running
+  if (typeof Notifications.addNotificationResponseReceivedListener === 'function') {
+    const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
+    return () => {
+      if (subscription && typeof subscription.remove === 'function') {
+        subscription.remove();
+      }
+    };
+  }
+
+  return () => {};
+}

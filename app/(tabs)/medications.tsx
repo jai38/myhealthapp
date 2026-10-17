@@ -22,9 +22,14 @@ import {
 } from '../../services/medications/medication-service';
 import { MedicationDetailModal } from '../../features/medications/MedicationDetailModal';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
+import { useLocalSearchParams } from 'expo-router';
 import { formatTime12Hour } from '../../features/medications/reminder-time-utils';
 import { authService } from '../../services/auth/auth-service';
-import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
+import {
+  syncAllMedicationReminders,
+  scheduleSnoozeReminder,
+  onNotificationResponse,
+} from '../../services/notifications/notification-service';
 
 type TabType = 'active' | 'inactive' | 'past';
 
@@ -46,6 +51,31 @@ export default function MedicationsScreen() {
 
   // Dose action in-flight state
   const [actionDoseId, setActionDoseId] = useState<string | null>(null);
+
+  // Deep-link from notification tap
+  const { openMedicationId } = useLocalSearchParams<{ openMedicationId?: string }>();
+
+  const openMedicationModal = useCallback((id: string) => {
+    setSelectedMedicationId(id);
+    setModalVisible(true);
+  }, []);
+
+  // Open modal if directed by notification route parameter
+  useEffect(() => {
+    if (openMedicationId) {
+      openMedicationModal(openMedicationId);
+    }
+  }, [openMedicationId, openMedicationModal]);
+
+  // Also listen for real-time notification taps while app is open
+  useEffect(() => {
+    const unsub = onNotificationResponse((data) => {
+      if (data.medicationId) {
+        openMedicationModal(data.medicationId);
+      }
+    });
+    return unsub;
+  }, [openMedicationModal]);
 
   const loadData = useCallback(async () => {
     setError(null);
@@ -103,6 +133,16 @@ export default function MedicationsScreen() {
         action,
         snoozeMinutes,
       });
+
+      // If snoozed, schedule local snooze follow-up alarm/notification
+      if (action === 'SNOOZED') {
+        const dose = todayDoses.find((d) => d.id === doseId);
+        const med = medications.find((m) => m.id === dose?.medicationId);
+        if (med) {
+          scheduleSnoozeReminder(med.id, med.nameAsWritten, snoozeMinutes || 15).catch(() => {});
+        }
+      }
+
       // Refresh dose list locally
       setTodayDoses((prev) =>
         prev.map((d) => (d.id === doseId ? { ...d, status: action, actionTime: new Date().toISOString() } : d))
@@ -112,11 +152,6 @@ export default function MedicationsScreen() {
     } finally {
       setActionDoseId(null);
     }
-  };
-
-  const openMedicationModal = (id: string) => {
-    setSelectedMedicationId(id);
-    setModalVisible(true);
   };
 
   const filteredMedications = medications.filter((m) => {
@@ -203,7 +238,7 @@ export default function MedicationsScreen() {
                 const med = medications.find((m) => m.id === dose.medicationId);
                 const doseDate = new Date(dose.scheduledTime);
                 const timeStr = doseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const isPending = dose.status === 'PENDING';
+                const isActionable = dose.status === 'PENDING' || dose.status === 'SNOOZED';
                 const isBusy = actionDoseId === dose.id;
 
                 return (
@@ -229,7 +264,15 @@ export default function MedicationsScreen() {
                       />
                     </View>
 
-                    {isPending ? (
+                    {dose.status === 'SNOOZED' && (
+                      <View style={styles.snoozeNoticeRow}>
+                        <Text style={styles.snoozeNoticeText}>
+                          ⏰ Snooze reminder active • Record when taken or skipped
+                        </Text>
+                      </View>
+                    )}
+
+                    {isActionable ? (
                       <View style={styles.doseActionRow}>
                         <TouchableOpacity
                           style={[styles.actionBtn, styles.takeBtn]}
@@ -252,7 +295,9 @@ export default function MedicationsScreen() {
                           onPress={() => handleRecordDoseAction(dose.id, 'SNOOZED', 15)}
                           disabled={isBusy}
                         >
-                          <Text style={styles.snoozeBtnText}>Snooze 15m</Text>
+                          <Text style={styles.snoozeBtnText}>
+                            {dose.status === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                          </Text>
                         </TouchableOpacity>
                       </View>
                     ) : (
@@ -558,6 +603,19 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 13,
     fontWeight: '600',
+  },
+  snoozeNoticeRow: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: borderRadius.sm,
+    paddingVertical: 5,
+    paddingHorizontal: spacing.sm,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  snoozeNoticeText: {
+    fontSize: 12,
+    color: '#92400E',
+    fontWeight: '500',
   },
   recordedActionRow: {
     marginTop: spacing.xs,

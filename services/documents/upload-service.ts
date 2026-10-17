@@ -71,6 +71,19 @@ export class MobileDocumentUploadService {
       if (exactBytes > 0) {
         file.size = exactBytes;
       }
+    } else if (file.uri) {
+      // If URI is provided on native device, get exact byte length from disk
+      const FileSystem = getNativeFileSystem();
+      if (FileSystem && typeof FileSystem.getInfoAsync === 'function') {
+        try {
+          const info = await FileSystem.getInfoAsync(file.uri);
+          if (info.exists && typeof info.size === 'number' && info.size > 0) {
+            file.size = info.size;
+          }
+        } catch (e) {
+          console.warn('Could not query file size from disk:', e);
+        }
+      }
     }
 
     // 1. Client-side validation
@@ -158,7 +171,8 @@ export class MobileDocumentUploadService {
         });
 
         if (result.status < 200 || result.status >= 300) {
-          throw new Error(`Direct storage upload failed with status ${result.status}`);
+          const detail = result.body ? `: ${result.body}` : '';
+          throw new Error(`Direct storage upload failed with status ${result.status}${detail}`);
         }
         return;
       }

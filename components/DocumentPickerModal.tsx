@@ -58,9 +58,20 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
+        let trueSize = asset.fileSize;
+        if (!trueSize && asset.uri && Platform.OS !== 'web') {
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const FileSystem = require('expo-file-system');
+            const info = await FileSystem.getInfoAsync(asset.uri);
+            if (info.exists && typeof info.size === 'number' && info.size > 0) {
+              trueSize = info.size;
+            }
+          } catch {}
+        }
         handleSelectFile({
           name: asset.fileName || `Camera_Prescription_${Date.now()}.jpg`,
-          size: asset.fileSize || 500000,
+          size: trueSize || 500000,
           mimeType: asset.mimeType || 'image/jpeg',
           uri: asset.uri,
         });
@@ -91,9 +102,20 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
+        let trueSize = asset.fileSize;
+        if (!trueSize && asset.uri && Platform.OS !== 'web') {
+          try {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const FileSystem = require('expo-file-system');
+            const info = await FileSystem.getInfoAsync(asset.uri);
+            if (info.exists && typeof info.size === 'number' && info.size > 0) {
+              trueSize = info.size;
+            }
+          } catch {}
+        }
         handleSelectFile({
           name: asset.fileName || `Gallery_Prescription_${Date.now()}.jpg`,
-          size: asset.fileSize || 500000,
+          size: trueSize || 500000,
           mimeType: asset.mimeType || 'image/jpeg',
           uri: asset.uri,
         });

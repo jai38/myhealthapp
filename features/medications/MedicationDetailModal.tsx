@@ -31,6 +31,7 @@ import {
 import {
   scheduleMedicationReminder,
   cancelAllRemindersForMedication,
+  scheduleSnoozeReminder,
 } from '../../services/notifications/notification-service';
 
 export interface MedicationDetailModalProps {
@@ -210,6 +211,38 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
       Alert.alert('Update Failed', err?.message || 'Could not update reminder schedule.');
     } finally {
       setSubmittingAction(false);
+    }
+  };
+
+  const [actionDoseId, setActionDoseId] = useState<string | null>(null);
+
+  const handleDoseAction = async (
+    doseLogId: string,
+    action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
+    snoozeMinutes?: number
+  ) => {
+    if (!medicationId) return;
+    setActionDoseId(doseLogId);
+    try {
+      await medicationService.recordDoseAction(doseLogId, {
+        action,
+        snoozeMinutes,
+      });
+
+      if (action === 'SNOOZED' && medication) {
+        scheduleSnoozeReminder(
+          medication.id,
+          medication.nameAsWritten,
+          snoozeMinutes || 15
+        ).catch(() => {});
+      }
+
+      await loadMedication(medicationId);
+      onStatusChanged?.();
+    } catch (err: any) {
+      Alert.alert('Action Failed', err?.message || 'Could not record dose action.');
+    } finally {
+      setActionDoseId(null);
     }
   };
 
@@ -625,36 +658,81 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
             <Card style={styles.card}>
               <Text style={styles.sectionHeader}>Recent Dose Occurrences</Text>
               {medication.doseLogs && medication.doseLogs.length > 0 ? (
-                medication.doseLogs.slice(0, 10).map((dl) => (
-                  <View key={dl.id} style={styles.doseRow}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.doseTime}>
-                        {new Date(dl.scheduledTime).toLocaleDateString([], {
-                          month: 'short',
-                          day: 'numeric',
-                        })}{' '}
-                        at{' '}
-                        {new Date(dl.scheduledTime).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </Text>
-                      {dl.notes && <Text style={styles.doseNotes}>Note: {dl.notes}</Text>}
+                medication.doseLogs.slice(0, 10).map((dl) => {
+                  const isActionable = dl.status === 'PENDING' || dl.status === 'SNOOZED';
+                  const isBusy = actionDoseId === dl.id;
+
+                  return (
+                    <View key={dl.id} style={styles.doseItemContainer}>
+                      <View style={styles.doseRow}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.doseTime}>
+                            {new Date(dl.scheduledTime).toLocaleDateString([], {
+                              month: 'short',
+                              day: 'numeric',
+                            })}{' '}
+                            at{' '}
+                            {new Date(dl.scheduledTime).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </Text>
+                          {dl.notes && <Text style={styles.doseNotes}>Note: {dl.notes}</Text>}
+                        </View>
+                        <Badge
+                          label={dl.status}
+                          variant={
+                            dl.status === 'TAKEN'
+                              ? 'success'
+                              : dl.status === 'SKIPPED'
+                              ? 'danger'
+                              : dl.status === 'SNOOZED'
+                              ? 'warning'
+                              : 'neutral'
+                          }
+                        />
+                      </View>
+
+                      {dl.status === 'SNOOZED' && (
+                        <View style={styles.snoozeNoticeRow}>
+                          <Text style={styles.snoozeNoticeText}>
+                            ⏰ Snooze reminder active • Record when taken or skipped
+                          </Text>
+                        </View>
+                      )}
+
+                      {isActionable && (
+                        <View style={styles.doseActionRow}>
+                          <TouchableOpacity
+                            style={[styles.actionBtn, styles.takeBtn]}
+                            onPress={() => handleDoseAction(dl.id, 'TAKEN')}
+                            disabled={isBusy}
+                          >
+                            <Text style={styles.takeBtnText}>Taken</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            style={[styles.actionBtn, styles.skipBtn]}
+                            onPress={() => handleDoseAction(dl.id, 'SKIPPED')}
+                            disabled={isBusy}
+                          >
+                            <Text style={styles.skipBtnText}>Skip</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            style={[styles.actionBtn, styles.snoozeBtn]}
+                            onPress={() => handleDoseAction(dl.id, 'SNOOZED', 15)}
+                            disabled={isBusy}
+                          >
+                            <Text style={styles.snoozeBtnText}>
+                              {dl.status === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
                     </View>
-                    <Badge
-                      label={dl.status}
-                      variant={
-                        dl.status === 'TAKEN'
-                          ? 'success'
-                          : dl.status === 'SKIPPED'
-                          ? 'danger'
-                          : dl.status === 'SNOOZED'
-                          ? 'warning'
-                          : 'neutral'
-                      }
-                    />
-                  </View>
-                ))
+                  );
+                })
               ) : (
                 <Text style={typography.bodyMuted}>No dose actions recorded yet.</Text>
               )}
@@ -1154,13 +1232,70 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: spacing.sm,
   },
+  doseItemContainer: {
+    paddingVertical: spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
   doseRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingVertical: spacing.xs,
+  },
+  snoozeNoticeRow: {
+    backgroundColor: '#FEF3C7',
+    borderRadius: borderRadius.sm,
+    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    marginTop: 2,
+    marginBottom: spacing.xs,
+  },
+  snoozeNoticeText: {
+    fontSize: 12,
+    color: '#92400E',
+    fontWeight: '500',
+  },
+  doseActionRow: {
+    flexDirection: 'row',
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
+    gap: spacing.xs,
+  },
+  actionBtn: {
+    flex: 1,
+    paddingVertical: 7,
+    borderRadius: borderRadius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  takeBtn: {
+    backgroundColor: colors.success,
+  },
+  takeBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  skipBtn: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+  },
+  skipBtnText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  snoozeBtn: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceMuted,
+  },
+  snoozeBtnText: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    fontWeight: '600',
   },
   doseTime: {
     fontSize: 14,

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { colors, typography, spacing } from '../theme/index';
 import { authService, UserSession } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import { requestNotificationPermissions } from '../services/notifications/notification-service';
+import {
+  requestNotificationPermissions,
+  registerNotificationResponseListener,
+} from '../services/notifications/notification-service';
 
 export default function RootLayout() {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
@@ -33,7 +36,20 @@ export default function RootLayout() {
       }
     });
 
-    return unsubscribe;
+    // Handle tapping on medication notification to open medication modal
+    const unsubNotification = registerNotificationResponseListener((medicationId) => {
+      setTimeout(() => {
+        router.push({
+          pathname: '/(tabs)/medications',
+          params: { openMedicationId: medicationId, t: Date.now().toString() },
+        });
+      }, 100);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubNotification();
+    };
   }, []);
 
   if (!initialized) {
