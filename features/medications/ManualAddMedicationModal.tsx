@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.h3,
-    color: colors.text,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     ...typography.h3,
     marginBottom: spacing.sm,
-    color: colors.text,
+    color: colors.textPrimary,
   },
   fieldLabel: {
     ...typography.caption,
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     ...typography.caption,
-    color: colors.text,
+    color: colors.textPrimary,
     fontWeight: '500',
   },
   chipTextActive: {
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.neutralMuted,
+    backgroundColor: colors.surfaceMuted,
     borderWidth: 1,
     borderColor: colors.border,
   },

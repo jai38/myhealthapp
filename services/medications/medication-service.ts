@@ -125,7 +125,7 @@ export class MedicationService {
     endDate?: string;
     notes?: string;
   }): Promise<MedicationRecord> {
-    const res = await this.client.post<{ data: MedicationRecord; message: string }>(
+    const res = await this.client.post<{ data: MedicationRecord; message?: string }>(
       '/medications',
       input,
       z.object({ data: MedicationRecordSchema, message: z.string().optional() })

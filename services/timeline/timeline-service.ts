@@ -5,7 +5,7 @@ export const TimelineEventSchema = z.object({
   id: z.string(),
   patientProfileId: z.string(),
   eventType: z.string(),
-  eventDate: z.union([z.string(), z.date()]).transform((val) => (typeof val === 'string' ? val : val.toISOString().split('T')[0])),
+  eventDate: z.union([z.string(), z.date().transform((d) => d.toISOString().split('T')[0])]) as unknown as z.ZodType<string>,
   dateIsUncertain: z.boolean().optional().default(false),
   datePrecision: z.string().optional().default('EXACT'),
   title: z.string(),
@@ -13,8 +13,8 @@ export const TimelineEventSchema = z.object({
   sourceDocumentId: z.string().nullable().optional(),
   sourcePrescriptionId: z.string().nullable().optional(),
   isVerified: z.boolean().optional().default(false),
-  createdAt: z.union([z.string(), z.date()]).optional(),
-  updatedAt: z.union([z.string(), z.date()]).optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
@@ -56,7 +56,7 @@ export const TimelineDetailSchema = z.object({
         mimeType: z.string(),
         fileSizeBytes: z.number().optional().default(0),
         pageCount: z.number().nullable().optional(),
-        uploadedAt: z.union([z.string(), z.date()]).optional(),
+        uploadedAt: z.preprocess((val) => (val instanceof Date ? val.toISOString() : typeof val === 'string' ? val : undefined), z.string().optional()),
       })
       .nullable()
       .optional(),
@@ -69,7 +69,7 @@ export const TimelineDetailSchema = z.object({
         clinicHospitalName: z.string().nullable().optional(),
         diagnosis: z.string().nullable().optional(),
         reviewStatus: z.string().nullable().optional(),
-        confirmedAt: z.union([z.string(), z.date()]).nullable().optional(),
+        confirmedAt: z.preprocess((val) => (val instanceof Date ? val.toISOString() : typeof val === 'string' ? val : null), z.string().nullable().optional()),
         confirmedByUserId: z.string().nullable().optional(),
         items: z.array(PrescriptionItemDetailSchema).optional().default([]),
       })
@@ -223,13 +223,13 @@ export class TimelineService {
 
     const qs = query.toString();
     const endpoint = `/timeline${qs ? `?${qs}` : ''}`;
-    return this.client.get(endpoint, TimelineResponseSchema);
+    return this.client.get<TimelineResponse>(endpoint, TimelineResponseSchema as any);
   }
 
   async fetchTimelineDetail(id: string): Promise<TimelineDetail> {
-    const res = await this.client.get(
+    const res = await this.client.get<{ data: TimelineDetail }>(
       `/timeline/${encodeURIComponent(id)}`,
-      TimelineDetailSchema
+      TimelineDetailSchema as any
     );
     return res.data;
   }

@@ -66,12 +66,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="reports"
         options={{
-          title: 'Profile',
-          headerTitle: 'My Profile',
+          title: 'Reports',
+          headerTitle: 'Medical Reports',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>👤</Text>
+            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>📄</Text>
           ),
         }}
       />

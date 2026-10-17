@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Modal, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -8,11 +8,15 @@ import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
 import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPrescriptionScreen';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
+import { AccountModal } from '../../features/account/AccountModal';
 import { PickedFile } from '../../services/documents/file-validator';
 import { MobileDocumentUploadService } from '../../services/documents/upload-service';
+import { authService, UserSession } from '../../services/auth/auth-service';
 import { api } from '../../services/api/client';
 
 export default function HomeScreen() {
+  const [session, setSession] = useState<UserSession | null>(authService.getSession());
+  const [isAccountModalVisible, setIsAccountModalVisible] = useState<boolean>(false);
   const [isPickerVisible, setIsPickerVisible] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [processingStatus, setProcessingStatus] = useState<string>('');
@@ -20,6 +24,13 @@ export default function HomeScreen() {
   const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isManualAddVisible, setIsManualAddVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = authService.subscribe((currentSession) => {
+      setSession(currentSession);
+    });
+    return unsubscribe;
+  }, []);
 
   const uploadService = new MobileDocumentUploadService(api);
 
@@ -97,9 +108,24 @@ export default function HomeScreen() {
 
   return (
     <ScreenLayout>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Welcome back</Text>
-        <Text style={styles.subGreeting}>Here is your health overview for today</Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>
+            {session?.fullName ? `Hello, ${session.fullName.split(' ')[0]}` : 'Welcome back'}
+          </Text>
+          <Text style={styles.subGreeting}>Here is your health overview for today</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.avatarButton}
+          onPress={() => setIsAccountModalVisible(true)}
+          accessibilityLabel="Open Patient Account Settings"
+        >
+          <Text style={styles.avatarButtonText}>
+            {session?.fullName
+              ? session.fullName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+              : '👤'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {confirmationNotice && (
@@ -204,13 +230,40 @@ export default function HomeScreen() {
           />
         )}
       </Modal>
+      {/* Patient Account Settings Modal */}
+      <AccountModal
+        visible={isAccountModalVisible}
+        onClose={() => setIsAccountModalVisible(false)}
+      />
     </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: spacing.lg,
+  },
+  header: {
+    flex: 1,
+    marginRight: spacing.md,
+  },
+  avatarButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primaryLight,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.primary,
   },
   greeting: {
     ...typography.h1,
