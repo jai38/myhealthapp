@@ -64,10 +64,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Pulse',
-          headerTitle: 'Health Pulse',
+          title: 'Today',
+          headerTitle: 'MyHealth',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>⚡</Text>
+            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>🗓️</Text>
           ),
         }}
       />
@@ -75,7 +75,7 @@ export default function TabLayout() {
         name="timeline"
         options={{
           title: 'Timeline',
-          headerTitle: 'Activity Stream',
+          headerTitle: 'Health Timeline',
           tabBarIcon: ({ focused }) => (
             <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>📋</Text>
           ),
@@ -84,7 +84,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="medications"
         options={{
-          title: 'Regimens',
+          title: 'Medications',
           headerTitle: 'Medications & Routine',
           tabBarIcon: ({ focused }) => (
             <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>💊</Text>
@@ -94,10 +94,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports"
         options={{
-          title: 'Vault',
-          headerTitle: 'Health Record Vault',
+          title: 'Records',
+          headerTitle: 'Medical Records',
           tabBarIcon: ({ focused }) => (
-            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>🛡️</Text>
+            <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.65 }}>📄</Text>
           ),
         }}
       />

@@ -9,90 +9,92 @@
  */
 
 export const colors = {
-  // Porcelain Canvas & Liquid Glass Surfaces
-  background: '#F4F6F9', // Warm, calm porcelain background with ambient depth
-  surface: '#FFFFFF', // Elevated white squircle card
-  surfaceGlass: 'rgba(255, 255, 255, 0.85)', // Liquid glass frosted surface
-  surfaceGlassSubtle: 'rgba(255, 255, 255, 0.65)',
-  surfaceSecondary: '#EEF2F6', // Soft recessed pill container
-  surfaceMuted: '#F8F9FB', // Recessed input & backdrop container
+  // Serene Porcelain Canvas & Elevated Medical Surfaces
+  background: '#F8FAFC', // Crisp, calming porcelain background
+  surface: '#FFFFFF', // Pristine white card
+  surfaceGlass: 'rgba(255, 255, 255, 0.94)', // Frosted glass surface
+  surfaceGlassSubtle: 'rgba(255, 255, 255, 0.75)',
+  surfaceSecondary: '#F1F5F9', // Soft recessed slate container
+  surfaceMuted: '#F8FAFC', // Recessed input backdrop
   surfaceElevated: '#FFFFFF', // High-elevation card
   surfaceHighlight: '#FFFFFF',
 
-  // Obsidian Dark Accent Cards (Baseline AI Signature)
-  surfaceObsidian: '#0E1116',
-  surfaceObsidianCard: '#161B22',
+  // Deep Slate Obsidian (Authoritative clinical contrast)
+  surfaceObsidian: '#0F172A',
+  surfaceObsidianCard: '#1E293B',
 
-  // Hairline Precision Glass Borders
-  border: 'rgba(0, 0, 0, 0.06)',
-  borderStrong: 'rgba(0, 0, 0, 0.12)',
-  borderSubtle: 'rgba(0, 0, 0, 0.04)',
-  borderGlass: 'rgba(255, 255, 255, 0.9)', // Glossy top rim highlight
+  // Subtle Precision Hairline Borders
+  border: 'rgba(15, 23, 42, 0.07)',
+  borderStrong: 'rgba(15, 23, 42, 0.14)',
+  borderSubtle: 'rgba(15, 23, 42, 0.04)',
+  borderGlass: 'rgba(255, 255, 255, 0.9)',
   borderGlassRim: 'rgba(255, 255, 255, 0.95)',
   borderTopGlass: 'rgba(255, 255, 255, 0.95)',
 
-  // High-Contrast Obsidian Primary
-  primary: '#0E1116', // Obsidian deep black
-  primaryHover: '#1E232B',
-  primaryLight: '#F1F4F8',
-  primaryDark: '#080A0D',
+  // Deep Slate Obsidian Primary
+  primary: '#0F172A', // Authoritative deep slate
+  primaryHover: '#1E293B',
+  primaryLight: '#F1F5F9',
+  primaryDark: '#020617',
 
-  // Baseline AI Signature: Solar Coral Neon
-  accentCoral: '#FF5B22', // High-energy Solar Coral (streaks, AI actions, priority alerts)
-  accentCoralGlow: 'rgba(255, 91, 34, 0.28)',
-  accentCoralLight: '#FFF1EC',
-  accentCoralDark: '#E04710',
+  // Primary Medical Accent: Calming Clinical Blue (Replaces blazing neon coral)
+  accentCoral: '#0284C7', // Clinical Sky Blue (Actions, upcoming dose highlights)
+  accentCoralGlow: 'rgba(2, 132, 199, 0.16)',
+  accentCoralLight: '#F0F9FF',
+  accentCoralDark: '#0369A1',
 
-  // Ronald Olsen Pastels: Purposeful Health-Category Taxonomy
-  accentCyan: '#06B6D4', // Glacier Cyan (Consultations, activity timeline, telemetry)
-  accentCyanGlow: 'rgba(6, 182, 212, 0.25)',
-  accentCyanLight: '#E0F2FE',
-  accentCyanSoft: '#CFFAFE',
-
-  accentMint: '#10B981', // Pistachio Matcha (Doses taken, verified records, normal labs)
-  accentMintGlow: 'rgba(16, 185, 129, 0.25)',
-  accentMintLight: '#DCFCE7',
+  // Restorative Emerald Mint (Doses taken, verified records, normal labs)
+  accentMint: '#10B981', // Clinical Emerald
+  accentMintGlow: 'rgba(16, 185, 129, 0.16)',
+  accentMintLight: '#ECFDF5',
   accentMintSoft: '#D1FAE5',
 
-  accentCustard: '#F59E0B', // Sunny Lemon (Pending doses, alarms, refill notices)
-  accentCustardGlow: 'rgba(245, 158, 11, 0.25)',
-  accentCustardLight: '#FEF9C3',
+  // Warm Muted Amber (Pending reminders, snooze alarms)
+  accentCustard: '#D97706', // Warm Amber
+  accentCustardGlow: 'rgba(217, 119, 6, 0.16)',
+  accentCustardLight: '#FFFBEB',
   accentCustardSoft: '#FEF3C7',
 
-  accentPeach: '#F97316', // Melon Peach (Snooze reminders, warnings, delta metrics)
-  accentPeachGlow: 'rgba(249, 115, 22, 0.25)',
-  accentPeachLight: '#FFEDD5',
-  accentPeachSoft: '#FFEDD5',
+  // Secondary Accents (Healthcare Category Taxonomy — Muted & Cohesive)
+  accentCyan: '#0284C7', // Clinical Sapphire
+  accentCyanGlow: 'rgba(2, 132, 199, 0.12)',
+  accentCyanLight: '#F0F9FF',
+  accentCyanSoft: '#E0F2FE',
 
-  accentViolet: '#8B5CF6', // Electric Purple (Smart insights, evening wind-down)
-  accentVioletGlow: 'rgba(139, 92, 246, 0.25)',
-  accentVioletLight: '#F3E8FF',
+  accentPeach: '#D97706', // Soft Amber (replaces jarring neon peach)
+  accentPeachGlow: 'rgba(217, 119, 6, 0.12)',
+  accentPeachLight: '#FFFBEB',
+  accentPeachSoft: '#FEF3C7',
 
-  // Compatibility & Semantic Color Tokens
-  secondary: '#06B6D4',
+  accentViolet: '#475569', // Calm Slate (replaces electric purple)
+  accentVioletGlow: 'rgba(71, 85, 105, 0.12)',
+  accentVioletLight: '#F1F5F9',
+
+  // Compatibility Semantic Aliases
+  secondary: '#0284C7',
   secondaryLight: '#E0F2FE',
-  amberGold: '#F59E0B',
-  amberGoldLight: '#FEF9C3',
+  amberGold: '#D97706',
+  amberGoldLight: '#FFFBEB',
   teal: '#10B981',
   tealDark: '#059669',
-  navy: '#0E1116',
-  navyLight: '#F1F4F8',
+  navy: '#0F172A',
+  navyLight: '#F1F5F9',
 
-  // Razor-Sharp Obsidian Typography
-  textPrimary: '#0E1116', // Deep obsidian black for bold headlines & numbers
-  textSecondary: '#4A5568', // Balanced slate for friendly readable descriptions
-  textMuted: '#718096', // Micro-labels and placeholders
-  textInverse: '#FFFFFF', // Pure white on dark buttons & cards
+  // Crisp High-Legibility Typography
+  textPrimary: '#0F172A', // Deep slate for high-contrast headlines & metrics
+  textSecondary: '#475569', // Calm slate for friendly descriptions
+  textMuted: '#94A3B8', // Subtle timestamps and micro-labels
+  textInverse: '#FFFFFF', // Pure white on dark elements
 
-  // Status & Telemetry Feedback
+  // Status Feedback
   success: '#10B981',
-  successLight: '#DCFCE7',
-  warning: '#F59E0B',
-  warningLight: '#FEF9C3',
+  successLight: '#ECFDF5',
+  warning: '#D97706',
+  warningLight: '#FFFBEB',
   danger: '#EF4444',
-  dangerLight: '#FEE2E2',
-  info: '#06B6D4',
-  infoLight: '#E0F2FE',
+  dangerLight: '#FEF2F2',
+  info: '#0284C7',
+  infoLight: '#F0F9FF',
 } as const;
 
 export const spacing = {
@@ -109,8 +111,8 @@ export const borderRadius = {
   sm: 10,
   md: 16,
   lg: 22,
-  xl: 26, // Ronald Olsen signature squircle
-  xxl: 30, // Baseline floating dock squircle
+  xl: 26,
+  xxl: 30,
   full: 9999,
 } as const;
 
@@ -184,52 +186,52 @@ export const typography = {
 
 export const shadows = {
   sm: {
-    shadowColor: '#0E1116',
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowRadius: 4,
+    elevation: 1,
   },
   md: {
-    shadowColor: '#0E1116',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.07,
-    shadowRadius: 20,
-    elevation: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    elevation: 3,
   },
   lg: {
-    shadowColor: '#0E1116',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.11,
-    shadowRadius: 36,
-    elevation: 8,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 5,
   },
   coralGlow: {
-    shadowColor: '#FF5B22',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 22,
-    elevation: 6,
+    shadowColor: '#0284C7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    elevation: 3,
   },
   mintGlow: {
     shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    elevation: 3,
   },
   cyanGlow: {
-    shadowColor: '#06B6D4',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 6,
+    shadowColor: '#0284C7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    elevation: 3,
   },
   glassCard: {
-    shadowColor: '#0E1116',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.06,
-    shadowRadius: 24,
-    elevation: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
+    elevation: 3,
   },
 } as const;

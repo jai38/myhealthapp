@@ -30,12 +30,12 @@ import {
   MedicationRecord,
   DoseLog,
 } from '../../services/medications/medication-service';
+import { medicationStore, toLocalDateString } from '../../services/medications/medication-store';
 import {
   timelineService,
   TimelineEvent,
   formatMedicalEventDate,
 } from '../../services/timeline/timeline-service';
-import { scheduleSnoozeReminder } from '../../services/notifications/notification-service';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -46,32 +46,53 @@ export default function HomeScreen() {
   const [processingStatus, setProcessingStatus] = useState<string>('');
   const [activeReviewData, setActiveReviewData] = useState<any | null>(null);
   const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isManualAddVisible, setIsManualAddVisible] = useState<boolean>(false);
 
-  // Live Performance & Telemetry Data
-  const [medications, setMedications] = useState<MedicationRecord[]>([]);
-  const [todayDoses, setTodayDoses] = useState<DoseLog[]>([]);
+  // Selected calendar date (Defaults to Today YYYY-MM-DD using timezone-safe local date)
+  const todayDateStr = toLocalDateString(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(todayDateStr);
+
+  // Store data
+  const [medications, setMedications] = useState<MedicationRecord[]>(() =>
+    medicationStore.getMedications()
+  );
+  const [allDoses, setAllDoses] = useState<DoseLog[]>(() => medicationStore.getAllDoses());
   const [recentEvents, setRecentEvents] = useState<TimelineEvent[]>([]);
   const [totalRecordsCount, setTotalRecordsCount] = useState<number>(0);
   const [actionDoseId, setActionDoseId] = useState<string | null>(null);
 
   const uploadService = new MobileDocumentUploadService(api);
 
-  // Load telemetry metrics
+  // Subscribe to reactive updates from medication store
+  useEffect(() => {
+    const unsub = medicationStore.subscribe(() => {
+      setMedications(medicationStore.getMedications());
+      setAllDoses(medicationStore.getAllDoses());
+    });
+    return unsub;
+  }, []);
+
+  // Sync with remote backend when available
   const loadDashboardData = useCallback(async () => {
     try {
-      const [allMeds, doses, timelineRes] = await Promise.all([
+      const [serverMeds, serverDoses, timelineRes] = await Promise.all([
         medicationService.listMedications().catch(() => []),
         medicationService.getDoseOccurrences().catch(() => []),
-        timelineService.fetchTimeline({ limit: 3 }).catch(() => ({ data: [], pagination: { totalCount: 0 } })),
+        timelineService
+          .fetchTimeline({ limit: 3 })
+          .catch(() => ({ data: [], pagination: { totalCount: 0 } })),
       ]);
-      setMedications(allMeds);
-      setTodayDoses(doses);
+
+      if (serverMeds.length > 0 || serverDoses.length > 0) {
+        await medicationStore.syncFromServer(serverMeds, serverDoses);
+      }
+
       setRecentEvents(timelineRes.data);
       setTotalRecordsCount(timelineRes.pagination.totalCount);
     } catch {
-      // Keep existing state if offline
+      // Offline fallback: keep existing store data
     }
   }, []);
 
@@ -89,14 +110,14 @@ export default function HomeScreen() {
 
   const handleFileSelected = async (file: PickedFile) => {
     setIsProcessing(true);
-    setProcessingStatus('Uploading document securely with SHA-256 verification...');
+    setProcessingStatus('Uploading prescription securely...');
     setConfirmationNotice(null);
     setUploadError(null);
 
     try {
       const { document, job } = await uploadService.uploadAndExtractPrescription(file);
 
-      setProcessingStatus('Extracting prescription data (Mock AI Provider)...');
+      setProcessingStatus('Extracting prescription data (AI Clinical Parser)...');
 
       const completedJob = await uploadService.pollJobUntilComplete(job.id, {
         maxAttempts: 15,
@@ -134,13 +155,13 @@ export default function HomeScreen() {
 
     const medCount = reviewPayload.medicines?.length || 0;
     setConfirmationNotice(
-      `Prescription confirmed successfully! ${medCount} medication(s) saved to verified clinical timeline.`
+      `Prescription confirmed successfully! ${medCount} medication(s) saved to verified timeline.`
     );
     setActiveReviewData(null);
     loadDashboardData();
   };
 
-  // Dose actions direct from dashboard
+  // Instant Optimistic Dose Actions (Taken, Snooze 15m, Skip)
   const handleRecordDoseAction = async (
     doseId: string,
     action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
@@ -148,52 +169,57 @@ export default function HomeScreen() {
   ) => {
     setActionDoseId(doseId);
     try {
-      await medicationService.recordDoseAction(doseId, {
-        action,
-        snoozeMinutes,
-      });
+      const updatedDose = await medicationStore.recordAction(doseId, action, snoozeMinutes);
+      const targetMed = medications.find((m) => m.id === updatedDose.medicationId);
+      const medName = targetMed?.nameAsWritten || 'Medication';
 
-      if (action === 'SNOOZED') {
-        const dose = todayDoses.find((d) => d.id === doseId);
-        const med = medications.find((m) => m.id === dose?.medicationId);
-        if (med) {
-          scheduleSnoozeReminder(med.id, med.nameAsWritten, snoozeMinutes || 15).catch(() => {});
-        }
+      if (action === 'TAKEN') {
+        setActionNotice(`✓ ${medName} marked as taken!`);
+      } else if (action === 'SNOOZED') {
+        setActionNotice(`⏰ ${medName} snoozed for ${snoozeMinutes || 15} minutes.`);
+      } else if (action === 'SKIPPED') {
+        setActionNotice(`Skipped ${medName} for this dose.`);
       }
 
-      setTodayDoses((prev) =>
-        prev.map((d) =>
-          d.id === doseId ? { ...d, status: action, actionTime: new Date().toISOString() } : d
-        )
-      );
-    } catch (err: any) {
-      Alert.alert('Action Failed', err?.message || 'Could not record dose action.');
+      // Auto-clear feedback notice after 4 seconds
+      setTimeout(() => {
+        setActionNotice(null);
+      }, 4000);
+    } catch {
+      Alert.alert('Action Failed', 'Could not record dose action.');
     } finally {
       setActionDoseId(null);
     }
   };
 
-  // Derived metrics
-  const totalDosesToday = todayDoses.length;
-  const takenDosesToday = todayDoses.filter((d) => d.status === 'TAKEN').length;
-  const actionableDoses = todayDoses.filter(
+  // Doses and adherence for the selected calendar date
+  const dayDoses = medicationStore.getDosesForDate(selectedDate);
+  const { percentage: adherencePct, taken: takenDosesCount, total: totalDosesCount } =
+    medicationStore.getAdherenceForDate(selectedDate);
+
+  const actionableDoses = dayDoses.filter(
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
   const nextDose = actionableDoses[0];
-  const nextMed = nextDose ? medications.find((m) => m.id === nextDose.medicationId) : null;
+  const nextMed = nextDose
+    ? medications.find((m) => m.id === nextDose.medicationId) ||
+      medicationStore.getMedicationById(nextDose.medicationId)
+    : null;
   const nextDoseDate = nextDose ? new Date(nextDose.scheduledTime) : null;
   const nextTimeStr = nextDoseDate
     ? nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
 
-  const adherenceTodayPct = totalDosesToday > 0 ? Math.round((takenDosesToday / totalDosesToday) * 100) : 100;
-  const activeMedsCount = medications.filter((m) => m.status === 'ACTIVE').length;
+  const allCurrentMeds = medications.length > 0 ? medications : medicationStore.getMedications();
+  const activeMedsCount = allCurrentMeds.filter((m) => m.status === 'ACTIVE').length;
 
-  const todayDateStr = new Date().toLocaleDateString('en-US', {
+  const selectedDateObj = new Date(selectedDate + 'T00:00:00');
+  const formattedSelectedDate = selectedDateObj.toLocaleDateString('en-US', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
   });
+  const isSelectedDateToday = selectedDate === todayDateStr;
 
   if (activeReviewData) {
     return (
@@ -217,15 +243,17 @@ export default function HomeScreen() {
       <View style={styles.headerContainer}>
         <View style={styles.header}>
           <View style={styles.statusRow}>
-            <Text style={styles.dateText}>{todayDateStr}</Text>
+            <Text style={styles.dateText}>{formattedSelectedDate}</Text>
             <View style={styles.streakPill}>
-              <Text style={styles.streakPillText}>⏱️ 7-DAY ADHERENCE</Text>
+              <Text style={styles.streakPillText}>⏱️ MEDICATION SCHEDULE</Text>
             </View>
           </View>
           <Text style={styles.greeting}>
             {session?.fullName ? `Hello, ${session.fullName.split(' ')[0]}` : 'Welcome Back'}
           </Text>
-          <Text style={styles.subGreeting}>Keep your medications and health records on track today.</Text>
+          <Text style={styles.subGreeting}>
+            Keep your medications and health records on track today.
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -237,23 +265,31 @@ export default function HomeScreen() {
           <Text style={styles.avatarButtonText}>
             {session?.fullName
               ? session.fullName
-              .split(' ')
-              .map((n: string) => n[0])
-              .join('')
-              .slice(0, 2)
-              .toUpperCase()
+                  .split(' ')
+                  .map((n: string) => n[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase()
               : '👤'}
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Banners */}
+      {/* Instant Action Feedback Toast */}
+      {actionNotice && (
+        <View style={styles.actionNoticeBanner}>
+          <Text style={styles.actionNoticeText}>{actionNotice}</Text>
+        </View>
+      )}
+
+      {/* Confirmation Banner */}
       {confirmationNotice && (
         <View style={styles.successBanner}>
           <Text style={styles.successText}>✓ {confirmationNotice}</Text>
         </View>
       )}
 
+      {/* Upload Error Banner */}
       {uploadError && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>⚠️ {uploadError}</Text>
@@ -269,8 +305,33 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {/* 2. HORIZONTAL WEEKDAY ADHERENCE CAROUSEL */}
-      <HorizontalDateStrip onSelectDate={() => router.push('/(tabs)/timeline')} />
+      {/* 2. INTERACTIVE WEEKDAY CALENDAR STRIP */}
+      <View style={styles.calendarContainer}>
+        <HorizontalDateStrip
+          selectedDate={selectedDate}
+          onSelectDate={(newDate) => {
+            setSelectedDate(newDate);
+          }}
+        />
+
+        {/* Selected Date Context & Reset to Today Button */}
+        <View style={styles.dateContextRow}>
+          <Text style={styles.dateContextText}>
+            {isSelectedDateToday
+              ? "Showing Today's Prescribed Schedule"
+              : `Showing Schedule for ${formattedSelectedDate}`}
+          </Text>
+          {!isSelectedDateToday && (
+            <TouchableOpacity
+              style={styles.jumpTodayBtn}
+              onPress={() => setSelectedDate(todayDateStr)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.jumpTodayBtnText}>Jump to Today ›</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
 
       {/* 3. PRESCRIPTION SCANNER & OMNIBAR */}
       <AiOmnibar
@@ -278,24 +339,27 @@ export default function HomeScreen() {
         onSubmitPrompt={() => router.push('/(tabs)/medications')}
       />
 
-      {/* 4. HERO ADHERENCE DONUT */}
+      {/* 4. HERO ADHERENCE DONUT (Calm medical teal/blue) */}
       <AdherenceDonut
-        percentage={adherenceTodayPct}
-        takenCount={takenDosesToday}
-        totalCount={totalDosesToday}
+        percentage={adherencePct}
+        takenCount={takenDosesCount}
+        totalCount={totalDosesCount}
+        label={isSelectedDateToday ? 'Medication Adherence' : `${formattedSelectedDate} Adherence`}
       />
 
-      {/* 5. 1-TAP UPCOMING DOSE CARD */}
+      {/* 5. 1-TAP UPCOMING DOSE CARD (Interactive Taken / Snooze / Skip) */}
       {nextDose && nextMed ? (
         <View style={styles.heroDoseCard}>
           <View style={styles.heroDoseHeader}>
             <View style={styles.heroBadgeRow}>
               <View style={styles.heroDoseBadge}>
-                <Text style={styles.heroDoseBadgeText}>UPCOMING DOSE ⏰</Text>
+                <Text style={styles.heroDoseBadgeText}>
+                  {isSelectedDateToday ? 'UPCOMING DOSE ⏰' : 'SCHEDULED DOSE ⏰'}
+                </Text>
               </View>
               {nextDose.status === 'SNOOZED' && (
                 <View style={styles.heroSnoozedBadge}>
-                  <Text style={styles.heroSnoozedText}>⏰ SNOOZED</Text>
+                  <Text style={styles.heroSnoozedText}>⏰ SNOOZED (15m)</Text>
                 </View>
               )}
             </View>
@@ -306,14 +370,13 @@ export default function HomeScreen() {
 
           <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
           <Text style={styles.heroMedMeta}>
-            {nextMed.strength ? `${nextMed.strength} • ` : ''}Scheduled at {nextTimeStr} • Daily Medication
+            {nextMed.strength ? `${nextMed.strength} • ` : ''}Scheduled at {nextTimeStr} • Daily
+            Regimen
           </Text>
 
           {nextMed.prescribedInstructions ? (
             <View style={styles.instructionsBox}>
-              <Text style={styles.instructionsText}>
-                💡 {nextMed.prescribedInstructions}
-              </Text>
+              <Text style={styles.instructionsText}>💡 {nextMed.prescribedInstructions}</Text>
             </View>
           ) : null}
 
@@ -323,7 +386,7 @@ export default function HomeScreen() {
               style={[styles.heroActionBtn, styles.heroActionSkip]}
               onPress={() => handleRecordDoseAction(nextDose.id, 'SKIPPED')}
               disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.8}
+              activeOpacity={0.75}
             >
               <Text style={styles.heroActionSkipText}>Skip</Text>
             </TouchableOpacity>
@@ -332,7 +395,7 @@ export default function HomeScreen() {
               style={[styles.heroActionBtn, styles.heroActionSnooze]}
               onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
               disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.8}
+              activeOpacity={0.75}
             >
               <Text style={styles.heroActionSnoozeText}>Snooze 15m</Text>
             </TouchableOpacity>
@@ -341,27 +404,123 @@ export default function HomeScreen() {
               style={[styles.heroActionBtn, styles.heroActionTaken]}
               onPress={() => handleRecordDoseAction(nextDose.id, 'TAKEN')}
               disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.8}
+              activeOpacity={0.75}
             >
               <Text style={styles.heroActionTakenText}>Taken ✓</Text>
             </TouchableOpacity>
           </View>
         </View>
-      ) : totalDosesToday > 0 && actionableDoses.length === 0 ? (
+      ) : totalDosesCount > 0 && actionableDoses.length === 0 ? (
         <View style={styles.streakCelebrationCard}>
           <View style={styles.streakRow}>
             <Text style={styles.streakIcon}>🎯</Text>
             <View style={{ flex: 1, marginLeft: spacing.sm }}>
-              <Text style={styles.streakTitle}>All Doses Taken Today! ✓</Text>
+              <Text style={styles.streakTitle}>All Doses Completed! ✓</Text>
               <Text style={styles.streakSub}>
-                100% adherence today. Great job staying consistent with your prescribed medication schedule.
+                {takenDosesCount} of {totalDosesCount} medications recorded for {formattedSelectedDate}.
+                Great consistency maintaining your schedule.
               </Text>
             </View>
           </View>
         </View>
-      ) : null}
+      ) : (
+        <Card variant="muted" style={styles.emptyDayCard}>
+          <Text style={styles.emptyDayText}>
+            No doses scheduled for {formattedSelectedDate}.
+          </Text>
+          <TouchableOpacity
+            style={styles.addMedQuickBtn}
+            onPress={() => setIsManualAddVisible(true)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.addMedQuickBtnText}>+ Add Medication</Text>
+          </TouchableOpacity>
+        </Card>
+      )}
 
-      {/* 6. THREE-TILE STATS MATRIX */}
+      {/* 5b. COMPLETE DAILY MEDICATION REGIMEN LIST */}
+      {dayDoses.length > 0 && (
+        <View style={styles.dailyScheduleContainer}>
+          <View style={styles.dailyScheduleHeader}>
+            <View>
+              <Text style={styles.dailyScheduleTitle}>
+                {isSelectedDateToday ? "Today's Schedule" : `${formattedSelectedDate} Schedule`}
+              </Text>
+              <Text style={styles.dailyScheduleSub}>
+                {takenDosesCount} of {totalDosesCount} doses recorded
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.manageScheduleLink}
+              onPress={() => router.push('/(tabs)/medications')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.manageScheduleLinkText}>View All ›</Text>
+            </TouchableOpacity>
+          </View>
+
+          {dayDoses.map((dose) => {
+            const med =
+              medications.find((m) => m.id === dose.medicationId) ||
+              medicationStore.getMedicationById(dose.medicationId);
+            if (!med) return null;
+
+            const doseDate = new Date(dose.scheduledTime);
+            const timeStr = doseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            return (
+              <View key={dose.id} style={styles.doseScheduleCard}>
+                <View style={styles.doseScheduleTimeBox}>
+                  <Text style={styles.doseScheduleTimeText}>{timeStr}</Text>
+                  <View
+                    style={[
+                      styles.doseScheduleDot,
+                      dose.status === 'TAKEN' && styles.doseScheduleDotTaken,
+                      dose.status === 'SNOOZED' && styles.doseScheduleDotSnoozed,
+                      dose.status === 'SKIPPED' && styles.doseScheduleDotSkipped,
+                    ]}
+                  />
+                </View>
+
+                <View style={styles.doseScheduleInfo}>
+                  <Text style={styles.doseScheduleMedName}>{med.nameAsWritten}</Text>
+                  <Text style={styles.doseScheduleInstructions} numberOfLines={1}>
+                    {med.strength ? `${med.strength} • ` : ''}
+                    {med.prescribedInstructions || 'Follow prescribed routine'}
+                  </Text>
+                </View>
+
+                <View style={styles.doseScheduleActionBox}>
+                  {dose.status === 'TAKEN' ? (
+                    <View style={styles.scheduleBadgeTaken}>
+                      <Text style={styles.scheduleBadgeTakenText}>✓ Taken</Text>
+                    </View>
+                  ) : dose.status === 'SNOOZED' ? (
+                    <View style={styles.scheduleBadgeSnoozed}>
+                      <Text style={styles.scheduleBadgeSnoozedText}>⏰ Snoozed</Text>
+                    </View>
+                  ) : dose.status === 'SKIPPED' ? (
+                    <View style={styles.scheduleBadgeSkipped}>
+                      <Text style={styles.scheduleBadgeSkippedText}>Skipped</Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.scheduleTakeBtn}
+                      onPress={() => handleRecordDoseAction(dose.id, 'TAKEN')}
+                      disabled={actionDoseId === dose.id}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.scheduleTakeBtnText}>Take ✓</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
+
+      {/* 6. THREE-TILE STATS MATRIX (Clean, cohesive clinical slate) */}
       <View style={styles.metricsGrid}>
         {/* Adherence Rate */}
         <TouchableOpacity
@@ -369,14 +528,14 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/medications')}
           activeOpacity={0.85}
         >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.accentMintLight }]}>
+          <View style={[styles.metricIconBox, { backgroundColor: '#ECFDF5' }]}>
             <Text style={styles.metricIcon}>⏱️</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.accentMint }]}>{adherenceTodayPct}%</Text>
-          <Text style={styles.metricLabel}>Adherence Rate</Text>
+          <Text style={styles.metricValue}>{adherencePct}%</Text>
+          <Text style={styles.metricLabel}>Adherence</Text>
           <View style={styles.metricFooter}>
             <Text style={styles.metricSubText}>
-              {takenDosesToday}/{totalDosesToday || 0} Doses Taken
+              {takenDosesCount}/{totalDosesCount || 0} Doses Done
             </Text>
           </View>
         </TouchableOpacity>
@@ -387,15 +546,13 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/medications')}
           activeOpacity={0.85}
         >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCoralLight }]}>
+          <View style={[styles.metricIconBox, { backgroundColor: '#F0F9FF' }]}>
             <Text style={styles.metricIcon}>💊</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.accentCoral }]}>
-            {activeMedsCount} Active
-          </Text>
-          <Text style={styles.metricLabel}>Medications</Text>
+          <Text style={styles.metricValue}>{activeMedsCount}</Text>
+          <Text style={styles.metricLabel}>Active Meds</Text>
           <View style={styles.metricFooter}>
-            <Text style={styles.metricSubText}>Prescriptions & Meds</Text>
+            <Text style={styles.metricSubText}>Prescriptions</Text>
           </View>
         </TouchableOpacity>
 
@@ -405,13 +562,11 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/reports')}
           activeOpacity={0.85}
         >
-          <View style={[styles.metricIconBox, { backgroundColor: colors.accentCustardLight }]}>
+          <View style={[styles.metricIconBox, { backgroundColor: '#F8FAFC' }]}>
             <Text style={styles.metricIcon}>📋</Text>
           </View>
-          <Text style={[styles.metricValue, { color: colors.accentCustard }]}>
-            {totalRecordsCount} Records
-          </Text>
-          <Text style={styles.metricLabel}>Health Records</Text>
+          <Text style={styles.metricValue}>{totalRecordsCount}</Text>
+          <Text style={styles.metricLabel}>Records</Text>
           <View style={styles.metricFooter}>
             <Text style={styles.metricSubText}>Labs & Summaries</Text>
           </View>
@@ -432,12 +587,12 @@ export default function HomeScreen() {
           activeOpacity={0.8}
           disabled={isProcessing}
         >
-          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCoralLight }]}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: '#F0F9FF' }]}>
             <Text style={styles.actionHubEmoji}>📸</Text>
           </View>
           <Text style={styles.actionHubTitle}>Scan Prescription</Text>
-          <Text style={styles.actionHubDesc}>Instant OCR extraction to verify medicines & schedules</Text>
-          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCoralLight }]}>
+          <Text style={styles.actionHubDesc}>Instant OCR extraction to verify medicines</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: '#F0F9FF' }]}>
             <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>Smart OCR</Text>
           </View>
         </TouchableOpacity>
@@ -449,13 +604,13 @@ export default function HomeScreen() {
           activeOpacity={0.8}
           disabled={isProcessing}
         >
-          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCyanLight }]}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: '#F0F9FF' }]}>
             <Text style={styles.actionHubEmoji}>💊</Text>
           </View>
           <Text style={styles.actionHubTitle}>Add Medication</Text>
           <Text style={styles.actionHubDesc}>Custom timing, dose reminders & instructions</Text>
-          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCyanLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCyan }]}>+ Add Med</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: '#F0F9FF' }]}>
+            <Text style={[styles.actionHubTagText, { color: colors.accentCoral }]}>+ Add Med</Text>
           </View>
         </TouchableOpacity>
 
@@ -465,13 +620,13 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/reports')}
           activeOpacity={0.8}
         >
-          <View style={[styles.actionHubIconBadge, { backgroundColor: colors.accentCustardLight }]}>
+          <View style={[styles.actionHubIconBadge, { backgroundColor: '#F8FAFC' }]}>
             <Text style={styles.actionHubEmoji}>📄</Text>
           </View>
           <Text style={styles.actionHubTitle}>Doctor Summary</Text>
-          <Text style={styles.actionHubDesc}>Shareable overview for your next clinic appointment</Text>
-          <View style={[styles.actionHubTag, { backgroundColor: colors.accentCustardLight }]}>
-            <Text style={[styles.actionHubTagText, { color: colors.accentCustard }]}>Export PDF</Text>
+          <Text style={styles.actionHubDesc}>Shareable overview for your next clinic visit</Text>
+          <View style={[styles.actionHubTag, { backgroundColor: '#F1F5F9' }]}>
+            <Text style={[styles.actionHubTagText, { color: colors.textSecondary }]}>Export PDF</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -646,6 +801,20 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.primary,
   },
+  actionNoticeBanner: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#86EFAC',
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  actionNoticeText: {
+    ...typography.caption,
+    color: '#15803D',
+    fontWeight: '700',
+  },
   successBanner: {
     backgroundColor: colors.successLight,
     borderWidth: 1,
@@ -690,6 +859,35 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 
+  // Calendar
+  calendarContainer: {
+    marginBottom: spacing.md,
+  },
+  dateContextRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.xs,
+    marginTop: -4,
+    marginBottom: spacing.xs,
+  },
+  dateContextText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  jumpTodayBtn: {
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.accentCoralLight,
+  },
+  jumpTodayBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.accentCoral,
+  },
+
   // 3-Tile Metrics Grid
   metricsGrid: {
     flexDirection: 'row',
@@ -698,16 +896,14 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 24px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
       : shadows.sm),
   },
@@ -747,17 +943,15 @@ const styles = StyleSheet.create({
 
   // Hero Dose Card
   heroDoseCard: {
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.md + 2,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: '0 12px 36px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.05)',
         } as any)
       : shadows.sm),
   },
@@ -778,7 +972,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: 'rgba(255, 91, 34, 0.15)',
+    borderColor: 'rgba(2, 132, 199, 0.15)',
   },
   heroDoseBadgeText: {
     fontSize: 11,
@@ -798,15 +992,13 @@ const styles = StyleSheet.create({
     color: colors.accentCustard,
   },
   heroTimeChip: {
-    backgroundColor: 'rgba(17, 24, 39, 0.05)',
+    backgroundColor: colors.surfaceSecondary,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
   },
   heroTimeChipText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
     color: colors.textPrimary,
   },
@@ -823,12 +1015,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   instructionsBox: {
-    backgroundColor: 'rgba(17, 24, 39, 0.03)',
+    backgroundColor: colors.surfaceSecondary,
     padding: spacing.sm,
     borderRadius: borderRadius.md,
     marginBottom: spacing.md,
     borderWidth: 1,
-    borderColor: 'rgba(17, 24, 39, 0.05)',
+    borderColor: colors.borderSubtle,
   },
   instructionsText: {
     fontSize: 12,
@@ -842,13 +1034,13 @@ const styles = StyleSheet.create({
   },
   heroActionBtn: {
     flex: 1,
-    paddingVertical: 11,
+    paddingVertical: 10,
     borderRadius: borderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroActionSkip: {
-    backgroundColor: 'rgba(17, 24, 39, 0.04)',
+    backgroundColor: colors.surfaceSecondary,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
   },
@@ -860,7 +1052,7 @@ const styles = StyleSheet.create({
   heroActionSnooze: {
     backgroundColor: colors.accentCustardLight,
     borderWidth: 1,
-    borderColor: 'rgba(202, 138, 4, 0.2)',
+    borderColor: 'rgba(217, 119, 6, 0.2)',
   },
   heroActionSnoozeText: {
     fontSize: 13,
@@ -871,7 +1063,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentCoral,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 16px rgba(255, 91, 34, 0.35)',
+          boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
         } as any)
       : {}),
   },
@@ -884,19 +1076,17 @@ const styles = StyleSheet.create({
 
   // Streak celebration
   streakCelebrationCard: {
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.md,
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.25)',
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
+          boxShadow: '0 2px 10px rgba(16, 185, 129, 0.08)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   streakRow: {
     flexDirection: 'row',
@@ -914,6 +1104,180 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 2,
+  },
+  emptyDayCard: {
+    padding: spacing.md,
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  emptyDayText: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginBottom: spacing.sm,
+  },
+  addMedQuickBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: borderRadius.md,
+  },
+  addMedQuickBtnText: {
+    color: colors.textInverse,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+
+  // Complete Daily Schedule List
+  dailyScheduleContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+        } as any)
+      : shadows.sm),
+  },
+  dailyScheduleHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+    paddingBottom: spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
+  dailyScheduleTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  dailyScheduleSub: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 1,
+  },
+  manageScheduleLink: {
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+  },
+  manageScheduleLinkText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.accentCoral,
+  },
+  doseScheduleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
+  doseScheduleTimeBox: {
+    width: 64,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingRight: spacing.xs,
+  },
+  doseScheduleTimeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  doseScheduleDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(15, 23, 42, 0.15)',
+    marginTop: 4,
+  },
+  doseScheduleDotTaken: {
+    backgroundColor: colors.accentMint,
+  },
+  doseScheduleDotSnoozed: {
+    backgroundColor: colors.accentCustard,
+  },
+  doseScheduleDotSkipped: {
+    backgroundColor: colors.textMuted,
+  },
+  doseScheduleInfo: {
+    flex: 1,
+    paddingHorizontal: spacing.sm,
+  },
+  doseScheduleMedName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  doseScheduleInstructions: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 1,
+  },
+  doseScheduleActionBox: {
+    alignItems: 'flex-end',
+    minWidth: 80,
+  },
+  scheduleBadgeTaken: {
+    backgroundColor: colors.accentMintLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.25)',
+  },
+  scheduleBadgeTakenText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.accentMint,
+  },
+  scheduleBadgeSnoozed: {
+    backgroundColor: colors.accentCustardLight,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(217, 119, 6, 0.25)',
+  },
+  scheduleBadgeSnoozedText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.accentCustard,
+  },
+  scheduleBadgeSkipped: {
+    backgroundColor: colors.surfaceSecondary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  scheduleBadgeSkippedText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textMuted,
+  },
+  scheduleTakeBtn: {
+    backgroundColor: colors.accentCoral,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...(Platform.OS === 'web'
+      ? ({
+          boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
+        } as any)
+      : {}),
+  },
+  scheduleTakeBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textInverse,
   },
 
   // Action Hub
@@ -937,17 +1301,15 @@ const styles = StyleSheet.create({
   },
   actionHubTile: {
     flex: 1,
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 6px 20px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
       : shadows.sm),
   },
@@ -995,7 +1357,7 @@ const styles = StyleSheet.create({
   viewAllLink: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.accentCyan,
+    color: colors.accentCoral,
   },
   emptyFeedCard: {
     padding: spacing.lg,
@@ -1027,7 +1389,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
         } as any)
       : shadows.sm),
   },
@@ -1097,4 +1459,3 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
-

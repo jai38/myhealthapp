@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import { colors, spacing, borderRadius } from '../theme/index';
+import { colors, spacing, borderRadius, shadows } from '../theme/index';
 
 export interface AiOmnibarProps {
   onScanPress?: () => void;
@@ -66,33 +66,31 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs + 2,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: '0 8px 30px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   scanButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.accentCoralLight,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.surfaceSecondary,
     borderWidth: 1,
-    borderColor: 'rgba(255, 91, 34, 0.15)',
+    borderColor: colors.borderSubtle,
     alignItems: 'center',
     justifyContent: 'center',
   },
   scanEmoji: {
-    fontSize: 18,
+    fontSize: 16,
   },
   input: {
     flex: 1,
@@ -111,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 12px rgba(14, 17, 22, 0.15)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.12)',
         } as any)
       : {}),
   },
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentCoral,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(255, 91, 34, 0.4)',
+          boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)',
         } as any)
       : {}),
   },

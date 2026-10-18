@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
-import { colors, spacing, borderRadius } from '../theme/index';
+import { colors, spacing, borderRadius, shadows } from '../theme/index';
 
 export interface AdherenceDonutProps {
   percentage: number; // 0 to 100
@@ -51,13 +51,13 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
               style={{
                 transform: 'rotate(135deg)',
                 overflow: 'visible',
-                filter: clampedPct > 0 ? 'drop-shadow(0px 4px 12px rgba(255, 91, 34, 0.25))' : 'none',
+                filter: clampedPct > 0 ? 'drop-shadow(0px 4px 10px rgba(2, 132, 199, 0.16))' : 'none',
               }}
             >
               <defs>
                 <linearGradient id="donutCoralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FF5B22" />
-                  <stop offset="100%" stopColor="#FF8C42" />
+                  <stop offset="0%" stopColor="#0284C7" />
+                  <stop offset="100%" stopColor="#38BDF8" />
                 </linearGradient>
                 <linearGradient id="donutMintGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#10B981" />
@@ -122,19 +122,24 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
           <View style={styles.statsList}>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Taken</Text>
-              <Text style={[styles.statValue, { color: colors.accentMint }]}>
+              <Text style={styles.statValue}>
                 {takenCount} done
               </Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Remaining</Text>
-              <Text style={[styles.statValue, { color: colors.accentCoral }]}>
+              <Text style={styles.statValue}>
                 {remainingCount} left
               </Text>
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statLabel}>Status</Text>
-              <Text style={[styles.statValue, { color: clampedPct >= 80 ? colors.accentMint : colors.accentCoral }]}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: clampedPct >= 80 ? colors.accentMint : colors.textSecondary },
+                ]}
+              >
                 {clampedPct >= 100 ? 'On Track ✓' : clampedPct >= 80 ? 'Good Progress' : 'Pending'}
               </Text>
             </View>
@@ -151,7 +156,7 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
           </View>
         </View>
         <View style={styles.capsuleSlot}>
-          <Text style={styles.capsuleTime}>Midday ⚡</Text>
+          <Text style={styles.capsuleTime}>Midday 🌤️</Text>
           <View style={[styles.capsuleBar, takenCount > 1 ? styles.capsuleTaken : styles.capsulePending]}>
             <Text style={styles.capsuleCheck}>{takenCount > 1 ? '✓' : '•'}</Text>
           </View>
@@ -169,19 +174,17 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.md + 2,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: '0 12px 36px rgba(14, 17, 22, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   headerRow: {
     flexDirection: 'row',
@@ -197,7 +200,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
     borderWidth: 1,
-    borderColor: 'rgba(255, 91, 34, 0.15)',
+    borderColor: 'rgba(2, 132, 199, 0.15)',
   },
   streakFlame: {
     fontSize: 12,

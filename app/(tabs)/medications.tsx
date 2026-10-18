@@ -19,8 +19,8 @@ import {
   MedicationRecord,
   DoseLog,
   medicationService,
-  MedicationStatus,
 } from '../../services/medications/medication-service';
+import { medicationStore, toLocalDateString } from '../../services/medications/medication-store';
 import { MedicationDetailModal } from '../../features/medications/MedicationDetailModal';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 import { useLocalSearchParams } from 'expo-router';
@@ -28,7 +28,6 @@ import { formatTime12Hour } from '../../features/medications/reminder-time-utils
 import { authService } from '../../services/auth/auth-service';
 import {
   syncAllMedicationReminders,
-  scheduleSnoozeReminder,
   onNotificationResponse,
 } from '../../services/notifications/notification-service';
 
@@ -36,14 +35,21 @@ type TabType = 'active' | 'inactive' | 'past';
 
 export default function MedicationsScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('active');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
 
-  const [medications, setMedications] = useState<MedicationRecord[]>([]);
-  const [todayDoses, setTodayDoses] = useState<DoseLog[]>([]);
+  // Selected calendar day for schedule inspection (default today)
+  const todayDateStr = toLocalDateString(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(todayDateStr);
 
-  // Selected medication modal
+  const [medications, setMedications] = useState<MedicationRecord[]>(() =>
+    medicationStore.getMedications()
+  );
+  const [allDoses, setAllDoses] = useState<DoseLog[]>(() => medicationStore.getAllDoses());
+
+  // Selected medication detail modal
   const [selectedMedicationId, setSelectedMedicationId] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -61,14 +67,12 @@ export default function MedicationsScreen() {
     setModalVisible(true);
   }, []);
 
-  // Open modal if directed by notification route parameter
   useEffect(() => {
     if (openMedicationId) {
       openMedicationModal(openMedicationId);
     }
   }, [openMedicationId, openMedicationModal]);
 
-  // Also listen for real-time notification taps while app is open
   useEffect(() => {
     const unsub = onNotificationResponse((data) => {
       if (data.medicationId) {
@@ -78,20 +82,33 @@ export default function MedicationsScreen() {
     return unsub;
   }, [openMedicationModal]);
 
+  // Subscribe to reactive updates from medicationStore
+  useEffect(() => {
+    const unsub = medicationStore.subscribe(() => {
+      setMedications(medicationStore.getMedications());
+      setAllDoses(medicationStore.getAllDoses());
+    });
+    return unsub;
+  }, []);
+
   const loadData = useCallback(async () => {
     setError(null);
     try {
       const [allMeds, doses] = await Promise.all([
-        medicationService.listMedications(),
-        medicationService.getDoseOccurrences(),
+        medicationService.listMedications().catch(() => []),
+        medicationService.getDoseOccurrences().catch(() => []),
       ]);
 
-      setMedications(allMeds);
-      setTodayDoses(doses);
+      if (allMeds.length > 0 || doses.length > 0) {
+        await medicationStore.syncFromServer(allMeds, doses);
+      }
+
+      setMedications(medicationStore.getMedications());
+      setAllDoses(medicationStore.getAllDoses());
 
       // Synchronize device alarms with all active medications
       syncAllMedicationReminders(
-        allMeds.map((m) => ({
+        medicationStore.getMedications().map((m) => ({
           id: m.id,
           name: m.nameAsWritten,
           isActive: m.status === 'ACTIVE',
@@ -123,6 +140,7 @@ export default function MedicationsScreen() {
     loadData();
   };
 
+  // Instant Optimistic Dose Actions (Taken, Snooze, Skip)
   const handleRecordDoseAction = async (
     doseId: string,
     action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
@@ -130,26 +148,23 @@ export default function MedicationsScreen() {
   ) => {
     setActionDoseId(doseId);
     try {
-      await medicationService.recordDoseAction(doseId, {
-        action,
-        snoozeMinutes,
-      });
+      const updatedDose = await medicationStore.recordAction(doseId, action, snoozeMinutes);
+      const targetMed = medications.find((m) => m.id === updatedDose.medicationId);
+      const medName = targetMed?.nameAsWritten || 'Medication';
 
-      // If snoozed, schedule local snooze follow-up alarm/notification
-      if (action === 'SNOOZED') {
-        const dose = todayDoses.find((d) => d.id === doseId);
-        const med = medications.find((m) => m.id === dose?.medicationId);
-        if (med) {
-          scheduleSnoozeReminder(med.id, med.nameAsWritten, snoozeMinutes || 15).catch(() => {});
-        }
+      if (action === 'TAKEN') {
+        setActionNotice(`✓ ${medName} marked as taken!`);
+      } else if (action === 'SNOOZED') {
+        setActionNotice(`⏰ ${medName} snoozed for ${snoozeMinutes || 15} minutes.`);
+      } else if (action === 'SKIPPED') {
+        setActionNotice(`Skipped ${medName} for this dose.`);
       }
 
-      // Refresh dose list locally
-      setTodayDoses((prev) =>
-        prev.map((d) => (d.id === doseId ? { ...d, status: action, actionTime: new Date().toISOString() } : d))
-      );
-    } catch (err: any) {
-      Alert.alert('Action Failed', err?.message || 'Could not record dose action.');
+      setTimeout(() => {
+        setActionNotice(null);
+      }, 4000);
+    } catch {
+      Alert.alert('Action Failed', 'Could not record dose action.');
     } finally {
       setActionDoseId(null);
     }
@@ -168,24 +183,56 @@ export default function MedicationsScreen() {
     (m) => m.status === 'COMPLETED' || m.status === 'DISCONTINUED'
   ).length;
 
-  const actionableDoses = todayDoses.filter(
+  // Selected date dose list & adherence
+  const dayDoses = medicationStore.getDosesForDate(selectedDate);
+  const { percentage: adherencePct, taken: takenDosesCount, total: totalDosesCount } =
+    medicationStore.getAdherenceForDate(selectedDate);
+
+  const actionableDoses = dayDoses.filter(
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
   const nextDose = actionableDoses[0];
-  const nextMed = nextDose ? medications.find((m) => m.id === nextDose.medicationId) : null;
+  const nextMed = nextDose
+    ? medications.find((m) => m.id === nextDose.medicationId) ||
+      medicationStore.getMedicationById(nextDose.medicationId)
+    : null;
   const nextDoseDate = nextDose ? new Date(nextDose.scheduledTime) : null;
   const nextTimeStr = nextDoseDate
     ? nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
 
-  const totalDosesToday = todayDoses.length;
-  const takenDosesToday = todayDoses.filter((d) => d.status === 'TAKEN').length;
-  const adherenceTodayPct = totalDosesToday > 0 ? Math.round((takenDosesToday / totalDosesToday) * 100) : 100;
+  // Weekly Adherence calculation for Monday - Sunday
+  const today = new Date();
+  const currentDayOfWeek = today.getDay();
+  const distanceToMonday = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + distanceToMonday);
 
-  // Weekly adherence mock days (Monday = 0)
-  const todayDayOfWeek = (new Date().getDay() + 6) % 7;
   const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-  const weekAdherence = [85, 100, 90, 75, 100, 95, adherenceTodayPct];
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const dateString = toLocalDateString(d);
+    const { percentage } = medicationStore.getAdherenceForDate(dateString);
+    const isToday = dateString === todayDateStr;
+    const isSelected = dateString === selectedDate;
+    return {
+      dayLabel: daysOfWeek[i],
+      dateNumber: d.getDate(),
+      dateString,
+      percentage,
+      isToday,
+      isSelected,
+    };
+  });
+
+  const isSelectedToday = selectedDate === todayDateStr;
+  const selectedDateObj = new Date(selectedDate + 'T00:00:00');
+  const formattedSelectedDate = selectedDateObj.toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
 
   return (
     <ScreenLayout>
@@ -211,6 +258,13 @@ export default function MedicationsScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Action feedback toast */}
+        {actionNotice && (
+          <View style={styles.actionNoticeBanner}>
+            <Text style={styles.actionNoticeText}>{actionNotice}</Text>
+          </View>
+        )}
+
         {loading ? (
           <View style={styles.centerBox}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -230,13 +284,15 @@ export default function MedicationsScreen() {
           </Card>
         ) : (
           <>
-            {/* 1. HERO CARD: Next Reminder (Matching Landing Page Hero Mockup) */}
+            {/* 1. HERO CARD: Next Reminder (Interactive Taken, Snooze, Skip) */}
             {nextDose && nextMed ? (
               <View style={styles.heroReminderCard}>
                 <View style={styles.heroTopRow}>
                   <View style={styles.heroBadge}>
                     <Text style={styles.heroBadgeIcon}>⏰</Text>
-                    <Text style={styles.heroBadgeText}>NEXT REMINDER</Text>
+                    <Text style={styles.heroBadgeText}>
+                      {isSelectedToday ? 'NEXT REMINDER' : 'SCHEDULED DOSE'}
+                    </Text>
                   </View>
                   <View style={styles.heroTimeChip}>
                     <Text style={styles.heroTimeChipText}>{nextTimeStr}</Text>
@@ -251,7 +307,7 @@ export default function MedicationsScreen() {
                 {nextDose.status === 'SNOOZED' && (
                   <View style={styles.heroSnoozeBanner}>
                     <Text style={styles.heroSnoozeText}>
-                      ⏰ Snoozed — 15m follow-up alarm active on device
+                      ⏰ Snoozed — 15m follow-up active
                     </Text>
                   </View>
                 )}
@@ -261,6 +317,7 @@ export default function MedicationsScreen() {
                     style={[styles.heroBtn, styles.heroBtnSkip]}
                     onPress={() => handleRecordDoseAction(nextDose.id, 'SKIPPED')}
                     disabled={actionDoseId === nextDose.id}
+                    activeOpacity={0.75}
                   >
                     <Text style={styles.heroBtnSkipText}>Skip</Text>
                   </TouchableOpacity>
@@ -269,6 +326,7 @@ export default function MedicationsScreen() {
                     style={[styles.heroBtn, styles.heroBtnSnooze]}
                     onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
                     disabled={actionDoseId === nextDose.id}
+                    activeOpacity={0.75}
                   >
                     <Text style={styles.heroBtnSnoozeText}>
                       {nextDose.status === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
@@ -279,49 +337,61 @@ export default function MedicationsScreen() {
                     style={[styles.heroBtn, styles.heroBtnTaken]}
                     onPress={() => handleRecordDoseAction(nextDose.id, 'TAKEN')}
                     disabled={actionDoseId === nextDose.id}
+                    activeOpacity={0.75}
                   >
                     <Text style={styles.heroBtnTakenText}>Taken ✓</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-            ) : totalDosesToday > 0 && actionableDoses.length === 0 ? (
+            ) : totalDosesCount > 0 && actionableDoses.length === 0 ? (
               <View style={styles.allCaughtUpCard}>
                 <View style={styles.allCaughtUpHeader}>
                   <Text style={styles.allCaughtUpIcon}>🎉</Text>
                   <View style={{ flex: 1, marginLeft: spacing.sm }}>
-                    <Text style={styles.allCaughtUpTitle}>All Doses Logged Today!</Text>
+                    <Text style={styles.allCaughtUpTitle}>All Doses Logged!</Text>
                     <Text style={styles.allCaughtUpSub}>
-                      {takenDosesToday} of {totalDosesToday} doses recorded on time. Great consistency!
+                      {takenDosesCount} of {totalDosesCount} doses recorded for {formattedSelectedDate}.
+                      Great consistency!
                     </Text>
                   </View>
                 </View>
               </View>
             ) : null}
 
-            {/* 2. WEEKLY ADHERENCE BAR CHART (Matching Landing Page Mockup) */}
+            {/* 2. WEEKLY ADHERENCE BAR CHART (Interactive Tappable Day Selector) */}
             <View style={styles.adherenceCard}>
               <View style={styles.adherenceHeaderRow}>
                 <View>
                   <Text style={styles.adherenceTitle}>Weekly Adherence</Text>
-                  <Text style={styles.adherenceSubtitle}>Daily intake completion rate</Text>
+                  <Text style={styles.adherenceSubtitle}>
+                    Tap any day bar to view its medication schedule
+                  </Text>
                 </View>
                 <View style={styles.adherenceRateBadge}>
-                  <Text style={styles.adherenceRateText}>{adherenceTodayPct}% Today</Text>
+                  <Text style={styles.adherenceRateText}>{adherencePct}%</Text>
                 </View>
               </View>
 
               <View style={styles.adherenceBarsRow}>
-                {weekAdherence.map((pct, idx) => {
-                  const isToday = idx === todayDayOfWeek;
+                {weekDays.map((item, idx) => {
                   return (
-                    <View key={idx} style={styles.adherenceCol}>
+                    <TouchableOpacity
+                      key={idx}
+                      style={[styles.adherenceCol, item.isSelected && styles.adherenceColSelected]}
+                      onPress={() => setSelectedDate(item.dateString)}
+                      activeOpacity={0.7}
+                    >
                       <View style={styles.adherenceTrack}>
                         <View
                           style={[
                             styles.adherenceFill,
                             {
-                              height: `${Math.max(15, pct * 0.45)}%`,
-                              backgroundColor: isToday ? colors.amberGold : colors.teal,
+                              height: `${Math.max(15, item.percentage * 0.45)}%`,
+                              backgroundColor: item.isSelected
+                                ? colors.accentCoral
+                                : item.percentage >= 100
+                                ? colors.accentMint
+                                : colors.surfaceSecondary,
                             },
                           ]}
                         />
@@ -329,31 +399,45 @@ export default function MedicationsScreen() {
                       <Text
                         style={[
                           styles.adherenceDayLabel,
-                          isToday && styles.adherenceDayLabelToday,
+                          item.isSelected && styles.adherenceDayLabelSelected,
+                          item.isToday && styles.adherenceDayLabelToday,
                         ]}
                       >
-                        {daysOfWeek[idx]}
+                        {item.dayLabel}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                   );
                 })}
               </View>
             </View>
 
-            {/* 3. TODAY'S SCHEDULE */}
+            {/* 3. TODAY'S SCHEDULE LIST (Filtered by selected day) */}
             <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>Today's Schedule ⏱️</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={styles.sectionTitle}>
+                  {isSelectedToday ? "Today's Schedule ⏱️" : `Schedule for ${formattedSelectedDate} ⏱️`}
+                </Text>
+                {!isSelectedToday && (
+                  <TouchableOpacity
+                    style={styles.resetTodayBtn}
+                    onPress={() => setSelectedDate(todayDateStr)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.resetTodayBtnText}>Reset to Today</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
               <Text style={styles.sectionSub}>
                 {actionableDoses.length === 0
-                  ? 'All doses taken for today ✓'
-                  : `${actionableDoses.length} reminder(s) pending today`}
+                  ? 'All doses recorded for this day ✓'
+                  : `${actionableDoses.length} reminder(s) pending`}
               </Text>
             </View>
 
-            {todayDoses.length === 0 ? (
+            {dayDoses.length === 0 ? (
               <Card variant="muted" style={styles.emptyDoseCard}>
                 <Text style={[typography.bodyMuted, { textAlign: 'center', marginBottom: spacing.sm }]}>
-                  No doses scheduled for today. Add a medicine or supplement to activate reminders.
+                  No doses scheduled for {formattedSelectedDate}. Add a medicine to activate reminders.
                 </Text>
                 <Button
                   title="+ Add Routine / Medicine"
@@ -362,14 +446,16 @@ export default function MedicationsScreen() {
                 />
               </Card>
             ) : (
-              todayDoses.map((dose) => {
+              dayDoses.map((dose) => {
                 const med = medications.find((m) => m.id === dose.medicationId);
                 const doseDate = new Date(dose.scheduledTime);
-                const timeStr = doseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const timeStr = doseDate.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
                 const isTaken = dose.status === 'TAKEN';
                 const isSkipped = dose.status === 'SKIPPED';
                 const isSnoozed = dose.status === 'SNOOZED';
-                const isPending = dose.status === 'PENDING';
                 const isBusy = actionDoseId === dose.id;
 
                 return (
@@ -427,6 +513,7 @@ export default function MedicationsScreen() {
                             style={styles.quickTakeBtn}
                             onPress={() => handleRecordDoseAction(dose.id, 'TAKEN')}
                             disabled={isBusy}
+                            activeOpacity={0.75}
                           >
                             <Text style={styles.quickTakeBtnText}>Taken ✓</Text>
                           </TouchableOpacity>
@@ -434,6 +521,7 @@ export default function MedicationsScreen() {
                             style={styles.quickSkipBtn}
                             onPress={() => handleRecordDoseAction(dose.id, 'SKIPPED')}
                             disabled={isBusy}
+                            activeOpacity={0.75}
                           >
                             <Text style={styles.quickSkipBtnText}>Skip</Text>
                           </TouchableOpacity>
@@ -519,7 +607,13 @@ export default function MedicationsScreen() {
                     ? 'No Pending Prescriptions'
                     : 'No Historical Regimens'}
                 </Text>
-                <Text style={[typography.bodyMuted, styles.emptyDescription, { marginBottom: spacing.md }]}>
+                <Text
+                  style={[
+                    typography.bodyMuted,
+                    styles.emptyDescription,
+                    { marginBottom: spacing.md },
+                  ]}
+                >
                   {activeTab === 'active'
                     ? 'You have no active medications running reminders. Add a medication manually or upload a prescription to get started.'
                     : activeTab === 'inactive'
@@ -653,14 +747,28 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
   },
   addMedHeaderBtnText: {
     color: colors.textInverse,
     fontSize: 13,
     fontWeight: '800',
+  },
+  actionNoticeBanner: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#86EFAC',
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  actionNoticeText: {
+    ...typography.caption,
+    color: '#15803D',
+    fontWeight: '700',
   },
   centerBox: {
     alignItems: 'center',
@@ -672,7 +780,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   },
 
-  /* 1. HERO REMINDER CARD (Porcelain Canvas with Squircle Geometry) */
+  /* 1. HERO REMINDER CARD */
   heroReminderCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xl,
@@ -682,7 +790,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 6px 20px rgba(17, 20, 24, 0.04)',
+          boxShadow: '0 4px 14px rgba(15, 23, 42, 0.04)',
         } as any)
       : shadows.sm),
   },
@@ -699,6 +807,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: 'rgba(2, 132, 199, 0.15)',
   },
   heroBadgeIcon: {
     fontSize: 11,
@@ -772,7 +882,7 @@ const styles = StyleSheet.create({
   heroBtnSnooze: {
     backgroundColor: colors.accentCustardLight,
     borderWidth: 1,
-    borderColor: 'rgba(202, 138, 4, 0.25)',
+    borderColor: 'rgba(217, 119, 6, 0.25)',
   },
   heroBtnSnoozeText: {
     color: colors.accentCustard,
@@ -783,7 +893,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentCoral,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(255, 91, 34, 0.35)',
+          boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
         } as any)
       : {}),
   },
@@ -796,19 +906,17 @@ const styles = StyleSheet.create({
 
   /* All Caught Up Card */
   allCaughtUpCard: {
-    backgroundColor: colors.surfaceGlass,
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.25)',
-    borderRadius: borderRadius.xxl,
+    borderRadius: borderRadius.xl,
     padding: spacing.md,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
+          boxShadow: '0 2px 10px rgba(16, 185, 129, 0.08)',
         } as any)
-      : {}),
+      : shadows.sm),
   },
   allCaughtUpHeader: {
     flexDirection: 'row',
@@ -829,19 +937,17 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  /* 2. WEEKLY ADHERENCE CARD (Ronald Olsen Capsule Bars) */
+  /* 2. WEEKLY ADHERENCE CARD */
   adherenceCard: {
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.md + 2,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: '0 12px 32px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
       : shadows.sm),
   },
@@ -862,7 +968,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   adherenceRateBadge: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.accentMintLight,
     paddingVertical: 3,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.full,
@@ -870,7 +976,7 @@ const styles = StyleSheet.create({
   adherenceRateText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.accentMint,
   },
   adherenceBarsRow: {
     flexDirection: 'row',
@@ -882,11 +988,16 @@ const styles = StyleSheet.create({
   adherenceCol: {
     flex: 1,
     alignItems: 'center',
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+  },
+  adherenceColSelected: {
+    backgroundColor: colors.surfaceSecondary,
   },
   adherenceTrack: {
     width: 14,
     height: 48,
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSecondary,
     borderRadius: borderRadius.full,
     justifyContent: 'flex-end',
     overflow: 'hidden',
@@ -905,6 +1016,10 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontWeight: '800',
   },
+  adherenceDayLabelSelected: {
+    color: colors.accentCoral,
+    fontWeight: '800',
+  },
 
   /* 3. TODAY'S SCHEDULE LIST */
   sectionHeaderRow: {
@@ -920,25 +1035,34 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginBottom: spacing.xs,
   },
+  resetTodayBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.accentCoralLight,
+  },
+  resetTodayBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.accentCoral,
+  },
   emptyDoseCard: {
     paddingVertical: spacing.md,
     marginBottom: spacing.md,
   },
   scheduleItemCard: {
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
     padding: spacing.sm + 4,
     marginBottom: spacing.xs + 4,
     borderWidth: 1,
-    borderColor: colors.borderGlass,
+    borderColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 6px 18px rgba(14, 17, 22, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 2px 6px rgba(15, 23, 42, 0.03)',
         } as any)
       : shadows.sm),
   },
@@ -955,7 +1079,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   scheduleIconBoxActive: {
-    backgroundColor: colors.accentCyanLight,
+    backgroundColor: colors.accentCoralLight,
   },
   scheduleIconBoxTaken: {
     backgroundColor: colors.surfaceSecondary,
@@ -1026,7 +1150,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.full,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 12px rgba(255, 91, 34, 0.35)',
+          boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)',
         } as any)
       : {}),
   },
@@ -1084,7 +1208,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 2px 8px rgba(17, 20, 24, 0.15)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.15)',
         } as any)
       : shadows.sm),
   },
@@ -1124,7 +1248,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 4px 14px rgba(17, 20, 24, 0.03)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
         } as any)
       : shadows.sm),
   },
@@ -1175,7 +1299,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   reminderChip: {
-    backgroundColor: colors.accentCyanLight,
+    backgroundColor: colors.accentCoralLight,
     paddingVertical: 2,
     paddingHorizontal: 8,
     borderRadius: borderRadius.full,
@@ -1183,7 +1307,7 @@ const styles = StyleSheet.create({
   reminderChipText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.accentCyan,
+    color: colors.accentCoral,
   },
   activateNoticeRow: {
     marginTop: spacing.xs,
@@ -1194,7 +1318,7 @@ const styles = StyleSheet.create({
   },
   activateNoticeText: {
     fontSize: 12,
-    color: colors.accentCyan,
+    color: colors.accentCoral,
     fontWeight: '600',
   },
 });

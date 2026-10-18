@@ -17,6 +17,8 @@ export interface HorizontalDateStripProps {
   onSelectDate?: (dateString: string) => void;
 }
 
+import { toLocalDateString } from '../services/medications/medication-store';
+
 export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
   days,
   selectedDate,
@@ -41,7 +43,7 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
       d.setDate(monday.getDate() + i);
 
       const isToday = d.toDateString() === today.toDateString();
-      const dateString = d.toISOString().split('T')[0];
+      const dateString = toLocalDateString(d);
 
       let adherenceStatus: DayItem['adherenceStatus'] = 'none';
       if (d < today) {
@@ -107,20 +109,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: colors.surfaceGlass,
-    borderRadius: borderRadius.xxl,
-    paddingVertical: spacing.sm + 4,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xl,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.sm,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.75)',
-    borderTopColor: '#FFFFFF',
-    borderTopWidth: 1.5,
+    borderColor: colors.border,
     marginBottom: spacing.md,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 10px 28px rgba(14, 17, 22, 0.05)',
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
         } as any)
       : shadows.sm),
   },
@@ -130,18 +128,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: spacing.sm,
     paddingHorizontal: 2,
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius.lg,
     marginHorizontal: 2,
   },
   dayCardSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accentCoral,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: colors.accentCoralDark,
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 8px 20px rgba(14, 17, 22, 0.3)',
+          boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)',
         } as any)
-      : shadows.md),
+      : shadows.sm),
   },
   dayLabel: {
     fontSize: 11,
@@ -151,44 +149,34 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   dayLabelSelected: {
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: 'rgba(255, 255, 255, 0.85)',
   },
   dateNumber: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '800',
     color: colors.textPrimary,
     marginBottom: 6,
-    letterSpacing: -0.3,
+    letterSpacing: -0.2,
   },
   dateNumberSelected: {
     color: colors.textInverse,
   },
   dot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(15, 23, 42, 0.12)',
   },
   dotComplete: {
     backgroundColor: colors.accentMint,
-    ...(Platform.OS === 'web'
-      ? ({
-          boxShadow: '0 0 8px rgba(16, 185, 129, 0.7)',
-        } as any)
-      : {}),
   },
   dotPartial: {
-    backgroundColor: colors.accentCoral,
-    ...(Platform.OS === 'web'
-      ? ({
-          boxShadow: '0 0 8px rgba(255, 91, 34, 0.7)',
-        } as any)
-      : {}),
+    backgroundColor: colors.accentCustard,
   },
   dotSelected: {
-    backgroundColor: colors.accentCoral,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    backgroundColor: '#FFFFFF',
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
   },
 });
