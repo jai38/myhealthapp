@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -67,6 +67,7 @@ jobs:
       - name: Export Static Web Bundle
         env:
           EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
+          EXPO_BASE_URL: /myhealthapp
         run: npx expo export -p web
 
       - name: Setup Pages
@@ -124,13 +125,25 @@ jobs:
           EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
         run: npx expo prebuild --platform android --clean --no-install
 
-      - name: Build Android APK with Gradle
+      - name: Build Standalone Android Release APK with Gradle
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: myhealthapp-preview-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: android/app/build/outputs/apk/release/*.apk
           retention-days: 14
+
+      - name: Update GitHub Release with Standalone APK
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APK_PATH=$(ls android/app/build/outputs/apk/release/*.apk | head -n 1)
+          if [ -f "$APK_PATH" ]; then
+            echo "Publishing release APK $APK_PATH to v0.1.0-preview..."
+            gh release upload v0.1.0-preview "$APK_PATH" --clobber --repo ${{ github.repository }} || \
+            gh release create v0.1.0-preview "$APK_PATH" --title "MyHealth Android Preview" --notes "Standalone Android Release APK with embedded offline JavaScript, calm clinical sapphire theme, and functional dose tracking." --prerelease --repo ${{ github.repository }}
+          fi

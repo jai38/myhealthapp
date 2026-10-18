@@ -44,9 +44,6 @@
         }
       ]
     ],
-    "experiments": {
-      "baseUrl": "/myhealthapp"
-    },
     "extra": {
       "router": {
         "origin": false
