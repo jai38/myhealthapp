@@ -24,6 +24,8 @@
       },
       "package": "com.myhealthapp.patient",
       "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM",
         "POST_NOTIFICATIONS",

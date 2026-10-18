@@ -87,6 +87,8 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    env:
+      EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
 
     steps:
       - name: Checkout Code
@@ -127,6 +129,8 @@ jobs:
 
       - name: Build Standalone Android Release APK with Gradle
         working-directory: android
+        env:
+          EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload Android APK Artifact

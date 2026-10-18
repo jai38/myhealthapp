@@ -128,7 +128,7 @@ class AuthService {
   }
 
   private getBaseUrl(): string {
-    return process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
+    return process.env.EXPO_PUBLIC_API_URL || 'https://myhealthapp-backend.onrender.com/api/v1';
   }
 
   async login(email: string, password: string): Promise<UserSession> {
