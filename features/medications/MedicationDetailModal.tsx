@@ -708,7 +708,11 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
                             onPress={() => handleDoseAction(dl.id, 'TAKEN')}
                             disabled={isBusy}
                           >
-                            <Text style={styles.takeBtnText}>Taken</Text>
+                            <Text style={styles.takeBtnText}>
+                              {new Date(dl.scheduledTime).getTime() > Date.now() + 30 * 60 * 1000
+                                ? 'Take Early'
+                                : 'Taken'}
+                            </Text>
                           </TouchableOpacity>
 
                           <TouchableOpacity
@@ -719,15 +723,18 @@ export const MedicationDetailModal: React.FC<MedicationDetailModalProps> = ({
                             <Text style={styles.skipBtnText}>Skip</Text>
                           </TouchableOpacity>
 
-                          <TouchableOpacity
-                            style={[styles.actionBtn, styles.snoozeBtn]}
-                            onPress={() => handleDoseAction(dl.id, 'SNOOZED', 15)}
-                            disabled={isBusy}
-                          >
-                            <Text style={styles.snoozeBtnText}>
-                              {dl.status === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
-                            </Text>
-                          </TouchableOpacity>
+                          {(new Date(dl.scheduledTime).getTime() <= Date.now() + 30 * 60 * 1000 ||
+                            dl.status === 'SNOOZED') && (
+                            <TouchableOpacity
+                              style={[styles.actionBtn, styles.snoozeBtn]}
+                              onPress={() => handleDoseAction(dl.id, 'SNOOZED', 15)}
+                              disabled={isBusy}
+                            >
+                              <Text style={styles.snoozeBtnText}>
+                                {dl.status === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                              </Text>
+                            </TouchableOpacity>
+                          )}
                         </View>
                       )}
                     </View>

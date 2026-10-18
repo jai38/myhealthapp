@@ -1,9 +1,15 @@
 import React from 'react';
-import { Text, Platform } from 'react-native';
+import { Text, Platform, useWindowDimensions } from 'react-native';
 import { Tabs } from 'expo-router';
 import { colors, typography } from '../../theme/index';
 
 export default function TabLayout() {
+  const { width } = useWindowDimensions();
+  // Centered floating tab bar on wide screens/tablets while keeping clean margins on mobile
+  const maxBarWidth = 560;
+  const barWidth = Math.min(width - 32, maxBarWidth);
+  const horizontalMargin = Math.max((width - barWidth) / 2, 16);
+
   return (
     <Tabs
       screenOptions={{
@@ -25,10 +31,8 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           bottom: Platform.OS === 'web' ? 14 : 16,
-          left: 14,
-          right: 14,
-          marginHorizontal: 'auto',
-          maxWidth: 580,
+          left: horizontalMargin,
+          right: horizontalMargin,
           borderRadius: 28,
           backgroundColor: Platform.OS === 'web' ? 'rgba(255, 255, 255, 0.92)' : '#FFFFFF',
           borderWidth: 1,

@@ -132,14 +132,6 @@ export function generateWeekDoses(meds: MedicationRecord[]): DoseLog[] {
         if (isPast) {
           status = 'TAKEN';
           actionTime = `${dateStr}T${String(hh).padStart(2, '0')}:${String(mm + 5).padStart(2, '0')}:00`;
-        } else if (isToday) {
-          // Metformin at 8:00 is taken, others pending
-          if (hh <= 9) {
-            status = 'TAKEN';
-            actionTime = `${dateStr}T08:05:00`;
-          } else {
-            status = 'PENDING';
-          }
         } else {
           status = 'PENDING';
         }
@@ -243,15 +235,17 @@ class MedicationStore {
   }
 
   getDosesForDate(dateString: string): DoseLog[] {
-    return this.doses.filter((d) => {
-      if (d.scheduledTime.startsWith(dateString)) return true;
-      try {
-        const local = toLocalDateString(new Date(d.scheduledTime));
-        return local === dateString;
-      } catch {
-        return false;
-      }
-    });
+    return this.doses
+      .filter((d) => {
+        if (d.scheduledTime.startsWith(dateString)) return true;
+        try {
+          const local = toLocalDateString(new Date(d.scheduledTime));
+          return local === dateString;
+        } catch {
+          return false;
+        }
+      })
+      .sort((a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime());
   }
 
   getTodayDoses(): DoseLog[] {

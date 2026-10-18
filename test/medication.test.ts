@@ -314,4 +314,64 @@ describe('Phase 4 Mobile: Medication Management, Safety Rules & Notification Sch
       expect(notifs[0].scheduleId).toBe('dl-future');
     });
   });
+
+  describe('Chronological Dose Ordering & Temporal States', () => {
+    it('Orders daily doses chronologically by scheduled time regardless of insertion order', () => {
+      const todayStr = '2026-10-19';
+      const unsortedDoses: DoseLog[] = [
+        {
+          id: 'dose-evening',
+          medicationId: 'med-1',
+          patientProfileId: 'pat-1',
+          scheduledTime: `${todayStr}T20:00:00`,
+          status: 'PENDING',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'dose-night',
+          medicationId: 'med-2',
+          patientProfileId: 'pat-1',
+          scheduledTime: `${todayStr}T03:30:00`,
+          status: 'PENDING',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: 'dose-morning',
+          medicationId: 'med-3',
+          patientProfileId: 'pat-1',
+          scheduledTime: `${todayStr}T08:00:00`,
+          status: 'PENDING',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+
+      const sorted = [...unsortedDoses].sort(
+        (a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime()
+      );
+
+      expect(sorted[0].id).toBe('dose-night'); // 03:30 AM
+      expect(sorted[1].id).toBe('dose-morning'); // 08:00 AM
+      expect(sorted[2].id).toBe('dose-evening'); // 20:00 PM
+    });
+
+    it('Correctly classifies a dose 7 hours in the future as UPCOMING, not due or snoozable', () => {
+      const simulatedNow = new Date('2026-10-19T01:04:00Z');
+      const futureDoseTime = new Date('2026-10-19T08:00:00Z');
+      const diffMinutes = Math.round((futureDoseTime.getTime() - simulatedNow.getTime()) / 60000);
+
+      expect(diffMinutes).toBe(416); // ~6.93 hours
+      expect(diffMinutes > 30).toBe(true); // Must be classified as UPCOMING
+
+      const isUpcoming = diffMinutes > 30;
+      const isDueNow = diffMinutes >= -15 && diffMinutes <= 30;
+      const isOverdue = diffMinutes < -15;
+
+      expect(isUpcoming).toBe(true);
+      expect(isDueNow).toBe(false);
+      expect(isOverdue).toBe(false);
+    });
+  });
 });

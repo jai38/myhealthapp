@@ -36,6 +36,7 @@ import {
   TimelineEvent,
   formatMedicalEventDate,
 } from '../../services/timeline/timeline-service';
+import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -107,6 +108,22 @@ export default function HomeScreen() {
     });
     return unsubscribe;
   }, [loadDashboardData]);
+
+  // Automatically sync local system notification alarms whenever active medications change
+  useEffect(() => {
+    const activeMeds = (medications.length > 0 ? medications : medicationStore.getMedications())
+      .filter((m) => m.status === 'ACTIVE')
+      .map((m) => ({
+        id: m.id,
+        name: m.nameAsWritten,
+        isActive: true,
+        reminderTimes: m.reminderTimes || [],
+        instructions: m.prescribedInstructions || undefined,
+      }));
+    if (activeMeds.length > 0) {
+      syncAllMedicationReminders(activeMeds).catch(() => {});
+    }
+  }, [medications]);
 
   const handleFileSelected = async (file: PickedFile) => {
     setIsProcessing(true);
@@ -192,6 +209,15 @@ export default function HomeScreen() {
     }
   };
 
+  // Calendar date context
+  const selectedDateObj = new Date(selectedDate + 'T00:00:00');
+  const formattedSelectedDate = selectedDateObj.toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+  const isSelectedDateToday = selectedDate === todayDateStr;
+
   // Doses and adherence for the selected calendar date
   const dayDoses = medicationStore.getDosesForDate(selectedDate);
   const { percentage: adherencePct, taken: takenDosesCount, total: totalDosesCount } =
@@ -200,7 +226,59 @@ export default function HomeScreen() {
   const actionableDoses = dayDoses.filter(
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
-  const nextDose = actionableDoses[0];
+
+  const now = new Date();
+  const nowMs = now.getTime();
+
+  let spotlightDose: DoseLog | null = null;
+  let doseTemporalState: 'OVERDUE' | 'DUE_NOW' | 'SNOOZED' | 'UPCOMING' = 'UPCOMING';
+  let diffMinutes = 0;
+
+  if (actionableDoses.length > 0) {
+    if (isSelectedDateToday) {
+      // 1. Prioritize active snoozed doses
+      const snoozed = actionableDoses.find((d) => d.status === 'SNOOZED');
+      // 2. Prioritize overdue doses (more than 15 mins past scheduled time)
+      const overdue = actionableDoses.find((d) => {
+        const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
+        return diff < -15;
+      });
+      // 3. Due now doses (within window of -15 to +30 mins)
+      const dueNow = actionableDoses.find((d) => {
+        const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
+        return diff >= -15 && diff <= 30;
+      });
+      // 4. Earliest upcoming dose in the future
+      const upcoming = actionableDoses.find((d) => {
+        const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
+        return diff > 30;
+      });
+
+      if (snoozed) {
+        spotlightDose = snoozed;
+        doseTemporalState = 'SNOOZED';
+        diffMinutes = Math.round((new Date(snoozed.scheduledTime).getTime() - nowMs) / 60000);
+      } else if (overdue) {
+        spotlightDose = overdue;
+        doseTemporalState = 'OVERDUE';
+        diffMinutes = Math.round((new Date(overdue.scheduledTime).getTime() - nowMs) / 60000);
+      } else if (dueNow) {
+        spotlightDose = dueNow;
+        doseTemporalState = 'DUE_NOW';
+        diffMinutes = Math.round((new Date(dueNow.scheduledTime).getTime() - nowMs) / 60000);
+      } else {
+        spotlightDose = upcoming || actionableDoses[0];
+        doseTemporalState = 'UPCOMING';
+        diffMinutes = Math.round((new Date(spotlightDose.scheduledTime).getTime() - nowMs) / 60000);
+      }
+    } else {
+      spotlightDose = actionableDoses[0];
+      doseTemporalState = 'UPCOMING';
+      diffMinutes = Math.round((new Date(spotlightDose.scheduledTime).getTime() - nowMs) / 60000);
+    }
+  }
+
+  const nextDose = spotlightDose;
   const nextMed = nextDose
     ? medications.find((m) => m.id === nextDose.medicationId) ||
       medicationStore.getMedicationById(nextDose.medicationId)
@@ -210,16 +288,23 @@ export default function HomeScreen() {
     ? nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
 
+  const formatTimeDifference = (mins: number) => {
+    if (mins < 0) {
+      const absMins = Math.abs(mins);
+      if (absMins < 60) return `${absMins}m overdue`;
+      const hrs = Math.floor(absMins / 60);
+      const rem = absMins % 60;
+      return rem > 0 ? `${hrs}h ${rem}m overdue` : `${hrs}h overdue`;
+    } else {
+      if (mins < 60) return `in ${mins}m`;
+      const hrs = Math.floor(mins / 60);
+      const rem = mins % 60;
+      return rem > 0 ? `in ${hrs}h ${rem}m` : `in ${hrs}h`;
+    }
+  };
+
   const allCurrentMeds = medications.length > 0 ? medications : medicationStore.getMedications();
   const activeMedsCount = allCurrentMeds.filter((m) => m.status === 'ACTIVE').length;
-
-  const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-  const formattedSelectedDate = selectedDateObj.toLocaleDateString('en-US', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  });
-  const isSelectedDateToday = selectedDate === todayDateStr;
 
   if (activeReviewData) {
     return (
@@ -347,19 +432,28 @@ export default function HomeScreen() {
         label={isSelectedDateToday ? 'Medication Adherence' : `${formattedSelectedDate} Adherence`}
       />
 
-      {/* 5. 1-TAP UPCOMING DOSE CARD (Interactive Taken / Snooze / Skip) */}
+      {/* 5. 1-TAP UPCOMING / DUE DOSE CARD */}
       {nextDose && nextMed ? (
         <View style={styles.heroDoseCard}>
           <View style={styles.heroDoseHeader}>
             <View style={styles.heroBadgeRow}>
-              <View style={styles.heroDoseBadge}>
-                <Text style={styles.heroDoseBadgeText}>
-                  {isSelectedDateToday ? 'UPCOMING DOSE ⏰' : 'SCHEDULED DOSE ⏰'}
-                </Text>
-              </View>
-              {nextDose.status === 'SNOOZED' && (
-                <View style={styles.heroSnoozedBadge}>
-                  <Text style={styles.heroSnoozedText}>⏰ SNOOZED (15m)</Text>
+              {doseTemporalState === 'OVERDUE' ? (
+                <View style={[styles.heroDoseBadge, styles.badgeOverdue]}>
+                  <Text style={styles.badgeOverdueText}>⚠️ OVERDUE DOSE</Text>
+                </View>
+              ) : doseTemporalState === 'DUE_NOW' ? (
+                <View style={[styles.heroDoseBadge, styles.badgeDueNow]}>
+                  <Text style={styles.badgeDueNowText}>🔔 DUE NOW</Text>
+                </View>
+              ) : doseTemporalState === 'SNOOZED' ? (
+                <View style={[styles.heroDoseBadge, styles.badgeSnoozed]}>
+                  <Text style={styles.badgeSnoozedText}>⏰ SNOOZED (15m)</Text>
+                </View>
+              ) : (
+                <View style={styles.heroDoseBadge}>
+                  <Text style={styles.heroDoseBadgeText}>
+                    {isSelectedDateToday ? 'UPCOMING DOSE ⏱️' : 'SCHEDULED DOSE ⏱️'}
+                  </Text>
                 </View>
               )}
             </View>
@@ -370,8 +464,14 @@ export default function HomeScreen() {
 
           <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
           <Text style={styles.heroMedMeta}>
-            {nextMed.strength ? `${nextMed.strength} • ` : ''}Scheduled at {nextTimeStr} • Daily
-            Regimen
+            {nextMed.strength ? `${nextMed.strength} • ` : ''}
+            {doseTemporalState === 'OVERDUE'
+              ? `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Action needed`
+              : doseTemporalState === 'DUE_NOW'
+              ? `Scheduled at ${nextTimeStr} • Time for your dose`
+              : doseTemporalState === 'SNOOZED'
+              ? `Scheduled at ${nextTimeStr} • Snooze active`
+              : `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Daily Regimen`}
           </Text>
 
           {nextMed.prescribedInstructions ? (
@@ -379,6 +479,15 @@ export default function HomeScreen() {
               <Text style={styles.instructionsText}>💡 {nextMed.prescribedInstructions}</Text>
             </View>
           ) : null}
+
+          {/* When upcoming in the future, display a clear note that alarm is scheduled */}
+          {doseTemporalState === 'UPCOMING' && (
+            <View style={styles.upcomingNoticeBox}>
+              <Text style={styles.upcomingNoticeText}>
+                🔔 Reminder notification is scheduled for {nextTimeStr}. You can record early or wait until due.
+              </Text>
+            </View>
+          )}
 
           {/* Quick 1-Tap Action Row */}
           <View style={styles.heroActionsRow}>
@@ -391,14 +500,19 @@ export default function HomeScreen() {
               <Text style={styles.heroActionSkipText}>Skip</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.heroActionBtn, styles.heroActionSnooze]}
-              onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
-              disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.heroActionSnoozeText}>Snooze 15m</Text>
-            </TouchableOpacity>
+            {/* SNOOZE IS ONLY SHOWN WHEN A DOSE IS CURRENTLY DUE, OVERDUE, OR SNOOZED */}
+            {doseTemporalState !== 'UPCOMING' && (
+              <TouchableOpacity
+                style={[styles.heroActionBtn, styles.heroActionSnooze]}
+                onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
+                disabled={actionDoseId === nextDose.id}
+                activeOpacity={0.75}
+              >
+                <Text style={styles.heroActionSnoozeText}>
+                  {doseTemporalState === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={[styles.heroActionBtn, styles.heroActionTaken]}
@@ -406,7 +520,9 @@ export default function HomeScreen() {
               disabled={actionDoseId === nextDose.id}
               activeOpacity={0.75}
             >
-              <Text style={styles.heroActionTakenText}>Taken ✓</Text>
+              <Text style={styles.heroActionTakenText}>
+                {doseTemporalState === 'UPCOMING' ? 'Take Early ✓' : 'Taken ✓'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -510,7 +626,11 @@ export default function HomeScreen() {
                       disabled={actionDoseId === dose.id}
                       activeOpacity={0.8}
                     >
-                      <Text style={styles.scheduleTakeBtnText}>Take ✓</Text>
+                      <Text style={styles.scheduleTakeBtnText}>
+                        {new Date(dose.scheduledTime).getTime() > Date.now() + 30 * 60 * 1000
+                          ? 'Take Early'
+                          : 'Take ✓'}
+                      </Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -979,6 +1099,51 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.accentCoral,
     letterSpacing: 0.5,
+  },
+  badgeOverdue: {
+    backgroundColor: '#FEF2F2',
+    borderColor: '#FCA5A5',
+  },
+  badgeOverdueText: {
+    color: '#DC2626',
+    fontWeight: '800',
+    fontSize: 11,
+    letterSpacing: 0.5,
+  },
+  badgeDueNow: {
+    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
+  },
+  badgeDueNowText: {
+    color: '#2563EB',
+    fontWeight: '800',
+    fontSize: 11,
+    letterSpacing: 0.5,
+  },
+  badgeSnoozed: {
+    backgroundColor: '#FFFBEB',
+    borderColor: '#FDE68A',
+  },
+  badgeSnoozedText: {
+    color: '#D97706',
+    fontWeight: '800',
+    fontSize: 11,
+    letterSpacing: 0.5,
+  },
+  upcomingNoticeBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs + 2,
+    marginBottom: spacing.md,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  upcomingNoticeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
+    lineHeight: 16,
   },
   heroSnoozedBadge: {
     backgroundColor: colors.accentCustardLight,
