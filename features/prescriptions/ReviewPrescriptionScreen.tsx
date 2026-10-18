@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
+  TextInput,
 } from 'react-native';
 import { colors, spacing, typography, borderRadius } from '../../theme/index';
 import { Button } from '../../components/Button';
@@ -14,6 +15,7 @@ import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Badge } from '../../components/Badge';
 import { DocumentPreview } from '../../components/DocumentPreview';
+import { formatTime12Hour, getTimePeriodIcon } from '../medications/reminder-time-utils';
 
 export interface EditableMedicine {
   id: string;
@@ -137,13 +139,31 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
     return rawMeds.map((m: any, idx: number) => {
       let defaultTimes = ['08:00'];
       const freq = (m?.frequency_text || '').toLowerCase();
-      if (freq.includes('bd') || freq.includes('twice') || freq.includes('2x') || freq.includes('1-0-1')) {
+      let normalizedFrequency = m?.frequency_text || '1x Daily';
+
+      if (freq.includes('as needed') || freq.includes('prn') || freq.includes('sos') || freq.includes('needed')) {
+        defaultTimes = [];
+        normalizedFrequency = 'As Needed';
+      } else if (freq.includes('bd') || freq.includes('twice') || freq.includes('2x') || freq.includes('1-0-1')) {
         defaultTimes = ['08:00', '20:00'];
+        normalizedFrequency = '2x Daily';
       } else if (freq.includes('tds') || freq.includes('thrice') || freq.includes('3x') || freq.includes('1-1-1')) {
         defaultTimes = ['08:00', '13:00', '20:00'];
+        normalizedFrequency = '3x Daily';
       } else if (freq.includes('qid') || freq.includes('4x')) {
         defaultTimes = ['08:00', '12:00', '16:00', '20:00'];
+        normalizedFrequency = '4x Daily';
+      } else if (freq.includes('od') || freq.includes('once') || freq.includes('1x')) {
+        defaultTimes = ['08:00'];
+        normalizedFrequency = '1x Daily';
       }
+
+      const isAsNeeded = normalizedFrequency === 'As Needed';
+      const initialReminderTimes = isAsNeeded
+        ? []
+        : Array.isArray(m?.reminder_times) && m.reminder_times.length > 0
+        ? m.reminder_times
+        : defaultTimes;
 
       return {
         id: m?.id || `med-${idx + 1}`,
@@ -151,14 +171,14 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
         normalized_medicine_name: m?.normalized_medicine_name || '',
         strength: m?.strength || '',
         dosage_form: m?.dosage_form || 'TABLET',
-        frequency_text: m?.frequency_text || '1x Daily',
+        frequency_text: normalizedFrequency,
         duration_text: m?.duration_text || '7 Days',
         route: m?.route || 'ORAL',
         instructions: m?.instructions || '',
         confidence: m?.confidence || 'HIGH',
         is_active_medication: Boolean(m?.is_active_medication),
-        times_per_day: defaultTimes.length,
-        reminder_times: Array.isArray(m?.reminder_times) && m.reminder_times.length > 0 ? m.reminder_times : defaultTimes,
+        times_per_day: initialReminderTimes.length,
+        reminder_times: initialReminderTimes,
         total_count: m?.total_count || '',
       };
     });
@@ -225,19 +245,33 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
         doctor_name: doctorName.trim() || undefined,
         clinic_hospital_name: clinicName.trim() || undefined,
         documented_diagnosis: diagnosis.trim() || undefined,
-        medicines: medicines.map((m) => ({
-          name_as_written: m.name_as_written.trim(),
-          normalized_medicine_name: m.normalized_medicine_name?.trim() || undefined,
-          strength: m.strength?.trim() || undefined,
-          dosage_form: m.dosage_form,
-          frequency_text: m.frequency_text?.trim() || undefined,
-          duration_text: m.duration_text?.trim() || undefined,
-          route: m.route,
-          instructions: m.instructions?.trim() || undefined,
-          is_active_medication: m.is_active_medication,
-          reminder_times: m.reminder_times || (m.is_active_medication ? ['08:00'] : undefined),
-          total_count: m.total_count?.trim() || undefined,
-        })),
+        medicines: medicines.map((m) => {
+          const isAsNeeded =
+            m.frequency_text === 'As Needed' ||
+            m.frequency_text?.toLowerCase().includes('needed') ||
+            m.frequency_text?.toLowerCase().includes('prn') ||
+            m.frequency_text?.toLowerCase().includes('sos');
+
+          return {
+            name_as_written: m.name_as_written.trim(),
+            normalized_medicine_name: m.normalized_medicine_name?.trim() || undefined,
+            strength: m.strength?.trim() || undefined,
+            dosage_form: m.dosage_form,
+            frequency_text: m.frequency_text?.trim() || undefined,
+            duration_text: m.duration_text?.trim() || undefined,
+            route: m.route,
+            instructions: m.instructions?.trim() || undefined,
+            is_active_medication: m.is_active_medication,
+            reminder_times: isAsNeeded
+              ? []
+              : m.reminder_times && m.reminder_times.length > 0
+              ? m.reminder_times
+              : m.is_active_medication
+              ? ['08:00']
+              : undefined,
+            total_count: m.total_count?.trim() || undefined,
+          };
+        }),
       };
 
       await onConfirm(payload);
@@ -355,12 +389,17 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
       </View>
 
       {medicines.map((med, index) => {
+        const isAsNeeded =
+          med.frequency_text === 'As Needed' ||
+          med.frequency_text?.toLowerCase().includes('needed') ||
+          med.frequency_text?.toLowerCase().includes('prn') ||
+          med.frequency_text?.toLowerCase().includes('sos');
+
         const isMissingRequired =
           med.is_active_medication &&
           (!med.name_as_written.trim() ||
             !med.duration_text?.trim() ||
-            !med.reminder_times ||
-            med.reminder_times.length === 0);
+            (!isAsNeeded && (!med.reminder_times || med.reminder_times.length === 0)));
 
         return (
           <Card
@@ -382,6 +421,8 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
               {med.is_active_medication ? (
                 isMissingRequired ? (
                   <Badge label="⚠️ Incomplete" variant="warning" />
+                ) : isAsNeeded ? (
+                  <Badge label="✓ Active (As Needed)" variant="success" />
                 ) : (
                   <Badge label="✓ Active Regimen" variant="success" />
                 )
@@ -395,7 +436,9 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
               <View style={styles.requiredWarningBox}>
                 <Text style={styles.requiredWarningTitle}>⚠️ Action Required for Reminders:</Text>
                 <Text style={styles.requiredWarningText}>
-                  Please choose a course duration and at least 1 reminder time so daily dose alarms can be scheduled.
+                  {isAsNeeded
+                    ? 'Please specify medicine name and course duration.'
+                    : 'Please choose a course duration and at least 1 reminder time so daily dose alarms can be scheduled.'}
                 </Text>
               </View>
             )}
@@ -526,21 +569,26 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
                 </Text>
                 <View style={styles.chipRow}>
                   {FREQUENCY_PRESETS.map((preset) => {
-                    const isSelected =
-                      med.frequency_text === preset.label ||
-                      (preset.times.length > 0 &&
-                        med.reminder_times?.length === preset.times.length);
+                    const isSelected = med.frequency_text === preset.label;
                     return (
                       <TouchableOpacity
                         key={preset.label}
                         style={[styles.presetChip, isSelected && styles.presetChipSelected]}
-                        onPress={() =>
-                          handleUpdateMedicine(med.id, {
-                            frequency_text: preset.label,
-                            times_per_day: preset.times.length,
-                            reminder_times: preset.times.length > 0 ? preset.times : med.reminder_times,
-                          })
-                        }
+                        onPress={() => {
+                          if (preset.label === 'As Needed') {
+                            handleUpdateMedicine(med.id, {
+                              frequency_text: 'As Needed',
+                              times_per_day: 0,
+                              reminder_times: [],
+                            });
+                          } else {
+                            handleUpdateMedicine(med.id, {
+                              frequency_text: preset.label,
+                              times_per_day: preset.times.length,
+                              reminder_times: [...preset.times],
+                            });
+                          }
+                        }}
                         activeOpacity={0.7}
                       >
                         <Text
@@ -556,85 +604,150 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
                   })}
                 </View>
 
-                {/* 3. SCHEDULED REMINDER TIMES */}
-                <Text style={styles.controlSectionLabel}>
-                  Scheduled Reminder Times <Text style={styles.requiredStar}>*</Text>
-                </Text>
-                <View style={styles.timesContainer}>
-                  {(med.reminder_times && med.reminder_times.length > 0
-                    ? med.reminder_times
-                    : ['08:00']
-                  ).map((timeStr, timeIdx) => (
-                    <View key={timeIdx} style={styles.timeChipRow}>
-                      <View style={styles.timeChipBadge}>
-                        <Text style={styles.timeChipText}>⏰ Dose {timeIdx + 1}: {timeStr}</Text>
-                      </View>
-
-                      <View style={styles.timeQuickPicker}>
-                        {['08:00', '13:00', '20:00', '22:00'].map((presetTime) => (
-                          <TouchableOpacity
-                            key={presetTime}
-                            style={[
-                              styles.miniTimeBtn,
-                              timeStr === presetTime && styles.miniTimeBtnActive,
-                            ]}
-                            onPress={() => {
-                              const newTimes = [...(med.reminder_times || ['08:00'])];
-                              newTimes[timeIdx] = presetTime;
-                              handleUpdateMedicine(med.id, { reminder_times: newTimes });
-                            }}
-                          >
-                            <Text
-                              style={[
-                                styles.miniTimeBtnText,
-                                timeStr === presetTime && styles.miniTimeBtnTextActive,
-                              ]}
-                            >
-                              {presetTime}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
+                {/* 3. SCHEDULED REMINDER TIMES (OR AS-NEEDED NOTICE) */}
+                {isAsNeeded ? (
+                  <View style={styles.asNeededCard}>
+                    <View style={styles.asNeededHeaderRow}>
+                      <Text style={styles.asNeededIcon}>ℹ️</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.asNeededTitle}>As-Needed (SOS) Medication</Text>
+                        <Text style={styles.asNeededText}>
+                          This medicine is taken only when symptoms occur (e.g. fever, headache, pain). No fixed daily reminder alarms will be scheduled. You can log doses on-demand from your dashboard whenever you take it.
+                        </Text>
                       </View>
                     </View>
-                  ))}
-
-                  <View style={styles.timeActionsRow}>
-                    <TouchableOpacity
-                      style={styles.addTimeBtn}
-                      onPress={() => {
-                        const current = med.reminder_times || [];
-                        const defaultNext =
-                          current.length === 1 ? '20:00' : current.length === 2 ? '13:00' : '22:00';
-                        handleUpdateMedicine(med.id, {
-                          reminder_times: [...current, defaultNext],
-                        });
-                      }}
-                    >
-                      <Text style={styles.addTimeBtnText}>+ Add Reminder Time</Text>
-                    </TouchableOpacity>
-
-                    {med.reminder_times && med.reminder_times.length > 1 && (
-                      <TouchableOpacity
-                        style={styles.removeTimeBtn}
-                        onPress={() => {
-                          const current = [...(med.reminder_times || [])];
-                          current.pop();
-                          handleUpdateMedicine(med.id, { reminder_times: current });
-                        }}
-                      >
-                        <Text style={styles.removeTimeBtnText}>- Remove Last</Text>
-                      </TouchableOpacity>
-                    )}
                   </View>
-                </View>
+                ) : (
+                  <>
+                    <Text style={styles.controlSectionLabel}>
+                      Scheduled Reminder Times <Text style={styles.requiredStar}>*</Text>
+                    </Text>
+                    <Text style={styles.controlSectionSub}>
+                      Tap quick preset buttons or type any custom time (HH:MM) for each daily dose.
+                    </Text>
 
-                {/* 4. TOTAL MEDICINE COUNT */}
-                <Input
-                  label="Total Quantity / Pill Count (e.g. 10 Tablets, 1 Bottle)"
-                  value={med.total_count || ''}
-                  onChangeText={(val) => handleUpdateMedicine(med.id, { total_count: val })}
-                  placeholder="e.g. 10 tablets, 30 capsules"
-                />
+                    <View style={styles.timesContainer}>
+                      {(med.reminder_times && med.reminder_times.length > 0
+                        ? med.reminder_times
+                        : ['08:00']
+                      ).map((timeStr, timeIdx) => (
+                        <View key={timeIdx} style={styles.timeCardItem}>
+                          <View style={styles.timeCardHeader}>
+                            <View style={styles.timeDoseBadge}>
+                              <Text style={styles.timeDoseText}>
+                                {getTimePeriodIcon(timeStr)} Dose {timeIdx + 1}:
+                              </Text>
+                              <Text style={styles.timeDoseValue}>
+                                {formatTime12Hour(timeStr)}
+                              </Text>
+                            </View>
+
+                            {med.reminder_times && med.reminder_times.length > 1 && (
+                              <TouchableOpacity
+                                style={styles.removeDoseBtn}
+                                onPress={() => {
+                                  const updated = (med.reminder_times || []).filter((_, i) => i !== timeIdx);
+                                  handleUpdateMedicine(med.id, {
+                                    reminder_times: updated,
+                                    times_per_day: updated.length,
+                                  });
+                                }}
+                              >
+                                <Text style={styles.removeDoseBtnText}>✕ Remove</Text>
+                              </TouchableOpacity>
+                            )}
+                          </View>
+
+                          {/* Quick Presets */}
+                          <View style={styles.timeQuickPicker}>
+                            {[
+                              { label: '08:00 Morning', time: '08:00' },
+                              { label: '13:00 Noon', time: '13:00' },
+                              { label: '18:00 Evening', time: '18:00' },
+                              { label: '21:00 Bedtime', time: '21:00' },
+                            ].map((preset) => (
+                              <TouchableOpacity
+                                key={preset.time}
+                                style={[
+                                  styles.miniTimeBtn,
+                                  timeStr === preset.time && styles.miniTimeBtnActive,
+                                ]}
+                                onPress={() => {
+                                  const newTimes = [...(med.reminder_times || ['08:00'])];
+                                  newTimes[timeIdx] = preset.time;
+                                  handleUpdateMedicine(med.id, { reminder_times: newTimes });
+                                }}
+                              >
+                                <Text
+                                  style={[
+                                    styles.miniTimeBtnText,
+                                    timeStr === preset.time && styles.miniTimeBtnTextActive,
+                                  ]}
+                                >
+                                  {preset.label}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+
+                          {/* Custom Time Input */}
+                          <View style={styles.customTimeRow}>
+                            <Text style={styles.customTimeLabel}>Custom Time (HH:MM):</Text>
+                            <View style={styles.customTimeInputBox}>
+                              <TextInput
+                                style={styles.customTimeInput}
+                                value={timeStr}
+                                placeholder="08:00"
+                                placeholderTextColor={colors.textMuted}
+                                maxLength={5}
+                                autoCapitalize="none"
+                                onChangeText={(val) => {
+                                  const newTimes = [...(med.reminder_times || ['08:00'])];
+                                  newTimes[timeIdx] = val;
+                                  handleUpdateMedicine(med.id, { reminder_times: newTimes });
+                                }}
+                              />
+                              <Text style={styles.customTimePreview}>
+                                = {formatTime12Hour(timeStr)}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      ))}
+
+                      <View style={styles.timeActionsRow}>
+                        <TouchableOpacity
+                          style={styles.addTimeBtn}
+                          onPress={() => {
+                            const current = med.reminder_times || [];
+                            const defaultNext =
+                              current.length === 1 ? '20:00' : current.length === 2 ? '13:00' : '22:00';
+                            const updated = [...current, defaultNext];
+                            handleUpdateMedicine(med.id, {
+                              reminder_times: updated,
+                              times_per_day: updated.length,
+                            });
+                          }}
+                        >
+                          <Text style={styles.addTimeBtnText}>+ Add Reminder Time</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </>
+                )}
+
+                {/* 4. TOTAL DISPENSED QUANTITY */}
+                <View style={styles.totalCountContainer}>
+                  <Input
+                    label="Total Dispensed Quantity (Optional - for refill tracking)"
+                    value={med.total_count || ''}
+                    onChangeText={(val) => handleUpdateMedicine(med.id, { total_count: val })}
+                    placeholder="e.g. 1 Bottle, 10 Tablets, 100ml (Optional)"
+                  />
+                  <Text style={styles.fieldHelperText}>
+                    💡 Optional: Total package size or count from the pharmacy (e.g. 1 Bottle, 10 Tablets). Used for supply and refill alerts. Leave blank if not specified.
+                  </Text>
+                </View>
               </View>
             )}
 
@@ -1078,5 +1191,127 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#B91C1C',
+  },
+
+  controlSectionSub: {
+    fontSize: 10.5,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+  asNeededCard: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    marginVertical: spacing.xs,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+  },
+  asNeededHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+  },
+  asNeededIcon: {
+    fontSize: 16,
+    marginTop: 1,
+  },
+  asNeededTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#166534',
+    marginBottom: 2,
+  },
+  asNeededText: {
+    fontSize: 11,
+    color: '#15803D',
+    lineHeight: 16,
+  },
+  timeCardItem: {
+    backgroundColor: colors.surface,
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.xs + 2,
+  },
+  timeCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.xs,
+  },
+  timeDoseBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  timeDoseText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  timeDoseValue: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: colors.primary,
+  },
+  removeDoseBtn: {
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: borderRadius.sm,
+    backgroundColor: '#FEE2E2',
+  },
+  removeDoseBtnText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#B91C1C',
+  },
+  customTimeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.xs,
+    paddingTop: spacing.xs,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderSubtle,
+  },
+  customTimeLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  customTimeInputBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  customTimeInput: {
+    width: 64,
+    height: 30,
+    backgroundColor: colors.surfaceSecondary,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.sm,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    paddingVertical: 0,
+    paddingHorizontal: 4,
+  },
+  customTimePreview: {
+    fontSize: 11,
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  totalCountContainer: {
+    marginTop: spacing.xs,
+  },
+  fieldHelperText: {
+    fontSize: 10.5,
+    color: colors.textMuted,
+    lineHeight: 15,
+    marginTop: -4,
+    marginBottom: spacing.xs,
   },
 });

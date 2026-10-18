@@ -396,6 +396,14 @@ class MedicationStore {
   }
 
   /**
+   * Directly logs an on-demand dose (e.g. for As-Needed / SOS medicines).
+   */
+  async addDoseLog(dose: DoseLog): Promise<void> {
+    this.doses = [dose, ...this.doses.filter((d) => d.id !== dose.id)];
+    await this.persist();
+  }
+
+  /**
    * Clears the current user's local storage completely.
    */
   async clearUserStorage(): Promise<void> {

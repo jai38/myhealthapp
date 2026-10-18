@@ -176,6 +176,19 @@ export default function HomeScreen() {
     if (Array.isArray(reviewPayload.medicines)) {
       for (const m of reviewPayload.medicines) {
         if (m.is_active_medication) {
+          const isAsNeeded =
+            m.frequency_text?.toLowerCase().includes('as needed') ||
+            m.frequency_text?.toLowerCase().includes('sos') ||
+            m.instructions?.toLowerCase().includes('as needed') ||
+            m.instructions?.toLowerCase().includes('sos') ||
+            (Array.isArray(m.reminder_times) && m.reminder_times.length === 0 && m.times_per_day === 0);
+
+          const reminderTimes = isAsNeeded
+            ? []
+            : Array.isArray(m.reminder_times) && m.reminder_times.length > 0
+            ? m.reminder_times
+            : ['08:00'];
+
           const newMed: MedicationRecord = {
             id: `med-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
             patientProfileId: session?.patientProfileId || 'patient-local',
@@ -184,13 +197,13 @@ export default function HomeScreen() {
             strength: m.strength || '',
             dosageForm: m.dosage_form || 'TABLET',
             route: m.route || 'ORAL',
-            prescribedInstructions: m.instructions || m.frequency_text || 'Take as prescribed',
+            prescribedInstructions:
+              m.instructions ||
+              m.frequency_text ||
+              (isAsNeeded ? 'Take as needed (SOS)' : 'Take as prescribed'),
             status: 'ACTIVE',
             startDate: reviewPayload.prescription_date || new Date().toISOString(),
-            reminderTimes:
-              Array.isArray(m.reminder_times) && m.reminder_times.length > 0
-                ? m.reminder_times
-                : ['08:00'],
+            reminderTimes,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
@@ -201,10 +214,36 @@ export default function HomeScreen() {
 
     const activeCount = reviewPayload.medicines?.filter((m: any) => m.is_active_medication)?.length || 0;
     setConfirmationNotice(
-      `Prescription confirmed! ${activeCount} active medication(s) added to your daily schedule.`
+      `Prescription confirmed! ${activeCount} active medication(s) added to your regimen.`
     );
     setActiveReviewData(null);
     loadDashboardData();
+  };
+
+  // On-demand logging for As-Needed (PRN / SOS) medications
+  const handleRecordAsNeededDose = async (med: MedicationRecord) => {
+    try {
+      const now = new Date();
+      const doseId = `prn-${med.id}-${Date.now()}`;
+      const newDose: DoseLog = {
+        id: doseId,
+        medicationId: med.id,
+        patientProfileId: med.patientProfileId,
+        scheduledTime: now.toISOString(),
+        status: 'TAKEN',
+        actionTime: now.toISOString(),
+        createdAt: now.toISOString(),
+        updatedAt: now.toISOString(),
+      };
+      await medicationStore.addDoseLog(newDose);
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setActionNotice(`✓ Logged dose of ${med.nameAsWritten} taken at ${timeStr}`);
+      setTimeout(() => {
+        setActionNotice(null);
+      }, 4000);
+    } catch {
+      Alert.alert('Action Failed', 'Could not record as-needed dose.');
+    }
   };
 
   // Instant Optimistic Dose Actions (Taken, Snooze 15m, Skip)
@@ -336,6 +375,14 @@ export default function HomeScreen() {
   const allCurrentMeds = medications.length > 0 ? medications : medicationStore.getMedications();
   const activeMedsCount = allCurrentMeds.filter((m) => m.status === 'ACTIVE').length;
   const hasActiveMedications = activeMedsCount > 0;
+
+  const asNeededMeds = allCurrentMeds.filter(
+    (m) =>
+      m.status === 'ACTIVE' &&
+      ((!m.reminderTimes || m.reminderTimes.length === 0) ||
+        m.prescribedInstructions?.toLowerCase().includes('as needed') ||
+        m.prescribedInstructions?.toLowerCase().includes('sos'))
+  );
 
   if (activeReviewData) {
     return (
@@ -747,6 +794,54 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                       )}
                     </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
+          {/* 5c. AS-NEEDED MEDICINES (SOS / ON-DEMAND) */}
+          {asNeededMeds.length > 0 && (
+            <View style={styles.asNeededSectionContainer}>
+              <View style={styles.asNeededHeaderRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.asNeededSectionTitle}>As-Needed Medicines (SOS)</Text>
+                  <Text style={styles.asNeededSectionSub}>
+                    Taken on-demand when symptoms arise. No fixed daily alarm.
+                  </Text>
+                </View>
+                <View style={styles.asNeededHeaderBadge}>
+                  <Text style={styles.asNeededHeaderBadgeText}>PRN / SOS</Text>
+                </View>
+              </View>
+
+              {asNeededMeds.map((med) => {
+                const todayDosesForMed = dayDoses.filter(
+                  (d) => d.medicationId === med.id && d.status === 'TAKEN'
+                );
+                return (
+                  <View key={med.id} style={styles.asNeededCard}>
+                    <View style={styles.asNeededInfo}>
+                      <Text style={styles.asNeededMedName}>{med.nameAsWritten}</Text>
+                      <Text style={styles.asNeededMedSub}>
+                        {med.strength ? `${med.strength} • ` : ''}
+                        {med.dosageForm ? `${med.dosageForm} • ` : ''}
+                        {med.prescribedInstructions || 'Take as needed when symptoms occur'}
+                      </Text>
+                      {todayDosesForMed.length > 0 && (
+                        <Text style={styles.asNeededTakenNotice}>
+                          ✓ {todayDosesForMed.length} dose{todayDosesForMed.length > 1 ? 's' : ''} recorded today
+                        </Text>
+                      )}
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.asNeededLogBtn}
+                      onPress={() => handleRecordAsNeededDose(med)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.asNeededLogBtnText}>+ Log Dose</Text>
+                    </TouchableOpacity>
                   </View>
                 );
               })}
@@ -1892,5 +1987,94 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     lineHeight: 18,
+  },
+
+  // As-Needed Medicines (SOS)
+  asNeededSectionContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...(Platform.OS === 'web'
+      ? ({ boxShadow: '0 4px 16px rgba(15, 76, 129, 0.06)' } as any)
+      : shadows.sm),
+  },
+  asNeededHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
+  asNeededSectionTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  asNeededSectionSub: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  asNeededHeaderBadge: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  asNeededHeaderBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#1D4ED8',
+    letterSpacing: 0.5,
+  },
+  asNeededCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    marginTop: spacing.xs,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  asNeededInfo: {
+    flex: 1,
+    marginRight: spacing.sm,
+  },
+  asNeededMedName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  asNeededMedSub: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  asNeededTakenNotice: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#059669',
+    marginTop: 4,
+  },
+  asNeededLogBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  asNeededLogBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
   },
 });
