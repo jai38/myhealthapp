@@ -16,7 +16,6 @@ import { Badge } from '../../components/Badge';
 import { colors, spacing, typography, borderRadius, shadows } from '../../theme/index';
 import { HorizontalDateStrip } from '../../components/HorizontalDateStrip';
 import { AdherenceDonut } from '../../components/AdherenceDonut';
-import { AiOmnibar } from '../../components/AiOmnibar';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
 import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPrescriptionScreen';
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
@@ -119,10 +118,9 @@ export default function HomeScreen() {
         isActive: true,
         reminderTimes: m.reminderTimes || [],
         instructions: m.prescribedInstructions || undefined,
+        endDate: m.endDate || null,
       }));
-    if (activeMeds.length > 0) {
-      syncAllMedicationReminders(activeMeds).catch(() => {});
-    }
+    syncAllMedicationReminders(activeMeds).catch(() => {});
   }, [medications]);
 
   const handleFileSelected = async (file: PickedFile) => {
@@ -168,11 +166,42 @@ export default function HomeScreen() {
   const handleConfirmPrescription = async (reviewPayload: any) => {
     if (!activeReviewData) return;
 
-    await uploadService.confirmPrescription(activeReviewData.jobId, reviewPayload);
+    try {
+      await uploadService.confirmPrescription(activeReviewData.jobId, reviewPayload);
+    } catch {
+      // Safe offline fallback
+    }
 
-    const medCount = reviewPayload.medicines?.length || 0;
+    // Immediately schedule any medicines marked as ACTIVE by the patient into local store
+    if (Array.isArray(reviewPayload.medicines)) {
+      for (const m of reviewPayload.medicines) {
+        if (m.is_active_medication) {
+          const newMed: MedicationRecord = {
+            id: `med-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            patientProfileId: session?.patientProfileId || 'patient-local',
+            nameAsWritten: m.name_as_written,
+            normalizedMedicineName: m.normalized_medicine_name || m.name_as_written,
+            strength: m.strength || '',
+            dosageForm: m.dosage_form || 'TABLET',
+            route: m.route || 'ORAL',
+            prescribedInstructions: m.instructions || m.frequency_text || 'Take as prescribed',
+            status: 'ACTIVE',
+            startDate: reviewPayload.prescription_date || new Date().toISOString(),
+            reminderTimes:
+              Array.isArray(m.reminder_times) && m.reminder_times.length > 0
+                ? m.reminder_times
+                : ['08:00'],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          await medicationStore.addMedication(newMed);
+        }
+      }
+    }
+
+    const activeCount = reviewPayload.medicines?.filter((m: any) => m.is_active_medication)?.length || 0;
     setConfirmationNotice(
-      `Prescription confirmed successfully! ${medCount} medication(s) saved to verified timeline.`
+      `Prescription confirmed! ${activeCount} active medication(s) added to your daily schedule.`
     );
     setActiveReviewData(null);
     loadDashboardData();
@@ -236,25 +265,30 @@ export default function HomeScreen() {
 
   if (actionableDoses.length > 0) {
     if (isSelectedDateToday) {
-      // 1. Prioritize active snoozed doses
+      // Prioritization for Today:
+      // 1. Due Now: Scheduled time has arrived, within past 15 mins (diff <= 0 && diff >= -15)
+      const dueNow = actionableDoses.find((d) => {
+        const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
+        return diff <= 0 && diff >= -15;
+      });
+      // 2. Active snoozed doses
       const snoozed = actionableDoses.find((d) => d.status === 'SNOOZED');
-      // 2. Prioritize overdue doses (more than 15 mins past scheduled time)
+      // 3. Overdue doses: Scheduled time is more than 15 mins in the past (diff < -15)
       const overdue = actionableDoses.find((d) => {
         const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
         return diff < -15;
       });
-      // 3. Due now doses (within window of -15 to +30 mins)
-      const dueNow = actionableDoses.find((d) => {
-        const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
-        return diff >= -15 && diff <= 30;
-      });
-      // 4. Earliest upcoming dose in the future
+      // 4. Earliest upcoming dose in the future (diff > 0)
       const upcoming = actionableDoses.find((d) => {
         const diff = Math.round((new Date(d.scheduledTime).getTime() - nowMs) / 60000);
-        return diff > 30;
+        return diff > 0;
       });
 
-      if (snoozed) {
+      if (dueNow) {
+        spotlightDose = dueNow;
+        doseTemporalState = 'DUE_NOW';
+        diffMinutes = Math.round((new Date(dueNow.scheduledTime).getTime() - nowMs) / 60000);
+      } else if (snoozed) {
         spotlightDose = snoozed;
         doseTemporalState = 'SNOOZED';
         diffMinutes = Math.round((new Date(snoozed.scheduledTime).getTime() - nowMs) / 60000);
@@ -262,10 +296,6 @@ export default function HomeScreen() {
         spotlightDose = overdue;
         doseTemporalState = 'OVERDUE';
         diffMinutes = Math.round((new Date(overdue.scheduledTime).getTime() - nowMs) / 60000);
-      } else if (dueNow) {
-        spotlightDose = dueNow;
-        doseTemporalState = 'DUE_NOW';
-        diffMinutes = Math.round((new Date(dueNow.scheduledTime).getTime() - nowMs) / 60000);
       } else {
         spotlightDose = upcoming || actionableDoses[0];
         doseTemporalState = 'UPCOMING';
@@ -305,6 +335,7 @@ export default function HomeScreen() {
 
   const allCurrentMeds = medications.length > 0 ? medications : medicationStore.getMedications();
   const activeMedsCount = allCurrentMeds.filter((m) => m.status === 'ACTIVE').length;
+  const hasActiveMedications = activeMedsCount > 0;
 
   if (activeReviewData) {
     return (
@@ -390,254 +421,338 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {/* 2. INTERACTIVE WEEKDAY CALENDAR STRIP */}
-      <View style={styles.calendarContainer}>
-        <HorizontalDateStrip
-          selectedDate={selectedDate}
-          onSelectDate={(newDate) => {
-            setSelectedDate(newDate);
-          }}
-        />
-
-        {/* Selected Date Context & Reset to Today Button */}
-        <View style={styles.dateContextRow}>
-          <Text style={styles.dateContextText}>
-            {isSelectedDateToday
-              ? "Showing Today's Prescribed Schedule"
-              : `Showing Schedule for ${formattedSelectedDate}`}
-          </Text>
-          {!isSelectedDateToday && (
-            <TouchableOpacity
-              style={styles.jumpTodayBtn}
-              onPress={() => setSelectedDate(todayDateStr)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.jumpTodayBtnText}>Jump to Today ›</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* 3. PRESCRIPTION SCANNER & OMNIBAR */}
-      <AiOmnibar
-        onScanPress={() => setIsPickerVisible(true)}
-        onSubmitPrompt={() => router.push('/(tabs)/medications')}
-      />
-
-      {/* 4. HERO ADHERENCE DONUT (Calm medical teal/blue) */}
-      <AdherenceDonut
-        percentage={adherencePct}
-        takenCount={takenDosesCount}
-        totalCount={totalDosesCount}
-        label={isSelectedDateToday ? 'Medication Adherence' : `${formattedSelectedDate} Adherence`}
-      />
-
-      {/* 5. 1-TAP UPCOMING / DUE DOSE CARD */}
-      {nextDose && nextMed ? (
-        <View style={styles.heroDoseCard}>
-          <View style={styles.heroDoseHeader}>
-            <View style={styles.heroBadgeRow}>
-              {doseTemporalState === 'OVERDUE' ? (
-                <View style={[styles.heroDoseBadge, styles.badgeOverdue]}>
-                  <Text style={styles.badgeOverdueText}>⚠️ OVERDUE DOSE</Text>
-                </View>
-              ) : doseTemporalState === 'DUE_NOW' ? (
-                <View style={[styles.heroDoseBadge, styles.badgeDueNow]}>
-                  <Text style={styles.badgeDueNowText}>🔔 DUE NOW</Text>
-                </View>
-              ) : doseTemporalState === 'SNOOZED' ? (
-                <View style={[styles.heroDoseBadge, styles.badgeSnoozed]}>
-                  <Text style={styles.badgeSnoozedText}>⏰ SNOOZED (15m)</Text>
-                </View>
-              ) : (
-                <View style={styles.heroDoseBadge}>
-                  <Text style={styles.heroDoseBadgeText}>
-                    {isSelectedDateToday ? 'UPCOMING DOSE ⏱️' : 'SCHEDULED DOSE ⏱️'}
-                  </Text>
-                </View>
-              )}
-            </View>
-            <View style={styles.heroTimeChip}>
-              <Text style={styles.heroTimeChipText}>{nextTimeStr}</Text>
-            </View>
+      {!hasActiveMedications ? (
+        /* NEW USER ONBOARDING HERO: Upload Prescription */
+        <View style={styles.newPatientOnboardingHero}>
+          <View style={styles.onboardingIconCircle}>
+            <Text style={styles.onboardingHeroEmoji}>📸</Text>
           </View>
-
-          <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
-          <Text style={styles.heroMedMeta}>
-            {nextMed.strength ? `${nextMed.strength} • ` : ''}
-            {doseTemporalState === 'OVERDUE'
-              ? `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Action needed`
-              : doseTemporalState === 'DUE_NOW'
-              ? `Scheduled at ${nextTimeStr} • Time for your dose`
-              : doseTemporalState === 'SNOOZED'
-              ? `Scheduled at ${nextTimeStr} • Snooze active`
-              : `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Daily Regimen`}
+          <Text style={styles.onboardingHeroTitle}>Upload Your Prescription</Text>
+          <Text style={styles.onboardingHeroSubtitle}>
+            Snap a photo or upload an image of your prescription slip. MyHealth extracts your medicines, dosages, and sets up your personalized reminder schedule.
           </Text>
 
-          {nextMed.prescribedInstructions ? (
-            <View style={styles.instructionsBox}>
-              <Text style={styles.instructionsText}>💡 {nextMed.prescribedInstructions}</Text>
-            </View>
-          ) : null}
+          <TouchableOpacity
+            style={styles.onboardingPrimaryBtn}
+            onPress={() => setIsPickerVisible(true)}
+            activeOpacity={0.8}
+            disabled={isProcessing}
+          >
+            <Text style={styles.onboardingPrimaryBtnText}>📸 Scan / Upload Prescription</Text>
+          </TouchableOpacity>
 
-          {/* When upcoming in the future, display a clear note that alarm is scheduled */}
-          {doseTemporalState === 'UPCOMING' && (
-            <View style={styles.upcomingNoticeBox}>
-              <Text style={styles.upcomingNoticeText}>
-                🔔 Reminder notification is scheduled for {nextTimeStr}. You can record early or wait until due.
+          <TouchableOpacity
+            style={styles.onboardingSecondaryBtn}
+            onPress={() => setIsManualAddVisible(true)}
+            activeOpacity={0.8}
+            disabled={isProcessing}
+          >
+            <Text style={styles.onboardingSecondaryBtnText}>+ Add Medication Manually</Text>
+          </TouchableOpacity>
+
+          {/* 3-Step Simple Patient Guide */}
+          <View style={styles.onboardingStepsCard}>
+            <Text style={styles.onboardingStepsTitle}>How MyHealth Works:</Text>
+            <View style={styles.onboardingStepItem}>
+              <View style={styles.onboardingStepNumBadge}>
+                <Text style={styles.onboardingStepNum}>1</Text>
+              </View>
+              <Text style={styles.onboardingStepText}>
+                <Text style={{ fontWeight: '700', color: colors.textPrimary }}>Upload Prescription: </Text>
+                Camera or file upload of any doctor's prescription slip.
               </Text>
             </View>
-          )}
-
-          {/* Quick 1-Tap Action Row */}
-          <View style={styles.heroActionsRow}>
-            <TouchableOpacity
-              style={[styles.heroActionBtn, styles.heroActionSkip]}
-              onPress={() => handleRecordDoseAction(nextDose.id, 'SKIPPED')}
-              disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.heroActionSkipText}>Skip</Text>
-            </TouchableOpacity>
-
-            {/* SNOOZE IS ONLY SHOWN WHEN A DOSE IS CURRENTLY DUE, OVERDUE, OR SNOOZED */}
-            {doseTemporalState !== 'UPCOMING' && (
-              <TouchableOpacity
-                style={[styles.heroActionBtn, styles.heroActionSnooze]}
-                onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
-                disabled={actionDoseId === nextDose.id}
-                activeOpacity={0.75}
-              >
-                <Text style={styles.heroActionSnoozeText}>
-                  {doseTemporalState === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            <TouchableOpacity
-              style={[styles.heroActionBtn, styles.heroActionTaken]}
-              onPress={() => handleRecordDoseAction(nextDose.id, 'TAKEN')}
-              disabled={actionDoseId === nextDose.id}
-              activeOpacity={0.75}
-            >
-              <Text style={styles.heroActionTakenText}>
-                {doseTemporalState === 'UPCOMING' ? 'Take Early ✓' : 'Taken ✓'}
+            <View style={styles.onboardingStepItem}>
+              <View style={styles.onboardingStepNumBadge}>
+                <Text style={styles.onboardingStepNum}>2</Text>
+              </View>
+              <Text style={styles.onboardingStepText}>
+                <Text style={{ fontWeight: '700', color: colors.textPrimary }}>Review & Confirm: </Text>
+                Pick your course duration (e.g. 5 days, 1 month) and exact reminder times.
               </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : totalDosesCount > 0 && actionableDoses.length === 0 ? (
-        <View style={styles.streakCelebrationCard}>
-          <View style={styles.streakRow}>
-            <Text style={styles.streakIcon}>🎯</Text>
-            <View style={{ flex: 1, marginLeft: spacing.sm }}>
-              <Text style={styles.streakTitle}>All Doses Completed! ✓</Text>
-              <Text style={styles.streakSub}>
-                {takenDosesCount} of {totalDosesCount} medications recorded for {formattedSelectedDate}.
-                Great consistency maintaining your schedule.
+            </View>
+            <View style={styles.onboardingStepItem}>
+              <View style={styles.onboardingStepNumBadge}>
+                <Text style={styles.onboardingStepNum}>3</Text>
+              </View>
+              <Text style={styles.onboardingStepText}>
+                <Text style={{ fontWeight: '700', color: colors.textPrimary }}>Daily Tracker & Alarms: </Text>
+                Receive 15-minute advance alerts, and 1-tap track every dose from your dashboard.
               </Text>
             </View>
           </View>
         </View>
       ) : (
-        <Card variant="muted" style={styles.emptyDayCard}>
-          <Text style={styles.emptyDayText}>
-            No doses scheduled for {formattedSelectedDate}.
-          </Text>
-          <TouchableOpacity
-            style={styles.addMedQuickBtn}
-            onPress={() => setIsManualAddVisible(true)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.addMedQuickBtnText}>+ Add Medication</Text>
-          </TouchableOpacity>
-        </Card>
-      )}
-
-      {/* 5b. COMPLETE DAILY MEDICATION REGIMEN LIST */}
-      {dayDoses.length > 0 && (
-        <View style={styles.dailyScheduleContainer}>
-          <View style={styles.dailyScheduleHeader}>
-            <View>
-              <Text style={styles.dailyScheduleTitle}>
-                {isSelectedDateToday ? "Today's Schedule" : `${formattedSelectedDate} Schedule`}
-              </Text>
-              <Text style={styles.dailyScheduleSub}>
-                {takenDosesCount} of {totalDosesCount} doses recorded
-              </Text>
-            </View>
+        /* RETURNING USER DASHBOARD (Active Medications Regimen) */
+        <>
+          {/* Quick Upload / Add Bar for returning users */}
+          <View style={styles.compactActionBar}>
             <TouchableOpacity
-              style={styles.manageScheduleLink}
-              onPress={() => router.push('/(tabs)/medications')}
-              activeOpacity={0.7}
+              style={styles.compactUploadBtn}
+              onPress={() => setIsPickerVisible(true)}
+              activeOpacity={0.8}
+              disabled={isProcessing}
             >
-              <Text style={styles.manageScheduleLinkText}>View All ›</Text>
+              <Text style={styles.compactUploadBtnText}>📸 Upload Prescription</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.compactAddBtn}
+              onPress={() => setIsManualAddVisible(true)}
+              activeOpacity={0.8}
+              disabled={isProcessing}
+            >
+              <Text style={styles.compactAddBtnText}>+ Add Med</Text>
             </TouchableOpacity>
           </View>
 
-          {dayDoses.map((dose) => {
-            const med =
-              medications.find((m) => m.id === dose.medicationId) ||
-              medicationStore.getMedicationById(dose.medicationId);
-            if (!med) return null;
+          {/* 2. INTERACTIVE WEEKDAY CALENDAR STRIP */}
+          <View style={styles.calendarContainer}>
+            <HorizontalDateStrip
+              selectedDate={selectedDate}
+              onSelectDate={(newDate) => {
+                setSelectedDate(newDate);
+              }}
+            />
 
-            const doseDate = new Date(dose.scheduledTime);
-            const timeStr = doseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            {/* Selected Date Context & Reset to Today Button */}
+            <View style={styles.dateContextRow}>
+              <Text style={styles.dateContextText}>
+                {isSelectedDateToday
+                  ? "Showing Today's Prescribed Schedule"
+                  : `Showing Schedule for ${formattedSelectedDate}`}
+              </Text>
+              {!isSelectedDateToday && (
+                <TouchableOpacity
+                  style={styles.jumpTodayBtn}
+                  onPress={() => setSelectedDate(todayDateStr)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.jumpTodayBtnText}>Jump to Today ›</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
 
-            return (
-              <View key={dose.id} style={styles.doseScheduleCard}>
-                <View style={styles.doseScheduleTimeBox}>
-                  <Text style={styles.doseScheduleTimeText}>{timeStr}</Text>
-                  <View
-                    style={[
-                      styles.doseScheduleDot,
-                      dose.status === 'TAKEN' && styles.doseScheduleDotTaken,
-                      dose.status === 'SNOOZED' && styles.doseScheduleDotSnoozed,
-                      dose.status === 'SKIPPED' && styles.doseScheduleDotSkipped,
-                    ]}
-                  />
-                </View>
+          {/* 4. HERO ADHERENCE DONUT (Calm medical teal/blue) */}
+          <AdherenceDonut
+            percentage={adherencePct}
+            takenCount={takenDosesCount}
+            totalCount={totalDosesCount}
+            label={isSelectedDateToday ? 'Medication Adherence' : `${formattedSelectedDate} Adherence`}
+          />
 
-                <View style={styles.doseScheduleInfo}>
-                  <Text style={styles.doseScheduleMedName}>{med.nameAsWritten}</Text>
-                  <Text style={styles.doseScheduleInstructions} numberOfLines={1}>
-                    {med.strength ? `${med.strength} • ` : ''}
-                    {med.prescribedInstructions || 'Follow prescribed routine'}
-                  </Text>
-                </View>
-
-                <View style={styles.doseScheduleActionBox}>
-                  {dose.status === 'TAKEN' ? (
-                    <View style={styles.scheduleBadgeTaken}>
-                      <Text style={styles.scheduleBadgeTakenText}>✓ Taken</Text>
+          {/* 5. 1-TAP UPCOMING / DUE DOSE CARD */}
+          {nextDose && nextMed ? (
+            <View style={styles.heroDoseCard}>
+              <View style={styles.heroDoseHeader}>
+                <View style={styles.heroBadgeRow}>
+                  {doseTemporalState === 'OVERDUE' ? (
+                    <View style={[styles.heroDoseBadge, styles.badgeOverdue]}>
+                      <Text style={styles.badgeOverdueText}>⚠️ OVERDUE DOSE</Text>
                     </View>
-                  ) : dose.status === 'SNOOZED' ? (
-                    <View style={styles.scheduleBadgeSnoozed}>
-                      <Text style={styles.scheduleBadgeSnoozedText}>⏰ Snoozed</Text>
+                  ) : doseTemporalState === 'DUE_NOW' ? (
+                    <View style={[styles.heroDoseBadge, styles.badgeDueNow]}>
+                      <Text style={styles.badgeDueNowText}>🔔 DUE NOW</Text>
                     </View>
-                  ) : dose.status === 'SKIPPED' ? (
-                    <View style={styles.scheduleBadgeSkipped}>
-                      <Text style={styles.scheduleBadgeSkippedText}>Skipped</Text>
+                  ) : doseTemporalState === 'SNOOZED' ? (
+                    <View style={[styles.heroDoseBadge, styles.badgeSnoozed]}>
+                      <Text style={styles.badgeSnoozedText}>⏰ SNOOZED (15m)</Text>
                     </View>
                   ) : (
-                    <TouchableOpacity
-                      style={styles.scheduleTakeBtn}
-                      onPress={() => handleRecordDoseAction(dose.id, 'TAKEN')}
-                      disabled={actionDoseId === dose.id}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={styles.scheduleTakeBtnText}>
-                        {new Date(dose.scheduledTime).getTime() > Date.now() + 30 * 60 * 1000
-                          ? 'Take Early'
-                          : 'Take ✓'}
+                    <View style={styles.heroDoseBadge}>
+                      <Text style={styles.heroDoseBadgeText}>
+                        {isSelectedDateToday
+                          ? diffMinutes <= 15 && diffMinutes > 0
+                            ? `UPCOMING IN ${diffMinutes}m ⏱️`
+                            : 'UPCOMING DOSE ⏱️'
+                          : 'SCHEDULED DOSE ⏱️'}
                       </Text>
-                    </TouchableOpacity>
+                    </View>
                   )}
                 </View>
+                <View style={styles.heroTimeChip}>
+                  <Text style={styles.heroTimeChipText}>{nextTimeStr}</Text>
+                </View>
               </View>
-            );
-          })}
-        </View>
+
+              <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
+              <Text style={styles.heroMedMeta}>
+                {nextMed.strength ? `${nextMed.strength} • ` : ''}
+                {doseTemporalState === 'OVERDUE'
+                  ? `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Action needed`
+                  : doseTemporalState === 'DUE_NOW'
+                  ? `Scheduled at ${nextTimeStr} • Time for your dose`
+                  : doseTemporalState === 'SNOOZED'
+                  ? `Scheduled at ${nextTimeStr} • Snooze active`
+                  : diffMinutes <= 15 && diffMinutes > 0
+                  ? `Scheduled at ${nextTimeStr} (in ${diffMinutes}m) • Alarm will sound at dose time`
+                  : `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Daily Regimen`}
+              </Text>
+
+              {nextMed.prescribedInstructions ? (
+                <View style={styles.instructionsBox}>
+                  <Text style={styles.instructionsText}>💡 {nextMed.prescribedInstructions}</Text>
+                </View>
+              ) : null}
+
+              {doseTemporalState === 'UPCOMING' && (
+                <View style={styles.upcomingNoticeBox}>
+                  <Text style={styles.upcomingNoticeText}>
+                    🔔 Reminder notification is scheduled for {nextTimeStr}. You can record early or wait until due.
+                  </Text>
+                </View>
+              )}
+
+              <View style={styles.heroActionsRow}>
+                <TouchableOpacity
+                  style={[styles.heroActionBtn, styles.heroActionSkip]}
+                  onPress={() => handleRecordDoseAction(nextDose.id, 'SKIPPED')}
+                  disabled={actionDoseId === nextDose.id}
+                  activeOpacity={0.75}
+                >
+                  <Text style={styles.heroActionSkipText}>Skip</Text>
+                </TouchableOpacity>
+
+                {doseTemporalState !== 'UPCOMING' && (
+                  <TouchableOpacity
+                    style={[styles.heroActionBtn, styles.heroActionSnooze]}
+                    onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
+                    disabled={actionDoseId === nextDose.id}
+                    activeOpacity={0.75}
+                  >
+                    <Text style={styles.heroActionSnoozeText}>
+                      {doseTemporalState === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <TouchableOpacity
+                  style={[styles.heroActionBtn, styles.heroActionTaken]}
+                  onPress={() => handleRecordDoseAction(nextDose.id, 'TAKEN')}
+                  disabled={actionDoseId === nextDose.id}
+                  activeOpacity={0.75}
+                >
+                  <Text style={styles.heroActionTakenText}>
+                    {doseTemporalState === 'UPCOMING' ? 'Take Early ✓' : 'Taken ✓'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : totalDosesCount > 0 && actionableDoses.length === 0 ? (
+            <View style={styles.streakCelebrationCard}>
+              <View style={styles.streakRow}>
+                <Text style={styles.streakIcon}>🎯</Text>
+                <View style={{ flex: 1, marginLeft: spacing.sm }}>
+                  <Text style={styles.streakTitle}>All Doses Completed! ✓</Text>
+                  <Text style={styles.streakSub}>
+                    {takenDosesCount} of {totalDosesCount} medications recorded for {formattedSelectedDate}.
+                    Great consistency maintaining your schedule.
+                  </Text>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <Card variant="muted" style={styles.emptyDayCard}>
+              <Text style={styles.emptyDayText}>
+                No doses scheduled for {formattedSelectedDate}.
+              </Text>
+              <TouchableOpacity
+                style={styles.addMedQuickBtn}
+                onPress={() => setIsManualAddVisible(true)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.addMedQuickBtnText}>+ Add Medication</Text>
+              </TouchableOpacity>
+            </Card>
+          )}
+
+          {/* 5b. COMPLETE DAILY MEDICATION REGIMEN LIST */}
+          {dayDoses.length > 0 && (
+            <View style={styles.dailyScheduleContainer}>
+              <View style={styles.dailyScheduleHeader}>
+                <View>
+                  <Text style={styles.dailyScheduleTitle}>
+                    {isSelectedDateToday ? "Today's Schedule" : `${formattedSelectedDate} Schedule`}
+                  </Text>
+                  <Text style={styles.dailyScheduleSub}>
+                    {takenDosesCount} of {totalDosesCount} doses recorded
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.manageScheduleLink}
+                  onPress={() => router.push('/(tabs)/medications')}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.manageScheduleLinkText}>View All ›</Text>
+                </TouchableOpacity>
+              </View>
+
+              {dayDoses.map((dose) => {
+                const med =
+                  medications.find((m) => m.id === dose.medicationId) ||
+                  medicationStore.getMedicationById(dose.medicationId);
+                if (!med) return null;
+
+                const doseDate = new Date(dose.scheduledTime);
+                const timeStr = doseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                return (
+                  <View key={dose.id} style={styles.doseScheduleCard}>
+                    <View style={styles.doseScheduleTimeBox}>
+                      <Text style={styles.doseScheduleTimeText}>{timeStr}</Text>
+                      <View
+                        style={[
+                          styles.doseScheduleDot,
+                          dose.status === 'TAKEN' && styles.doseScheduleDotTaken,
+                          dose.status === 'SNOOZED' && styles.doseScheduleDotSnoozed,
+                          dose.status === 'SKIPPED' && styles.doseScheduleDotSkipped,
+                        ]}
+                      />
+                    </View>
+
+                    <View style={styles.doseScheduleInfo}>
+                      <Text style={styles.doseScheduleMedName}>{med.nameAsWritten}</Text>
+                      <Text style={styles.doseScheduleInstructions} numberOfLines={1}>
+                        {med.strength ? `${med.strength} • ` : ''}
+                        {med.prescribedInstructions || 'Follow prescribed routine'}
+                      </Text>
+                    </View>
+
+                    <View style={styles.doseScheduleActionBox}>
+                      {dose.status === 'TAKEN' ? (
+                        <View style={styles.scheduleBadgeTaken}>
+                          <Text style={styles.scheduleBadgeTakenText}>✓ Taken</Text>
+                        </View>
+                      ) : dose.status === 'SNOOZED' ? (
+                        <View style={styles.scheduleBadgeSnoozed}>
+                          <Text style={styles.scheduleBadgeSnoozedText}>⏰ Snoozed</Text>
+                        </View>
+                      ) : dose.status === 'SKIPPED' ? (
+                        <View style={styles.scheduleBadgeSkipped}>
+                          <Text style={styles.scheduleBadgeSkippedText}>Skipped</Text>
+                        </View>
+                      ) : (
+                        <TouchableOpacity
+                          style={styles.scheduleTakeBtn}
+                          onPress={() => handleRecordDoseAction(dose.id, 'TAKEN')}
+                          disabled={actionDoseId === dose.id}
+                          activeOpacity={0.8}
+                        >
+                          <Text style={styles.scheduleTakeBtnText}>
+                            {new Date(dose.scheduledTime).getTime() > Date.now()
+                              ? 'Take Early'
+                              : 'Take ✓'}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </>
       )}
 
       {/* 6. THREE-TILE STATS MATRIX (Clean, cohesive clinical slate) */}
@@ -1622,5 +1737,160 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     lineHeight: 16,
     marginTop: 2,
+  },
+
+  // Compact Action Bar for Returning Users
+  compactActionBar: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  compactUploadBtn: {
+    flex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.lg,
+    ...(Platform.OS === 'web'
+      ? ({ boxShadow: '0 2px 6px rgba(15, 76, 129, 0.25)' } as any)
+      : shadows.sm),
+  },
+  compactUploadBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  compactAddBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+  },
+  compactAddBtnText: {
+    color: colors.primary,
+    fontWeight: '700',
+    fontSize: 13,
+  },
+
+  // New Patient Onboarding Hero
+  newPatientOnboardingHero: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.xl,
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    ...(Platform.OS === 'web'
+      ? ({ boxShadow: '0 8px 24px rgba(15, 76, 129, 0.08)' } as any)
+      : shadows.md),
+  },
+  onboardingIconCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#E8F1F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  onboardingHeroEmoji: {
+    fontSize: 32,
+  },
+  onboardingHeroTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
+  },
+  onboardingHeroSubtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.xs,
+  },
+  onboardingPrimaryBtn: {
+    width: '100%',
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
+    ...(Platform.OS === 'web'
+      ? ({ boxShadow: '0 4px 12px rgba(15, 76, 129, 0.3)' } as any)
+      : shadows.sm),
+  },
+  onboardingPrimaryBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  onboardingSecondaryBtn: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    paddingVertical: spacing.sm + 2,
+    borderRadius: borderRadius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    marginBottom: spacing.lg,
+  },
+  onboardingSecondaryBtnText: {
+    color: colors.textSecondary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  onboardingStepsCard: {
+    width: '100%',
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  onboardingStepsTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
+  },
+  onboardingStepItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing.xs,
+    gap: spacing.xs + 2,
+  },
+  onboardingStepNumBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
+  onboardingStepNum: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  onboardingStepText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.textSecondary,
+    lineHeight: 18,
   },
 });

@@ -84,7 +84,9 @@ export async function requestNotificationPermissions(): Promise<boolean> {
 }
 
 /**
- * Schedules a daily recurring notification for a specific medication dose time.
+ * Schedules daily recurring notifications for a specific medication dose time:
+ * 1. 15-minute advance reminder ("Upcoming in 15m")
+ * 2. Exact dose-time alarm ("Time for [Med]")
  * @param medicationId Unique medication ID
  * @param medicationName Name of medicine (e.g. "Amoxicillin")
  * @param timeString 24-hr time string (e.g. "08:00" or "20:30")
@@ -110,25 +112,54 @@ export async function scheduleMedicationReminder(
     return null;
   }
 
-  const identifier = `med-${medicationId}-${timeString.replace(':', '')}`;
+  const baseIdentifier = `med-${medicationId}-${timeString.replace(':', '')}`;
 
   try {
-    // Cancel existing identifier if already scheduled
-    await Notifications.cancelScheduledNotificationAsync(identifier).catch(() => {});
+    // Cancel existing identifiers if already scheduled
+    await Notifications.cancelScheduledNotificationAsync(`${baseIdentifier}-adv`).catch(() => {});
+    await Notifications.cancelScheduledNotificationAsync(`${baseIdentifier}-due`).catch(() => {});
+    await Notifications.cancelScheduledNotificationAsync(baseIdentifier).catch(() => {});
 
     // Ensure permission is granted and channel is ready
     await requestNotificationPermissions();
 
+    // 1. Advance reminder: exactly 15 minutes before scheduled dose time
+    let advanceHour = hour;
+    let advanceMinute = minute - 15;
+    if (advanceMinute < 0) {
+      advanceMinute += 60;
+      advanceHour = (advanceHour - 1 + 24) % 24;
+    }
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: `${baseIdentifier}-adv`,
+      content: {
+        title: `🔔 Upcoming in 15m: ${medicationName}`,
+        body: `Scheduled for ${timeString}. ${instructions ? instructions : 'Prepare to take with water.'}`,
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+        data: { medicationId, time: timeString, type: 'advance_reminder' },
+        channelId: MEDICATION_CHANNEL_ID,
+      },
+      trigger: {
+        hour: advanceHour,
+        minute: advanceMinute,
+        repeats: true,
+        channelId: MEDICATION_CHANNEL_ID,
+      },
+    }).catch(() => {});
+
+    // 2. Exact dose-time alert (Take, Skip, Snooze)
     const notifId = await Notifications.scheduleNotificationAsync({
-      identifier,
+      identifier: `${baseIdentifier}-due`,
       content: {
         title: `💊 Time for ${medicationName}`,
         body: instructions
-          ? `${instructions} (${timeString})`
-          : `Time to take your scheduled dose of ${medicationName} (${timeString}).`,
+          ? `${instructions} (${timeString}) • Open app to record Taken, Skip, or Snooze.`
+          : `Time to take your scheduled dose of ${medicationName} (${timeString}). Open to record.`,
         sound: 'default',
         priority: Notifications.AndroidNotificationPriority.MAX,
-        data: { medicationId, time: timeString },
+        data: { medicationId, time: timeString, type: 'dose_due' },
         channelId: MEDICATION_CHANNEL_ID,
       },
       trigger: {
@@ -170,6 +201,7 @@ export async function cancelAllRemindersForMedication(medicationId: string): Pro
 
 /**
  * Synchronizes scheduled system alarms with all currently active patient medications.
+ * Respects medication course duration (endDate) so alarms do not fire after completion.
  */
 export async function syncAllMedicationReminders(
   medications: Array<{
@@ -178,6 +210,7 @@ export async function syncAllMedicationReminders(
     isActive: boolean;
     reminderTimes: string[];
     instructions?: string;
+    endDate?: string | null;
   }>
 ): Promise<void> {
   const Notifications = getNotificationsModule();
@@ -197,9 +230,20 @@ export async function syncAllMedicationReminders(
       }
     }
 
-    // Schedule each active medication dose
+    const now = Date.now();
+
+    // Schedule each active medication dose within its active course
     for (const med of medications) {
       if (!med.isActive) continue;
+
+      // Check course duration: if endDate is in the past, do not schedule alarms
+      if (med.endDate) {
+        const endDateTime = new Date(`${med.endDate}T23:59:59`).getTime();
+        if (!isNaN(endDateTime) && endDateTime < now) {
+          continue;
+        }
+      }
+
       const times = med.reminderTimes || [];
       for (const time of times) {
         await scheduleMedicationReminder(med.id, med.name, time, med.instructions);

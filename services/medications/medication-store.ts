@@ -45,7 +45,30 @@ const safeStorage = {
       }
     }
   },
+  async removeItem(key: string): Promise<void> {
+    memoryStore.delete(key);
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch {
+      // ignore
+    }
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // ignore
+      }
+    }
+  },
 };
+
+function getStorageKeys(userId: string | null) {
+  const suffix = userId ? `_user_${userId}` : '_guest';
+  return {
+    MEDS: `@myhealthapp/persisted_meds${suffix}`,
+    DOSES: `@myhealthapp/persisted_doses${suffix}`,
+  };
+}
 
 export const INITIAL_PRESCRIBED_MEDS: MedicationRecord[] = [
   {
@@ -103,35 +126,34 @@ export function toLocalDateString(d: Date): string {
 }
 
 export function generateWeekDoses(meds: MedicationRecord[]): DoseLog[] {
+  return generateTrailingWeekDoses(meds);
+}
+
+export function generateTrailingWeekDoses(meds: MedicationRecord[]): DoseLog[] {
   const doses: DoseLog[] = [];
   const today = new Date();
-  const currentDayOfWeek = today.getDay(); // 0 is Sunday, 1 is Monday...
-  const distanceToMonday = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() + distanceToMonday);
-
   const todayDateStr = toLocalDateString(today);
 
-  for (let d = 0; d < 7; d++) {
-    const dayDate = new Date(monday);
-    dayDate.setDate(monday.getDate() + d);
+  // Generate for past 6 days + today + future 6 days so historical days are viewable
+  for (let offset = -6; offset <= 6; offset++) {
+    const dayDate = new Date(today);
+    dayDate.setDate(today.getDate() + offset);
     const dateStr = toLocalDateString(dayDate);
     const isPast = dateStr < todayDateStr;
-    const isToday = dateStr === todayDateStr;
 
     for (const med of meds) {
-      if (!med.reminderTimes) continue;
+      if (med.status !== 'ACTIVE' || !med.reminderTimes) continue;
       for (const timeStr of med.reminderTimes) {
         const timeClean = timeStr.trim();
         const [hh, mm] = timeClean.split(':').map(Number);
-        const schedTime = `${dateStr}T${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:00`;
+        const schedTime = `${dateStr}T${String(hh || 0).padStart(2, '0')}:${String(mm || 0).padStart(2, '0')}:00`;
 
         let status: DoseLog['status'] = 'PENDING';
         let actionTime: string | undefined = undefined;
 
         if (isPast) {
           status = 'TAKEN';
-          actionTime = `${dateStr}T${String(hh).padStart(2, '0')}:${String(mm + 5).padStart(2, '0')}:00`;
+          actionTime = `${dateStr}T${String(hh || 0).padStart(2, '0')}:${String(((mm || 0) + 5) % 60).padStart(2, '0')}:00`;
         } else {
           status = 'PENDING';
         }
@@ -156,39 +178,60 @@ export function generateWeekDoses(meds: MedicationRecord[]): DoseLog[] {
 type StoreListener = () => void;
 
 class MedicationStore {
-  private meds: MedicationRecord[] = [...INITIAL_PRESCRIBED_MEDS];
-  private doses: DoseLog[] = generateWeekDoses(INITIAL_PRESCRIBED_MEDS);
+  private currentUserId: string | null = authService.getSession()?.userId || null;
+  private meds: MedicationRecord[] = [];
+  private doses: DoseLog[] = [];
   private initialized = false;
   private listeners = new Set<StoreListener>();
 
   constructor() {
     this.init();
+    // React to user auth logins, signups, and logouts
+    authService.subscribe((session) => {
+      const newUserId = session?.userId || null;
+      if (newUserId !== this.currentUserId) {
+        this.switchUser(newUserId);
+      }
+    });
+  }
+
+  async switchUser(newUserId: string | null): Promise<void> {
+    this.currentUserId = newUserId;
+    this.meds = [];
+    this.doses = [];
+    this.initialized = false;
+    await this.init();
   }
 
   async init(): Promise<void> {
     if (this.initialized) return;
 
+    const keys = getStorageKeys(this.currentUserId);
+
     try {
-      const storedMeds = await safeStorage.getItem(STORAGE_KEYS.MEDS);
-      const storedDoses = await safeStorage.getItem(STORAGE_KEYS.DOSES);
+      const storedMeds = await safeStorage.getItem(keys.MEDS);
+      const storedDoses = await safeStorage.getItem(keys.DOSES);
 
       if (storedMeds && storedDoses) {
         const parsedMeds = JSON.parse(storedMeds);
         const parsedDoses = JSON.parse(storedDoses);
-        if (Array.isArray(parsedMeds) && parsedMeds.length > 0) {
-          this.meds = parsedMeds;
-        }
-        if (Array.isArray(parsedDoses) && parsedDoses.length > 0) {
-          this.doses = parsedDoses;
-        }
+        this.meds = Array.isArray(parsedMeds) ? parsedMeds : [];
+        this.doses = Array.isArray(parsedDoses) ? parsedDoses : [];
       } else {
-        this.meds = [...INITIAL_PRESCRIBED_MEDS];
-        this.doses = generateWeekDoses(this.meds);
-        await this.persist();
+        // Authenticated users start with a clean slate: NO fake cross-user medications!
+        if (this.currentUserId) {
+          this.meds = [];
+          this.doses = [];
+        } else {
+          // Unauthenticated demo/guest mode preview
+          this.meds = [...INITIAL_PRESCRIBED_MEDS];
+          this.doses = generateTrailingWeekDoses(this.meds);
+          await this.persist();
+        }
       }
     } catch {
-      this.meds = [...INITIAL_PRESCRIBED_MEDS];
-      this.doses = generateWeekDoses(this.meds);
+      this.meds = this.currentUserId ? [] : [...INITIAL_PRESCRIBED_MEDS];
+      this.doses = this.meds.length > 0 ? generateTrailingWeekDoses(this.meds) : [];
     } finally {
       this.initialized = true;
       this.notify();
@@ -213,9 +256,10 @@ class MedicationStore {
   }
 
   private async persist(): Promise<void> {
+    const keys = getStorageKeys(this.currentUserId);
     try {
-      await safeStorage.setItem(STORAGE_KEYS.MEDS, JSON.stringify(this.meds));
-      await safeStorage.setItem(STORAGE_KEYS.DOSES, JSON.stringify(this.doses));
+      await safeStorage.setItem(keys.MEDS, JSON.stringify(this.meds));
+      await safeStorage.setItem(keys.DOSES, JSON.stringify(this.doses));
     } catch {
       // ignore
     }
@@ -223,11 +267,12 @@ class MedicationStore {
   }
 
   getMedications(): MedicationRecord[] {
-    return this.meds.length > 0 ? this.meds : INITIAL_PRESCRIBED_MEDS;
+    // Return only active user's actual medications (do NOT fallback to INITIAL_PRESCRIBED_MEDS for real users)
+    return this.meds;
   }
 
   getMedicationById(id: string): MedicationRecord | undefined {
-    return this.meds.find((m) => m.id === id) || INITIAL_PRESCRIBED_MEDS.find((m) => m.id === id);
+    return this.meds.find((m) => m.id === id);
   }
 
   getAllDoses(): DoseLog[] {
@@ -342,10 +387,24 @@ class MedicationStore {
    * Adds a new medication and schedules its doses.
    */
   async addMedication(med: MedicationRecord): Promise<void> {
-    this.meds = [med, ...this.meds];
+    this.meds = [med, ...this.meds.filter((m) => m.id !== med.id)];
     const newDoses = generateWeekDoses([med]);
-    this.doses = [...this.doses, ...newDoses];
+    const existingDoseIds = new Set(this.doses.map((d) => d.id));
+    const uniqueNewDoses = newDoses.filter((d) => !existingDoseIds.has(d.id));
+    this.doses = [...this.doses, ...uniqueNewDoses];
     await this.persist();
+  }
+
+  /**
+   * Clears the current user's local storage completely.
+   */
+  async clearUserStorage(): Promise<void> {
+    const keys = getStorageKeys(this.currentUserId);
+    await safeStorage.removeItem(keys.MEDS);
+    await safeStorage.removeItem(keys.DOSES);
+    this.meds = [];
+    this.doses = [];
+    this.notify();
   }
 }
 

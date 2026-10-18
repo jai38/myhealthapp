@@ -17,47 +17,48 @@ export interface HorizontalDateStripProps {
   onSelectDate?: (dateString: string) => void;
 }
 
-import { toLocalDateString } from '../services/medications/medication-store';
+import { toLocalDateString, medicationStore } from '../services/medications/medication-store';
 
 export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
   days,
   selectedDate,
   onSelectDate,
 }) => {
-  // Generate 7 days of the current week if none provided
+  // Generate trailing 7 days leading up to Today so users can inspect past history and adherence
   const weekDays = React.useMemo(() => {
     if (days && days.length > 0) return days;
 
     const today = new Date();
-    const currentDayOfWeek = today.getDay(); // 0 is Sunday, 1 is Monday...
-    // Adjust to Monday start
-    const distanceToMonday = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + distanceToMonday);
-
-    const labels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const todayDateStr = toLocalDateString(today);
+    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const result: DayItem[] = [];
 
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
+    // 6 days of recent past history + Today
+    for (let offset = -6; offset <= 0; offset++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + offset);
 
-      const isToday = d.toDateString() === today.toDateString();
+      const isToday = offset === 0;
       const dateString = toLocalDateString(d);
+      const adherence = medicationStore.getAdherenceForDate(dateString);
 
       let adherenceStatus: DayItem['adherenceStatus'] = 'none';
-      if (d < today) {
-        adherenceStatus = 'complete';
-      } else if (isToday) {
-        adherenceStatus = 'partial';
+      if (adherence.total > 0) {
+        if (adherence.taken === adherence.total) {
+          adherenceStatus = 'complete';
+        } else if (adherence.taken > 0) {
+          adherenceStatus = 'partial';
+        } else {
+          adherenceStatus = 'pending';
+        }
       }
 
       result.push({
-        dayLabel: labels[i],
+        dayLabel: isToday ? 'TODAY' : dayNames[d.getDay()],
         dateNumber: d.getDate(),
         dateString,
         isToday,
-        hasActivity: true,
+        hasActivity: adherence.total > 0,
         adherenceStatus,
       });
     }
@@ -66,7 +67,7 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
   }, [days]);
 
   const activeDate =
-    selectedDate || weekDays.find((d) => d.isToday)?.dateString || weekDays[0]?.dateString;
+    selectedDate || weekDays.find((d) => d.isToday)?.dateString || weekDays[weekDays.length - 1]?.dateString;
 
   return (
     <View style={styles.container}>
@@ -82,7 +83,14 @@ export const HorizontalDateStrip: React.FC<HorizontalDateStripProps> = ({
             accessibilityRole="button"
             accessibilityLabel={`${item.dayLabel} ${item.dateNumber}${item.isToday ? ' (Today)' : ''}`}
           >
-            <Text style={[styles.dayLabel, isSelected && styles.dayLabelSelected]}>
+            <Text
+              style={[
+                styles.dayLabel,
+                item.isToday && styles.dayLabelToday,
+                isSelected && styles.dayLabelSelected,
+              ]}
+              numberOfLines={1}
+            >
               {item.dayLabel}
             </Text>
             <Text style={[styles.dateNumber, isSelected && styles.dateNumberSelected]}>
@@ -148,8 +156,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textTransform: 'uppercase',
   },
+  dayLabelToday: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: colors.accentCoral,
+  },
   dayLabelSelected: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: 'rgba(255, 255, 255, 0.95)',
   },
   dateNumber: {
     fontSize: 15,
