@@ -1,7 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MedicationRecord, DoseLog, medicationService } from './medication-service';
 import { authService } from '../auth/auth-service';
-import { scheduleSnoozeReminder } from '../notifications/notification-service';
+import {
+  scheduleSnoozeReminder,
+  cancelSnoozeRemindersForMedication,
+  dismissDeliveredNotificationsForMedication,
+} from '../notifications/notification-service';
 
 const STORAGE_KEYS = {
   MEDS: '@myhealthapp/persisted_meds',
@@ -266,6 +270,10 @@ class MedicationStore {
     this.notify();
   }
 
+  isInitialized(): boolean {
+    return this.initialized;
+  }
+
   getMedications(): MedicationRecord[] {
     // Return only active user's actual medications (do NOT fallback to INITIAL_PRESCRIBED_MEDS for real users)
     return this.meds;
@@ -334,6 +342,10 @@ class MedicationStore {
         if (med) {
           scheduleSnoozeReminder(med.id, med.nameAsWritten, snoozeMinutes).catch(() => {});
         }
+      } else if (action === 'TAKEN' || action === 'SKIPPED') {
+        // Clear active snooze and dismiss any delivered notification banner
+        cancelSnoozeRemindersForMedication(existing.medicationId).catch(() => {});
+        dismissDeliveredNotificationsForMedication(existing.medicationId).catch(() => {});
       }
 
       // Background sync to backend if online and authenticated

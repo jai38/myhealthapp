@@ -110,6 +110,9 @@ export default function HomeScreen() {
 
   // Automatically sync local system notification alarms whenever active medications change
   useEffect(() => {
+    if (!medicationStore.isInitialized() && medications.length === 0) {
+      return;
+    }
     const activeMeds = (medications.length > 0 ? medications : medicationStore.getMedications())
       .filter((m) => m.status === 'ACTIVE')
       .map((m) => ({
