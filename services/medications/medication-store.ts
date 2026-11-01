@@ -130,20 +130,22 @@ export function toLocalDateString(d: Date): string {
 }
 
 export function generateWeekDoses(meds: MedicationRecord[]): DoseLog[] {
-  return generateTrailingWeekDoses(meds);
+  return generateUpcomingDoses(meds);
 }
 
-export function generateTrailingWeekDoses(meds: MedicationRecord[]): DoseLog[] {
+/**
+ * Generates PENDING dose occurrences for today and the next 6 days only.
+ * Past occurrences are never generated: a dose the patient did not record is
+ * not a taken dose, and only an explicit TAKEN/SKIPPED action changes status.
+ */
+export function generateUpcomingDoses(meds: MedicationRecord[]): DoseLog[] {
   const doses: DoseLog[] = [];
   const today = new Date();
-  const todayDateStr = toLocalDateString(today);
 
-  // Generate for past 6 days + today + future 6 days so historical days are viewable
-  for (let offset = -6; offset <= 6; offset++) {
+  for (let offset = 0; offset <= 6; offset++) {
     const dayDate = new Date(today);
     dayDate.setDate(today.getDate() + offset);
     const dateStr = toLocalDateString(dayDate);
-    const isPast = dateStr < todayDateStr;
 
     for (const med of meds) {
       if (med.status !== 'ACTIVE' || !med.reminderTimes) continue;
@@ -152,23 +154,12 @@ export function generateTrailingWeekDoses(meds: MedicationRecord[]): DoseLog[] {
         const [hh, mm] = timeClean.split(':').map(Number);
         const schedTime = `${dateStr}T${String(hh || 0).padStart(2, '0')}:${String(mm || 0).padStart(2, '0')}:00`;
 
-        let status: DoseLog['status'] = 'PENDING';
-        let actionTime: string | undefined = undefined;
-
-        if (isPast) {
-          status = 'TAKEN';
-          actionTime = `${dateStr}T${String(hh || 0).padStart(2, '0')}:${String(((mm || 0) + 5) % 60).padStart(2, '0')}:00`;
-        } else {
-          status = 'PENDING';
-        }
-
         doses.push({
           id: `dose-${med.id}-${dateStr}-${timeClean.replace(':', '')}`,
           medicationId: med.id,
           patientProfileId: med.patientProfileId,
           scheduledTime: schedTime,
-          status,
-          actionTime,
+          status: 'PENDING',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
@@ -177,6 +168,24 @@ export function generateTrailingWeekDoses(meds: MedicationRecord[]): DoseLog[] {
   }
 
   return doses;
+}
+
+/**
+ * Detects dose records fabricated by the removed trailing-week backfill.
+ * The backfill wrote TAKEN with an `actionTime` of scheduled time + 5 minutes
+ * as a zone-less, second-precision string (`YYYY-MM-DDTHH:mm:00`). Real user
+ * actions store `new Date().toISOString()` (millisecond precision, trailing Z),
+ * so a record only matches when every signature below holds.
+ */
+export function isFabricatedBackfillDose(dose: DoseLog, now: Date = new Date()): boolean {
+  if (dose.status !== 'TAKEN' || !dose.actionTime) return false;
+  if (!dose.id.startsWith('dose-')) return false;
+  const sched = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):00$/.exec(dose.scheduledTime);
+  const action = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):00$/.exec(dose.actionTime);
+  if (!sched || !action) return false;
+  if (sched[1] !== action[1] || sched[2] !== action[2]) return false;
+  if (Number(action[3]) !== (Number(sched[3]) + 5) % 60) return false;
+  return sched[1] < toLocalDateString(now);
 }
 
 type StoreListener = () => void;
@@ -220,7 +229,12 @@ class MedicationStore {
         const parsedMeds = JSON.parse(storedMeds);
         const parsedDoses = JSON.parse(storedDoses);
         this.meds = Array.isArray(parsedMeds) ? parsedMeds : [];
-        this.doses = Array.isArray(parsedDoses) ? parsedDoses : [];
+        const loadedDoses: DoseLog[] = Array.isArray(parsedDoses) ? parsedDoses : [];
+        // Purge past TAKEN records that were synthesized by the old backfill
+        this.doses = loadedDoses.filter((d) => !isFabricatedBackfillDose(d));
+        if (this.doses.length !== loadedDoses.length) {
+          await this.persist();
+        }
       } else {
         // Authenticated users start with a clean slate: NO fake cross-user medications!
         if (this.currentUserId) {
@@ -229,13 +243,13 @@ class MedicationStore {
         } else {
           // Unauthenticated demo/guest mode preview
           this.meds = [...INITIAL_PRESCRIBED_MEDS];
-          this.doses = generateTrailingWeekDoses(this.meds);
+          this.doses = generateUpcomingDoses(this.meds);
           await this.persist();
         }
       }
     } catch {
       this.meds = this.currentUserId ? [] : [...INITIAL_PRESCRIBED_MEDS];
-      this.doses = this.meds.length > 0 ? generateTrailingWeekDoses(this.meds) : [];
+      this.doses = this.meds.length > 0 ? generateUpcomingDoses(this.meds) : [];
     } finally {
       this.initialized = true;
       this.notify();
@@ -378,7 +392,8 @@ class MedicationStore {
     const dayDoses = this.getDosesForDate(dateString);
     const total = dayDoses.length;
     const taken = dayDoses.filter((d) => d.status === 'TAKEN').length;
-    const percentage = total > 0 ? Math.round((taken / total) * 100) : 100;
+    // No scheduled/recorded doses means no adherence to report, not 100%
+    const percentage = total > 0 ? Math.round((taken / total) * 100) : 0;
     return { percentage, taken, total };
   }
 

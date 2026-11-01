@@ -864,7 +864,7 @@ export default function HomeScreen() {
           <View style={[styles.metricIconBox, { backgroundColor: '#ECFDF5' }]}>
             <Text style={styles.metricIcon}>⏱️</Text>
           </View>
-          <Text style={styles.metricValue}>{adherencePct}%</Text>
+          <Text style={styles.metricValue}>{totalDosesCount > 0 ? `${adherencePct}%` : '—'}</Text>
           <Text style={styles.metricLabel}>Adherence</Text>
           <View style={styles.metricFooter}>
             <Text style={styles.metricSubText}>

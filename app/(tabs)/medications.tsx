@@ -368,7 +368,7 @@ export default function MedicationsScreen() {
                   </Text>
                 </View>
                 <View style={styles.adherenceRateBadge}>
-                  <Text style={styles.adherenceRateText}>{adherencePct}%</Text>
+                  <Text style={styles.adherenceRateText}>{totalDosesCount > 0 ? `${adherencePct}%` : '—'}</Text>
                 </View>
               </View>
 

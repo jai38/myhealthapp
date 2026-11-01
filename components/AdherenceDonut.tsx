@@ -100,7 +100,7 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
           {/* Center typography inside Donut */}
           <View style={styles.donutCenter}>
             <Text style={styles.centerValue}>
-              {totalCount > 0 ? `${clampedPct}%` : '100%'}
+              {totalCount > 0 ? `${clampedPct}%` : '—'}
             </Text>
             <Text style={styles.centerLabel}>
               {remainingCount === 0 && totalCount > 0
@@ -116,7 +116,7 @@ export const AdherenceDonut: React.FC<AdherenceDonutProps> = ({
         <View style={styles.breakdownContainer}>
           <Text style={styles.breakdownTitle}>{label}</Text>
           <Text style={styles.breakdownBigNumber}>
-            {totalCount > 0 ? `${takenCount} of ${totalCount}` : 'All Clear'}
+            {totalCount > 0 ? `${takenCount} of ${totalCount}` : 'No doses'}
           </Text>
 
           <View style={styles.statsList}>
