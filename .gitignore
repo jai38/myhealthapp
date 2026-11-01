@@ -27,3 +27,6 @@ ios/
 # macOS & Windows
 .DS_Store
 Thumbs.db
+
+# Local screenshots from scripts/screenshot.mjs
+screenshots/

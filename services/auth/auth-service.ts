@@ -181,6 +181,9 @@ class AuthService {
     }
 
     const { user, session } = body.data;
+    if (!session) {
+      throw new Error('We could not create this account. If you already have one, please sign in.');
+    }
     const userSession: UserSession = {
       userId: user.id || session.userId,
       email: user.email,
