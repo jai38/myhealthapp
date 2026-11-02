@@ -42,6 +42,14 @@ export interface ExtractionJobData {
   errorMessage?: string;
 }
 
+/** The job did not finish within the wait. The upload is stored; the job may still finish on the server. */
+export class ExtractionWaitTimeoutError extends Error {
+  constructor() {
+    super('Extraction job timed out while waiting for results');
+    this.name = 'ExtractionWaitTimeoutError';
+  }
+}
+
 export type DirectUploaderFn = (
   signedUrl: string,
   file: PickedFile,
@@ -285,7 +293,7 @@ export class MobileDocumentUploadService {
       await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
 
-    throw new Error('Extraction job timed out while waiting for results');
+    throw new ExtractionWaitTimeoutError();
   }
 
   /**

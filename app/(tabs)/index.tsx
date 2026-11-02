@@ -21,7 +21,10 @@ import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPre
 import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
 import { AccountModal } from '../../features/account/AccountModal';
 import { PickedFile } from '../../services/documents/file-validator';
-import { MobileDocumentUploadService } from '../../services/documents/upload-service';
+import {
+  MobileDocumentUploadService,
+  ExtractionWaitTimeoutError,
+} from '../../services/documents/upload-service';
 import { authService, UserSession } from '../../services/auth/auth-service';
 import { api } from '../../services/api/client';
 import {
@@ -131,15 +134,23 @@ export default function HomeScreen() {
     setProcessingStatus('Uploading prescription securely...');
     setConfirmationNotice(null);
     setUploadError(null);
+    let slowNoticeTimer: ReturnType<typeof setTimeout> | undefined;
 
     try {
       const { document, job } = await uploadService.uploadAndExtractPrescription(file);
 
       setProcessingStatus('Extracting prescription data (AI Clinical Parser)...');
+      // The AI reader runs as a separate service that sleeps when idle; the first document after a
+      // quiet period waits 2-3 minutes for it to start.
+      slowNoticeTimer = setTimeout(() => {
+        setProcessingStatus(
+          'Starting the AI reader. The first prescription after a quiet period can take up to 3 minutes. Please keep this screen open.'
+        );
+      }, 15_000);
 
       const completedJob = await uploadService.pollJobUntilComplete(job.id, {
-        maxAttempts: 15,
-        intervalMs: 800,
+        maxAttempts: 120,
+        intervalMs: 2000,
       });
 
       if (completedJob.status === 'FAILED') {
@@ -158,10 +169,18 @@ export default function HomeScreen() {
         extractedPayload: completedJob.extractedPayload,
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Upload failed';
-      setUploadError(msg);
-      Alert.alert('Upload / Extraction Error', msg);
+      if (err instanceof ExtractionWaitTimeoutError) {
+        const msg =
+          'Your prescription was uploaded, but reading it is taking longer than usual. Please upload it again in a few minutes.';
+        setUploadError(msg);
+        Alert.alert('Still reading', msg);
+      } else {
+        const msg = err instanceof Error ? err.message : 'Upload failed';
+        setUploadError(msg);
+        Alert.alert('Upload / Extraction Error', msg);
+      }
     } finally {
+      if (slowNoticeTimer) clearTimeout(slowNoticeTimer);
       setIsProcessing(false);
     }
   };

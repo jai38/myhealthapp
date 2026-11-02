@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { MobileDocumentUploadService } from '../services/documents/upload-service';
+import {
+  MobileDocumentUploadService,
+  ExtractionWaitTimeoutError,
+} from '../services/documents/upload-service';
 import { ApiClient } from '../services/api/client';
 
 describe('Mobile Document Upload & Extraction Pipeline Service', () => {
@@ -110,5 +113,18 @@ describe('Mobile Document Upload & Extraction Pipeline Service', () => {
 
     expect(job.status).toBe('SUCCEEDED');
     expect(attempts).toBe(2);
+  });
+
+  it('ends a wait for a job that never finishes with ExtractionWaitTimeoutError', async () => {
+    const mockClient = new ApiClient({ baseUrl: 'http://mock' });
+    const getSpy = vi.spyOn(mockClient, 'get').mockResolvedValue({
+      data: { id: 'job-789', status: 'QUEUED', retryCount: 0 },
+    } as any);
+
+    const service = new MobileDocumentUploadService(mockClient);
+    await expect(
+      service.pollJobUntilComplete('job-789', { maxAttempts: 3, intervalMs: 1 })
+    ).rejects.toBeInstanceOf(ExtractionWaitTimeoutError);
+    expect(getSpy).toHaveBeenCalledTimes(3);
   });
 });
