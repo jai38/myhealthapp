@@ -82,13 +82,28 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  # One APK per backend until cutover: Render keeps v0.1.0-preview, AWS gets its own release.
   build-android-apk:
-    name: Build Android APK
+    name: Build Android APK (${{ matrix.backend }})
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - backend: render
+            api_url: https://myhealthapp-backend.onrender.com/api/v1
+            release_tag: v0.1.0-preview
+            release_title: MyHealth Android Preview
+            eas_profile: preview
+          - backend: aws
+            api_url: https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1
+            release_tag: v0.2.0-aws-preview
+            release_title: MyHealth Android Preview (AWS Mumbai)
+            eas_profile: ''
     env:
-      EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
+      EXPO_PUBLIC_API_URL: ${{ matrix.api_url }}
 
     steps:
       - name: Checkout Code
@@ -116,27 +131,24 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Try EAS Cloud Build (if quota available)
+        if: matrix.eas_profile != ''
         run: |
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
             echo "Attempting EAS Cloud Build..."
-            eas build --platform android --profile preview --non-interactive --no-wait || echo "EAS Cloud quota reached or failed; will compile APK locally on runner."
+            eas build --platform android --profile ${{ matrix.eas_profile }} --non-interactive --no-wait || echo "EAS Cloud quota reached or failed; will compile APK locally on runner."
           fi
 
       - name: Prebuild Native Android Project
-        env:
-          EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
         run: npx expo prebuild --platform android --clean --no-install
 
       - name: Build Standalone Android Release APK with Gradle
         working-directory: android
-        env:
-          EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: myhealthapp-preview-apk
+          name: myhealthapp-preview-apk-${{ matrix.backend }}
           path: android/app/build/outputs/apk/release/*.apk
           retention-days: 14
 
@@ -147,7 +159,7 @@ jobs:
         run: |
           APK_PATH=$(ls android/app/build/outputs/apk/release/*.apk | head -n 1)
           if [ -f "$APK_PATH" ]; then
-            echo "Publishing release APK $APK_PATH to v0.1.0-preview..."
-            gh release upload v0.1.0-preview "$APK_PATH" --clobber --repo ${{ github.repository }} || \
-            gh release create v0.1.0-preview "$APK_PATH" --title "MyHealth Android Preview" --notes "Standalone Android Release APK with embedded offline JavaScript, calm clinical sapphire theme, and functional dose tracking." --prerelease --repo ${{ github.repository }}
+            echo "Publishing release APK $APK_PATH to ${{ matrix.release_tag }}..."
+            gh release upload "${{ matrix.release_tag }}" "$APK_PATH" --clobber --repo ${{ github.repository }} || \
+            gh release create "${{ matrix.release_tag }}" "$APK_PATH" --title "${{ matrix.release_title }}" --notes "Standalone Android Release APK. API: ${{ matrix.api_url }}. Test accounts and synthetic data only." --prerelease --repo ${{ github.repository }}
           fi
