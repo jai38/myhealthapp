@@ -136,7 +136,7 @@ export class ApiClient {
 import { authService } from '../auth/auth-service';
 
 export const getApiBaseUrl = (): string => {
-  return process.env.EXPO_PUBLIC_API_URL || 'https://myhealthapp-backend.onrender.com/api/v1';
+  return process.env.EXPO_PUBLIC_API_URL || 'https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1';
 };
 
 // Default production-ready client instance with dynamic URL and persisted token

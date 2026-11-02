@@ -96,7 +96,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
             <Text style={styles.brandTagline}>Your Personal Clinical Health Vault</Text>
             <View style={styles.cloudBadge}>
               <View style={styles.cloudDot} />
-              <Text style={styles.cloudText}>Connected to Render Cloud & Supabase</Text>
+              <Text style={styles.cloudText}>Secure cloud, hosted in Mumbai</Text>
             </View>
           </View>
 

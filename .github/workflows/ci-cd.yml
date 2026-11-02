@@ -66,7 +66,7 @@ jobs:
 
       - name: Export Static Web Bundle
         env:
-          EXPO_PUBLIC_API_URL: https://myhealthapp-backend.onrender.com/api/v1
+          EXPO_PUBLIC_API_URL: https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1
           EXPO_BASE_URL: /myhealthapp
         run: npx expo export -p web
 
@@ -82,7 +82,8 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # One APK per backend until cutover: Render keeps v0.1.0-preview, AWS gets its own release.
+  # The backend runs on AWS Mumbai since the Phase 2 cutover; Render and v0.1.0-preview are retired.
+  # One matrix entry per backend, so a second environment (for example a test copy) can be added here.
   build-android-apk:
     name: Build Android APK (${{ matrix.backend }})
     needs: test
@@ -92,16 +93,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - backend: render
-            api_url: https://myhealthapp-backend.onrender.com/api/v1
-            release_tag: v0.1.0-preview
-            release_title: MyHealth Android Preview
-            eas_profile: preview
           - backend: aws
             api_url: https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1
             release_tag: v0.2.0-aws-preview
             release_title: MyHealth Android Preview (AWS Mumbai)
-            eas_profile: ''
+            eas_profile: preview
     env:
       EXPO_PUBLIC_API_URL: ${{ matrix.api_url }}
 

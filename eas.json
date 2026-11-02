@@ -16,12 +16,6 @@
         "simulator": true
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://myhealthapp-backend.onrender.com/api/v1"
-      }
-    },
-    "preview-aws": {
-      "extends": "preview",
-      "env": {
         "EXPO_PUBLIC_API_URL": "https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1"
       }
     },
