@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getGlobalErrorCopy } from '../components/system/GlobalErrorScreen';
+import { getGlobalErrorCopy } from '../components/system/globalErrorCopy';
 
 describe('GlobalErrorScreen copy', () => {
   it('uses the offline title and body', () => {
