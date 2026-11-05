@@ -4,6 +4,7 @@ import { Stack, router, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { color } from '../design/tokens';
+import { useAppFonts } from '../design/fonts';
 import { authService, UserSession, SessionEndReason } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
 import { RestoringScreen } from '../features/auth/RestoringScreen';
@@ -23,6 +24,8 @@ export default function RootLayout() {
   const [endReason, setEndReason] = useState<SessionEndReason | null>(authService.getEndReason());
   const [initialized, setInitialized] = useState<boolean>(false);
   const pathname = usePathname();
+  // Inter for every screen. Never blocks for long: on a load error the system font is used.
+  const { loaded: fontsLoaded } = useAppFonts();
 
   useEffect(() => {
     // Wait for AsyncStorage persisted session load
@@ -71,7 +74,7 @@ export default function RootLayout() {
     );
   }
 
-  if (gate === 'restoring') {
+  if (gate === 'restoring' || !fontsLoaded) {
     return (
       <SafeAreaProvider>
         <StatusBar style="dark" />
