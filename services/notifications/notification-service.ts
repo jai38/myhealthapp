@@ -194,7 +194,7 @@ export async function scheduleMedicationReminder(
 
     return notifId;
   } catch (err) {
-    console.warn(`Failed to schedule reminder for ${medicationName} at ${timeString}:`, err);
+    console.warn(`Failed to schedule reminder for medication ${medicationId}`);
     return null;
   }
 }
@@ -488,7 +488,7 @@ export async function scheduleSnoozeReminder(
 
     return notifId;
   } catch (err) {
-    console.warn(`Failed to schedule snooze reminder for ${medicationName}:`, err);
+    console.warn(`Failed to schedule snooze reminder for medication ${medicationId}`);
     return null;
   }
 }
