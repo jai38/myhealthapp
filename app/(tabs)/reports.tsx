@@ -24,7 +24,7 @@ import {
 import { ReportExportModal } from '../../features/reports/ReportExportModal';
 import { authService } from '../../services/auth/auth-service';
 import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const PRESET_OPTIONS: Array<{ label: string; value: DateRangePreset }> = [
   { label: 'All Time', value: 'ALL' },

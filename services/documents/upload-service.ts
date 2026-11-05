@@ -8,7 +8,7 @@ const getNativeFileSystem = (): any => {
   }
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return typeof require !== 'undefined' ? require('expo-file-system') : null;
+    return typeof require !== 'undefined' ? require('expo-file-system/legacy') : null;
   } catch {
     return null;
   }

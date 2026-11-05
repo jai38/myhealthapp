@@ -62,7 +62,7 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
         if (!trueSize && asset.uri && Platform.OS !== 'web') {
           try {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const FileSystem = require('expo-file-system');
+            const FileSystem = require('expo-file-system/legacy');
             const info = await FileSystem.getInfoAsync(asset.uri);
             if (info.exists && typeof info.size === 'number' && info.size > 0) {
               trueSize = info.size;
@@ -106,7 +106,7 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
         if (!trueSize && asset.uri && Platform.OS !== 'web') {
           try {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const FileSystem = require('expo-file-system');
+            const FileSystem = require('expo-file-system/legacy');
             const info = await FileSystem.getInfoAsync(asset.uri);
             if (info.exists && typeof info.size === 'number' && info.size > 0) {
               trueSize = info.size;
