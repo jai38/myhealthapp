@@ -1,14 +1,26 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Card } from '../../components/Card';
-import { Badge } from '../../components/Badge';
-import { Button } from '../../components/Button';
-import { colors, spacing, typography } from '../../theme/index';
+import { StyleSheet, View } from 'react-native';
+import { Card } from '../../design/components/Containers/Card';
+import { SectionHeader } from '../../design/components/Containers/SectionHeader';
+import { SegmentedControl } from '../../design/components/Containers/SegmentedControl';
+import { EmptyState } from '../../design/components/Feedback/EmptyState';
+import { Icon } from '../../design/components/Foundations/Icon';
+import { Text } from '../../design/components/Foundations/Text';
+import { t } from '../../design/strings';
+import type { StringKey } from '../../design/strings';
+import { color, radius, space } from '../../design/tokens';
 import { MedicationRecord } from '../../services/medications/medication-service';
 import { formatTime12Hour } from './reminder-time-utils';
-import { styles } from './styles-list';
 
 export type TabType = 'active' | 'inactive' | 'past';
+
+const STATUS_KEYS: Record<string, StringKey> = {
+  ACTIVE: 'medicines.statusActive',
+  INACTIVE: 'medicines.statusPrescribed',
+  PAUSED: 'medicines.statusPaused',
+  COMPLETED: 'medicines.statusCompleted',
+  DISCONTINUED: 'medicines.statusDiscontinued',
+};
 
 export function MedicationList({
   activeTab,
@@ -30,167 +42,144 @@ export function MedicationList({
   openMedicationModal: (id: string) => void;
 }) {
   return (
-    <>
-            {/* 4. MY MEDICATIONS & SUPPLEMENTS */}
-            <View style={styles.vaultHeaderRow}>
-              <Text style={styles.vaultSectionTitle}>My Medications & Supplements 💊</Text>
-              <Text style={styles.vaultSectionSub}>
-                Verified prescriptions, dosages, and reminder schedules
-              </Text>
-            </View>
+    <View style={styles.root} testID="medicines-list">
+      <SectionHeader title={t('medicines.listTitle')} />
+      <Text variant="caption" tone="secondary">
+        {t('medicines.listSubtitle')}
+      </Text>
 
-            {/* Segmented Tab Bar */}
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
-                style={[styles.tabButton, activeTab === 'active' && styles.tabButtonActive]}
-                onPress={() => setActiveTab('active')}
-              >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeTab === 'active' ? styles.tabTextActive : styles.tabTextInactive,
-                  ]}
-                >
-                  Active ({activeMedicationsCount})
-                </Text>
-              </TouchableOpacity>
+      <SegmentedControl<TabType>
+        testID="medicines-tabs"
+        value={activeTab}
+        onChange={setActiveTab}
+        options={[
+          { value: 'active', label: t('medicines.tabActive', { count: activeMedicationsCount }) },
+          {
+            value: 'inactive',
+            label: t('medicines.tabPrescribed', { count: inactiveMedicationsCount }),
+          },
+          { value: 'past', label: t('medicines.tabPast', { count: pastMedicationsCount }) },
+        ]}
+      />
 
-              <TouchableOpacity
-                style={[styles.tabButton, activeTab === 'inactive' && styles.tabButtonActive]}
-                onPress={() => setActiveTab('inactive')}
-              >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeTab === 'inactive' ? styles.tabTextActive : styles.tabTextInactive,
-                  ]}
-                >
-                  Prescribed ({inactiveMedicationsCount})
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.tabButton, activeTab === 'past' && styles.tabButtonActive]}
-                onPress={() => setActiveTab('past')}
-              >
-                <Text
-                  style={[
-                    styles.tabText,
-                    activeTab === 'past' ? styles.tabTextActive : styles.tabTextInactive,
-                  ]}
-                >
-                  Past ({pastMedicationsCount})
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Medication List under active tab */}
-            {filteredMedications.length === 0 ? (
-              <Card variant="muted" style={styles.emptyCard}>
-                <Badge
-                  label={
-                    activeTab === 'active'
-                      ? 'No Active Medications'
-                      : activeTab === 'inactive'
-                      ? 'No Prescribed Medications'
-                      : 'No Past Regimens'
-                  }
-                  variant="neutral"
-                  style={styles.badge}
-                />
-                <Text style={[typography.h3, styles.emptyTitle]}>
-                  {activeTab === 'active'
-                    ? 'No Active Regimens'
-                    : activeTab === 'inactive'
-                    ? 'No Pending Prescriptions'
-                    : 'No Historical Regimens'}
-                </Text>
-                <Text
-                  style={[
-                    typography.bodyMuted,
-                    styles.emptyDescription,
-                    { marginBottom: spacing.md },
-                  ]}
-                >
-                  {activeTab === 'active'
-                    ? 'You have no active medications running reminders. Add a medication manually or upload a prescription to get started.'
-                    : activeTab === 'inactive'
-                    ? 'Prescriptions you upload and confirm will appear here as inactive medications ready for reminder configuration.'
-                    : 'Completed and discontinued medication regimens will be preserved here in your historical health record.'}
-                </Text>
-                <Button
-                  title="+ Add Medication Manually"
-                  variant="primary"
-                  onPress={onAddMedicine}
-                />
-              </Card>
-            ) : (
-              filteredMedications.map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  activeOpacity={0.7}
-                  onPress={() => openMedicationModal(item.id)}
-                >
-                  <Card style={styles.medCard}>
-                    <View style={styles.medCardHeader}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.medName}>{item.nameAsWritten}</Text>
-                        {item.normalizedMedicineName && (
-                          <Text style={styles.medNormalized}>
-                            Generic: {item.normalizedMedicineName}
-                          </Text>
-                        )}
-                      </View>
-                      <Badge
-                        label={item.status}
-                        variant={
-                          item.status === 'ACTIVE'
-                            ? 'success'
-                            : item.status === 'INACTIVE'
-                            ? 'warning'
-                            : item.status === 'PAUSED'
-                            ? 'warning'
-                            : 'neutral'
-                        }
-                      />
-                    </View>
-
-                    {item.strength && (
-                      <Text style={styles.medStrength}>
-                        Strength: {item.strength} • {item.dosageForm}
-                      </Text>
-                    )}
-
-                    {item.prescribedInstructions && (
-                      <Text style={styles.medInstructions} numberOfLines={2}>
-                        {item.prescribedInstructions}
-                      </Text>
-                    )}
-
-                    {item.reminderTimes && item.reminderTimes.length > 0 ? (
-                      <View style={styles.scheduleSummaryRow}>
-                        <Text style={styles.scheduleSummaryLabel}>Reminders:</Text>
-                        <View style={styles.scheduleChipsWrap}>
-                          {item.reminderTimes.map((t, idx) => (
-                            <View key={idx} style={styles.reminderChip}>
-                              <Text style={styles.reminderChipText}>
-                                🔔 {formatTime12Hour(t)}
-                              </Text>
-                            </View>
-                          ))}
-                        </View>
-                      </View>
-                    ) : item.status === 'INACTIVE' ? (
-                      <View style={styles.activateNoticeRow}>
-                        <Text style={styles.activateNoticeText}>
-                          Tap to select reminder times & activate
-                        </Text>
-                      </View>
-                    ) : null}
-                  </Card>
-                </TouchableOpacity>
-              ))
-            )}
-    </>
+      {filteredMedications.length === 0 ? (
+        <EmptyState
+          icon="medkit-outline"
+          title={
+            activeTab === 'active'
+              ? t('medicines.emptyActiveTitle')
+              : activeTab === 'inactive'
+              ? t('medicines.emptyPrescribedTitle')
+              : t('medicines.emptyPastTitle')
+          }
+          body={
+            activeTab === 'active'
+              ? t('medicines.emptyActiveBody')
+              : activeTab === 'inactive'
+              ? t('medicines.emptyPrescribedBody')
+              : t('medicines.emptyPastBody')
+          }
+          action={{ label: t('medicines.addManually'), onPress: onAddMedicine }}
+          testID="medicines-list-empty"
+        />
+      ) : (
+        filteredMedications.map((item) => (
+          <MedicationCard
+            key={item.id}
+            med={item}
+            onPress={() => openMedicationModal(item.id)}
+          />
+        ))
+      )}
+    </View>
   );
 }
+
+function MedicationCard({ med, onPress }: { med: MedicationRecord; onPress: () => void }) {
+  const statusKey = STATUS_KEYS[med.status];
+  const reminderTimes = med.reminderTimes ?? [];
+
+  return (
+    <Card onPress={onPress} accessibilityLabel={med.nameAsWritten} testID={`medicines-card-${med.id}`}>
+      <View style={styles.cardHeader}>
+        <View style={styles.cardText}>
+          <Text variant="title3">{med.nameAsWritten}</Text>
+          {med.normalizedMedicineName ? (
+            <Text variant="caption" tone="secondary">
+              {t('medicines.generic', { name: med.normalizedMedicineName })}
+            </Text>
+          ) : null}
+        </View>
+        <Text variant="caption" tone="link">
+          {statusKey ? t(statusKey) : med.status}
+        </Text>
+      </View>
+
+      {med.strength ? (
+        <Text variant="callout" tone="secondary">
+          {t('medicines.strength', { strength: med.strength, form: med.dosageForm })}
+        </Text>
+      ) : null}
+
+      {med.prescribedInstructions ? (
+        <Text variant="callout" tone="secondary" numberOfLines={2}>
+          {med.prescribedInstructions}
+        </Text>
+      ) : null}
+
+      {reminderTimes.length > 0 ? (
+        <View style={styles.reminderRow}>
+          <Text variant="caption" tone="secondary">
+            {t('medicines.reminders')}
+          </Text>
+          <View style={styles.chips}>
+            {reminderTimes.map((time, idx) => (
+              <View key={idx} style={styles.chip}>
+                <Icon name="notifications-outline" size="sm" tone="link" />
+                <Text variant="caption" tone="link">
+                  {formatTime12Hour(time)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : med.status === 'INACTIVE' ? (
+        <Text variant="caption" tone="link">
+          {t('medicines.tapToActivate')}
+        </Text>
+      ) : null}
+    </Card>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    gap: space.md,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.md,
+  },
+  cardText: {
+    flex: 1,
+    gap: space.xxs,
+  },
+  reminderRow: {
+    gap: space.xs,
+  },
+  chips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space.xs,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xxs,
+    backgroundColor: color.bg.tintBlue,
+    borderRadius: radius.full,
+    paddingHorizontal: space.sm,
+    paddingVertical: space.xxs,
+  },
+});

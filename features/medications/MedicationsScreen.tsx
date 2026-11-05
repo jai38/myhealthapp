@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
-import { ScreenLayout } from '../../components/ScreenLayout';
-import { Card } from '../../components/Card';
-import { Button } from '../../components/Button';
-import { colors, spacing, typography } from '../../theme/index';
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Button } from '../../design/components/Actions/Button';
+import { ErrorState } from '../../design/components/Feedback/ErrorState';
+import { Screen } from '../../design/components/Foundations/Screen';
+import { Text } from '../../design/components/Foundations/Text';
+import { t } from '../../design/strings';
+import type { StringKey } from '../../design/strings';
+import { color, radius, space } from '../../design/tokens';
 import { toLocalDateString } from '../../services/medications/medication-store';
 import { medicationStore } from '../../services/medications/medication-store';
 import { MedicationDetailModal } from './MedicationDetailModal';
@@ -18,13 +14,23 @@ import { ManualAddMedicationModal } from './ManualAddMedicationModal';
 import { useLocalSearchParams } from 'expo-router';
 import { onNotificationResponse } from '../../services/notifications/notification-service';
 import { useMedicationsData } from './useMedicationsData';
-import { styles } from './styles-screen';
 import { NextDoseCard } from './NextDoseCard';
 import { pickNextDose } from '../today/todayModel';
 import { WeeklyAdherenceCard } from './WeeklyAdherenceCard';
 import { DaySchedule } from './DaySchedule';
 import { MedicationList, type TabType } from './MedicationList';
 
+const DAY_KEYS: StringKey[] = [
+  'medicines.day.mon',
+  'medicines.day.tue',
+  'medicines.day.wed',
+  'medicines.day.thu',
+  'medicines.day.fri',
+  'medicines.day.sat',
+  'medicines.day.sun',
+];
+
+// The Medicines tab header and safe area come from the tab shell, so this screen has no title of its own.
 export default function MedicationsScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('active');
 
@@ -96,8 +102,9 @@ export default function MedicationsScreen() {
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
   // The one next-dose rule, shared with Today. Unrecorded past doses are never "next".
+  const nowMs = Date.now();
   const nextDose =
-    pickNextDose(actionableDoses, Date.now(), (id) => medicationStore.getMedicationById(id)) ??
+    pickNextDose(actionableDoses, nowMs, (id) => medicationStore.getMedicationById(id)) ??
     undefined;
   const nextMed = nextDose
     ? medications.find((m) => m.id === nextDose.medicationId) ||
@@ -115,7 +122,6 @@ export default function MedicationsScreen() {
   const monday = new Date(today);
   monday.setDate(today.getDate() + distanceToMonday);
 
-  const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
@@ -124,7 +130,7 @@ export default function MedicationsScreen() {
     const isToday = dateString === todayDateStr;
     const isSelected = dateString === selectedDate;
     return {
-      dayLabel: daysOfWeek[i],
+      dayLabel: t(DAY_KEYS[i]),
       dateNumber: d.getDate(),
       dateString,
       percentage,
@@ -142,98 +148,100 @@ export default function MedicationsScreen() {
   });
 
   return (
-    <ScreenLayout>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {/* Header with Quick Action */}
-        <View style={styles.headerRow}>
-          <View style={{ flex: 1, paddingRight: spacing.sm }}>
-            <Text style={styles.pageTitle}>Medication Routine</Text>
-            <Text style={styles.pageSubHeader}>
-              Daily reminders, schedule adherence, and verified medicine vault.
-            </Text>
+    <>
+      <Screen scroll={false} testID="medicines-screen">
+        <ScrollView
+          contentContainerStyle={styles.content}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={color.action.primary}
+              colors={[color.action.primary]}
+            />
+          }
+        >
+          <View style={styles.addRow}>
+            <Button
+              label={t('medicines.addMedicine')}
+              variant="secondary"
+              icon="add"
+              onPress={() => setAddModalVisible(true)}
+              testID="medicines-add"
+            />
           </View>
-          <TouchableOpacity
-            style={styles.addMedHeaderBtn}
-            onPress={() => setAddModalVisible(true)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.addMedHeaderBtnText}>+ Add Medicine</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Action feedback toast */}
-        {actionNotice && (
-          <View style={styles.actionNoticeBanner}>
-            <Text style={styles.actionNoticeText}>{actionNotice}</Text>
-          </View>
-        )}
+          {/* Action feedback notice */}
+          {actionNotice ? (
+            <View style={styles.notice}>
+              <Text variant="callout" tone="primary">
+                {actionNotice}
+              </Text>
+            </View>
+          ) : null}
 
-        {loading ? (
-          <View style={styles.centerBox}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[typography.bodyMuted, { marginTop: spacing.md }]}>
-              Loading medications and schedules...
-            </Text>
-          </View>
-        ) : error ? (
-          <Card variant="muted" style={styles.errorCard}>
-            <Text style={[typography.h3, { color: colors.danger, marginBottom: spacing.xs }]}>
-              Unable to load medications
-            </Text>
-            <Text style={[typography.bodyMuted, { textAlign: 'center', marginBottom: spacing.md }]}>
-              {error}
-            </Text>
-            <Button title="Retry" onPress={loadData} />
-          </Card>
-        ) : (
-          <>
-            <NextDoseCard
-              nextDose={nextDose}
-              nextMed={nextMed}
-              nextTimeStr={nextTimeStr}
-              isSelectedToday={isSelectedToday}
-              formattedSelectedDate={formattedSelectedDate}
-              totalDosesCount={totalDosesCount}
-              takenDosesCount={takenDosesCount}
-              actionableDoses={actionableDoses}
-              actionDoseId={actionDoseId}
-              handleRecordDoseAction={handleRecordDoseAction}
+          {loading ? (
+            <View style={styles.loadingBox}>
+              <ActivityIndicator size="large" color={color.action.primary} />
+              <Text variant="callout" tone="secondary" align="center">
+                {t('medicines.loading')}
+              </Text>
+            </View>
+          ) : error ? (
+            <ErrorState
+              title={t('medicines.errorTitle')}
+              body={error}
+              onRetry={loadData}
+              testID="medicines-error"
             />
-            <WeeklyAdherenceCard
-              weekDays={weekDays}
-              setSelectedDate={setSelectedDate}
-              totalDosesCount={totalDosesCount}
-              adherencePct={adherencePct}
-            />
-            <DaySchedule
-              isSelectedToday={isSelectedToday}
-              formattedSelectedDate={formattedSelectedDate}
-              todayDateStr={todayDateStr}
-              setSelectedDate={setSelectedDate}
-              actionableDoses={actionableDoses}
-              dayDoses={dayDoses}
-              medications={medications}
-              actionDoseId={actionDoseId}
-              handleRecordDoseAction={handleRecordDoseAction}
-              onAddMedicine={() => setAddModalVisible(true)}
-            />
-            <MedicationList
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              activeMedicationsCount={activeMedicationsCount}
-              inactiveMedicationsCount={inactiveMedicationsCount}
-              pastMedicationsCount={pastMedicationsCount}
-              filteredMedications={filteredMedications}
-              onAddMedicine={() => setAddModalVisible(true)}
-              openMedicationModal={openMedicationModal}
-            />
-          </>
-        )}
-      </ScrollView>
+          ) : (
+            <>
+              <NextDoseCard
+                nextDose={nextDose}
+                nextMed={nextMed}
+                nextTimeStr={nextTimeStr}
+                nowMs={nowMs}
+                isSelectedToday={isSelectedToday}
+                formattedSelectedDate={formattedSelectedDate}
+                totalDosesCount={totalDosesCount}
+                takenDosesCount={takenDosesCount}
+                actionableDoses={actionableDoses}
+                actionDoseId={actionDoseId}
+                handleRecordDoseAction={handleRecordDoseAction}
+              />
+              <WeeklyAdherenceCard
+                weekDays={weekDays}
+                setSelectedDate={setSelectedDate}
+                totalDosesCount={totalDosesCount}
+                adherencePct={adherencePct}
+              />
+              <DaySchedule
+                isSelectedToday={isSelectedToday}
+                formattedSelectedDate={formattedSelectedDate}
+                todayDateStr={todayDateStr}
+                setSelectedDate={setSelectedDate}
+                actionableDoses={actionableDoses}
+                dayDoses={dayDoses}
+                medications={medications}
+                actionDoseId={actionDoseId}
+                handleRecordDoseAction={handleRecordDoseAction}
+                onAddMedicine={() => setAddModalVisible(true)}
+                nowMs={nowMs}
+              />
+              <MedicationList
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                activeMedicationsCount={activeMedicationsCount}
+                inactiveMedicationsCount={inactiveMedicationsCount}
+                pastMedicationsCount={pastMedicationsCount}
+                filteredMedications={filteredMedications}
+                onAddMedicine={() => setAddModalVisible(true)}
+                openMedicationModal={openMedicationModal}
+              />
+            </>
+          )}
+        </ScrollView>
+      </Screen>
 
       {/* Medication Details Modal */}
       <MedicationDetailModal
@@ -249,6 +257,26 @@ export default function MedicationsScreen() {
         onClose={() => setAddModalVisible(false)}
         onMedicationCreated={loadData}
       />
-    </ScreenLayout>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    gap: space.xl,
+    paddingBottom: space.xxl,
+  },
+  addRow: {
+    alignItems: 'flex-start',
+  },
+  notice: {
+    backgroundColor: color.tone.success.bg,
+    borderRadius: radius.md,
+    padding: space.md,
+  },
+  loadingBox: {
+    alignItems: 'center',
+    gap: space.md,
+    paddingVertical: space.xxl,
+  },
+});

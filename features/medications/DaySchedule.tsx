@@ -1,10 +1,25 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Card } from '../../components/Card';
-import { Button } from '../../components/Button';
-import { colors, spacing, typography } from '../../theme/index';
-import { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
-import { styles } from './styles-schedule';
+import { StyleSheet, View } from 'react-native';
+import { Button } from '../../design/components/Actions/Button';
+import { ListGroup } from '../../design/components/Containers/ListGroup';
+import { SectionHeader } from '../../design/components/Containers/SectionHeader';
+import { EmptyState } from '../../design/components/Feedback/EmptyState';
+import { MedicineIcon } from '../../design/components/Foundations/MedicineIcon';
+import type { MedicineForm } from '../../design/components/Foundations/iconNames';
+import { Text } from '../../design/components/Foundations/Text';
+import { StatusPill } from '../../design/components/Trust/StatusPill';
+import { t } from '../../design/strings';
+import { space } from '../../design/tokens';
+import type { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
+import { doseStatusFor, formatDoseClock } from './dose-display';
+
+// Icon for the dose row, from the medicine's dosage form. Pills are the default.
+function formFor(dosageForm: string | undefined): MedicineForm {
+  const form = dosageForm?.toLowerCase() ?? '';
+  if (form.includes('syrup')) return 'liquid';
+  if (form.includes('drop')) return 'drops';
+  return 'capsule';
+}
 
 export function DaySchedule({
   isSelectedToday,
@@ -17,6 +32,7 @@ export function DaySchedule({
   actionDoseId,
   handleRecordDoseAction,
   onAddMedicine,
+  nowMs,
 }: {
   isSelectedToday: boolean;
   formattedSelectedDate: string;
@@ -32,130 +48,142 @@ export function DaySchedule({
     snoozeMinutes?: number
   ) => Promise<void>;
   onAddMedicine: () => void;
+  nowMs: number;
 }) {
   return (
-    <>
-            {/* 3. TODAY'S SCHEDULE LIST (Filtered by selected day) */}
-            <View style={styles.sectionHeaderRow}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={styles.sectionTitle}>
-                  {isSelectedToday ? "Today's Schedule ⏱️" : `Schedule for ${formattedSelectedDate} ⏱️`}
-                </Text>
-                {!isSelectedToday && (
-                  <TouchableOpacity
-                    style={styles.resetTodayBtn}
-                    onPress={() => setSelectedDate(todayDateStr)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.resetTodayBtnText}>Reset to Today</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-              <Text style={styles.sectionSub}>
-                {actionableDoses.length === 0
-                  ? 'All doses recorded for this day ✓'
-                  : `${actionableDoses.length} reminder(s) pending`}
-              </Text>
-            </View>
+    <View style={styles.root} testID="medicines-day">
+      <SectionHeader
+        title={
+          isSelectedToday
+            ? t('medicines.todayTitle')
+            : t('medicines.dayTitle', { date: formattedSelectedDate })
+        }
+        onViewAll={isSelectedToday ? undefined : () => setSelectedDate(todayDateStr)}
+        viewAllLabel={t('medicines.resetToToday')}
+      />
+      <Text variant="caption" tone="secondary">
+        {actionableDoses.length === 0
+          ? t('medicines.allRecorded')
+          : t('medicines.pendingCount', { count: actionableDoses.length })}
+      </Text>
 
-            {dayDoses.length === 0 ? (
-              <Card variant="muted" style={styles.emptyDoseCard}>
-                <Text style={[typography.bodyMuted, { textAlign: 'center', marginBottom: spacing.sm }]}>
-                  No doses scheduled for {formattedSelectedDate}. Add a medicine to activate reminders.
-                </Text>
-                <Button
-                  title="+ Add Routine / Medicine"
-                  variant="outline"
-                  onPress={onAddMedicine}
-                />
-              </Card>
-            ) : (
-              dayDoses.map((dose) => {
-                const med = medications.find((m) => m.id === dose.medicationId);
-                const doseDate = new Date(dose.scheduledTime);
-                const timeStr = doseDate.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                });
-                const isTaken = dose.status === 'TAKEN';
-                const isSkipped = dose.status === 'SKIPPED';
-                const isSnoozed = dose.status === 'SNOOZED';
-                const isBusy = actionDoseId === dose.id;
-
-                return (
-                  <View key={dose.id} style={styles.scheduleItemCard}>
-                    <View style={styles.scheduleLeftCol}>
-                      <View
-                        style={[
-                          styles.scheduleIconBox,
-                          isTaken
-                            ? styles.scheduleIconBoxTaken
-                            : isSnoozed
-                            ? styles.scheduleIconBoxSnoozed
-                            : styles.scheduleIconBoxActive,
-                        ]}
-                      >
-                        <Text style={styles.scheduleIconEmoji}>
-                          {med?.dosageForm?.toLowerCase().includes('syrup')
-                            ? '🥄'
-                            : med?.dosageForm?.toLowerCase().includes('drop')
-                            ? '💧'
-                            : '💊'}
-                        </Text>
-                      </View>
-
-                      <View style={{ flex: 1, marginLeft: spacing.sm }}>
-                        <Text
-                          style={[
-                            styles.scheduleMedName,
-                            isTaken && styles.scheduleMedNameTaken,
-                          ]}
-                        >
-                          {med?.nameAsWritten || 'Medication'}
-                        </Text>
-                        <Text style={styles.scheduleMedMeta}>
-                          {med?.strength ? `${med.strength} • ` : ''}
-                          <Text style={{ fontWeight: '700' }}>{timeStr}</Text>
-                        </Text>
-                      </View>
-                    </View>
-
-                    {/* Status Pill or Direct Quick Action */}
-                    <View style={styles.scheduleRightCol}>
-                      {isTaken ? (
-                        <View style={styles.takenCheckBadge}>
-                          <Text style={styles.takenCheckIcon}>✓</Text>
-                          <Text style={styles.takenCheckText}>Taken</Text>
-                        </View>
-                      ) : isSkipped ? (
-                        <View style={styles.skippedBadge}>
-                          <Text style={styles.skippedText}>Skipped</Text>
-                        </View>
-                      ) : (
-                        <View style={styles.quickActionGroup}>
-                          <TouchableOpacity
-                            style={styles.quickTakeBtn}
-                            onPress={() => handleRecordDoseAction(dose.id, 'TAKEN')}
-                            disabled={isBusy}
-                            activeOpacity={0.75}
-                          >
-                            <Text style={styles.quickTakeBtnText}>Taken ✓</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.quickSkipBtn}
-                            onPress={() => handleRecordDoseAction(dose.id, 'SKIPPED')}
-                            disabled={isBusy}
-                            activeOpacity={0.75}
-                          >
-                            <Text style={styles.quickSkipBtnText}>Skip</Text>
-                          </TouchableOpacity>
-                        </View>
-                      )}
-                    </View>
-                  </View>
-                );
-              })
-            )}
-    </>
+      {dayDoses.length === 0 ? (
+        <EmptyState
+          icon="calendar-outline"
+          title={t('medicines.noDosesTitle', { date: formattedSelectedDate })}
+          body={t('medicines.noDosesBody')}
+          action={{ label: t('medicines.addRoutine'), onPress: onAddMedicine }}
+          testID="medicines-day-empty"
+        />
+      ) : (
+        <ListGroup>
+          {dayDoses.map((dose) => (
+            <DoseRow
+              key={dose.id}
+              dose={dose}
+              med={medications.find((m) => m.id === dose.medicationId)}
+              nowMs={nowMs}
+              isBusy={actionDoseId === dose.id}
+              onRecord={handleRecordDoseAction}
+            />
+          ))}
+        </ListGroup>
+      )}
+    </View>
   );
 }
+
+// One scheduled dose. The status comes from doseStatusFor. Taken and Skip are the user's own taps.
+function DoseRow({
+  dose,
+  med,
+  nowMs,
+  isBusy,
+  onRecord,
+}: {
+  dose: DoseLog;
+  med: MedicationRecord | undefined;
+  nowMs: number;
+  isBusy: boolean;
+  onRecord: (
+    doseId: string,
+    action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
+    snoozeMinutes?: number
+  ) => Promise<void>;
+}) {
+  const timeStr = formatDoseClock(new Date(dose.scheduledTime));
+  const isTaken = dose.status === 'TAKEN';
+  const isSkipped = dose.status === 'SKIPPED';
+  const meta = med?.strength
+    ? t('medicines.doseMeta', { strength: med.strength, time: timeStr })
+    : timeStr;
+
+  return (
+    <View style={styles.row} testID={`medicines-dose-${dose.id}`}>
+      <View style={styles.top}>
+        <MedicineIcon form={formFor(med?.dosageForm)} size="md" tone="secondary" />
+        <View style={styles.text}>
+          <Text variant="title3" numberOfLines={1}>
+            {med?.nameAsWritten || t('medicines.medicationFallback')}
+          </Text>
+          <Text variant="callout" tone="secondary">
+            {meta}
+          </Text>
+          <StatusPill display={doseStatusFor(dose, nowMs, med)} />
+        </View>
+      </View>
+
+      {!isTaken && !isSkipped ? (
+        <View style={styles.actions}>
+          <View style={styles.actionSlot}>
+            <Button
+              label={t('medicines.taken')}
+              variant="primary"
+              icon="checkmark"
+              fullWidth
+              disabled={isBusy}
+              onPress={() => onRecord(dose.id, 'TAKEN')}
+            />
+          </View>
+          <View style={styles.actionSlot}>
+            <Button
+              label={t('medicines.skip')}
+              variant="secondary"
+              fullWidth
+              disabled={isBusy}
+              onPress={() => onRecord(dose.id, 'SKIPPED')}
+            />
+          </View>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: {
+    gap: space.sm,
+  },
+  row: {
+    paddingVertical: space.md,
+    paddingHorizontal: space.lg,
+    gap: space.md,
+  },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.md,
+  },
+  text: {
+    flex: 1,
+    gap: space.xxs,
+    alignItems: 'flex-start',
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: space.sm,
+  },
+  actionSlot: {
+    flex: 1,
+  },
+});
