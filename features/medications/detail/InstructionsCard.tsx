@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { DocumentPreview } from '../../../components/DocumentPreview';
+import { DocumentPreview } from '../../documents/DocumentPreview';
 import { Button } from '../../../design/components/Actions/Button';
 import { Card } from '../../../design/components/Containers/Card';
 import { Divider } from '../../../design/components/Foundations/Divider';

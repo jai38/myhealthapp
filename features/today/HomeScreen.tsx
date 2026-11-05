@@ -5,7 +5,7 @@ import { Screen } from '../../design/components/Foundations/Screen';
 import { Text } from '../../design/components/Foundations/Text';
 import { size, space } from '../../design/tokens';
 import { t } from '../../design/strings';
-import { DocumentPickerModal } from '../../components/DocumentPickerModal';
+import { DocumentPickerModal } from '../documents/DocumentPickerModal';
 import { ReviewPrescriptionScreen } from '../prescriptions/ReviewPrescriptionScreen';
 import { ManualAddMedicationModal } from '../medications/ManualAddMedicationModal';
 import { medicationStore } from '../../services/medications/medication-store';

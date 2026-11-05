@@ -7,7 +7,7 @@ import { Text } from '../../design/components/Foundations/Text';
 import { color, space } from '../../design/tokens';
 import type { StatusDisplay } from '../../design/status';
 import { t } from '../../design/strings';
-import { DocumentPreview } from '../../components/DocumentPreview';
+import { DocumentPreview } from '../documents/DocumentPreview';
 import type {
   PrescriptionItemDetail,
   TimelineDetail,

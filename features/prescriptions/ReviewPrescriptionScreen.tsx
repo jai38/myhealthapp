@@ -1,58 +1,19 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Platform,
-  TextInput,
-} from 'react-native';
-import { colors, spacing, typography, borderRadius } from '../../theme/index';
-import { Button } from '../../components/Button';
-import { Card } from '../../components/Card';
-import { Input } from '../../components/Input';
-import { Badge } from '../../components/Badge';
-import { DocumentPreview } from '../../components/DocumentPreview';
-import { formatTime12Hour, getTimePeriodIcon } from '../medications/reminder-time-utils';
+import { Alert, StyleSheet, View } from 'react-native';
+import { Button } from '../../design/components/Actions/Button';
+import { Screen } from '../../design/components/Foundations/Screen';
+import { Text } from '../../design/components/Foundations/Text';
+import { t } from '../../design/strings';
+import { space } from '../../design/tokens';
+import { DocumentPreview } from '../documents/DocumentPreview';
+import { ReviewBanners } from './review/ReviewBanners';
+import { ReviewHeader } from './review/ReviewHeader';
+import { MedicineCard } from './review/MedicineCard';
+import { PrescriptionDetailsCard } from './review/PrescriptionDetailsCard';
+import { buildInitialMedicines, buildReviewPayload } from './review/reviewLogic';
+import type { EditableMedicine } from './review/reviewTypes';
 
-export interface EditableMedicine {
-  id: string;
-  name_as_written: string;
-  normalized_medicine_name?: string;
-  strength?: string;
-  dosage_form: 'TABLET' | 'CAPSULE' | 'SYRUP' | 'INJECTION' | 'CREAM' | 'DROPS' | 'INHALER' | 'OTHER';
-  frequency_text?: string;
-  duration_text?: string;
-  route: 'ORAL' | 'TOPICAL' | 'INTRAVENOUS' | 'INHALATION' | 'OPHTHALMIC' | 'OTHER';
-  instructions?: string;
-  confidence: 'HIGH' | 'UNCERTAIN';
-  is_active_medication: boolean;
-  times_per_day?: number;
-  reminder_times?: string[];
-  total_count?: string;
-}
-
-const DURATION_PRESETS = [
-  '1 Day',
-  '3 Days',
-  '5 Days',
-  '7 Days',
-  '10 Days',
-  '14 Days',
-  '1 Month',
-  '3 Months',
-  'Ongoing',
-];
-
-const FREQUENCY_PRESETS = [
-  { label: '1x Daily', times: ['08:00'] },
-  { label: '2x Daily', times: ['08:00', '20:00'] },
-  { label: '3x Daily', times: ['08:00', '13:00', '20:00'] },
-  { label: '4x Daily', times: ['08:00', '12:00', '16:00', '20:00'] },
-  { label: 'As Needed', times: [] },
-];
+export type { EditableMedicine } from './review/reviewTypes';
 
 export interface ReviewPrescriptionScreenProps {
   jobId: string;
@@ -74,6 +35,7 @@ export interface ReviewPrescriptionScreenProps {
   onDiscard: () => void;
 }
 
+// Drafts only. Nothing here is saved until the patient taps confirm.
 export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> = ({
   jobId,
   documentId,
@@ -114,75 +76,9 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
     safeExtraction.documented_diagnosis || ''
   );
 
-  const [medicines, setMedicines] = useState<EditableMedicine[]>(() => {
-    const rawMeds = Array.isArray(safeExtraction.medicines) ? safeExtraction.medicines : [];
-    if (rawMeds.length === 0) {
-      return [
-        {
-          id: 'med-1',
-          name_as_written: '',
-          normalized_medicine_name: '',
-          strength: '',
-          dosage_form: 'TABLET',
-          frequency_text: '1x Daily',
-          duration_text: '7 Days',
-          route: 'ORAL',
-          instructions: '',
-          confidence: 'HIGH',
-          is_active_medication: true,
-          times_per_day: 1,
-          reminder_times: ['08:00'],
-          total_count: '',
-        },
-      ];
-    }
-    return rawMeds.map((m: any, idx: number) => {
-      let defaultTimes = ['08:00'];
-      const freq = (m?.frequency_text || '').toLowerCase();
-      let normalizedFrequency = m?.frequency_text || '1x Daily';
-
-      if (freq.includes('as needed') || freq.includes('prn') || freq.includes('sos') || freq.includes('needed')) {
-        defaultTimes = [];
-        normalizedFrequency = 'As Needed';
-      } else if (freq.includes('bd') || freq.includes('twice') || freq.includes('2x') || freq.includes('1-0-1')) {
-        defaultTimes = ['08:00', '20:00'];
-        normalizedFrequency = '2x Daily';
-      } else if (freq.includes('tds') || freq.includes('thrice') || freq.includes('3x') || freq.includes('1-1-1')) {
-        defaultTimes = ['08:00', '13:00', '20:00'];
-        normalizedFrequency = '3x Daily';
-      } else if (freq.includes('qid') || freq.includes('4x')) {
-        defaultTimes = ['08:00', '12:00', '16:00', '20:00'];
-        normalizedFrequency = '4x Daily';
-      } else if (freq.includes('od') || freq.includes('once') || freq.includes('1x')) {
-        defaultTimes = ['08:00'];
-        normalizedFrequency = '1x Daily';
-      }
-
-      const isAsNeeded = normalizedFrequency === 'As Needed';
-      const initialReminderTimes = isAsNeeded
-        ? []
-        : Array.isArray(m?.reminder_times) && m.reminder_times.length > 0
-        ? m.reminder_times
-        : defaultTimes;
-
-      return {
-        id: m?.id || `med-${idx + 1}`,
-        name_as_written: m?.name_as_written || '',
-        normalized_medicine_name: m?.normalized_medicine_name || '',
-        strength: m?.strength || '',
-        dosage_form: m?.dosage_form || 'TABLET',
-        frequency_text: normalizedFrequency,
-        duration_text: m?.duration_text || '7 Days',
-        route: m?.route || 'ORAL',
-        instructions: m?.instructions || '',
-        confidence: m?.confidence || 'HIGH',
-        is_active_medication: Boolean(m?.is_active_medication),
-        times_per_day: initialReminderTimes.length,
-        reminder_times: initialReminderTimes,
-        total_count: m?.total_count || '',
-      };
-    });
-  });
+  const [medicines, setMedicines] = useState<EditableMedicine[]>(() =>
+    buildInitialMedicines(safeExtraction.medicines)
+  );
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -212,7 +108,7 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
 
   const handleRemoveMedicine = (id: string) => {
     if (medicines.length <= 1) {
-      Alert.alert('Notice', 'At least one medicine is required on a prescription.');
+      Alert.alert(t('prescriptions.review.noticeTitle'), t('prescriptions.review.minOneMedicine'));
       return;
     }
     setMedicines((prev) => prev.filter((med) => med.id !== id));
@@ -222,7 +118,7 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
     // Validate that medicine names are present
     const emptyNames = medicines.some((m) => !m.name_as_written.trim());
     if (emptyNames) {
-      setFormError('All medicines must have a name as written.');
+      setFormError(t('prescriptions.review.errorNameRequired'));
       return;
     }
 
@@ -230,53 +126,19 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
     setIsSubmitting(true);
 
     try {
-      let cleanDate: string | undefined = prescriptionDate.trim() || undefined;
-      if (cleanDate) {
-        const dmy = cleanDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-        if (dmy) {
-          cleanDate = `${dmy[3]}-${dmy[2].padStart(2, '0')}-${dmy[1].padStart(2, '0')}`;
-        }
-      }
-
-      const payload = {
+      const payload = buildReviewPayload({
         documentId,
-        prescription_date: cleanDate,
-        date_is_uncertain: dateIsUncertain || !cleanDate,
-        doctor_name: doctorName.trim() || undefined,
-        clinic_hospital_name: clinicName.trim() || undefined,
-        documented_diagnosis: diagnosis.trim() || undefined,
-        medicines: medicines.map((m) => {
-          const isAsNeeded =
-            m.frequency_text === 'As Needed' ||
-            m.frequency_text?.toLowerCase().includes('needed') ||
-            m.frequency_text?.toLowerCase().includes('prn') ||
-            m.frequency_text?.toLowerCase().includes('sos');
-
-          return {
-            name_as_written: m.name_as_written.trim(),
-            normalized_medicine_name: m.normalized_medicine_name?.trim() || undefined,
-            strength: m.strength?.trim() || undefined,
-            dosage_form: m.dosage_form,
-            frequency_text: m.frequency_text?.trim() || undefined,
-            duration_text: m.duration_text?.trim() || undefined,
-            route: m.route,
-            instructions: m.instructions?.trim() || undefined,
-            is_active_medication: m.is_active_medication,
-            reminder_times: isAsNeeded
-              ? []
-              : m.reminder_times && m.reminder_times.length > 0
-              ? m.reminder_times
-              : m.is_active_medication
-              ? ['08:00']
-              : undefined,
-            total_count: m.total_count?.trim() || undefined,
-          };
-        }),
-      };
+        prescriptionDate,
+        dateIsUncertain,
+        doctorName,
+        clinicName,
+        diagnosis,
+        medicines,
+      });
 
       await onConfirm(payload);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Confirmation failed';
+      const msg = err instanceof Error ? err.message : t('prescriptions.review.errorConfirmFailed');
       setFormError(msg);
     } finally {
       setIsSubmitting(false);
@@ -284,1034 +146,98 @@ export const ReviewPrescriptionScreen: React.FC<ReviewPrescriptionScreenProps> =
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Top Bar with Cancel / Dismiss */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={onDiscard}
-          style={styles.cancelTopButton}
-          accessibilityLabel="Discard review and return to home"
-        >
-          <Text style={styles.cancelTopText}>✕ Discard</Text>
-        </TouchableOpacity>
-        <Badge label="Clinical Review" variant="warning" />
-      </View>
+    <Screen>
+      <View style={styles.column}>
+        <ReviewHeader onDiscard={onDiscard} />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.screenTitle}>Patient Review & Correction</Text>
-        <Text style={styles.screenSubtitle}>
-          Verify extracted fields against your original document. AI output is draft until confirmed.
-        </Text>
-      </View>
-
-      {/* Original Document Preview */}
-      <DocumentPreview
-        filename={documentFilename}
-        mimeType={documentMimeType}
-        signedUrl={signedUrl}
-        localUri={localUri}
-        style={styles.documentPreview}
-      />
-
-      {/* Warnings Banner if AI had uncertainties */}
-      {Array.isArray(safeExtraction.validation_warnings) &&
-        safeExtraction.validation_warnings.length > 0 && (
-          <View style={styles.warningBanner}>
-            <Text style={styles.warningTitle}>⚠️ Ambiguity Detected by AI:</Text>
-            {safeExtraction.validation_warnings.map((w: string, i: number) => (
-              <Text key={i} style={styles.warningItem}>
-                • {w}
-              </Text>
-            ))}
-          </View>
-        )}
-
-      {formError && (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>❌ {formError}</Text>
-        </View>
-      )}
-
-      {/* Prescription Metadata Card */}
-      <Card style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Prescription Details</Text>
-
-        <Input
-          label="Prescription Date (YYYY-MM-DD)"
-          value={prescriptionDate}
-          onChangeText={setPrescriptionDate}
-          placeholder="e.g. 2026-10-12"
+        {/* Original Document Preview */}
+        <DocumentPreview
+          filename={documentFilename}
+          mimeType={documentMimeType}
+          signedUrl={signedUrl}
+          localUri={localUri}
         />
 
-        <TouchableOpacity
-          style={styles.checkboxRow}
-          onPress={() => setDateIsUncertain(!dateIsUncertain)}
-        >
-          <View style={[styles.checkbox, dateIsUncertain && styles.checkboxChecked]}>
-            {dateIsUncertain && <Text style={styles.checkboxMark}>✓</Text>}
-          </View>
-          <Text style={styles.checkboxLabel}>
-            Date is unwritten, approximate, or uncertain
+        <ReviewBanners
+          warnings={safeExtraction.validation_warnings}
+          formError={formError}
+        />
+
+        <PrescriptionDetailsCard
+          prescriptionDate={prescriptionDate}
+          onPrescriptionDateChange={setPrescriptionDate}
+          dateIsUncertain={dateIsUncertain}
+          onDateIsUncertainChange={setDateIsUncertain}
+          doctorName={doctorName}
+          onDoctorNameChange={setDoctorName}
+          clinicName={clinicName}
+          onClinicNameChange={setClinicName}
+          diagnosis={diagnosis}
+          onDiagnosisChange={setDiagnosis}
+        />
+
+        <View style={styles.medicinesHeader}>
+          <Text variant="title2" style={styles.medicinesTitle}>
+            {t('prescriptions.review.medicinesTitle', { count: medicines.length })}
           </Text>
-        </TouchableOpacity>
+          <Button
+            label={t('prescriptions.review.addMedicine')}
+            icon="add"
+            variant="secondary"
+            onPress={handleAddMedicine}
+          />
+        </View>
 
-        <Input
-          label="Prescribing Doctor"
-          value={doctorName}
-          onChangeText={setDoctorName}
-          placeholder="e.g. Dr. A. Verma, MD"
-        />
-
-        <Input
-          label="Clinic / Hospital Name"
-          value={clinicName}
-          onChangeText={setClinicName}
-          placeholder="e.g. Apollo Clinic"
-        />
-
-        <Input
-          label="Documented Clinical Diagnosis"
-          value={diagnosis}
-          onChangeText={setDiagnosis}
-          placeholder="e.g. Type 2 Diabetes Mellitus"
-        />
-      </Card>
-
-      {/* Medicines Section */}
-      <View style={styles.medicinesHeader}>
-        <Text style={styles.sectionTitle}>
-          Medications ({medicines.length})
-        </Text>
-        <TouchableOpacity style={styles.addMedButton} onPress={handleAddMedicine}>
-          <Text style={styles.addMedButtonText}>+ Add Medicine</Text>
-        </TouchableOpacity>
-      </View>
-
-      {medicines.map((med, index) => {
-        const isAsNeeded =
-          med.frequency_text === 'As Needed' ||
-          med.frequency_text?.toLowerCase().includes('needed') ||
-          med.frequency_text?.toLowerCase().includes('prn') ||
-          med.frequency_text?.toLowerCase().includes('sos');
-
-        const isMissingRequired =
-          med.is_active_medication &&
-          (!med.name_as_written.trim() ||
-            !med.duration_text?.trim() ||
-            (!isAsNeeded && (!med.reminder_times || med.reminder_times.length === 0)));
-
-        return (
-          <Card
+        {medicines.map((med, index) => (
+          <MedicineCard
             key={med.id}
-            style={[
-              styles.medicineCard,
-              med.is_active_medication && styles.medicineCardActive,
-              isMissingRequired && styles.medicineCardWarning,
-            ]}
-          >
-            <View style={styles.medCardHeader}>
-              <View style={styles.medTitleRow}>
-                <Text style={styles.medIndexBadge}>#{index + 1}</Text>
-                <Text style={styles.medHeaderTitle}>
-                  {med.name_as_written || 'New Medicine'}
-                </Text>
-              </View>
+            med={med}
+            index={index}
+            onUpdate={(updates) => handleUpdateMedicine(med.id, updates)}
+            onRemove={() => handleRemoveMedicine(med.id)}
+          />
+        ))}
 
-              {med.is_active_medication ? (
-                isMissingRequired ? (
-                  <Badge label="⚠️ Incomplete" variant="warning" />
-                ) : isAsNeeded ? (
-                  <Badge label="✓ Active (As Needed)" variant="success" />
-                ) : (
-                  <Badge label="✓ Active Regimen" variant="success" />
-                )
-              ) : (
-                <Badge label="Historical Only" variant="neutral" />
-              )}
-            </View>
-
-            {/* Action Required Alert Box */}
-            {isMissingRequired && (
-              <View style={styles.requiredWarningBox}>
-                <Text style={styles.requiredWarningTitle}>⚠️ Action Required for Reminders:</Text>
-                <Text style={styles.requiredWarningText}>
-                  {isAsNeeded
-                    ? 'Please specify medicine name and course duration.'
-                    : 'Please choose a course duration and at least 1 reminder time so daily dose alarms can be scheduled.'}
-                </Text>
-              </View>
-            )}
-
-            <Input
-              label="Medicine Name (as written on slip) *"
-              value={med.name_as_written}
-              onChangeText={(val) => handleUpdateMedicine(med.id, { name_as_written: val })}
-              placeholder="e.g. Augmentin 625"
-            />
-
-            <Input
-              label="Normalized / Generic Name"
-              value={med.normalized_medicine_name || ''}
-              onChangeText={(val) =>
-                handleUpdateMedicine(med.id, { normalized_medicine_name: val })
-              }
-              placeholder="e.g. Amoxicillin and Clavulanate Potassium"
-            />
-
-            <View style={styles.inputRow}>
-              <View style={styles.inputCol}>
-                <Input
-                  label="Strength"
-                  value={med.strength || ''}
-                  onChangeText={(val) => handleUpdateMedicine(med.id, { strength: val })}
-                  placeholder="e.g. 500 mg"
-                />
-              </View>
-              <View style={styles.inputCol}>
-                <Input
-                  label="Dosage Form"
-                  value={med.dosage_form}
-                  onChangeText={(val) =>
-                    handleUpdateMedicine(med.id, {
-                      dosage_form: val.toUpperCase() as any,
-                    })
-                  }
-                  placeholder="TABLET / SYRUP / CAPSULE"
-                />
-              </View>
-            </View>
-
-            {/* ACTIVE REGIMEN PROMINENT TOGGLE */}
-            <TouchableOpacity
-              style={[
-                styles.activeToggleCard,
-                med.is_active_medication ? styles.activeToggleCardOn : styles.activeToggleCardOff,
-              ]}
-              onPress={() => {
-                const nextActive = !med.is_active_medication;
-                const defaultTimes =
-                  nextActive && (!med.reminder_times || med.reminder_times.length === 0)
-                    ? ['08:00']
-                    : med.reminder_times;
-                handleUpdateMedicine(med.id, {
-                  is_active_medication: nextActive,
-                  reminder_times: defaultTimes,
-                  duration_text: nextActive && !med.duration_text ? '7 Days' : med.duration_text,
-                });
-              }}
-              activeOpacity={0.8}
-            >
-              <View style={styles.toggleRow}>
-                <View
-                  style={[
-                    styles.toggleCheckbox,
-                    med.is_active_medication && styles.toggleCheckboxActive,
-                  ]}
-                >
-                  {med.is_active_medication && <Text style={styles.toggleCheckText}>✓</Text>}
-                </View>
-                <View style={{ flex: 1, marginLeft: spacing.sm }}>
-                  <Text style={styles.toggleTitle}>
-                    {med.is_active_medication
-                      ? '✓ Active Medicine (Schedule Daily Reminders)'
-                      : 'Historical Prescription Only (No Reminders)'}
-                  </Text>
-                  <Text style={styles.toggleSub}>
-                    {med.is_active_medication
-                      ? 'Dose alarms and daily schedule will be enabled for this medicine.'
-                      : 'Preserved as clinical record without setting recurring alerts.'}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-
-            {/* SCHEDULE & DOSAGE CONTROLS */}
-            {med.is_active_medication && (
-              <View style={styles.scheduleConfigContainer}>
-                {/* 1. DURATION SELECTOR */}
-                <Text style={styles.controlSectionLabel}>
-                  Course Duration <Text style={styles.requiredStar}>*</Text>
-                </Text>
-                <View style={styles.chipRow}>
-                  {DURATION_PRESETS.map((preset) => {
-                    const isSelected = med.duration_text === preset;
-                    return (
-                      <TouchableOpacity
-                        key={preset}
-                        style={[styles.presetChip, isSelected && styles.presetChipSelected]}
-                        onPress={() => handleUpdateMedicine(med.id, { duration_text: preset })}
-                        activeOpacity={0.7}
-                      >
-                        <Text
-                          style={[
-                            styles.presetChipText,
-                            isSelected && styles.presetChipTextSelected,
-                          ]}
-                        >
-                          {preset}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                <Input
-                  label="Custom Duration (e.g. 10 days, 2 weeks)"
-                  value={med.duration_text || ''}
-                  onChangeText={(val) => handleUpdateMedicine(med.id, { duration_text: val })}
-                  placeholder="e.g. 5 Days or Ongoing"
-                />
-
-                {/* 2. FREQUENCY SELECTOR */}
-                <Text style={styles.controlSectionLabel}>
-                  Frequency (Times Per Day) <Text style={styles.requiredStar}>*</Text>
-                </Text>
-                <View style={styles.chipRow}>
-                  {FREQUENCY_PRESETS.map((preset) => {
-                    const isSelected = med.frequency_text === preset.label;
-                    return (
-                      <TouchableOpacity
-                        key={preset.label}
-                        style={[styles.presetChip, isSelected && styles.presetChipSelected]}
-                        onPress={() => {
-                          if (preset.label === 'As Needed') {
-                            handleUpdateMedicine(med.id, {
-                              frequency_text: 'As Needed',
-                              times_per_day: 0,
-                              reminder_times: [],
-                            });
-                          } else {
-                            handleUpdateMedicine(med.id, {
-                              frequency_text: preset.label,
-                              times_per_day: preset.times.length,
-                              reminder_times: [...preset.times],
-                            });
-                          }
-                        }}
-                        activeOpacity={0.7}
-                      >
-                        <Text
-                          style={[
-                            styles.presetChipText,
-                            isSelected && styles.presetChipTextSelected,
-                          ]}
-                        >
-                          {preset.label}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                {/* 3. SCHEDULED REMINDER TIMES (OR AS-NEEDED NOTICE) */}
-                {isAsNeeded ? (
-                  <View style={styles.asNeededCard}>
-                    <View style={styles.asNeededHeaderRow}>
-                      <Text style={styles.asNeededIcon}>ℹ️</Text>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.asNeededTitle}>As-Needed (SOS) Medication</Text>
-                        <Text style={styles.asNeededText}>
-                          This medicine is taken only when symptoms occur (e.g. fever, headache, pain). No fixed daily reminder alarms will be scheduled. You can log doses on-demand from your dashboard whenever you take it.
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                ) : (
-                  <>
-                    <Text style={styles.controlSectionLabel}>
-                      Scheduled Reminder Times <Text style={styles.requiredStar}>*</Text>
-                    </Text>
-                    <Text style={styles.controlSectionSub}>
-                      Tap quick preset buttons or type any custom time (HH:MM) for each daily dose.
-                    </Text>
-
-                    <View style={styles.timesContainer}>
-                      {(med.reminder_times && med.reminder_times.length > 0
-                        ? med.reminder_times
-                        : ['08:00']
-                      ).map((timeStr, timeIdx) => (
-                        <View key={timeIdx} style={styles.timeCardItem}>
-                          <View style={styles.timeCardHeader}>
-                            <View style={styles.timeDoseBadge}>
-                              <Text style={styles.timeDoseText}>
-                                {getTimePeriodIcon(timeStr)} Dose {timeIdx + 1}:
-                              </Text>
-                              <Text style={styles.timeDoseValue}>
-                                {formatTime12Hour(timeStr)}
-                              </Text>
-                            </View>
-
-                            {med.reminder_times && med.reminder_times.length > 1 && (
-                              <TouchableOpacity
-                                style={styles.removeDoseBtn}
-                                onPress={() => {
-                                  const updated = (med.reminder_times || []).filter((_, i) => i !== timeIdx);
-                                  handleUpdateMedicine(med.id, {
-                                    reminder_times: updated,
-                                    times_per_day: updated.length,
-                                  });
-                                }}
-                              >
-                                <Text style={styles.removeDoseBtnText}>✕ Remove</Text>
-                              </TouchableOpacity>
-                            )}
-                          </View>
-
-                          {/* Quick Presets */}
-                          <View style={styles.timeQuickPicker}>
-                            {[
-                              { label: '08:00 Morning', time: '08:00' },
-                              { label: '13:00 Noon', time: '13:00' },
-                              { label: '18:00 Evening', time: '18:00' },
-                              { label: '21:00 Bedtime', time: '21:00' },
-                            ].map((preset) => (
-                              <TouchableOpacity
-                                key={preset.time}
-                                style={[
-                                  styles.miniTimeBtn,
-                                  timeStr === preset.time && styles.miniTimeBtnActive,
-                                ]}
-                                onPress={() => {
-                                  const newTimes = [...(med.reminder_times || ['08:00'])];
-                                  newTimes[timeIdx] = preset.time;
-                                  handleUpdateMedicine(med.id, { reminder_times: newTimes });
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.miniTimeBtnText,
-                                    timeStr === preset.time && styles.miniTimeBtnTextActive,
-                                  ]}
-                                >
-                                  {preset.label}
-                                </Text>
-                              </TouchableOpacity>
-                            ))}
-                          </View>
-
-                          {/* Custom Time Input */}
-                          <View style={styles.customTimeRow}>
-                            <Text style={styles.customTimeLabel}>Custom Time (HH:MM):</Text>
-                            <View style={styles.customTimeInputBox}>
-                              <TextInput
-                                style={styles.customTimeInput}
-                                value={timeStr}
-                                placeholder="08:00"
-                                placeholderTextColor={colors.textMuted}
-                                maxLength={5}
-                                autoCapitalize="none"
-                                onChangeText={(val) => {
-                                  const newTimes = [...(med.reminder_times || ['08:00'])];
-                                  newTimes[timeIdx] = val;
-                                  handleUpdateMedicine(med.id, { reminder_times: newTimes });
-                                }}
-                              />
-                              <Text style={styles.customTimePreview}>
-                                = {formatTime12Hour(timeStr)}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      ))}
-
-                      <View style={styles.timeActionsRow}>
-                        <TouchableOpacity
-                          style={styles.addTimeBtn}
-                          onPress={() => {
-                            const current = med.reminder_times || [];
-                            const defaultNext =
-                              current.length === 1 ? '20:00' : current.length === 2 ? '13:00' : '22:00';
-                            const updated = [...current, defaultNext];
-                            handleUpdateMedicine(med.id, {
-                              reminder_times: updated,
-                              times_per_day: updated.length,
-                            });
-                          }}
-                        >
-                          <Text style={styles.addTimeBtnText}>+ Add Reminder Time</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </>
-                )}
-
-                {/* 4. TOTAL DISPENSED QUANTITY */}
-                <View style={styles.totalCountContainer}>
-                  <Input
-                    label="Total Dispensed Quantity (Optional - for refill tracking)"
-                    value={med.total_count || ''}
-                    onChangeText={(val) => handleUpdateMedicine(med.id, { total_count: val })}
-                    placeholder="e.g. 1 Bottle, 10 Tablets, 100ml (Optional)"
-                  />
-                  <Text style={styles.fieldHelperText}>
-                    💡 Optional: Total package size or count from the pharmacy (e.g. 1 Bottle, 10 Tablets). Used for supply and refill alerts. Leave blank if not specified.
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            <Input
-              label="Instructions / Notes"
-              value={med.instructions || ''}
-              onChangeText={(val) =>
-                handleUpdateMedicine(med.id, { instructions: val })
-              }
-              placeholder="e.g. Take after food with water"
-            />
-
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleRemoveMedicine(med.id)}
-            >
-              <Text style={styles.deleteButtonText}>✕ Remove Medicine</Text>
-            </TouchableOpacity>
-          </Card>
-        );
-      })}
-
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <Button
-          title={isSubmitting ? 'Confirming...' : 'Confirm & Save to Timeline'}
-          variant="primary"
-          onPress={handleConfirm}
-          disabled={isSubmitting}
-        />
-        <Button
-          title="Discard Draft"
-          variant="ghost"
-          onPress={onDiscard}
-          disabled={isSubmitting}
-          style={{ marginTop: spacing.sm }}
-        />
+        {/* Action Buttons */}
+        <View style={styles.actions}>
+          <Button
+            label={isSubmitting ? t('prescriptions.review.confirming') : t('prescriptions.review.confirm')}
+            variant="primary"
+            onPress={handleConfirm}
+            disabled={isSubmitting}
+            fullWidth
+          />
+          <Button
+            label={t('prescriptions.review.discardDraft')}
+            variant="text"
+            onPress={onDiscard}
+            disabled={isSubmitting}
+            fullWidth
+          />
+        </View>
       </View>
-    </ScrollView>
+    </Screen>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    padding: spacing.md,
-    paddingBottom: spacing.xxl,
-    maxWidth: 640,
+  column: {
     width: '100%',
+    maxWidth: 640,
     alignSelf: 'center',
-  },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    paddingTop: Platform.OS === 'android' ? spacing.sm : 0,
-  },
-  cancelTopButton: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.surfaceMuted,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  cancelTopText: {
-    ...typography.caption,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  header: {
-    marginBottom: spacing.md,
-  },
-  screenTitle: {
-    ...typography.h2,
-    color: colors.textPrimary,
-  },
-  screenSubtitle: {
-    ...typography.bodyMuted,
-    marginTop: spacing.xs,
-  },
-  documentPreview: {
-    marginBottom: spacing.md,
-  },
-  warningBanner: {
-    backgroundColor: colors.warningLight,
-    borderWidth: 1,
-    borderColor: colors.warning,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  warningTitle: {
-    ...typography.caption,
-    fontWeight: '700',
-    color: colors.warning,
-    marginBottom: spacing.xs,
-  },
-  warningItem: {
-    ...typography.caption,
-    color: colors.textPrimary,
-    marginTop: 2,
-  },
-  errorBanner: {
-    backgroundColor: colors.dangerLight,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    ...typography.caption,
-    color: colors.danger,
-    fontWeight: '600',
-  },
-  sectionCard: {
-    marginBottom: spacing.md,
-  },
-  sectionTitle: {
-    ...typography.h3,
-    marginBottom: spacing.md,
-  },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    marginTop: -spacing.xs,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.sm,
-    backgroundColor: colors.surface,
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  checkboxMark: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  checkboxLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    flex: 1,
+    gap: space.lg,
+    paddingBottom: space.xxl,
   },
   medicinesHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: spacing.sm,
-    marginBottom: spacing.xs,
+    gap: space.sm,
   },
-  addMedButton: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
+  medicinesTitle: {
+    flexShrink: 1,
   },
-  addMedButtonText: {
-    ...typography.caption,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  medicineCard: {
-    marginBottom: spacing.md,
-  },
-  medCardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  medTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    flex: 1,
-  },
-  medIndexBadge: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    backgroundColor: colors.surfaceMuted,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: borderRadius.sm,
-  },
-  medHeaderTitle: {
-    ...typography.body,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  inputCol: {
-    flex: 1,
-  },
-  activeMedCheckboxRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    padding: spacing.sm,
-    borderRadius: borderRadius.sm,
-    marginVertical: spacing.sm,
-  },
-  activeMedLabelContainer: {
-    flex: 1,
-  },
-  activeMedTitle: {
-    ...typography.caption,
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  activeMedSubtitle: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  deleteButton: {
-    alignSelf: 'flex-end',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  deleteButtonText: {
-    ...typography.caption,
-    color: colors.danger,
-    fontWeight: '500',
-  },
-  actionButtons: {
-    marginTop: spacing.md,
-    marginBottom: spacing.xl,
-  },
-  medicineCardActive: {
-    borderColor: '#10B981',
-    borderWidth: 1.5,
-  },
-  medicineCardWarning: {
-    borderColor: '#F59E0B',
-    borderWidth: 1.5,
-  },
-  requiredWarningBox: {
-    backgroundColor: '#FEF3C7',
-    borderRadius: borderRadius.md,
-    padding: spacing.sm,
-    marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: '#F59E0B',
-  },
-  requiredWarningTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#B45309',
-  },
-  requiredWarningText: {
-    fontSize: 11,
-    color: '#92400E',
-    marginTop: 2,
-  },
-  activeToggleCard: {
-    borderRadius: borderRadius.md,
-    padding: spacing.sm,
-    marginVertical: spacing.sm,
-    borderWidth: 1.5,
-  },
-  activeToggleCardOn: {
-    backgroundColor: '#ECFDF5',
-    borderColor: '#10B981',
-  },
-  activeToggleCardOff: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  toggleCheckbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-  },
-  toggleCheckboxActive: {
-    backgroundColor: '#10B981',
-    borderColor: '#059669',
-  },
-  toggleCheckText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  toggleTitle: {
-    ...typography.caption,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
-  toggleSub: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  scheduleConfigContainer: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: borderRadius.md,
-    padding: spacing.sm,
-    marginVertical: spacing.xs,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  controlSectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    marginTop: spacing.xs,
-    marginBottom: spacing.xs,
-  },
-  requiredStar: {
-    color: colors.danger,
-    fontWeight: '800',
-  },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: spacing.sm,
-  },
-  presetChip: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  presetChipSelected: {
-    backgroundColor: colors.accentCoral,
-    borderColor: colors.accentCoralDark,
-  },
-  presetChipText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  presetChipTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  timesContainer: {
-    marginBottom: spacing.sm,
-  },
-  timeChipRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.surface,
-    padding: spacing.xs + 2,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 6,
-  },
-  timeChipBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  timeChipText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
-  timeQuickPicker: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  miniTimeBtn: {
-    paddingVertical: 3,
-    paddingHorizontal: 6,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.surfaceMuted,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  miniTimeBtnActive: {
-    backgroundColor: colors.accentCoral,
-    borderColor: colors.accentCoral,
-  },
-  miniTimeBtnText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  miniTimeBtnTextActive: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-  },
-  timeActionsRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginTop: 4,
-  },
-  addTimeBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: borderRadius.sm,
-    backgroundColor: '#E0F2FE',
-  },
-  addTimeBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0369A1',
-  },
-  removeTimeBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: borderRadius.sm,
-    backgroundColor: '#FEE2E2',
-  },
-  removeTimeBtnText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#B91C1C',
-  },
-
-  controlSectionSub: {
-    fontSize: 10.5,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  asNeededCard: {
-    backgroundColor: '#F0FDF4',
-    borderRadius: borderRadius.md,
-    padding: spacing.sm,
-    marginVertical: spacing.xs,
-    borderWidth: 1,
-    borderColor: '#BBF7D0',
-  },
-  asNeededHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.xs,
-  },
-  asNeededIcon: {
-    fontSize: 16,
-    marginTop: 1,
-  },
-  asNeededTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#166534',
-    marginBottom: 2,
-  },
-  asNeededText: {
-    fontSize: 11,
-    color: '#15803D',
-    lineHeight: 16,
-  },
-  timeCardItem: {
-    backgroundColor: colors.surface,
-    padding: spacing.sm,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: spacing.xs + 2,
-  },
-  timeCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xs,
-  },
-  timeDoseBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  timeDoseText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textPrimary,
-  },
-  timeDoseValue: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: colors.primary,
-  },
-  removeDoseBtn: {
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: borderRadius.sm,
-    backgroundColor: '#FEE2E2',
-  },
-  removeDoseBtnText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#B91C1C',
-  },
-  customTimeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: spacing.xs,
-    paddingTop: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderSubtle,
-  },
-  customTimeLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  customTimeInputBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  customTimeInput: {
-    width: 64,
-    height: 30,
-    backgroundColor: colors.surfaceSecondary,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.sm,
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    paddingVertical: 0,
-    paddingHorizontal: 4,
-  },
-  customTimePreview: {
-    fontSize: 11,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  totalCountContainer: {
-    marginTop: spacing.xs,
-  },
-  fieldHelperText: {
-    fontSize: 10.5,
-    color: colors.textMuted,
-    lineHeight: 15,
-    marginTop: -4,
-    marginBottom: spacing.xs,
+  actions: {
+    gap: space.sm,
   },
 });
