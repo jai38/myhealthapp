@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { isSessionExpired, type SessionEndReason } from '../../features/auth/authGate';
+import { needsRefresh, type SessionEndReason } from '../../features/auth/authGate';
+import { cancelAllMedicationReminders } from '../notifications/notification-service';
 
 export interface UserSession {
   userId: string;
@@ -73,11 +74,17 @@ type AuthListener = (session: UserSession | null) => void;
 
 export type { SessionEndReason };
 
+// retry: a usable token is now current, so send the request again.
+// rejected: the server refused the refresh and the session has ended as expired.
+// unreachable: the refresh could not be completed (offline, server error); the session is kept.
+export type RefreshOutcome = 'retry' | 'rejected' | 'unreachable';
+
 class AuthService {
   private currentSession: UserSession | null = null;
   private listeners: Set<AuthListener> = new Set();
   private initialized: boolean = false;
   private ready: Promise<void>;
+  private refreshInFlight: Promise<RefreshOutcome> | null = null;
   // Why the last session ended. Cleared when a new session starts.
   private endReason: SessionEndReason | null = null;
 
@@ -89,19 +96,18 @@ class AuthService {
     try {
       const raw = await safeStorage.getItem(STORAGE_KEYS.SESSION);
       if (raw) {
-        const persisted: UserSession = JSON.parse(raw);
-        // The app has no token refresh yet, so a persisted session past its expiry cannot be renewed.
-        if (isSessionExpired(persisted, Date.now())) {
-          await this.endSession('expired');
-        } else {
-          this.currentSession = persisted;
-          this.notifyListeners();
-        }
+        // A cached session is kept even when its token is old, so an offline patient still gets in.
+        this.currentSession = JSON.parse(raw);
+        this.notifyListeners();
       }
     } catch {
       // Clean fallback
     } finally {
       this.initialized = true;
+    }
+    // Renew an old token in the background. Only the server rejecting it ends the session.
+    if (needsRefresh(this.currentSession, Date.now())) {
+      void this.refreshSession(null);
     }
   }
 
@@ -124,6 +130,8 @@ class AuthService {
   }
 
   async getToken(): Promise<string | null> {
+    // A refresh in flight is about to replace the token; wait so callers send the new one.
+    if (this.refreshInFlight) await this.refreshInFlight;
     if (this.currentSession?.accessToken) {
       return this.currentSession.accessToken;
     }
@@ -221,12 +229,78 @@ class AuthService {
     this.notifyListeners();
   }
 
-  // Deliberate sign-out: no note is shown afterwards.
-  async logout(): Promise<void> {
-    await this.endSession('signedOut');
+  /**
+   * Renews the access token with the refresh token. One refresh at a time: concurrent
+   * callers share it, so a rotating refresh token is never spent twice.
+   * `failedToken` is the access token a rejected request was sent with. If it is no longer
+   * the current token, a newer one already exists and the caller just retries.
+   */
+  refreshSession(failedToken: string | null): Promise<RefreshOutcome> {
+    const current = this.currentSession;
+    if (!current) return Promise.resolve('rejected');
+    if (failedToken && failedToken !== current.accessToken) return Promise.resolve('retry');
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = this.doRefresh(current).finally(() => {
+        this.refreshInFlight = null;
+      });
+    }
+    return this.refreshInFlight;
   }
 
-  // The session ended because it expired or the API answered 401. Does nothing without a session.
+  private async doRefresh(started: UserSession): Promise<RefreshOutcome> {
+    if (!started.refreshToken) {
+      await this.expireSession();
+      return 'rejected';
+    }
+    let res: Response;
+    try {
+      res = await fetch(`${this.getBaseUrl()}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ refreshToken: started.refreshToken }),
+      });
+    } catch {
+      return 'unreachable';
+    }
+    // The patient signed out, or in as someone else, while this was in flight: drop the result.
+    if (this.currentSession?.refreshToken !== started.refreshToken) {
+      return this.currentSession ? 'retry' : 'rejected';
+    }
+    if (res.status === 400 || res.status === 401 || res.status === 403) {
+      await this.expireSession();
+      return 'rejected';
+    }
+    if (!res.ok) return 'unreachable';
+    const body = await res.json().catch(() => null);
+    const next = body?.data?.session;
+    if (!next?.accessToken || !next?.refreshToken) return 'unreachable';
+    await this.saveSession({
+      ...started,
+      accessToken: next.accessToken,
+      refreshToken: next.refreshToken,
+      expiresAt: next.expiresAt,
+    });
+    return 'retry';
+  }
+
+  // Deliberate sign-out: no note is shown afterwards. Scheduled reminders are cancelled so
+  // another person using the device is not shown this patient's medicines.
+  async logout(): Promise<void> {
+    const refreshToken = this.currentSession?.refreshToken;
+    await this.endSession('signedOut');
+    await cancelAllMedicationReminders();
+    if (refreshToken) {
+      // Best effort: sign-out never waits on, or fails because of, the server.
+      void fetch(`${this.getBaseUrl()}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      }).catch(() => {});
+    }
+  }
+
+  // The server rejected the refresh, or there is no refresh token. Reminders are left alone: a
+  // missed dose is the worse harm. Does nothing without a session.
   async expireSession(): Promise<void> {
     if (!this.currentSession) return;
     await this.endSession('expired');

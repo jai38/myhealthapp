@@ -59,14 +59,7 @@ export default function RootLayout() {
     };
   }, []);
 
-  const gate = authGateState({ initialized, session, endReason, nowMs: Date.now() });
-
-  // A held session that is past its expiry is cleared at once, with every patient cache.
-  useEffect(() => {
-    if (gate === 'expired' && session) {
-      void authService.expireSession();
-    }
-  }, [gate, session]);
+  const gate = authGateState({ initialized, session, endReason });
 
   // Dev only: the component gallery opens without sign-in, so it needs no backend.
   if (isGalleryEnabled(__DEV__) && isGalleryPath(pathname)) {

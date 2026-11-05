@@ -9,32 +9,40 @@ export interface SessionLike {
   expiresAt?: number;
 }
 
+// Refresh the access token when it is this close to its expiry, or past it.
+export const REFRESH_LEEWAY_MS = 60_000;
+
 /**
- * A session with a known expiry in the past is expired.
- * A session with no expiry is treated as live; the API's 401 ends it if the server disagrees.
- * No refresh flow exists in the app yet, so an expired session cannot be renewed.
+ * True when the access token is past or near its expiry and should be refreshed.
+ * The clock only ever triggers a refresh attempt. It never signs the patient out:
+ * only the server rejecting the refresh does that. A session with no expiry is not
+ * refreshed ahead of time; a 401 triggers the refresh instead.
  */
-export function isSessionExpired(session: SessionLike | null | undefined, nowMs: number): boolean {
+export function needsRefresh(
+  session: SessionLike | null | undefined,
+  nowMs: number,
+  leewayMs: number = REFRESH_LEEWAY_MS
+): boolean {
   if (!session) return false;
   if (typeof session.expiresAt !== 'number' || !Number.isFinite(session.expiresAt)) return false;
-  return session.expiresAt <= nowMs;
+  return session.expiresAt - leewayMs <= nowMs;
 }
 
 export interface AuthGateInput {
   initialized: boolean;
   session: SessionLike | null | undefined;
   endReason: SessionEndReason | null | undefined;
-  nowMs: number;
 }
 
 /**
- * Which tree to render. Patient data is reachable only from 'signedIn', and a
- * session that is expired (by its own expiry or by an end reason) is never signedIn.
+ * Which tree to render. Patient data is reachable only from 'signedIn'. A session ends as
+ * expired only through the auth service (the server rejected the refresh, or there was no
+ * refresh token), which clears it and sets the end reason. A cached session whose token is
+ * merely old stays signedIn, so an offline patient keeps access.
  */
-export function authGateState({ initialized, session, endReason, nowMs }: AuthGateInput): AuthGateState {
+export function authGateState({ initialized, session, endReason }: AuthGateInput): AuthGateState {
   if (!initialized) return 'restoring';
   if (!session) return endReason === 'expired' ? 'expired' : 'signedOut';
-  if (isSessionExpired(session, nowMs)) return 'expired';
   return 'signedIn';
 }
 

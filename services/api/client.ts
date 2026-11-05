@@ -16,22 +16,28 @@ export interface ApiClientConfig {
   baseUrl: string;
   getToken?: () => Promise<string | null>;
   onUnauthorized?: () => void;
+  // On a 401, renews the session. 'retry' sends the request once more with the current token;
+  // 'rejected' means the session ended; 'unreachable' means it could not be renewed right now.
+  refreshSession?: (failedToken: string | null) => Promise<'retry' | 'rejected' | 'unreachable'>;
 }
 
 export class ApiClient {
   private baseUrl: string;
   private getToken?: () => Promise<string | null>;
   private onUnauthorized?: () => void;
+  private refreshSession?: ApiClientConfig['refreshSession'];
 
   constructor(config: ApiClientConfig) {
     this.baseUrl = config.baseUrl;
     this.getToken = config.getToken;
     this.onUnauthorized = config.onUnauthorized;
+    this.refreshSession = config.refreshSession;
   }
 
   async request<T>(
     endpoint: string,
-    options: RequestInit & { schema?: ZodSchema<T> } = {}
+    options: RequestInit & { schema?: ZodSchema<T> } = {},
+    retried = false
   ): Promise<T> {
     const { schema, headers: customHeaders, ...fetchOptions } = options;
     const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
@@ -43,8 +49,10 @@ export class ApiClient {
       ...((customHeaders as Record<string, string>) || {}),
     };
 
+    let sentToken: string | null = null;
     if (this.getToken) {
       const token = await this.getToken();
+      sentToken = token;
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
@@ -61,7 +69,13 @@ export class ApiClient {
     }
 
     if (response.status === 401) {
-      if (this.onUnauthorized) {
+      if (this.refreshSession && !retried) {
+        const outcome = await this.refreshSession(sentToken);
+        if (outcome === 'retry') return this.request<T>(endpoint, options, true);
+        if (outcome === 'unreachable') {
+          throw new ApiError(0, 'NETWORK_ERROR', 'Network connection unavailable or failed');
+        }
+      } else if (this.onUnauthorized) {
         this.onUnauthorized();
       }
       throw new ApiError(401, 'UNAUTHORIZED', 'Session expired or unauthorized');
@@ -143,9 +157,7 @@ export const getApiBaseUrl = (): string => {
 export const api = new ApiClient({
   baseUrl: getApiBaseUrl(),
   getToken: () => authService.getToken(),
-  onUnauthorized: () => {
-    // A 401 means the session ended; it is not a deliberate sign-out.
-    void authService.expireSession();
-  },
+  // A 401 renews the session once and retries; only a server-rejected refresh ends it.
+  refreshSession: (failedToken) => authService.refreshSession(failedToken),
 });
 

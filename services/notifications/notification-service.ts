@@ -298,6 +298,32 @@ export async function cancelAllRemindersForMedication(medicationId: string): Pro
   }
 }
 
+/**
+ * Cancels every scheduled medication reminder (med-* and snooze-*) and clears delivered ones.
+ * Used on a deliberate sign-out so the next person on the device sees nobody's medicines.
+ * Never used on expiry: a missed dose is the worse harm.
+ */
+export async function cancelAllMedicationReminders(): Promise<void> {
+  const Notifications = getNotificationsModule();
+  if (!Notifications) {
+    return;
+  }
+  try {
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    for (const notif of scheduled) {
+      if (
+        notif.identifier &&
+        (notif.identifier.startsWith('med-') || notif.identifier.startsWith('snooze-'))
+      ) {
+        await Notifications.cancelScheduledNotificationAsync(notif.identifier).catch(() => {});
+      }
+    }
+    await dismissAllDeliveredNotifications();
+  } catch {
+    // Best effort.
+  }
+}
+
 let lastSyncedScheduleKey = '';
 
 /**

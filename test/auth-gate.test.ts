@@ -8,7 +8,7 @@ vi.mock('@react-native-async-storage/async-storage', () => ({
   },
 }));
 
-import { authGateState, isSessionExpired, showsSessionEndedNote } from '../features/auth/authGate';
+import { authGateState, needsRefresh, showsSessionEndedNote } from '../features/auth/authGate';
 import { authService, UserSession } from '../services/auth/auth-service';
 import { medicationStore } from '../services/medications/medication-store';
 import { ApiClient, ApiError } from '../services/api/client';
@@ -18,42 +18,42 @@ const NOW = 1_800_000_000_000;
 const live = { expiresAt: NOW + 60_000 };
 const stale = { expiresAt: NOW - 1 };
 
-describe('isSessionExpired', () => {
+describe('needsRefresh', () => {
   it('is false without a session or without an expiry', () => {
-    expect(isSessionExpired(null, NOW)).toBe(false);
-    expect(isSessionExpired({}, NOW)).toBe(false);
+    expect(needsRefresh(null, NOW)).toBe(false);
+    expect(needsRefresh({}, NOW)).toBe(false);
   });
-  it('is true at and after the expiry, false before it', () => {
-    expect(isSessionExpired({ expiresAt: NOW }, NOW)).toBe(true);
-    expect(isSessionExpired(stale, NOW)).toBe(true);
-    expect(isSessionExpired(live, NOW)).toBe(false);
+  it('is true when past or within the leeway of the expiry, false well before it', () => {
+    expect(needsRefresh(stale, NOW)).toBe(true);
+    expect(needsRefresh({ expiresAt: NOW + 30_000 }, NOW)).toBe(true);
+    expect(needsRefresh({ expiresAt: NOW + 120_000 }, NOW)).toBe(false);
   });
 });
 
 describe('authGateState', () => {
   it('is restoring before initialization, whatever else is set', () => {
-    expect(authGateState({ initialized: false, session: null, endReason: null, nowMs: NOW })).toBe('restoring');
-    expect(authGateState({ initialized: false, session: live, endReason: null, nowMs: NOW })).toBe('restoring');
+    expect(authGateState({ initialized: false, session: null, endReason: null })).toBe('restoring');
+    expect(authGateState({ initialized: false, session: live, endReason: null })).toBe('restoring');
   });
   it('is signedOut with no session and no end reason', () => {
-    expect(authGateState({ initialized: true, session: null, endReason: null, nowMs: NOW })).toBe('signedOut');
+    expect(authGateState({ initialized: true, session: null, endReason: null })).toBe('signedOut');
   });
   it('is signedOut after a deliberate sign-out, with no note', () => {
-    const state = authGateState({ initialized: true, session: null, endReason: 'signedOut', nowMs: NOW });
+    const state = authGateState({ initialized: true, session: null, endReason: 'signedOut' });
     expect(state).toBe('signedOut');
     expect(showsSessionEndedNote(state)).toBe(false);
   });
   it('is expired, with the note, after a 401 or expiry ended the session', () => {
-    const state = authGateState({ initialized: true, session: null, endReason: 'expired', nowMs: NOW });
+    const state = authGateState({ initialized: true, session: null, endReason: 'expired' });
     expect(state).toBe('expired');
     expect(showsSessionEndedNote(state)).toBe(true);
   });
-  it('is expired when the held session is past its expiry', () => {
-    expect(authGateState({ initialized: true, session: stale, endReason: null, nowMs: NOW })).toBe('expired');
+  it('keeps a cached session signedIn even when its token is past expiry (offline access)', () => {
+    expect(authGateState({ initialized: true, session: stale, endReason: null })).toBe('signedIn');
   });
   it('is signedIn only for a live session', () => {
-    expect(authGateState({ initialized: true, session: live, endReason: null, nowMs: NOW })).toBe('signedIn');
-    expect(authGateState({ initialized: true, session: {}, endReason: null, nowMs: NOW })).toBe('signedIn');
+    expect(authGateState({ initialized: true, session: live, endReason: null })).toBe('signedIn');
+    expect(authGateState({ initialized: true, session: {}, endReason: null })).toBe('signedIn');
   });
 });
 
@@ -124,7 +124,6 @@ describe('the auth gate never renders patient data after expiry', () => {
       initialized: true,
       session: authService.getSession(),
       endReason: authService.getEndReason(),
-      nowMs: Date.now(),
     });
     expect(state).toBe('expired');
     expect(state).not.toBe('signedIn');
@@ -151,12 +150,12 @@ describe('the auth gate never renders patient data after expiry', () => {
     await ending;
   });
 
-  it('a 401 from the API client ends the session as expired', async () => {
+  it('a 401 whose refresh the server rejects ends the session as expired', async () => {
     await signInForTest(makeSession());
     const client = new ApiClient({
       baseUrl: 'http://localhost/api',
       getToken: () => authService.getToken(),
-      onUnauthorized: () => void authService.expireSession(),
+      refreshSession: (t) => authService.refreshSession(t),
     });
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
