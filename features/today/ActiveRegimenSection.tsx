@@ -4,7 +4,7 @@ import { HorizontalDateStrip } from '../../components/HorizontalDateStrip';
 import { AdherenceDonut } from '../../components/AdherenceDonut';
 import { MedicationRecord, DoseLog } from '../../services/medications/medication-service';
 import { styles } from './styles-header';
-import { DoseTemporalState } from './utils';
+import type { DoseDisplayState } from '../../design/status';
 import { DoseHeroSection } from './DoseHeroSection';
 import { DailySchedule } from './DailySchedule';
 import { AsNeededSection } from './AsNeededSection';
@@ -23,7 +23,7 @@ export function ActiveRegimenSection({
   totalDosesCount,
   nextDose,
   nextMed,
-  doseTemporalState,
+  nextDoseState,
   diffMinutes,
   nextTimeStr,
   actionableDoses,
@@ -47,7 +47,7 @@ export function ActiveRegimenSection({
   totalDosesCount: number;
   nextDose: DoseLog | null;
   nextMed: MedicationRecord | null | undefined;
-  doseTemporalState: DoseTemporalState;
+  nextDoseState: DoseDisplayState | null;
   diffMinutes: number;
   nextTimeStr: string;
   actionableDoses: DoseLog[];
@@ -122,7 +122,7 @@ export function ActiveRegimenSection({
       <DoseHeroSection
         nextDose={nextDose}
         nextMed={nextMed}
-        doseTemporalState={doseTemporalState}
+        nextDoseState={nextDoseState}
         diffMinutes={diffMinutes}
         nextTimeStr={nextTimeStr}
         isSelectedDateToday={isSelectedDateToday}

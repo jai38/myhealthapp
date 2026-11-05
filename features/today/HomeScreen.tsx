@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { ScreenLayout } from '../../components/ScreenLayout';
 import { Card } from '../../components/Card';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
@@ -8,10 +8,10 @@ import { ManualAddMedicationModal } from '../../features/medications/ManualAddMe
 import { AccountModal } from '../../features/account/AccountModal';
 import { colors } from '../../theme/index';
 import { medicationStore, toLocalDateString } from '../../services/medications/medication-store';
-import { useTodayData } from './useTodayData';
+import { useToday } from './useToday';
 import { usePrescriptionUpload } from './usePrescriptionUpload';
 import { useDoseActions } from './useDoseActions';
-import { getSpotlightDose } from './utils';
+import { doseDisplayStateFor, pickNextDose } from './todayModel';
 import { styles } from './styles-header';
 import { TodayHeader } from './TodayHeader';
 import { OnboardingHero } from './OnboardingHero';
@@ -30,8 +30,8 @@ export default function HomeScreen() {
   const todayDateStr = toLocalDateString(new Date());
   const [selectedDate, setSelectedDate] = useState<string>(todayDateStr);
 
-  const { session, medications, recentEvents, totalRecordsCount, loadDashboardData } =
-    useTodayData();
+  const { session, medications, recentEvents, totalRecordsCount, loadDashboardData, nowMs } =
+    useToday();
   const {
     isProcessing,
     processingStatus,
@@ -64,16 +64,14 @@ export default function HomeScreen() {
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
 
-  const now = new Date();
-  const nowMs = now.getTime();
-
-  const { spotlightDose, doseTemporalState, diffMinutes } = getSpotlightDose(
-    actionableDoses,
-    isSelectedDateToday,
-    nowMs
-  );
-
-  const nextDose = spotlightDose;
+  // The one next-dose rule, shared with Medicines. Unrecorded past doses are never "next".
+  const medFor = (id: string) =>
+    medications.find((m) => m.id === id) || medicationStore.getMedicationById(id);
+  const nextDose = pickNextDose(actionableDoses, nowMs, medFor);
+  const nextDoseState = nextDose ? doseDisplayStateFor(nextDose, nowMs, medFor(nextDose.medicationId)) : null;
+  const diffMinutes = nextDose
+    ? Math.round((new Date(nextDose.scheduledTime).getTime() - nowMs) / 60000)
+    : 0;
   const nextMed = nextDose
     ? medications.find((m) => m.id === nextDose.medicationId) ||
       medicationStore.getMedicationById(nextDose.medicationId)
@@ -170,7 +168,7 @@ export default function HomeScreen() {
           totalDosesCount={totalDosesCount}
           nextDose={nextDose}
           nextMed={nextMed}
-          doseTemporalState={doseTemporalState}
+          nextDoseState={nextDoseState}
           diffMinutes={diffMinutes}
           nextTimeStr={nextTimeStr}
           actionableDoses={actionableDoses}
@@ -216,26 +214,6 @@ export default function HomeScreen() {
           loadDashboardData();
         }}
       />
-
-      <Modal
-        visible={Boolean(activeReviewData)}
-        animationType="slide"
-        onRequestClose={() => setActiveReviewData(null)}
-      >
-        {activeReviewData && (
-          <ReviewPrescriptionScreen
-            jobId={activeReviewData.jobId}
-            documentId={activeReviewData.documentId}
-            documentFilename={activeReviewData.documentFilename}
-            documentMimeType={activeReviewData.documentMimeType}
-            signedUrl={activeReviewData.signedUrl}
-            localUri={activeReviewData.localUri}
-            initialExtraction={activeReviewData.extractedPayload}
-            onConfirm={handleConfirmPrescription}
-            onDiscard={() => setActiveReviewData(null)}
-          />
-        )}
-      </Modal>
 
       <AccountModal
         visible={isAccountModalVisible}

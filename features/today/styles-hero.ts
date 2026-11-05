@@ -40,16 +40,6 @@ export const styles = StyleSheet.create({
     color: colors.accentCoral,
     letterSpacing: 0.5,
   },
-  badgeOverdue: {
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FCA5A5',
-  },
-  badgeOverdueText: {
-    color: '#DC2626',
-    fontWeight: '800',
-    fontSize: 11,
-    letterSpacing: 0.5,
-  },
   badgeDueNow: {
     backgroundColor: '#EFF6FF',
     borderColor: '#BFDBFE',

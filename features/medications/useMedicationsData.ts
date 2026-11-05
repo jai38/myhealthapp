@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import {
   medicationService,
   MedicationRecord,
-  DoseLog,
 } from '../../services/medications/medication-service';
 import { medicationStore } from '../../services/medications/medication-store';
 import { buildReminderSyncPayload } from '../../services/medications/reminder-sync';
@@ -19,7 +18,6 @@ export function useMedicationsData() {
   const [medications, setMedications] = useState<MedicationRecord[]>(() =>
     medicationStore.getMedications()
   );
-  const [allDoses, setAllDoses] = useState<DoseLog[]>(() => medicationStore.getAllDoses());
 
   // Dose action in-flight state
   const [actionDoseId, setActionDoseId] = useState<string | null>(null);
@@ -28,7 +26,6 @@ export function useMedicationsData() {
   useEffect(() => {
     const unsub = medicationStore.subscribe(() => {
       setMedications(medicationStore.getMedications());
-      setAllDoses(medicationStore.getAllDoses());
     });
     return unsub;
   }, []);
@@ -46,7 +43,6 @@ export function useMedicationsData() {
       }
 
       setMedications(medicationStore.getMedications());
-      setAllDoses(medicationStore.getAllDoses());
 
       // Synchronize device alarms with all active medications
       syncAllMedicationReminders(buildReminderSyncPayload(medicationStore.getMedications())).catch(() => {});

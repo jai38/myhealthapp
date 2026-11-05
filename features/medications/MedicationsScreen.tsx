@@ -20,6 +20,7 @@ import { onNotificationResponse } from '../../services/notifications/notificatio
 import { useMedicationsData } from './useMedicationsData';
 import { styles } from './styles-screen';
 import { NextDoseCard } from './NextDoseCard';
+import { pickNextDose } from '../today/todayModel';
 import { WeeklyAdherenceCard } from './WeeklyAdherenceCard';
 import { DaySchedule } from './DaySchedule';
 import { MedicationList, type TabType } from './MedicationList';
@@ -94,7 +95,10 @@ export default function MedicationsScreen() {
   const actionableDoses = dayDoses.filter(
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
-  const nextDose = actionableDoses[0];
+  // The one next-dose rule, shared with Today. Unrecorded past doses are never "next".
+  const nextDose =
+    pickNextDose(actionableDoses, Date.now(), (id) => medicationStore.getMedicationById(id)) ??
+    undefined;
   const nextMed = nextDose
     ? medications.find((m) => m.id === nextDose.medicationId) ||
       medicationStore.getMedicationById(nextDose.medicationId)

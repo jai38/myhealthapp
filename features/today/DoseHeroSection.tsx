@@ -4,12 +4,14 @@ import { Card } from '../../components/Card';
 import { spacing } from '../../theme/index';
 import { MedicationRecord, DoseLog } from '../../services/medications/medication-service';
 import { styles } from './styles-hero';
-import { DoseTemporalState, formatTimeDifference } from './utils';
+import { formatTimeDifference } from './utils';
+import { doseStatusDisplay, type DoseDisplayState } from '../../design/status';
+import { t } from '../../design/strings';
 
 export function DoseHeroSection({
   nextDose,
   nextMed,
-  doseTemporalState,
+  nextDoseState,
   diffMinutes,
   nextTimeStr,
   isSelectedDateToday,
@@ -23,7 +25,7 @@ export function DoseHeroSection({
 }: {
   nextDose: DoseLog | null;
   nextMed: MedicationRecord | null | undefined;
-  doseTemporalState: DoseTemporalState;
+  nextDoseState: DoseDisplayState | null;
   diffMinutes: number;
   nextTimeStr: string;
   isSelectedDateToday: boolean;
@@ -39,6 +41,12 @@ export function DoseHeroSection({
   ) => Promise<void>;
   onAddManual: () => void;
 }) {
+  const statusDisplay = nextDoseState
+    ? doseStatusDisplay(nextDoseState, (d) =>
+        d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      )
+    : null;
+  const statusLabel = statusDisplay ? t(statusDisplay.labelKey, statusDisplay.labelParams) : '';
   return (
     <>
           {/* 5. 1-TAP UPCOMING / DUE DOSE CARD */}
@@ -46,29 +54,25 @@ export function DoseHeroSection({
             <View style={styles.heroDoseCard}>
               <View style={styles.heroDoseHeader}>
                 <View style={styles.heroBadgeRow}>
-                  {doseTemporalState === 'OVERDUE' ? (
-                    <View style={[styles.heroDoseBadge, styles.badgeOverdue]}>
-                      <Text style={styles.badgeOverdueText}>⚠️ OVERDUE DOSE</Text>
-                    </View>
-                  ) : doseTemporalState === 'DUE_NOW' ? (
-                    <View style={[styles.heroDoseBadge, styles.badgeDueNow]}>
-                      <Text style={styles.badgeDueNowText}>🔔 DUE NOW</Text>
-                    </View>
-                  ) : doseTemporalState === 'SNOOZED' ? (
-                    <View style={[styles.heroDoseBadge, styles.badgeSnoozed]}>
-                      <Text style={styles.badgeSnoozedText}>⏰ SNOOZED (15m)</Text>
-                    </View>
-                  ) : (
-                    <View style={styles.heroDoseBadge}>
-                      <Text style={styles.heroDoseBadgeText}>
-                        {isSelectedDateToday
-                          ? diffMinutes <= 15 && diffMinutes > 0
-                            ? `UPCOMING IN ${diffMinutes}m ⏱️`
-                            : 'UPCOMING DOSE ⏱️'
-                          : 'SCHEDULED DOSE ⏱️'}
-                      </Text>
-                    </View>
-                  )}
+                  <View
+                    style={[
+                      styles.heroDoseBadge,
+                      nextDoseState?.kind === 'dueNow' && styles.badgeDueNow,
+                      nextDoseState?.kind === 'snoozed' && styles.badgeSnoozed,
+                    ]}
+                  >
+                    <Text
+                      style={
+                        nextDoseState?.kind === 'dueNow'
+                          ? styles.badgeDueNowText
+                          : nextDoseState?.kind === 'snoozed'
+                          ? styles.badgeSnoozedText
+                          : styles.heroDoseBadgeText
+                      }
+                    >
+                      {statusLabel}
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.heroTimeChip}>
                   <Text style={styles.heroTimeChipText}>{nextTimeStr}</Text>
@@ -78,11 +82,9 @@ export function DoseHeroSection({
               <Text style={styles.heroMedName}>{nextMed.nameAsWritten}</Text>
               <Text style={styles.heroMedMeta}>
                 {nextMed.strength ? `${nextMed.strength} • ` : ''}
-                {doseTemporalState === 'OVERDUE'
-                  ? `Scheduled at ${nextTimeStr} (${formatTimeDifference(diffMinutes)}) • Action needed`
-                  : doseTemporalState === 'DUE_NOW'
+                {nextDoseState?.kind === 'dueNow'
                   ? `Scheduled at ${nextTimeStr} • Time for your dose`
-                  : doseTemporalState === 'SNOOZED'
+                  : nextDoseState?.kind === 'snoozed'
                   ? `Scheduled at ${nextTimeStr} • Snooze active`
                   : diffMinutes <= 15 && diffMinutes > 0
                   ? `Scheduled at ${nextTimeStr} (in ${diffMinutes}m) • Alarm will sound at dose time`
@@ -95,7 +97,7 @@ export function DoseHeroSection({
                 </View>
               ) : null}
 
-              {doseTemporalState === 'UPCOMING' && (
+              {nextDoseState?.kind === 'upcoming' && (
                 <View style={styles.upcomingNoticeBox}>
                   <Text style={styles.upcomingNoticeText}>
                     🔔 Reminder notification is scheduled for {nextTimeStr}. You can record early or wait until due.
@@ -113,7 +115,7 @@ export function DoseHeroSection({
                   <Text style={styles.heroActionSkipText}>Skip</Text>
                 </TouchableOpacity>
 
-                {doseTemporalState !== 'UPCOMING' && (
+                {nextDoseState?.kind !== 'upcoming' && (
                   <TouchableOpacity
                     style={[styles.heroActionBtn, styles.heroActionSnooze]}
                     onPress={() => handleRecordDoseAction(nextDose.id, 'SNOOZED', 15)}
@@ -121,7 +123,7 @@ export function DoseHeroSection({
                     activeOpacity={0.75}
                   >
                     <Text style={styles.heroActionSnoozeText}>
-                      {doseTemporalState === 'SNOOZED' ? 'Snooze +15m' : 'Snooze 15m'}
+                      {nextDoseState?.kind === 'snoozed' ? 'Snooze +15m' : 'Snooze 15m'}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -133,7 +135,7 @@ export function DoseHeroSection({
                   activeOpacity={0.75}
                 >
                   <Text style={styles.heroActionTakenText}>
-                    {doseTemporalState === 'UPCOMING' ? 'Take Early ✓' : 'Taken ✓'}
+                    {nextDoseState?.kind === 'upcoming' ? 'Take Early ✓' : 'Taken ✓'}
                   </Text>
                 </TouchableOpacity>
               </View>

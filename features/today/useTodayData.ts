@@ -3,7 +3,6 @@ import { authService, UserSession } from '../../services/auth/auth-service';
 import {
   medicationService,
   MedicationRecord,
-  DoseLog,
 } from '../../services/medications/medication-service';
 import { medicationStore } from '../../services/medications/medication-store';
 import { timelineService, TimelineEvent } from '../../services/timeline/timeline-service';
@@ -15,7 +14,10 @@ export function useTodayData() {
   const [medications, setMedications] = useState<MedicationRecord[]>(() =>
     medicationStore.getMedications()
   );
-  const [allDoses, setAllDoses] = useState<DoseLog[]>(() => medicationStore.getAllDoses());
+  const [initialized, setInitialized] = useState<boolean>(() => medicationStore.isInitialized());
+  const [loadFailed, setLoadFailed] = useState<boolean>(false);
+  // Time of the last successful server load. Kept in memory only.
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
   const [recentEvents, setRecentEvents] = useState<TimelineEvent[]>([]);
   const [totalRecordsCount, setTotalRecordsCount] = useState<number>(0);
 
@@ -23,7 +25,7 @@ export function useTodayData() {
   useEffect(() => {
     const unsub = medicationStore.subscribe(() => {
       setMedications(medicationStore.getMedications());
-      setAllDoses(medicationStore.getAllDoses());
+      setInitialized(medicationStore.isInitialized());
     });
     return unsub;
   }, []);
@@ -31,9 +33,18 @@ export function useTodayData() {
   // Sync with remote backend when available
   const loadDashboardData = useCallback(async () => {
     try {
+      // Both medicine calls failing means the load failed; cached store data is kept either way.
+      let medsFailed = false;
+      let dosesFailed = false;
       const [serverMeds, serverDoses, timelineRes] = await Promise.all([
-        medicationService.listMedications().catch(() => []),
-        medicationService.getDoseOccurrences().catch(() => []),
+        medicationService.listMedications().catch(() => {
+          medsFailed = true;
+          return [];
+        }),
+        medicationService.getDoseOccurrences().catch(() => {
+          dosesFailed = true;
+          return [];
+        }),
         timelineService
           .fetchTimeline({ limit: 3 })
           .catch(() => ({ data: [], pagination: { totalCount: 0 } })),
@@ -43,10 +54,18 @@ export function useTodayData() {
         await medicationStore.syncFromServer(serverMeds, serverDoses);
       }
 
+      if (medsFailed && dosesFailed) {
+        setLoadFailed(true);
+      } else {
+        setLoadFailed(false);
+        setLastUpdatedAt(Date.now());
+      }
+
       setRecentEvents(timelineRes.data);
       setTotalRecordsCount(timelineRes.pagination.totalCount);
     } catch {
       // Offline fallback: keep existing store data
+      setLoadFailed(true);
     }
   }, []);
 
@@ -73,5 +92,14 @@ export function useTodayData() {
     syncAllMedicationReminders(activeMeds).catch(() => {});
   }, [medications]);
 
-  return { session, medications, allDoses, recentEvents, totalRecordsCount, loadDashboardData };
+  return {
+    session,
+    medications,
+    initialized,
+    loadFailed,
+    lastUpdatedAt,
+    recentEvents,
+    totalRecordsCount,
+    loadDashboardData,
+  };
 }

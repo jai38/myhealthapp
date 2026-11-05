@@ -34,6 +34,13 @@ export const en = {
   'status.missedByUser': 'Marked missed',
   'status.notConfirmed': 'Not confirmed',
 
+  'today.greeting.morning': 'Good morning, {name}',
+  'today.greeting.afternoon': 'Good afternoon, {name}',
+  'today.greeting.evening': 'Good evening, {name}',
+  'today.greeting.morningNoName': 'Good morning',
+  'today.greeting.afternoonNoName': 'Good afternoon',
+  'today.greeting.eveningNoName': 'Good evening',
+
   'trust.fromDocument': 'From document',
   'trust.addedByYou': 'Added by you',
   'trust.fromDoctor': "From doctor's record",
