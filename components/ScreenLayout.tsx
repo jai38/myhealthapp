@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: spacing.md,
     paddingTop: spacing.md,
-    paddingBottom: 130, // Generous clearance for floating dock
+    paddingBottom: spacing.xxl,
     maxWidth: 640,
     width: '100%',
     alignSelf: 'center',

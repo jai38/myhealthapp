@@ -114,6 +114,11 @@ export const en = {
   'container.stepCurrent': 'Current step',
   'container.stepUpcoming': 'Not started',
 
+  'records.timeline': 'Timeline',
+  'records.reports': 'Reports',
+  'records.views': 'Records view',
+  'healthPlan.soonTitle': 'Your health plan is on its way',
+  'healthPlan.soonBody': 'Goals and care plans will appear here in a future update.',
   'nav.notificationsNone': 'Notifications, none new',
   'nav.notificationsMany': '9+',
   'patient.switch': 'Switch patient',

@@ -16,7 +16,7 @@ export function RecentActivity({ recentEvents }: { recentEvents: TimelineEvent[]
           <Text style={styles.sectionTitle}>Recent Health Activity</Text>
           <Text style={styles.sectionSub}>Verified prescriptions, doctor visits & lab tests</Text>
         </View>
-        <TouchableOpacity onPress={() => router.push('/(tabs)/timeline')}>
+        <TouchableOpacity onPress={() => router.push({ pathname: '/records', params: { view: 'timeline' } })}>
           <Text style={styles.viewAllLink}>View All ›</Text>
         </TouchableOpacity>
       </View>
@@ -40,7 +40,7 @@ export function RecentActivity({ recentEvents }: { recentEvents: TimelineEvent[]
             <TouchableOpacity
               key={event.id}
               style={styles.activityCard}
-              onPress={() => router.push('/(tabs)/timeline')}
+              onPress={() => router.push({ pathname: '/records', params: { view: 'timeline' } })}
               activeOpacity={0.85}
             >
               <View style={styles.activityTopRow}>

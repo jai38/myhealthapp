@@ -60,7 +60,7 @@ export function ActionHub({
         {/* Tile 3: Doctor Summary Export */}
         <TouchableOpacity
           style={styles.actionHubTile}
-          onPress={() => router.push('/(tabs)/reports')}
+          onPress={() => router.push({ pathname: '/records', params: { view: 'reports' } })}
           activeOpacity={0.8}
         >
           <View style={[styles.actionHubIconBadge, { backgroundColor: '#F8FAFC' }]}>

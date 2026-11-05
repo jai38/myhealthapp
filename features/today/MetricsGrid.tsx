@@ -58,7 +58,7 @@ export function MetricsGrid({
         {/* Verified Health Records */}
         <TouchableOpacity
           style={styles.metricCard}
-          onPress={() => router.push('/(tabs)/reports')}
+          onPress={() => router.push({ pathname: '/records', params: { view: 'reports' } })}
           activeOpacity={0.85}
         >
           <View style={[styles.metricIconBox, { backgroundColor: '#F8FAFC' }]}>

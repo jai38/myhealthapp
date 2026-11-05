@@ -9,6 +9,7 @@ import { AuthScreen } from '../features/auth/AuthScreen';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ConnectivityBanner } from '../components/system/ConnectivityBanner';
 import { ConnectivityProvider } from '../services/network/useConnectivity';
+import { medicineOpenTarget } from '../features/shell/tabs';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
 import {
   requestNotificationPermissions,
@@ -43,10 +44,7 @@ export default function RootLayout() {
     // Handle tapping on medication notification to open medication modal
     const unsubNotification = registerNotificationResponseListener((medicationId) => {
       setTimeout(() => {
-        router.push({
-          pathname: '/(tabs)/medications',
-          params: { openMedicationId: medicationId, t: Date.now().toString() },
-        });
+        router.push(medicineOpenTarget(medicationId, Date.now().toString()));
       }, 100);
     });
 
