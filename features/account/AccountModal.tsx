@@ -223,7 +223,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({ visible, onClose }) 
 
                 {/* App Version Info */}
                 <View style={styles.versionContainer}>
-                  <Text style={styles.versionText}>MyHealth App v1.0.0 • Clinical Edition</Text>
+                  <Text style={styles.versionText}>Ayoreni v1.0.0</Text>
                   <Text style={styles.versionSubtext}>Strict Clinical Safety & FHIR Aligned</Text>
                 </View>
               </>

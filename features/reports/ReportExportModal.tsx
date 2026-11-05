@@ -178,7 +178,7 @@ export const ReportExportModal: React.FC<ReportExportModalProps> = ({
         await Share.share({
           title: generatedReport.title,
           message:
-            `My Health App -- ${generatedReport.title}\n` +
+            `Ayoreni -- ${generatedReport.title}\n` +
             `Verified Records: ${generatedReport.summary.totalRecords} (Events: ${generatedReport.summary.timelineEventsCount}, Medications: ${generatedReport.summary.medicationsCount})\n` +
             `Generated: ${new Date(generatedReport.generatedAt).toLocaleDateString()}\n` +
             `Secure document access: ${generatedReport.downloadUrl}`,
