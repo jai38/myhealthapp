@@ -7,11 +7,6 @@
     "icon": "./assets/icon.png",
     "scheme": "myhealthapp",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FFFFFF"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.myhealthapp.patient"
@@ -39,6 +34,14 @@
     "plugins": [
       "expo-router",
       "expo-asset",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "backgroundColor": "#FFFFFF",
+          "resizeMode": "contain"
+        }
+      ],
       [
         "expo-notifications",
         {

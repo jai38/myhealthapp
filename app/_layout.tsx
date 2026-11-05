@@ -67,7 +67,7 @@ export default function RootLayout() {
   if (!initialized) {
     return (
       <SafeAreaProvider>
-        <StatusBar style="dark" backgroundColor={colors.background} />
+        <StatusBar style="dark" />
         <View style={styles.loadingContainer}>
           <View style={styles.splashBadge}>
             <Text style={styles.splashIcon}>🩺</Text>
@@ -83,7 +83,7 @@ export default function RootLayout() {
   if (!session) {
     return (
       <SafeAreaProvider>
-        <StatusBar style="dark" backgroundColor={colors.background} />
+        <StatusBar style="dark" />
         <ErrorBoundary>
           <AuthScreen />
         </ErrorBoundary>
@@ -94,7 +94,7 @@ export default function RootLayout() {
   // Authenticated: Render main tabs
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" backgroundColor={colors.background} />
+      <StatusBar style="dark" />
       <ErrorBoundary>
         <Stack
           screenOptions={{

@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   scrim: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: color.text.primary,
     opacity: 0.4,
   },

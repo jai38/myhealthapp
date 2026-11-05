@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     padding: space.lg,
   },
   scrim: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: color.text.primary,
     opacity: 0.4,
   },

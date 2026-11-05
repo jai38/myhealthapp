@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   ambientBackground: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     overflow: 'hidden',
   },
   glowOrbTopRight: {
