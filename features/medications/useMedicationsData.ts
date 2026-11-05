@@ -6,6 +6,7 @@ import {
   DoseLog,
 } from '../../services/medications/medication-service';
 import { medicationStore } from '../../services/medications/medication-store';
+import { buildReminderSyncPayload } from '../../services/medications/reminder-sync';
 import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
 import { authService } from '../../services/auth/auth-service';
 
@@ -48,15 +49,7 @@ export function useMedicationsData() {
       setAllDoses(medicationStore.getAllDoses());
 
       // Synchronize device alarms with all active medications
-      syncAllMedicationReminders(
-        medicationStore.getMedications().map((m) => ({
-          id: m.id,
-          name: m.nameAsWritten,
-          isActive: m.status === 'ACTIVE',
-          reminderTimes: m.reminderTimes || [],
-          instructions: m.prescribedInstructions || undefined,
-        }))
-      ).catch(() => {});
+      syncAllMedicationReminders(buildReminderSyncPayload(medicationStore.getMedications())).catch(() => {});
     } catch (err: any) {
       setError(err?.message || 'Failed to load medication records.');
     } finally {

@@ -7,6 +7,7 @@ import {
 } from '../../services/medications/medication-service';
 import { medicationStore } from '../../services/medications/medication-store';
 import { timelineService, TimelineEvent } from '../../services/timeline/timeline-service';
+import { buildReminderSyncPayload } from '../../services/medications/reminder-sync';
 import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
 
 export function useTodayData() {
@@ -66,16 +67,9 @@ export function useTodayData() {
     if (!medicationStore.isInitialized() && medications.length === 0) {
       return;
     }
-    const activeMeds = (medications.length > 0 ? medications : medicationStore.getMedications())
-      .filter((m) => m.status === 'ACTIVE')
-      .map((m) => ({
-        id: m.id,
-        name: m.nameAsWritten,
-        isActive: true,
-        reminderTimes: m.reminderTimes || [],
-        instructions: m.prescribedInstructions || undefined,
-        endDate: m.endDate || null,
-      }));
+    const activeMeds = buildReminderSyncPayload(
+      medications.length > 0 ? medications : medicationStore.getMedications()
+    );
     syncAllMedicationReminders(activeMeds).catch(() => {});
   }, [medications]);
 
