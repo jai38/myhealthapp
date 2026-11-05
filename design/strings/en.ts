@@ -569,6 +569,8 @@ export const en = {
   'medicines.manual.save': 'Save Medication & Schedule',
   'medicines.manual.addedTitle': 'Medication Added',
   'medicines.manual.addedWithReminders': '"{name}" is now active with {count} daily reminder(s).',
+  'medicines.reminders.permissionOff': 'Reminders could not be set because notifications are off. Turn on notifications for this app in your phone settings, then set the reminder times again.',
+  'medicines.reminders.notSet': 'Reminders could not be set on this phone. Check that notifications are on for this app in your phone settings, then set the reminder times again.',
   'medicines.manual.addedWithoutReminders': '"{name}" has been saved to your medications list.',
 
   'medicines.detail.title': 'Medication Details',

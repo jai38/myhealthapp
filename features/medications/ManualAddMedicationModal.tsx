@@ -15,7 +15,11 @@ import type { StringKey } from '../../design/strings';
 import { color, radius, space } from '../../design/tokens';
 import { medicationService } from '../../services/medications/medication-service';
 import { formatTime12Hour } from './reminder-time-utils';
-import { scheduleMedicationReminder } from '../../services/notifications/notification-service';
+import {
+  scheduleMedicationReminders,
+  type ReminderScheduleResult,
+} from '../../services/notifications/notification-service';
+import { reminderFailureMessageKey, reminderOutcome } from './reminderOutcome';
 import { ManualAddCustomTime } from './ManualAddCustomTime';
 
 export interface ManualAddMedicationModalProps {
@@ -134,15 +138,21 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
       });
 
       // Schedule device notifications / alarms if enabled
-      if (enableReminders && created?.id) {
-        for (const t of selectedTimes) {
-          scheduleMedicationReminder(created.id, name.trim(), t, instructions.trim()).catch(() => {});
-        }
+      // The medicine is saved either way; the message only claims reminders that were really scheduled.
+      let reminderResult: ReminderScheduleResult | null = null;
+      if (enableReminders) {
+        reminderResult = created?.id
+          ? await scheduleMedicationReminders(created.id, name.trim(), selectedTimes, instructions.trim())
+          : { scheduled: 0, total: selectedTimes.length, permissionDenied: false };
       }
 
       Alert.alert(
         t('medicines.manual.addedTitle'),
-        enableReminders
+        reminderResult && reminderOutcome(reminderResult) !== 'allSet'
+          ? `${t('medicines.manual.addedWithoutReminders', { name: name.trim() })} ${t(
+              reminderFailureMessageKey(reminderResult)
+            )}`
+          : enableReminders
           ? t('medicines.manual.addedWithReminders', {
               name: name.trim(),
               count: selectedTimes.length,

@@ -199,6 +199,45 @@ export async function scheduleMedicationReminder(
   }
 }
 
+export interface ReminderScheduleResult {
+  /** Times that got a scheduled notification. */
+  scheduled: number;
+  /** Times that were requested. */
+  total: number;
+  /** Notification permission is not granted, so nothing can fire. */
+  permissionDenied: boolean;
+}
+
+/**
+ * Schedules reminders for every time and reports what actually happened.
+ * A time counts as scheduled only when a notification id came back. Callers must
+ * not tell the patient reminders are active unless `scheduled === total`.
+ */
+export async function scheduleMedicationReminders(
+  medicationId: string,
+  medicationName: string,
+  times: string[],
+  instructions?: string
+): Promise<ReminderScheduleResult> {
+  const total = times.length;
+  if (total === 0) return { scheduled: 0, total, permissionDenied: false };
+
+  const granted = await requestNotificationPermissions().catch(() => false);
+  if (!granted) return { scheduled: 0, total, permissionDenied: true };
+
+  let scheduled = 0;
+  for (const time of times) {
+    const id = await scheduleMedicationReminder(
+      medicationId,
+      medicationName,
+      time,
+      instructions
+    ).catch(() => null);
+    if (id) scheduled++;
+  }
+  return { scheduled, total, permissionDenied: false };
+}
+
 /**
  * Dismisses any currently presented (visible in status bar / lock screen)
  * notifications for a specific medication.

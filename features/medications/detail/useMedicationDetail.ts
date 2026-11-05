@@ -7,11 +7,12 @@ import {
   medicationService,
 } from '../../../services/medications/medication-service';
 import {
-  scheduleMedicationReminder,
+  scheduleMedicationReminders,
   cancelAllRemindersForMedication,
   scheduleSnoozeReminder,
 } from '../../../services/notifications/notification-service';
 import { formatTime12Hour } from '../reminder-time-utils';
+import { reminderFailureMessageKey, reminderOutcome } from '../reminderOutcome';
 
 export interface UseMedicationDetailArgs {
   visible: boolean;
@@ -147,22 +148,22 @@ export function useMedicationDetail({ visible, medicationId, onStatusChanged }: 
       });
 
       // Synchronize alarms for activated medication
-      cancelAllRemindersForMedication(medicationId).catch(() => {});
-      for (const t of selectedTimes) {
-        scheduleMedicationReminder(
-          medicationId,
-          medication?.nameAsWritten || 'Medication',
-          t,
-          medication?.prescribedInstructions || undefined
-        ).catch(() => {});
-      }
+      await cancelAllRemindersForMedication(medicationId).catch(() => {});
+      const reminderResult = await scheduleMedicationReminders(
+        medicationId,
+        medication?.nameAsWritten || 'Medication',
+        selectedTimes,
+        medication?.prescribedInstructions || undefined
+      );
 
       setShowScheduleForm(false);
       await loadMedication(medicationId);
       onStatusChanged?.();
       Alert.alert(
         t('medicines.detail.alert.activatedTitle'),
-        t('medicines.detail.alert.activatedBody')
+        reminderOutcome(reminderResult) === 'allSet'
+          ? t('medicines.detail.alert.activatedBody')
+          : t(reminderFailureMessageKey(reminderResult))
       );
     } catch (err: any) {
       Alert.alert(
@@ -191,22 +192,22 @@ export function useMedicationDetail({ visible, medicationId, onStatusChanged }: 
       });
 
       // Reschedule alarms for new reminder times
-      cancelAllRemindersForMedication(medicationId).catch(() => {});
-      for (const t of selectedTimes) {
-        scheduleMedicationReminder(
-          medicationId,
-          medication?.nameAsWritten || 'Medication',
-          t,
-          medication?.prescribedInstructions || undefined
-        ).catch(() => {});
-      }
+      await cancelAllRemindersForMedication(medicationId).catch(() => {});
+      const reminderResult = await scheduleMedicationReminders(
+        medicationId,
+        medication?.nameAsWritten || 'Medication',
+        selectedTimes,
+        medication?.prescribedInstructions || undefined
+      );
 
       setShowScheduleForm(false);
       await loadMedication(medicationId);
       onStatusChanged?.();
       Alert.alert(
         t('medicines.detail.alert.updatedTitle'),
-        t('medicines.detail.alert.updatedBody')
+        reminderOutcome(reminderResult) === 'allSet'
+          ? t('medicines.detail.alert.updatedBody')
+          : t(reminderFailureMessageKey(reminderResult))
       );
     } catch (err: any) {
       Alert.alert(
@@ -287,19 +288,19 @@ export function useMedicationDetail({ visible, medicationId, onStatusChanged }: 
     setSubmittingAction(true);
     try {
       await medicationService.resumeMedication(medicationId);
-      for (const t of selectedTimes) {
-        scheduleMedicationReminder(
-          medicationId,
-          medication?.nameAsWritten || 'Medication',
-          t,
-          medication?.prescribedInstructions || undefined
-        ).catch(() => {});
-      }
+      const reminderResult = await scheduleMedicationReminders(
+        medicationId,
+        medication?.nameAsWritten || 'Medication',
+        selectedTimes,
+        medication?.prescribedInstructions || undefined
+      );
       await loadMedication(medicationId);
       onStatusChanged?.();
       Alert.alert(
         t('medicines.detail.alert.resumedTitle'),
-        t('medicines.detail.alert.resumedBody')
+        reminderOutcome(reminderResult) === 'allSet'
+          ? t('medicines.detail.alert.resumedBody')
+          : t(reminderFailureMessageKey(reminderResult))
       );
     } catch (err: any) {
       Alert.alert(
@@ -346,7 +347,7 @@ export function useMedicationDetail({ visible, medicationId, onStatusChanged }: 
     setSubmittingAction(true);
     try {
       await medicationService.discontinueMedication(medicationId, discontinueReason);
-      cancelAllRemindersForMedication(medicationId).catch(() => {});
+      await cancelAllRemindersForMedication(medicationId).catch(() => {});
       setShowDiscontinuePrompt(false);
       await loadMedication(medicationId);
       onStatusChanged?.();
