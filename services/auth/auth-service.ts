@@ -226,6 +226,14 @@ class AuthService {
     this.endReason = null;
     await safeStorage.setItem(STORAGE_KEYS.TOKEN, session.accessToken);
     await safeStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
+    // A sign-out during the writes above must not leave this session on disk.
+    if (this.currentSession !== session) {
+      if (this.currentSession === null) {
+        await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
+        await safeStorage.removeItem(STORAGE_KEYS.SESSION);
+      }
+      return;
+    }
     this.notifyListeners();
   }
 
@@ -272,6 +280,10 @@ class AuthService {
     }
     if (!res.ok) return 'unreachable';
     const body = await res.json().catch(() => null);
+    // Check again: the patient may have signed out while the body was being read.
+    if (this.currentSession?.refreshToken !== started.refreshToken) {
+      return this.currentSession ? 'retry' : 'rejected';
+    }
     const next = body?.data?.session;
     if (!next?.accessToken || !next?.refreshToken) return 'unreachable';
     await this.saveSession({

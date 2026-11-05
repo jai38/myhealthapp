@@ -230,4 +230,32 @@ describe('reminders on sign-out and expiry', () => {
     expect(cancelled).toEqual([]);
     expect(authService.getEndReason()).toBe('expired');
   });
+
+  it('a sign-out while the refresh body is being read does not bring the session back', async () => {
+    await signIn();
+    let releaseBody: () => void = () => {};
+    const bodyGate = new Promise<void>((r) => (releaseBody = r));
+    const refreshed = (await refreshBody(1).json()) as unknown;
+    global.fetch = vi.fn(async (url: any) => {
+      if (String(url).endsWith('/auth/refresh')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => {
+            await bodyGate;
+            return refreshed;
+          },
+          text: async () => '',
+        } as unknown as Response;
+      }
+      return ok({});
+    }) as any;
+    const pending = authService.refreshSession(null);
+    await new Promise((r) => setTimeout(r, 0));
+    await authService.logout();
+    releaseBody();
+    expect(await pending).toBe('rejected');
+    expect(authService.getSession()).toBeNull();
+    expect(authService.getEndReason()).toBe('signedOut');
+  });
 });
