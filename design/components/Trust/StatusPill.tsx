@@ -26,6 +26,7 @@ export function StatusPill({ display, testID }: StatusPillProps) {
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'flex-start',
+        maxWidth: '100%',
         gap: space.xs,
         minHeight: pillLayout.minHeight,
         paddingHorizontal: pillLayout.paddingHorizontal,
@@ -43,7 +44,7 @@ export function StatusPill({ display, testID }: StatusPillProps) {
       />
       <Text
         variant="caption"
-        style={{ color: colors.fg }}
+        style={{ color: colors.fg, flexShrink: 1 }}
         testID={testID && `${testID}-label`}
       >
         {label}

@@ -24,26 +24,34 @@ export function Screen({
   wave = false,
   testID,
 }: ScreenProps) {
+  // The wave sits inside the scrolling content, so it scrolls away with the
+  // header instead of staying pinned behind the page.
+  const waveNode = wave ? (
+    <View pointerEvents="none" style={styles.waveSlot}>
+      <WaveHeader />
+    </View>
+  ) : null;
+  const content = (
+    <>
+      {waveNode}
+      {children}
+    </>
+  );
   const body =
     scroll && onRefresh ? (
       <RefreshScroll onRefresh={onRefresh} contentContainerStyle={styles.content}>
-        {children}
+        {content}
       </RefreshScroll>
     ) : scroll ? (
-      <ScrollView contentContainerStyle={styles.content}>{children}</ScrollView>
+      <ScrollView contentContainerStyle={styles.content}>{content}</ScrollView>
     ) : (
-      <View style={styles.fill}>{children}</View>
+      <View style={styles.fill}>{content}</View>
     );
 
   return (
     <View testID={testID} style={styles.root}>
-      {wave ? (
-        <View pointerEvents="none" style={styles.waveSlot}>
-          <WaveHeader />
-        </View>
-      ) : null}
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-        {header}
+        {header ? <View style={styles.gutter}>{header}</View> : null}
         {body}
       </SafeAreaView>
     </View>
@@ -55,6 +63,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: color.bg.screen,
   },
+  // The gutter lives on the content, not the scroll view, so the wave can run
+  // edge to edge (absolute children are placed against the padding box).
   waveSlot: {
     position: 'absolute',
     top: 0,
@@ -63,12 +73,16 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
+  },
+  gutter: {
     paddingHorizontal: space.lg,
   },
   fill: {
     flex: 1,
+    paddingHorizontal: space.lg,
   },
   content: {
     flexGrow: 1,
+    paddingHorizontal: space.lg,
   },
 });

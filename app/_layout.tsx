@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import { Stack, router } from 'expo-router';
+import { Stack, router, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { colors, typography, spacing } from '../theme/index';
 import { authService, UserSession } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
 import {
   requestNotificationPermissions,
   registerNotificationResponseListener,
@@ -15,6 +16,7 @@ import {
 export default function RootLayout() {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
   const [initialized, setInitialized] = useState<boolean>(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Wait for AsyncStorage persisted session load
@@ -51,6 +53,16 @@ export default function RootLayout() {
       unsubNotification();
     };
   }, []);
+
+  // Dev only: the component gallery opens without sign-in, so it needs no backend.
+  if (isGalleryEnabled(__DEV__) && isGalleryPath(pathname)) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaProvider>
+    );
+  }
 
   if (!initialized) {
     return (

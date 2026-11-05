@@ -64,7 +64,8 @@ export function Button({
               maxFontSizeMultiplier={maxFontScaleFor('bodyStrong')}
               style={[
                 textStyles.bodyStrong,
-                { color: fg },
+                // Long labels wrap instead of overflowing the button.
+                { color: fg, flexShrink: 1, textAlign: 'center' },
                 (icon !== undefined || loading) && styles.labelAfterLeading,
               ]}
             >

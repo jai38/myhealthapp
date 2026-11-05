@@ -5,7 +5,9 @@ import { color } from '../tokens';
 // Placeholder until the owner's SVG arrives. Replace the paths in this file only.
 export function LogoMark({ size }: { size: number }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 48 48" accessible={false}>
+    // No accessibility props here: Logo is the accessible element, and on web
+    // react-native-svg would pass `accessible` straight to the DOM.
+    <Svg width={size} height={size} viewBox="0 0 48 48">
       <Path
         d="M8 34 C8 18 18 8 38 8 C38 26 30 36 8 34 Z"
         fill={color.action.primary}

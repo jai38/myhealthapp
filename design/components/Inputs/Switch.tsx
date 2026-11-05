@@ -48,6 +48,8 @@ export function Switch({
           disabled={disabled}
           trackColor={{ false: color.border.input, true: color.action.primary }}
           thumbColor={color.bg.card}
+          // Web only (react-native-web); otherwise the thumb turns teal when on.
+          {...({ activeThumbColor: color.bg.card } as object)}
           ios_backgroundColor={color.border.input}
         />
       </View>

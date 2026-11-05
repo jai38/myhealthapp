@@ -40,7 +40,7 @@ export function ListRow({
           </Text>
         )}
       </View>
-      {trailing}
+      {trailing !== undefined && <View style={styles.trailing}>{trailing}</View>}
       {chevron && <Icon name="chevron-forward" size="md" tone="secondary" />}
     </>
   );
@@ -75,7 +75,13 @@ const styles = StyleSheet.create({
   pressed: {
     backgroundColor: color.bg.subtle,
   },
+  // The title keeps at least half the row; a long trailing pill wraps instead.
   text: {
     flex: 1,
+    minWidth: '50%',
+  },
+  trailing: {
+    flexShrink: 1,
+    alignItems: 'flex-end',
   },
 });
