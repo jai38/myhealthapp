@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import {
   Modal,
   View,
-  Text,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
 } from 'react-native';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
-import { colors, spacing, borderRadius, typography, shadows } from '../../theme/index';
 import { authService, UserSession } from '../../services/auth/auth-service';
+import { Text } from '../../design/components/Foundations/Text';
+import { Icon } from '../../design/components/Foundations/Icon';
+import { IconButton } from '../../design/components/Actions/IconButton';
+import { Button } from '../../design/components/Actions/Button';
+import { SegmentedControl } from '../../design/components/Containers/SegmentedControl';
+import { EmailField } from '../../design/components/Inputs/EmailField';
+import { PasswordField } from '../../design/components/Inputs/PasswordField';
+import { TextField } from '../../design/components/Inputs/TextField';
 import { LegalTermsModal } from '../legal/LegalTermsModal';
+import { color, elevation, radius, space } from '../../design/tokens';
+import { t } from '../../design/strings';
 
 export interface AuthModalProps {
   visible: boolean;
@@ -53,22 +58,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setErrorMessage(null);
 
     if (!email.trim()) {
-      setErrorMessage('Please enter your email address.');
+      setErrorMessage(t('auth.emailRequired'));
       return;
     }
 
     if (!password) {
-      setErrorMessage('Please enter your password.');
+      setErrorMessage(t('auth.passwordRequired'));
       return;
     }
 
     if (mode === 'signup' && password.length < 8) {
-      setErrorMessage('Password must be at least 8 characters long.');
+      setErrorMessage(t('auth.passwordTooShort'));
       return;
     }
 
     if (mode === 'signup' && !agreedToTerms) {
-      setErrorMessage('You must review and agree to the Terms of Service & Health Privacy Policy before creating an account.');
+      setErrorMessage(t('auth.consentRequired'));
       return;
     }
 
@@ -88,310 +93,231 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClose();
     } catch (err: unknown) {
       setLoading(false);
-      const msg = err instanceof Error ? err.message : 'Authentication failed. Please try again.';
+      const msg = err instanceof Error ? err.message : t('auth.authFailed');
       setErrorMessage(msg);
     }
   };
 
+  const isLogin = mode === 'login';
+
   return (
     <>
-      <Modal
-        visible={visible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={onClose}
-      >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.overlay}
-      >
-        <View style={styles.sheetContainer}>
-          {/* Header */}
-          <View style={styles.header}>
-            <View>
-              <Text style={typography.h2}>
-                {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-              </Text>
-              <Text style={[typography.bodyMuted, { marginTop: 2 }]}>
-                {mode === 'login'
-                  ? 'Sign in to access your secure medical records'
-                  : 'Get started with personal medical timeline tracking'}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.closeButton}
-              accessibilityLabel="Close"
-            >
-              <Text style={styles.closeText}>✕</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Mode Switch Tabs */}
-          <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[styles.tab, mode === 'login' && styles.activeTab]}
-              onPress={() => handleModeChange('login')}
-            >
-              <Text style={[styles.tabText, mode === 'login' && styles.activeTabText]}>
-                Sign In
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, mode === 'signup' && styles.activeTab]}
-              onPress={() => handleModeChange('signup')}
-            >
-              <Text style={[styles.tabText, mode === 'signup' && styles.activeTabText]}>
-                Create Account
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView style={styles.body} keyboardShouldPersistTaps="handled">
-            {errorMessage ? (
-              <View style={styles.errorBanner}>
-                <Text style={styles.errorBannerText}>{errorMessage}</Text>
-              </View>
-            ) : null}
-
-            {mode === 'signup' ? (
-              <Input
-                label="Full Name"
-                placeholder="e.g. Jane Doe"
-                value={fullName}
-                onChangeText={setFullName}
-                autoCapitalize="words"
-              />
-            ) : null}
-
-            <Input
-              label="Email Address"
-              placeholder="patient@example.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-
-            <Input
-              label="Password"
-              placeholder={mode === 'signup' ? 'Min. 8 characters' : 'Enter password'}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-              helperText={
-                mode === 'signup'
-                  ? 'Use at least 8 characters with letters and numbers'
-                  : undefined
-              }
-            />
-
-            {mode === 'signup' ? (
-              <View style={styles.consentContainer}>
-                <TouchableOpacity
-                  style={[styles.checkbox, agreedToTerms && styles.checkboxActive]}
-                  onPress={() => setAgreedToTerms(!agreedToTerms)}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: agreedToTerms }}
-                >
-                  {agreedToTerms ? <Text style={styles.checkmark}>✓</Text> : null}
-                </TouchableOpacity>
-                <View style={styles.consentTextContainer}>
-                  <Text style={styles.consentText}>
-                    I have read and agree to the{' '}
-                    <Text
-                      style={styles.legalLink}
-                      onPress={() => handleOpenLegal('terms')}
-                    >
-                      Terms of Service
-                    </Text>{' '}
-                    and acknowledge the{' '}
-                    <Text
-                      style={styles.legalLink}
-                      onPress={() => handleOpenLegal('privacy')}
-                    >
-                      Health Privacy Policy
-                    </Text>
-                    , including secure AI prescription extraction.
+      <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+        <View style={styles.overlay}>
+          {/* Scrim: a token-coloured layer behind the sheet. Not pressable, as before. */}
+          <View style={styles.scrim} pointerEvents="none" />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            style={styles.sheetLayer}
+          >
+            <View style={styles.sheetContainer}>
+              <View style={styles.header}>
+                <View style={styles.headerText}>
+                  <Text variant="title2">{isLogin ? t('auth.welcomeBack') : t('auth.tabCreate')}</Text>
+                  <Text variant="callout" tone="secondary">
+                    {isLogin ? t('auth.modalSignInIntro') : t('auth.modalCreateIntro')}
                   </Text>
                 </View>
+                <IconButton icon="close" accessibilityLabel={t('common.close')} onPress={onClose} />
               </View>
-            ) : null}
 
-            <View style={styles.submitContainer}>
-              <Button
-                title={mode === 'login' ? 'Sign In' : 'Create Account'}
-                onPress={handleSubmit}
-                disabled={loading}
-                style={styles.submitButton}
-              />
-              {loading ? (
-                <ActivityIndicator
-                  color={colors.primary}
-                  style={{ marginTop: spacing.sm }}
+              <View style={styles.modeSwitch}>
+                <SegmentedControl<'login' | 'signup'>
+                  options={[
+                    { value: 'login', label: t('auth.tabSignIn') },
+                    { value: 'signup', label: t('auth.tabCreate') },
+                  ]}
+                  value={mode}
+                  onChange={handleModeChange}
                 />
-              ) : null}
+              </View>
+
+              <ScrollView style={styles.body} keyboardShouldPersistTaps="handled">
+                {errorMessage ? (
+                  <View style={styles.errorBanner}>
+                    <Text variant="caption" tone="danger">
+                      {errorMessage}
+                    </Text>
+                  </View>
+                ) : null}
+
+                {mode === 'signup' ? (
+                  <TextField
+                    label={t('auth.fullName')}
+                    placeholder={t('auth.fullNamePlaceholder')}
+                    value={fullName}
+                    onChangeText={setFullName}
+                    autoCapitalize="words"
+                    disabled={loading}
+                  />
+                ) : null}
+
+                <EmailField
+                  label={t('auth.email')}
+                  placeholder={t('auth.emailPlaceholder')}
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCorrect={false}
+                  disabled={loading}
+                />
+
+                <PasswordField
+                  label={t('auth.password')}
+                  placeholder={isLogin ? t('auth.passwordPlaceholderLogin') : t('auth.passwordPlaceholderSignup')}
+                  value={password}
+                  onChangeText={setPassword}
+                  autoCapitalize="none"
+                  helper={mode === 'signup' ? t('auth.passwordHelper') : undefined}
+                  disabled={loading}
+                />
+
+                {mode === 'signup' ? (
+                  <View style={styles.consentRow}>
+                    <Pressable
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked: agreedToTerms }}
+                      onPress={() => setAgreedToTerms(!agreedToTerms)}
+                      style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}
+                    >
+                      {agreedToTerms ? <Icon name="checkmark" size="sm" tone="inverse" /> : null}
+                    </Pressable>
+                    <Text variant="caption" tone="secondary" style={styles.consentText}>
+                      {t('auth.consentPrefix')}{' '}
+                      <Text variant="caption" tone="link" style={styles.legalLink} onPress={() => handleOpenLegal('terms')}>
+                        {t('auth.consentTerms')}
+                      </Text>{' '}
+                      {t('auth.consentAnd')}{' '}
+                      <Text variant="caption" tone="link" style={styles.legalLink} onPress={() => handleOpenLegal('privacy')}>
+                        {t('auth.consentPrivacy')}
+                      </Text>
+                      {t('auth.consentSuffix')}
+                    </Text>
+                  </View>
+                ) : null}
+
+                <View style={styles.submitContainer}>
+                  <Button
+                    label={isLogin ? t('auth.tabSignIn') : t('auth.tabCreate')}
+                    variant="primary"
+                    fullWidth
+                    onPress={handleSubmit}
+                    disabled={loading}
+                    loading={loading}
+                  />
+                </View>
+
+                {/* Quick switch helper */}
+                <Pressable
+                  accessibilityRole="button"
+                  style={styles.switchPrompt}
+                  onPress={() => handleModeChange(isLogin ? 'signup' : 'login')}
+                >
+                  <Text variant="caption" tone="secondary" align="center">
+                    {isLogin ? t('auth.modalNoAccountPrompt') : t('auth.modalRegisteredPrompt')}{' '}
+                    <Text variant="caption" tone="link">
+                      {isLogin ? t('auth.modalSignUpLink') : t('auth.tabSignIn')}
+                    </Text>
+                  </Text>
+                </Pressable>
+              </ScrollView>
             </View>
-
-            {/* Quick Switch Helper */}
-            <TouchableOpacity
-              style={styles.switchPrompt}
-              onPress={() => handleModeChange(mode === 'login' ? 'signup' : 'login')}
-            >
-              <Text style={typography.caption}>
-                {mode === 'login'
-                  ? "Don't have an account? "
-                  : 'Already registered? '}
-                <Text style={{ color: colors.primary, fontWeight: '700' }}>
-                  {mode === 'login' ? 'Sign Up' : 'Sign In'}
-                </Text>
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
+          </KeyboardAvoidingView>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      </Modal>
 
-    <LegalTermsModal
-      visible={showLegalModal}
-      initialTab={legalModalInitialTab}
-      onClose={() => setShowLegalModal(false)}
-    />
-  </>
+      <LegalTermsModal
+        visible={showLegalModal}
+        initialTab={legalModalInitialTab}
+        onClose={() => setShowLegalModal(false)}
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    justifyContent: 'flex-end',
+  },
+  scrim: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: color.text.primary,
+    opacity: 0.45,
+  },
+  sheetLayer: {
     justifyContent: 'flex-end',
   },
   sheetContainer: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: borderRadius.xl,
-    borderTopRightRadius: borderRadius.xl,
-    paddingTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
+    backgroundColor: color.bg.card,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingTop: space.lg,
+    paddingHorizontal: space.lg,
+    paddingBottom: space.xl,
     maxHeight: '90%',
-    ...shadows.lg,
+    ...elevation.sheet,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.md,
+    marginBottom: space.md,
   },
-  closeButton: {
-    width: 32,
-    height: 32,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.surfaceMuted,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: spacing.sm,
-  },
-  closeText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    fontWeight: 'bold',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.md,
-    padding: 3,
-    marginBottom: spacing.md,
-  },
-  tab: {
+  headerText: {
     flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderRadius: borderRadius.sm,
+    gap: space.xxs,
+    paddingRight: space.sm,
   },
-  activeTab: {
-    backgroundColor: colors.surface,
-    ...shadows.sm,
-  },
-  tabText: {
-    ...typography.caption,
-    fontWeight: '500',
-    color: colors.textSecondary,
-  },
-  activeTabText: {
-    fontWeight: '700',
-    color: colors.primary,
+  modeSwitch: {
+    marginBottom: space.md,
   },
   body: {
-    paddingVertical: spacing.xs,
+    paddingVertical: space.xs,
   },
   errorBanner: {
-    backgroundColor: colors.dangerLight,
-    borderColor: colors.danger,
-    borderWidth: 1,
-    borderRadius: borderRadius.md,
-    padding: spacing.sm + 2,
-    marginBottom: spacing.md,
-  },
-  errorBannerText: {
-    ...typography.caption,
-    color: colors.danger,
-    fontWeight: '600',
+    backgroundColor: color.tone.danger.bg,
+    borderRadius: radius.md,
+    padding: space.md,
+    marginBottom: space.md,
   },
   submitContainer: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.md,
+    marginTop: space.sm,
+    marginBottom: space.md,
   },
-  submitButton: {
-    width: '100%',
-  },
-  consentContainer: {
+  consentRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginVertical: spacing.sm,
-    paddingHorizontal: 2,
+    gap: space.sm,
+    marginVertical: space.sm,
   },
   checkbox: {
     width: 22,
     height: 22,
     borderRadius: 6,
     borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    borderColor: color.border.input,
+    backgroundColor: color.bg.card,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.sm,
-    marginTop: 2,
+    marginTop: space.xxs,
   },
-  checkboxActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  checkmark: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  consentTextContainer: {
-    flex: 1,
+  checkboxChecked: {
+    backgroundColor: color.action.primary,
+    borderColor: color.action.primary,
   },
   consentText: {
-    ...typography.caption,
-    fontSize: 12,
-    lineHeight: 18,
-    color: colors.textSecondary,
+    flex: 1,
   },
   legalLink: {
-    color: colors.primary,
-    fontWeight: '700',
     textDecorationLine: 'underline',
   },
   switchPrompt: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.lg,
+    paddingVertical: space.sm,
+    marginBottom: space.lg,
   },
 });

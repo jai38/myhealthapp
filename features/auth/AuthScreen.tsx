@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet, Pressable, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
-import { colors, spacing, borderRadius, typography, shadows } from '../../theme/index';
 import { authService, UserSession } from '../../services/auth/auth-service';
 import { WaveHeader } from '../../design/components/Foundations/WaveHeader';
-import { Text as DsText } from '../../design/components/Foundations/Text';
-import { color as dsColor, space as dsSpace, radius as dsRadius } from '../../design/tokens';
+import { Text } from '../../design/components/Foundations/Text';
+import { Icon } from '../../design/components/Foundations/Icon';
+import { Logo } from '../../design/components/Foundations/Logo';
+import { Card } from '../../design/components/Containers/Card';
+import { SegmentedControl } from '../../design/components/Containers/SegmentedControl';
+import { Button } from '../../design/components/Actions/Button';
+import { EmailField } from '../../design/components/Inputs/EmailField';
+import { PasswordField } from '../../design/components/Inputs/PasswordField';
+import { TextField } from '../../design/components/Inputs/TextField';
+import { color, space, radius } from '../../design/tokens';
 import { t } from '../../design/strings';
 import { shouldShowOfflineBanner } from '../../services/network/connectivity';
 import { useConnectivity } from '../../services/network/useConnectivity';
@@ -57,17 +52,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      setErrorMessage('Please enter your email address.');
+      setErrorMessage(t('auth.emailRequired'));
       return;
     }
 
     if (!password) {
-      setErrorMessage('Please enter your password.');
+      setErrorMessage(t('auth.passwordRequired'));
       return;
     }
 
     if (mode === 'signup' && password.length < 8) {
-      setErrorMessage('Password must be at least 8 characters long.');
+      setErrorMessage(t('auth.passwordTooShort'));
       return;
     }
 
@@ -96,9 +91,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         setErrorMessage(t('auth.offlineSignIn'));
         return;
       }
-      const msg = err instanceof Error ? err.message : 'Authentication failed. Please try again.';
+      const msg = err instanceof Error ? err.message : t('auth.authFailed');
       setErrorMessage(msg);
-      Alert.alert('Authentication Error', msg);
+      Alert.alert(t('auth.errorAlertTitle'), msg);
     }
   };
 
@@ -112,151 +107,127 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Header Branding */}
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           <View style={styles.brandContainer}>
-            <View style={styles.logoBadge}>
-              <Text style={styles.logoIcon}>🩺</Text>
-            </View>
-            <Text style={styles.brandTitle}>MyHealth</Text>
-            <Text style={styles.brandTagline}>Your Personal Clinical Health Vault</Text>
+            <Logo variant="full" size={40} />
+            <Text variant="callout" tone="secondary" align="center" style={styles.brandTagline}>
+              {t('auth.tagline')}
+            </Text>
             <View style={styles.cloudBadge}>
-              <View style={styles.cloudDot} />
-              <Text style={styles.cloudText}>Secure cloud, hosted in Mumbai</Text>
+              <Icon name="cloud-done-outline" size="sm" tone="success" />
+              <Text variant="caption" tone="secondary">
+                {t('auth.cloudBadge')}
+              </Text>
             </View>
           </View>
 
-          {/* Card Container */}
-          <View style={styles.authCard}>
-            {/* Mode Switch Tabs */}
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
-                style={[styles.tab, mode === 'login' && styles.activeTab]}
-                onPress={() => handleModeChange('login')}
-                disabled={loading}
-              >
-                <Text style={[styles.tabText, mode === 'login' && styles.activeTabText]}>
-                  Sign In
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.tab, mode === 'signup' && styles.activeTab]}
-                onPress={() => handleModeChange('signup')}
-                disabled={loading}
-              >
-                <Text style={[styles.tabText, mode === 'signup' && styles.activeTabText]}>
-                  Create Account
-                </Text>
-              </TouchableOpacity>
+          <Card>
+            {/* Mode switch. Blocked while a request is in flight, as before. */}
+            <View pointerEvents={loading ? 'none' : 'auto'} style={styles.modeSwitch}>
+              <SegmentedControl<'login' | 'signup'>
+                options={[
+                  { value: 'login', label: t('auth.tabSignIn') },
+                  { value: 'signup', label: t('auth.tabCreate') },
+                ]}
+                value={mode}
+                onChange={handleModeChange}
+              />
             </View>
 
             <View style={styles.formHeader}>
-              <Text style={typography.h3}>
-                {mode === 'login' ? 'Welcome Back' : 'Get Started'}
+              <Text variant="title2">
+                {mode === 'login' ? t('auth.welcomeBack') : t('auth.getStarted')}
               </Text>
-              <Text style={[typography.bodyMuted, { marginTop: 4 }]}>
-                {mode === 'login'
-                  ? 'Access your prescriptions, medications, and health history.'
-                  : 'Create a private account with encrypted cloud backup.'}
+              <Text variant="callout" tone="secondary" style={styles.formIntro}>
+                {mode === 'login' ? t('auth.loginIntro') : t('auth.signupIntro')}
               </Text>
             </View>
 
             {sessionEnded && (
               <View style={styles.sessionNote} accessibilityRole="alert" testID="session-ended-note">
-                <DsText variant="body" tone="primary">
+                <Text variant="body" tone="primary">
                   {t('auth.sessionEnded')}
-                </DsText>
+                </Text>
               </View>
             )}
 
             {errorMessage && (
               <View style={styles.errorBanner}>
-                <Text style={styles.errorBannerText}>⚠️ {errorMessage}</Text>
+                <Icon name="warning-outline" tone="danger" />
+                <Text variant="caption" tone="danger" style={styles.flex}>
+                  {errorMessage}
+                </Text>
               </View>
             )}
 
             {mode === 'signup' && (
-              <Input
-                label="Full Name"
-                placeholder="e.g. Jane Doe"
+              <TextField
+                label={t('auth.fullName')}
+                placeholder={t('auth.fullNamePlaceholder')}
                 value={fullName}
                 onChangeText={setFullName}
                 autoCapitalize="words"
-                editable={!loading}
+                disabled={loading}
               />
             )}
 
-            <Input
-              label="Email Address"
-              placeholder="patient@example.com"
+            <EmailField
+              label={t('auth.email')}
+              placeholder={t('auth.emailPlaceholder')}
               value={email}
               onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
               autoCorrect={false}
-              editable={!loading}
+              disabled={loading}
             />
 
-            <Input
-              label="Password"
-              placeholder={mode === 'signup' ? 'Min. 8 characters' : 'Enter your password'}
+            <PasswordField
+              label={t('auth.password')}
+              placeholder={
+                mode === 'signup' ? t('auth.passwordPlaceholderSignup') : t('auth.passwordPlaceholderLogin')
+              }
               value={password}
               onChangeText={setPassword}
-              secureTextEntry
               autoCapitalize="none"
-              helperText={
-                mode === 'signup'
-                  ? 'Use at least 8 characters with letters and numbers'
-                  : undefined
-              }
-              editable={!loading}
+              helper={mode === 'signup' ? t('auth.passwordHelper') : undefined}
+              disabled={loading}
             />
 
             <View style={styles.actionContainer}>
               <Button
-                title={
+                label={
                   loading
-                    ? 'Connecting...'
+                    ? t('auth.connecting')
                     : mode === 'login'
-                    ? 'Sign In to MyHealth'
-                    : 'Create MyHealth Account'
+                    ? t('auth.signInAction')
+                    : t('auth.createAction')
                 }
                 variant="primary"
+                fullWidth
                 onPress={handleSubmit}
-                disabled={loading}
+                loading={loading}
               />
-              {loading && (
-                <ActivityIndicator
-                  color={colors.primary}
-                  style={{ marginTop: spacing.md }}
-                />
-              )}
             </View>
 
-            {/* Quick Switch Prompt */}
-            <TouchableOpacity
+            {/* Quick switch prompt */}
+            <Pressable
+              accessibilityRole="button"
               style={styles.switchPrompt}
               onPress={() => handleModeChange(mode === 'login' ? 'signup' : 'login')}
               disabled={loading}
             >
-              <Text style={typography.caption}>
-                {mode === 'login'
-                  ? "Don't have an account yet? "
-                  : 'Already have an account? '}
-                <Text style={styles.switchPromptLink}>
-                  {mode === 'login' ? 'Create Account' : 'Sign In'}
+              <Text variant="caption" tone="secondary" align="center">
+                {mode === 'login' ? t('auth.noAccountPrompt') : t('auth.haveAccountPrompt')}{' '}
+                <Text variant="caption" tone="link">
+                  {mode === 'login' ? t('auth.tabCreate') : t('auth.tabSignIn')}
                 </Text>
               </Text>
-            </TouchableOpacity>
-          </View>
+            </Pressable>
+          </Card>
 
-          {/* Privacy & Trust Footer */}
           <View style={styles.trustFooter}>
-            <Text style={styles.trustText}>
-              🔒 Protected Health Information is encrypted with AES-256 and stored in private S3 buckets. We never share your records.
+            <Icon name="lock-closed-outline" size="sm" tone="tertiary" />
+            <Text variant="caption" tone="tertiary" align="center" style={styles.trustText}>
+              {t('auth.trustFooter')}
             </Text>
           </View>
         </ScrollView>
@@ -268,7 +239,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: dsColor.bg.card,
+    backgroundColor: color.bg.card,
   },
   waveSlot: {
     position: 'absolute',
@@ -276,144 +247,78 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  sessionNote: {
-    backgroundColor: dsColor.tone.info.bg,
-    borderRadius: dsRadius.sm,
-    padding: dsSpace.md,
-    marginBottom: dsSpace.md,
-  },
   container: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: spacing.lg,
+    padding: space.lg,
     maxWidth: 480,
     width: '100%',
     alignSelf: 'center',
   },
   brandContainer: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  logoBadge: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.primaryLight,
-    marginBottom: spacing.sm,
-    ...shadows.md,
-  },
-  logoIcon: {
-    fontSize: 32,
-  },
-  brandTitle: {
-    ...typography.h1,
-    color: colors.primaryDark,
-    letterSpacing: -0.5,
+    marginBottom: space.xl,
+    gap: space.xs,
   },
   brandTagline: {
-    ...typography.bodyMuted,
-    marginTop: 4,
+    marginTop: space.xs,
   },
   cloudBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginTop: spacing.sm,
+    gap: space.xs,
+    backgroundColor: color.bg.card,
+    paddingHorizontal: space.sm,
+    paddingVertical: space.xs,
+    borderRadius: radius.full,
+    marginTop: space.sm,
   },
-  cloudDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: colors.success,
-    marginRight: 6,
-  },
-  cloudText: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    fontWeight: '500',
-  },
-  authCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.md,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: borderRadius.md,
-    padding: 3,
-    marginBottom: spacing.lg,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderRadius: borderRadius.sm,
-  },
-  activeTab: {
-    backgroundColor: colors.surface,
-    ...shadows.sm,
-  },
-  tabText: {
-    ...typography.caption,
-    fontWeight: '600',
-    color: colors.textMuted,
-  },
-  activeTabText: {
-    color: colors.primary,
+  modeSwitch: {
+    marginBottom: space.lg,
   },
   formHeader: {
-    marginBottom: spacing.md,
+    marginBottom: space.md,
+    gap: space.xs,
+  },
+  formIntro: {
+    marginTop: space.xxs,
+  },
+  sessionNote: {
+    backgroundColor: color.tone.info.bg,
+    borderRadius: radius.sm,
+    padding: space.md,
+    marginBottom: space.md,
   },
   errorBanner: {
-    backgroundColor: colors.dangerLight,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    borderRadius: borderRadius.sm,
-    padding: spacing.sm,
-    marginBottom: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.sm,
+    backgroundColor: color.tone.danger.bg,
+    borderRadius: radius.sm,
+    padding: space.md,
+    marginBottom: space.md,
   },
-  errorBannerText: {
-    ...typography.caption,
-    color: colors.danger,
-    fontWeight: '600',
+  flex: {
+    flex: 1,
   },
   actionContainer: {
-    marginTop: spacing.md,
+    marginTop: space.md,
   },
   switchPrompt: {
-    marginTop: spacing.lg,
+    marginTop: space.lg,
     alignItems: 'center',
-    paddingVertical: spacing.xs,
-  },
-  switchPromptLink: {
-    color: colors.primary,
-    fontWeight: '700',
+    paddingVertical: space.xs,
   },
   trustFooter: {
-    marginTop: spacing.xl,
+    marginTop: space.xl,
     alignItems: 'center',
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: space.sm,
+    gap: space.xs,
   },
   trustText: {
-    fontSize: 11,
-    color: colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 16,
+    maxWidth: 400,
   },
 });
