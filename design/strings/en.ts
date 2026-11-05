@@ -147,4 +147,8 @@ export const en = {
   'globalError.supportCode': 'Support code: {code}',
   'globalError.supportHint': 'If this keeps happening, share this code with support.',
   'feedback.offlineRetryHint': 'Checks your connection again',
+
+  'auth.sessionEnded': 'Your session ended. Please sign in again.',
+  'auth.offlineSignIn': 'You are offline. Connect to the internet to sign in.',
+  'auth.restoring': 'Opening Ayoreni',
 } as const;

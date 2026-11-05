@@ -15,16 +15,31 @@ import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { colors, spacing, borderRadius, typography, shadows } from '../../theme/index';
 import { authService, UserSession } from '../../services/auth/auth-service';
+import { WaveHeader } from '../../design/components/Foundations/WaveHeader';
+import { Text as DsText } from '../../design/components/Foundations/Text';
+import { color as dsColor, space as dsSpace, radius as dsRadius } from '../../design/tokens';
+import { t } from '../../design/strings';
+import { shouldShowOfflineBanner } from '../../services/network/connectivity';
+import { useConnectivity } from '../../services/network/useConnectivity';
 
 export interface AuthScreenProps {
   onSuccess?: (session: UserSession) => void;
   initialMode?: 'login' | 'signup';
+  // True when the last session ended by expiry; shows a calm note. Never after a deliberate sign-out.
+  sessionEnded?: boolean;
+}
+
+// A failed fetch (no connection) surfaces as a TypeError in React Native and browsers.
+function isNetworkFailure(err: unknown): boolean {
+  return err instanceof TypeError;
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({
   onSuccess,
   initialMode = 'login',
+  sessionEnded = false,
 }) => {
+  const { status } = useConnectivity();
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,6 +71,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       return;
     }
 
+    // Offline: say so calmly instead of sending a request that cannot succeed.
+    if (shouldShowOfflineBanner(status)) {
+      setErrorMessage(t('auth.offlineSignIn'));
+      return;
+    }
+
     setLoading(true);
     try {
       let session: UserSession;
@@ -71,6 +92,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       }
     } catch (err: unknown) {
       setLoading(false);
+      if (isNetworkFailure(err)) {
+        setErrorMessage(t('auth.offlineSignIn'));
+        return;
+      }
       const msg = err instanceof Error ? err.message : 'Authentication failed. Please try again.';
       setErrorMessage(msg);
       Alert.alert('Authentication Error', msg);
@@ -79,6 +104,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* The wave belongs to this white screen only, behind the logo. */}
+      <View pointerEvents="none" style={styles.waveSlot}>
+        <WaveHeader />
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
@@ -134,6 +163,14 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                   : 'Create a private account with encrypted cloud backup.'}
               </Text>
             </View>
+
+            {sessionEnded && (
+              <View style={styles.sessionNote} accessibilityRole="alert" testID="session-ended-note">
+                <DsText variant="body" tone="primary">
+                  {t('auth.sessionEnded')}
+                </DsText>
+              </View>
+            )}
 
             {errorMessage && (
               <View style={styles.errorBanner}>
@@ -231,7 +268,19 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: dsColor.bg.card,
+  },
+  waveSlot: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+  sessionNote: {
+    backgroundColor: dsColor.tone.info.bg,
+    borderRadius: dsRadius.sm,
+    padding: dsSpace.md,
+    marginBottom: dsSpace.md,
   },
   container: {
     flex: 1,

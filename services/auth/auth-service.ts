@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isSessionExpired, type SessionEndReason } from '../../features/auth/authGate';
 
 export interface UserSession {
   userId: string;
@@ -70,21 +71,32 @@ const safeStorage = {
 
 type AuthListener = (session: UserSession | null) => void;
 
+export type { SessionEndReason };
+
 class AuthService {
   private currentSession: UserSession | null = null;
   private listeners: Set<AuthListener> = new Set();
   private initialized: boolean = false;
+  private ready: Promise<void>;
+  // Why the last session ended. Cleared when a new session starts.
+  private endReason: SessionEndReason | null = null;
 
   constructor() {
-    this.loadPersistedSession();
+    this.ready = this.loadPersistedSession();
   }
 
   private async loadPersistedSession(): Promise<void> {
     try {
       const raw = await safeStorage.getItem(STORAGE_KEYS.SESSION);
       if (raw) {
-        this.currentSession = JSON.parse(raw);
-        this.notifyListeners();
+        const persisted: UserSession = JSON.parse(raw);
+        // The app has no token refresh yet, so a persisted session past its expiry cannot be renewed.
+        if (isSessionExpired(persisted, Date.now())) {
+          await this.endSession('expired');
+        } else {
+          this.currentSession = persisted;
+          this.notifyListeners();
+        }
       }
     } catch {
       // Clean fallback
@@ -94,8 +106,7 @@ class AuthService {
   }
 
   async waitForInitialization(): Promise<void> {
-    if (this.initialized) return;
-    await this.loadPersistedSession();
+    await this.ready;
   }
 
   subscribe(listener: AuthListener): () => void {
@@ -117,6 +128,10 @@ class AuthService {
       return this.currentSession.accessToken;
     }
     return await safeStorage.getItem(STORAGE_KEYS.TOKEN);
+  }
+
+  getEndReason(): SessionEndReason | null {
+    return this.endReason;
   }
 
   getSession(): UserSession | null {
@@ -200,16 +215,30 @@ class AuthService {
 
   private async saveSession(session: UserSession): Promise<void> {
     this.currentSession = session;
+    this.endReason = null;
     await safeStorage.setItem(STORAGE_KEYS.TOKEN, session.accessToken);
     await safeStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
     this.notifyListeners();
   }
 
+  // Deliberate sign-out: no note is shown afterwards.
   async logout(): Promise<void> {
+    await this.endSession('signedOut');
+  }
+
+  // The session ended because it expired or the API answered 401. Does nothing without a session.
+  async expireSession(): Promise<void> {
+    if (!this.currentSession) return;
+    await this.endSession('expired');
+  }
+
+  private async endSession(reason: SessionEndReason): Promise<void> {
+    // In memory first and synchronously, so subscribers see null before any await.
     this.currentSession = null;
+    this.endReason = reason;
+    this.notifyListeners();
     await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
     await safeStorage.removeItem(STORAGE_KEYS.SESSION);
-    this.notifyListeners();
   }
 }
 

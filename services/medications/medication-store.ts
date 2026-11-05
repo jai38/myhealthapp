@@ -213,6 +213,8 @@ class MedicationStore {
     this.meds = [];
     this.doses = [];
     this.initialized = false;
+    // Tell listeners now, so nothing keeps showing the previous user's records while init() loads.
+    this.notify();
     await this.init();
   }
 

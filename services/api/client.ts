@@ -144,7 +144,8 @@ export const api = new ApiClient({
   baseUrl: getApiBaseUrl(),
   getToken: () => authService.getToken(),
   onUnauthorized: () => {
-    authService.logout();
+    // A 401 means the session ended; it is not a deliberate sign-out.
+    void authService.expireSession();
   },
 });
 

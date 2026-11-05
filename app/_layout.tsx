@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Stack, router, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { colors, typography, spacing } from '../theme/index';
-import { authService, UserSession } from '../services/auth/auth-service';
+import { color } from '../design/tokens';
+import { authService, UserSession, SessionEndReason } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
+import { RestoringScreen } from '../features/auth/RestoringScreen';
+import { authGateState, showsSessionEndedNote } from '../features/auth/authGate';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ConnectivityBanner } from '../components/system/ConnectivityBanner';
 import { ConnectivityProvider } from '../services/network/useConnectivity';
@@ -18,6 +20,7 @@ import {
 
 export default function RootLayout() {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
+  const [endReason, setEndReason] = useState<SessionEndReason | null>(authService.getEndReason());
   const [initialized, setInitialized] = useState<boolean>(false);
   const pathname = usePathname();
 
@@ -26,6 +29,7 @@ export default function RootLayout() {
     authService.waitForInitialization().then(() => {
       const current = authService.getSession();
       setSession(current);
+      setEndReason(authService.getEndReason());
       setInitialized(true);
       if (current) {
         // Prompt for notification permissions on startup if authenticated
@@ -33,9 +37,10 @@ export default function RootLayout() {
       }
     });
 
+    // Only the initial load ends the restoring state; this subscriber just follows later changes.
     const unsubscribe = authService.subscribe((currentSession) => {
       setSession(currentSession);
-      setInitialized(true);
+      setEndReason(authService.getEndReason());
       if (currentSession) {
         requestNotificationPermissions().catch(() => {});
       }
@@ -54,6 +59,15 @@ export default function RootLayout() {
     };
   }, []);
 
+  const gate = authGateState({ initialized, session, endReason, nowMs: Date.now() });
+
+  // A held session that is past its expiry is cleared at once, with every patient cache.
+  useEffect(() => {
+    if (gate === 'expired' && session) {
+      void authService.expireSession();
+    }
+  }, [gate, session]);
+
   // Dev only: the component gallery opens without sign-in, so it needs no backend.
   if (isGalleryEnabled(__DEV__) && isGalleryPath(pathname)) {
     return (
@@ -64,36 +78,35 @@ export default function RootLayout() {
     );
   }
 
-  if (!initialized) {
+  if (gate === 'restoring') {
     return (
       <SafeAreaProvider>
         <StatusBar style="dark" />
-        <View style={styles.loadingContainer}>
-          <View style={styles.splashBadge}>
-            <Text style={styles.splashIcon}>🩺</Text>
-          </View>
-          <Text style={styles.splashTitle}>MyHealth</Text>
-          <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: spacing.md }} />
-        </View>
+        <RestoringScreen />
       </SafeAreaProvider>
     );
   }
 
-  // If not authenticated, land on Login / Register screen
-  if (!session) {
+  // Signed out or expired: the signed-in tree below is not rendered at all, so no patient data can show.
+  if (gate !== 'signedIn') {
     return (
-      <SafeAreaProvider>
+      <SafeAreaProvider key="signedOut">
         <StatusBar style="dark" />
-        <ErrorBoundary>
-          <AuthScreen />
-        </ErrorBoundary>
+        <ConnectivityProvider>
+          <ConnectivityBanner />
+          <View style={styles.appBody}>
+            <ErrorBoundary>
+              <AuthScreen sessionEnded={showsSessionEndedNote(gate)} />
+            </ErrorBoundary>
+          </View>
+        </ConnectivityProvider>
       </SafeAreaProvider>
     );
   }
 
   // Authenticated: Render main tabs
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider key="signedIn">
       <StatusBar style="dark" />
       <ConnectivityProvider>
         <ConnectivityBanner />
@@ -101,10 +114,10 @@ export default function RootLayout() {
           <ErrorBoundary>
             <Stack
               screenOptions={{
-                headerStyle: { backgroundColor: colors.surface },
-                headerTintColor: colors.textPrimary,
+                headerStyle: { backgroundColor: color.bg.card },
+                headerTintColor: color.text.primary,
                 headerTitleStyle: { fontWeight: '600' },
-                contentStyle: { backgroundColor: colors.background },
+                contentStyle: { backgroundColor: color.bg.screen },
                 headerShadowVisible: false,
               }}
             >
@@ -120,29 +133,5 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   appBody: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  splashBadge: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.primaryLight,
-  },
-  splashIcon: {
-    fontSize: 34,
-  },
-  splashTitle: {
-    ...typography.h2,
-    color: colors.primaryDark,
-    marginTop: spacing.md,
   },
 });
