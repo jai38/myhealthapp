@@ -125,12 +125,12 @@ describe('pickNextDose', () => {
     expect(pickNextDose([], now)).toBeNull();
   });
   it('both screens use the shared rule', () => {
-    for (const f of [
-      '../features/today/HomeScreen.tsx',
-      '../features/medications/MedicationsScreen.tsx',
-    ]) {
-      expect(readFileSync(new URL(f, import.meta.url), 'utf8')).toContain('pickNextDose');
-    }
+    const src = (f: string) => readFileSync(new URL(f, import.meta.url), 'utf8');
+    // Medicines calls the rule directly; Today gets `next` from useToday, which groups with it.
+    expect(src('../features/medications/MedicationsScreen.tsx')).toContain('pickNextDose');
+    expect(src('../features/today/useToday.ts')).toContain('groupTodayDoses');
+    expect(src('../features/today/HomeScreen.tsx')).toMatch(/useToday\(\)/);
+    expect(src('../features/today/HomeScreen.tsx')).not.toMatch(/scheduledTime\)\.getTime\(\) - now/);
     expect(readFileSync(new URL('../features/today/utils.ts', import.meta.url), 'utf8')).not.toContain(
       'getSpotlightDose',
     );

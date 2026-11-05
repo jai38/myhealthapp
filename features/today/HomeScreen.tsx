@@ -84,7 +84,7 @@ export default function HomeScreen() {
   const show = (section: TodaySection) => sections.includes(section);
   const openScan = () => setIsPickerVisible(true);
   const openManualAdd = () => setIsManualAddVisible(true);
-  // `next` comes from useToday, which applies the shared next-dose rule (pickNextDose in todayModel).
+  // `next` comes from useToday, which applies the shared next-dose rule.
   const dueRest = dueNowRest(groups);
 
   return (
