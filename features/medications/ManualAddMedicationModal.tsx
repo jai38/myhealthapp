@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
-import { colors, spacing, typography, borderRadius } from '../../theme/index';
-import { Card } from '../../components/Card';
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import { CustomTimePicker } from '../../components/CustomTimePicker';
+import { Alert, Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Button } from '../../design/components/Actions/Button';
+import { IconButton } from '../../design/components/Actions/IconButton';
+import { Card } from '../../design/components/Containers/Card';
+import { Icon } from '../../design/components/Foundations/Icon';
+import { Screen } from '../../design/components/Foundations/Screen';
+import { Text } from '../../design/components/Foundations/Text';
+import { ChipGroup } from '../../design/components/Inputs/ChipGroup';
+import { Switch } from '../../design/components/Inputs/Switch';
+import { TextField } from '../../design/components/Inputs/TextField';
+import { TopBar } from '../../design/components/Navigation/TopBar';
+import { t } from '../../design/strings';
+import type { StringKey } from '../../design/strings';
+import { color, radius, space } from '../../design/tokens';
 import { medicationService } from '../../services/medications/medication-service';
-import { formatTime12Hour, getTimePeriodIcon } from './reminder-time-utils';
+import { formatTime12Hour } from './reminder-time-utils';
 import { scheduleMedicationReminder } from '../../services/notifications/notification-service';
+import { ManualAddCustomTime } from './ManualAddCustomTime';
 
 export interface ManualAddMedicationModalProps {
   visible: boolean;
@@ -24,23 +24,33 @@ export interface ManualAddMedicationModalProps {
   onMedicationCreated: () => void;
 }
 
-const DOSAGE_FORMS = [
-  'TABLET',
-  'CAPSULE',
-  'SYRUP',
-  'DROPS',
-  'INJECTION',
-  'CREAM',
-  'INHALER',
-  'OTHER',
+const DOSAGE_FORMS: { value: string; labelKey: StringKey }[] = [
+  { value: 'TABLET', labelKey: 'medicines.manual.form.tablet' },
+  { value: 'CAPSULE', labelKey: 'medicines.manual.form.capsule' },
+  { value: 'SYRUP', labelKey: 'medicines.manual.form.syrup' },
+  { value: 'DROPS', labelKey: 'medicines.manual.form.drops' },
+  { value: 'INJECTION', labelKey: 'medicines.manual.form.injection' },
+  { value: 'CREAM', labelKey: 'medicines.manual.form.cream' },
+  { value: 'INHALER', labelKey: 'medicines.manual.form.inhaler' },
+  { value: 'OTHER', labelKey: 'medicines.manual.form.other' },
 ];
 
-const PRESET_TIMES = [
-  { label: '🌅 Morning (8:00 AM)', time: '08:00' },
-  { label: '☀️ Noon (1:00 PM)', time: '13:00' },
-  { label: '🌇 Evening (6:00 PM)', time: '18:00' },
-  { label: '🌙 Bedtime (9:00 PM)', time: '21:00' },
+const DOSAGE_FORM_OPTIONS = DOSAGE_FORMS.map((form) => ({
+  value: form.value,
+  label: t(form.labelKey),
+}));
+
+const PRESET_TIMES: { time: string; labelKey: StringKey }[] = [
+  { time: '08:00', labelKey: 'medicines.manual.preset.morning' },
+  { time: '13:00', labelKey: 'medicines.manual.preset.noon' },
+  { time: '18:00', labelKey: 'medicines.manual.preset.evening' },
+  { time: '21:00', labelKey: 'medicines.manual.preset.bedtime' },
 ];
+
+const PRESET_OPTIONS = PRESET_TIMES.map((item) => ({
+  value: item.time,
+  label: t(item.labelKey),
+}));
 
 export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> = ({
   visible,
@@ -80,6 +90,14 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
     }
   };
 
+  // ChipGroup reports the whole next selection, so find the preset that was tapped.
+  const handlePresetChange = (next: string[]) => {
+    const changed = PRESET_TIMES.find(
+      (item) => next.includes(item.time) !== selectedTimes.includes(item.time)
+    );
+    if (changed) handleTogglePresetTime(changed.time);
+  };
+
   const handleAddCustomTime = (time24: string) => {
     if (!selectedTimes.includes(time24)) {
       setSelectedTimes((prev) => [...prev, time24].sort());
@@ -92,12 +110,12 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      setError('Medication name is required.');
+      setError(t('medicines.manual.errorNameRequired'));
       return;
     }
 
     if (enableReminders && selectedTimes.length === 0) {
-      setError('Please select at least one reminder time, or disable reminders.');
+      setError(t('medicines.manual.errorNoTimes'));
       return;
     }
 
@@ -123,17 +141,20 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
       }
 
       Alert.alert(
-        'Medication Added',
+        t('medicines.manual.addedTitle'),
         enableReminders
-          ? `"${name.trim()}" is now active with ${selectedTimes.length} daily reminder(s).`
-          : `"${name.trim()}" has been saved to your medications list.`
+          ? t('medicines.manual.addedWithReminders', {
+              name: name.trim(),
+              count: selectedTimes.length,
+            })
+          : t('medicines.manual.addedWithoutReminders', { name: name.trim() })
       );
 
       resetForm();
       onMedicationCreated();
       onClose();
     } catch (err: any) {
-      setError(err?.message || 'Failed to create medication. Please try again.');
+      setError(err?.message || t('medicines.manual.errorSaveFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -141,370 +162,194 @@ export const ManualAddMedicationModal: React.FC<ManualAddMedicationModalProps> =
 
   return (
     <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Text style={styles.closeBtnText}>✕ Close</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>Add Medication Manually</Text>
-          <View style={{ width: 60 }} />
-        </View>
-
-        <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
-          {error && (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorText}>⚠️ {error}</Text>
+      <Screen
+        header={
+          <TopBar
+            title={t('medicines.manual.title')}
+            right={
+              <IconButton icon="close" accessibilityLabel={t('common.close')} onPress={onClose} />
+            }
+          />
+        }
+      >
+        <View style={styles.body}>
+          {error ? (
+            <View style={styles.errorBox} accessibilityLiveRegion="polite">
+              <Icon name="warning-outline" tone="danger" />
+              <Text variant="body" tone="danger" style={styles.flex}>
+                {error}
+              </Text>
             </View>
-          )}
+          ) : null}
 
           {/* Basic Info Card */}
-          <Card style={styles.card}>
-            <Text style={styles.sectionHeader}>Medicine Information</Text>
+          <Card style={styles.stack}>
+            <Text variant="title3">{t('medicines.manual.sectionInfo')}</Text>
 
-            <Input
-              label="Medicine Name *"
+            <TextField
+              label={t('medicines.manual.nameLabel')}
               value={name}
               onChangeText={setName}
-              placeholder="e.g. Paracetamol, Metformin, Amoxicillin"
+              placeholder={t('medicines.manual.namePlaceholder')}
             />
 
-            <Input
-              label="Strength / Dose (Optional)"
+            <TextField
+              label={t('medicines.manual.strengthLabel')}
               value={strength}
               onChangeText={setStrength}
-              placeholder="e.g. 500mg, 10ml, 2.5mg"
+              placeholder={t('medicines.manual.strengthPlaceholder')}
             />
 
-            <Text style={styles.fieldLabel}>Dosage Form</Text>
-            <View style={styles.chipRow}>
-              {DOSAGE_FORMS.map((form) => (
-                <TouchableOpacity
-                  key={form}
-                  style={[styles.chip, dosageForm === form && styles.chipActive]}
-                  onPress={() => setDosageForm(form)}
-                >
-                  <Text
-                    style={[styles.chipText, dosageForm === form && styles.chipTextActive]}
-                  >
-                    {form}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <ChipGroup
+              label={t('medicines.manual.formLabel')}
+              options={DOSAGE_FORM_OPTIONS}
+              selected={[dosageForm]}
+              onChange={(next) => {
+                const picked = next[0];
+                if (picked) setDosageForm(picked);
+              }}
+            />
 
-            <Input
-              label="Instructions (Optional)"
+            <TextField
+              label={t('medicines.manual.instructionsLabel')}
               value={instructions}
               onChangeText={setInstructions}
-              placeholder="e.g. Take 1 tablet after meals"
+              placeholder={t('medicines.manual.instructionsPlaceholder')}
             />
 
-            <Input
-              label="Start Date (YYYY-MM-DD)"
+            <TextField
+              label={t('medicines.manual.startDateLabel')}
               value={startDate}
               onChangeText={setStartDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('medicines.manual.startDatePlaceholder')}
             />
           </Card>
 
           {/* Reminders & Regimen Card */}
-          <Card style={styles.card}>
-            <View style={styles.reminderHeaderRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.sectionHeader}>Daily Dose Reminders</Text>
-                <Text style={[typography.caption, { color: colors.textSecondary }]}>
-                  Schedule recurring alarms and dose tracking for today and upcoming days.
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={[styles.toggleBtn, enableReminders && styles.toggleBtnActive]}
-                onPress={() => setEnableReminders(!enableReminders)}
-              >
-                <Text
-                  style={[styles.toggleBtnText, enableReminders && styles.toggleBtnTextActive]}
-                >
-                  {enableReminders ? 'ON' : 'OFF'}
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <Card style={styles.stack}>
+            <Switch
+              label={t('medicines.manual.remindersTitle')}
+              helper={t('medicines.manual.remindersBody')}
+              value={enableReminders}
+              onValueChange={setEnableReminders}
+            />
 
             {enableReminders && (
-              <View style={{ marginTop: spacing.md }}>
-                <Text style={styles.fieldLabel}>Quick Times of Day</Text>
-                <View style={styles.presetRow}>
-                  {PRESET_TIMES.map((item) => {
-                    const isSelected = selectedTimes.includes(item.time);
-                    return (
-                      <TouchableOpacity
-                        key={item.time}
-                        style={[styles.presetChip, isSelected && styles.presetChipActive]}
-                        onPress={() => handleTogglePresetTime(item.time)}
-                      >
-                        <Text
-                          style={[
-                            styles.presetChipText,
-                            isSelected && styles.presetChipTextActive,
-                          ]}
-                        >
-                          {isSelected ? '✓ ' : '+ '}
-                          {item.label}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
+              <>
+                <ChipGroup
+                  label={t('medicines.manual.presetsLabel')}
+                  multi
+                  options={PRESET_OPTIONS}
+                  selected={selectedTimes}
+                  onChange={handlePresetChange}
+                />
 
                 {/* Selected Times List */}
-                <Text style={[styles.fieldLabel, { marginTop: spacing.md }]}>
-                  Active Reminder Times ({selectedTimes.length})
-                </Text>
-                <View style={styles.activeTimesRow}>
+                <View style={styles.stackTight}>
+                  <Text variant="caption" tone="secondary">
+                    {t('medicines.manual.activeTimesLabel', { count: selectedTimes.length })}
+                  </Text>
                   {selectedTimes.length === 0 ? (
-                    <Text style={[typography.caption, { color: colors.danger }]}>
-                      No times selected. Select a preset above or add a custom time below.
+                    <Text variant="caption" tone="danger">
+                      {t('medicines.manual.noTimes')}
                     </Text>
                   ) : (
-                    selectedTimes.map((t) => (
-                      <View key={t} style={styles.timeTag}>
-                        <Text style={styles.timeTagText}>
-                          {getTimePeriodIcon(t)} {formatTime12Hour(t)}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => handleRemoveTime(t)}
-                          style={styles.timeTagRemove}
-                        >
-                          <Text style={styles.timeTagRemoveText}>✕</Text>
-                        </TouchableOpacity>
-                      </View>
-                    ))
+                    <View style={styles.tagRow}>
+                      {selectedTimes.map((time) => (
+                        <View key={time} style={styles.timeTag}>
+                          <Icon name="alarm" size="sm" tone="link" />
+                          <Text variant="callout" tone="link">
+                            {formatTime12Hour(time)}
+                          </Text>
+                          <Pressable
+                            accessibilityRole="button"
+                            accessibilityLabel={t('medicines.manual.removeTime', {
+                              time: formatTime12Hour(time),
+                            })}
+                            hitSlop={8}
+                            onPress={() => handleRemoveTime(time)}
+                          >
+                            <Icon name="close" size="sm" tone="link" />
+                          </Pressable>
+                        </View>
+                      ))}
+                    </View>
                   )}
                 </View>
 
-                {/* Custom Time Picker */}
-                <CustomTimePicker
-                  onAddTime={handleAddCustomTime}
-                  existingTimes={selectedTimes}
-                />
-              </View>
+                <ManualAddCustomTime onAddTime={handleAddCustomTime} existingTimes={selectedTimes} />
+              </>
             )}
           </Card>
 
           {/* Notes Card */}
-          <Card style={styles.card}>
-            <Input
-              label="Doctor / Personal Notes (Optional)"
+          <Card>
+            <TextField
+              label={t('medicines.manual.notesLabel')}
               value={notes}
               onChangeText={setNotes}
-              placeholder="e.g. Prescribed by Dr. Sharma for BP"
+              placeholder={t('medicines.manual.notesPlaceholder')}
             />
           </Card>
 
           {/* Submit Button */}
-          <View style={styles.actionButtons}>
+          <View style={styles.actions}>
             <Button
-              title={submitting ? 'Saving Medication...' : 'Save Medication & Schedule'}
+              label={submitting ? t('medicines.manual.saving') : t('medicines.manual.save')}
               onPress={handleSubmit}
               disabled={submitting}
+              fullWidth
             />
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </Screen>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  closeBtn: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  closeBtnText: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  title: {
-    ...typography.h3,
-    color: colors.textPrimary,
-  },
-  content: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: spacing.lg,
-    maxWidth: 640,
+  body: {
     width: '100%',
+    maxWidth: 640,
     alignSelf: 'center',
+    gap: space.lg,
+    paddingTop: space.md,
+    paddingBottom: space.xl,
   },
-  card: {
-    marginBottom: spacing.md,
+  stack: {
+    gap: space.lg,
   },
-  sectionHeader: {
-    ...typography.h3,
-    marginBottom: spacing.sm,
-    color: colors.textPrimary,
+  stackTight: {
+    gap: space.sm,
   },
-  fieldLabel: {
-    ...typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
+  flex: {
+    flex: 1,
   },
-  chipRow: {
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: space.sm,
+    padding: space.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: color.action.danger,
+    backgroundColor: color.tone.danger.bg,
+  },
+  tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.xs,
-    marginBottom: spacing.md,
-  },
-  chip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  chipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  chipText: {
-    ...typography.caption,
-    color: colors.textPrimary,
-    fontWeight: '500',
-  },
-  chipTextActive: {
-    color: colors.textInverse,
-    fontWeight: '700',
-  },
-  reminderHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  toggleBtn: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.surfaceMuted,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  toggleBtnActive: {
-    backgroundColor: colors.successLight,
-    borderColor: colors.success,
-  },
-  toggleBtnText: {
-    ...typography.caption,
-    fontWeight: '700',
-    color: colors.textSecondary,
-  },
-  toggleBtnTextActive: {
-    color: colors.success,
-  },
-  presetRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
-  },
-  presetChip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: borderRadius.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-  },
-  presetChipActive: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
-  },
-  presetChipText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    fontWeight: '500',
-  },
-  presetChipTextActive: {
-    color: colors.primary,
-    fontWeight: '700',
-  },
-  activeTimesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    marginBottom: spacing.md,
+    gap: space.sm,
   },
   timeTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primaryLight,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: borderRadius.sm,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    gap: space.xs,
+    paddingVertical: space.xs,
+    paddingHorizontal: space.md,
+    borderRadius: radius.control,
+    backgroundColor: color.bg.tintBlue,
   },
-  timeTagText: {
-    ...typography.caption,
-    color: colors.primary,
-    fontWeight: '700',
-  },
-  timeTagRemove: {
-    marginLeft: 6,
-    padding: 2,
-  },
-  timeTagRemoveText: {
-    color: colors.primary,
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  customTimeRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginTop: spacing.xs,
-  },
-  addTimeBtn: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.md,
-    paddingVertical: 12,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  addTimeBtnText: {
-    ...typography.body,
-    color: colors.textInverse,
-    fontWeight: '700',
-  },
-  errorBox: {
-    backgroundColor: colors.dangerLight,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    ...typography.body,
-    color: colors.danger,
-  },
-  actionButtons: {
-    marginTop: spacing.md,
-    marginBottom: spacing.xl,
+  actions: {
+    marginTop: space.sm,
   },
 });
