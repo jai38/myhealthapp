@@ -133,4 +133,13 @@ export const en = {
   'trust.uncertainHint': 'This value was not clear. Check it against the source.',
   'trust.outdated': 'May be out of date',
   'trust.disclaimerLabel': 'Important',
+
+  'globalError.offlineTitle': "You're offline",
+  'globalError.offlineBody':
+    'Your saved information is still on this device. Connect to the internet to refresh it.',
+  'globalError.errorTitle': 'Something went wrong',
+  'globalError.errorBody': 'Nothing was lost. Please try again.',
+  'globalError.supportCode': 'Support code: {code}',
+  'globalError.supportHint': 'If this keeps happening, share this code with support.',
+  'feedback.offlineRetryHint': 'Checks your connection again',
 } as const;

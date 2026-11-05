@@ -7,6 +7,8 @@ import { colors, typography, spacing } from '../theme/index';
 import { authService, UserSession } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { ConnectivityBanner } from '../components/system/ConnectivityBanner';
+import { ConnectivityProvider } from '../services/network/useConnectivity';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
 import {
   requestNotificationPermissions,
@@ -95,24 +97,32 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <ErrorBoundary>
-        <Stack
-          screenOptions={{
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.textPrimary,
-            headerTitleStyle: { fontWeight: '600' },
-            contentStyle: { backgroundColor: colors.background },
-            headerShadowVisible: false,
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </ErrorBoundary>
+      <ConnectivityProvider>
+        <ConnectivityBanner />
+        <View style={styles.appBody}>
+          <ErrorBoundary>
+            <Stack
+              screenOptions={{
+                headerStyle: { backgroundColor: colors.surface },
+                headerTintColor: colors.textPrimary,
+                headerTitleStyle: { fontWeight: '600' },
+                contentStyle: { backgroundColor: colors.background },
+                headerShadowVisible: false,
+              }}
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </ErrorBoundary>
+        </View>
+      </ConnectivityProvider>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  appBody: {
+    flex: 1,
+  },
   loadingContainer: {
     flex: 1,
     backgroundColor: colors.background,

@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Button } from '../Actions/Button';
 import { Icon } from '../Foundations/Icon';
 import { Text } from '../Foundations/Text';
 import { color, space } from '../../tokens';
@@ -8,11 +9,14 @@ import { t } from '../../strings';
 export interface OfflineBannerProps {
   // Already formatted by the caller, for example "09:40".
   lastUpdated?: string;
+  // When given, shows a Retry button that re-checks the connection.
+  onRetry?: () => void;
+  retrying?: boolean;
   testID?: string;
 }
 
 // Text on bg.subtle uses text.primary or text.secondary only.
-export function OfflineBanner({ lastUpdated, testID }: OfflineBannerProps) {
+export function OfflineBanner({ lastUpdated, onRetry, retrying = false, testID }: OfflineBannerProps) {
   return (
     <View
       testID={testID}
@@ -39,6 +43,16 @@ export function OfflineBanner({ lastUpdated, testID }: OfflineBannerProps) {
           </Text>
         )}
       </View>
+      {onRetry !== undefined && (
+        <Button
+          label={t('common.retry')}
+          variant="secondary"
+          onPress={onRetry}
+          loading={retrying}
+          accessibilityHint={t('feedback.offlineRetryHint')}
+          testID={testID && `${testID}-retry`}
+        />
+      )}
     </View>
   );
 }
@@ -46,7 +60,7 @@ export function OfflineBanner({ lastUpdated, testID }: OfflineBannerProps) {
 const styles = StyleSheet.create({
   strip: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: space.md,
     paddingHorizontal: space.lg,
     paddingVertical: space.md,
