@@ -9,7 +9,7 @@ import { StatusPill } from '../../../design/components/Trust/StatusPill';
 import { t } from '../../../design/strings';
 import { color, radius, space } from '../../../design/tokens';
 import type { DoseLog, MedicationDetail } from '../../../services/medications/medication-service';
-import { doseStatusFor } from '../dose-display';
+import { canActOnDose, doseStatusFor } from '../dose-display';
 
 export interface DoseHistoryCardProps {
   medication: MedicationDetail;
@@ -58,7 +58,7 @@ interface DoseRowProps {
 }
 
 function DoseRow({ medication, dose, isBusy, onDoseAction }: DoseRowProps) {
-  const isActionable = dose.status === 'PENDING' || dose.status === 'SNOOZED';
+  const isActionable = canActOnDose(dose, medication);
   const scheduledMs = new Date(dose.scheduledTime).getTime();
   const isEarly = scheduledMs > Date.now() + THIRTY_MINUTES_MS;
   const canSnooze = scheduledMs <= Date.now() + THIRTY_MINUTES_MS || dose.status === 'SNOOZED';
@@ -83,7 +83,7 @@ function DoseRow({ medication, dose, isBusy, onDoseAction }: DoseRowProps) {
         <StatusPill display={doseStatusFor(dose, Date.now(), medication)} />
       </View>
 
-      {dose.status === 'SNOOZED' ? (
+      {dose.status === 'SNOOZED' && isActionable ? (
         <View style={styles.snoozeNotice}>
           <Icon name="alarm-outline" size="sm" color={color.tone.caution.fg} />
           <Text variant="caption" style={[styles.flex, styles.snoozeText]}>

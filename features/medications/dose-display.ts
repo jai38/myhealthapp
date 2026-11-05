@@ -17,3 +17,16 @@ export function doseStatusFor(
 ): StatusDisplay | null {
   return doseStatusDisplay(doseDisplayStateFor(dose, nowMs, med), formatDoseClock);
 }
+
+/**
+ * Whether Take/Skip/Snooze may be offered for a dose: it must still be awaiting an
+ * answer (PENDING or SNOOZED) and its medicine must be active. Paused or stopped
+ * medicines show no actions, as on Today and the Medicines list.
+ */
+export function canActOnDose(
+  dose: Pick<DoseLog, 'status'>,
+  med: Pick<MedicationRecord, 'status'> | null | undefined,
+): boolean {
+  if (dose.status !== 'PENDING' && dose.status !== 'SNOOZED') return false;
+  return !med || med.status === 'ACTIVE';
+}
