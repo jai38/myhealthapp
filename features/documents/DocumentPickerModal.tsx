@@ -13,6 +13,7 @@ import { Spacer } from '../../design/components/Foundations/Spacer';
 import { t } from '../../design/strings';
 import { color, radius, space } from '../../design/tokens';
 import { PickedFile, validatePickedFile } from '../../services/documents/file-validator';
+import { areTestSamplesEnabled } from './pickerSamples';
 
 export interface DocumentPickerModalProps {
   visible: boolean;
@@ -236,16 +237,20 @@ export const DocumentPickerModal: React.FC<DocumentPickerModalProps> = ({
         />
       </ListGroup>
 
-      {/* Instant Quick Test Samples */}
-      <Text variant="overline" tone="secondary">
-        {t('documents.picker.samplesTitle')}
-      </Text>
-      <View style={styles.samplesRow}>
-        <Button label={t('documents.picker.samplePdf')} variant="secondary" onPress={handlePickSamplePdf} />
-        <Button label={t('documents.picker.samplePhoto')} variant="secondary" onPress={handlePickSamplePhoto} />
-        <Button label={t('documents.picker.testOversized')} variant="secondary" onPress={handlePickOversizedSample} />
-        <Button label={t('documents.picker.testTxt')} variant="secondary" onPress={handlePickInvalidFormat} />
-      </View>
+      {/* Developer-only sample and boundary-test files. Never shown in release builds. */}
+      {areTestSamplesEnabled(__DEV__) ? (
+        <>
+          <Text variant="overline" tone="secondary">
+            {t('documents.picker.samplesTitle')}
+          </Text>
+          <View style={styles.samplesRow}>
+            <Button label={t('documents.picker.samplePdf')} variant="secondary" onPress={handlePickSamplePdf} />
+            <Button label={t('documents.picker.samplePhoto')} variant="secondary" onPress={handlePickSamplePhoto} />
+            <Button label={t('documents.picker.testOversized')} variant="secondary" onPress={handlePickOversizedSample} />
+            <Button label={t('documents.picker.testTxt')} variant="secondary" onPress={handlePickInvalidFormat} />
+          </View>
+        </>
+      ) : null}
 
       <Spacer size="md" />
       <Button label={t('common.cancel')} variant="text" onPress={onClose} fullWidth />
