@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { toConnectivityStatus, shouldShowOfflineBanner } from '../services/network/connectivity';
-import { createSupportCode } from '../components/system/supportCode';
+import { createSupportCode } from '../features/system/supportCode';
 
 describe('toConnectivityStatus', () => {
   it('online when connected and reachable', () => {

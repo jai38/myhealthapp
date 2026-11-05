@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
-import { GlobalErrorScreen } from './system/GlobalErrorScreen';
-import { createSupportCode } from './system/supportCode';
+import { GlobalErrorScreen } from './GlobalErrorScreen';
+import { createSupportCode } from './supportCode';
 
 interface Props {
   children: ReactNode;

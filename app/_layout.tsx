@@ -8,8 +8,8 @@ import { authService, UserSession, SessionEndReason } from '../services/auth/aut
 import { AuthScreen } from '../features/auth/AuthScreen';
 import { RestoringScreen } from '../features/auth/RestoringScreen';
 import { authGateState, showsSessionEndedNote } from '../features/auth/authGate';
-import { ErrorBoundary } from '../components/ErrorBoundary';
-import { ConnectivityBanner } from '../components/system/ConnectivityBanner';
+import { ErrorBoundary } from '../features/system/ErrorBoundary';
+import { ConnectivityBanner } from '../features/system/ConnectivityBanner';
 import { ConnectivityProvider } from '../services/network/useConnectivity';
 import { medicineOpenTarget } from '../features/shell/tabs';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
