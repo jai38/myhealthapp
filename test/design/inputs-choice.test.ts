@@ -27,17 +27,20 @@ describe('choice colors meet contrast', () => {
     });
   }
 
-  for (const state of states.filter((s) => !s.disabled)) {
-    it(`${state.name} border meets the UI minimum on the screen`, () => {
-      const { border } = choiceColors(state);
-      expect(contrastRatio(border, color.bg.screen)).toBeGreaterThanOrEqual(MIN_UI);
-    });
-  }
+  it('selected fill is visible against the white card', () => {
+    const { bg } = choiceColors({ selected: true, disabled: false });
+    expect(contrastRatio(bg, color.bg.card)).toBeGreaterThanOrEqual(MIN_UI);
+  });
 });
 
 describe('choice layout', () => {
-  it('meets the touch target', () => {
-    expect(meetsTouchTarget(choiceLayout)).toBe(true);
+  it('meets the 48 dp touch target with hit slop', () => {
+    expect(
+      meetsTouchTarget(
+        { minHeight: choiceLayout.minHeight, minWidth: choiceLayout.minWidth },
+        choiceLayout.hitSlop,
+      ),
+    ).toBe(true);
   });
 });
 

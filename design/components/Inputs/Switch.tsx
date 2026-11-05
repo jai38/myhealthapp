@@ -30,6 +30,7 @@ export function Switch({
       accessibilityHint={helper}
       accessibilityState={{ checked: value, disabled }}
       disabled={disabled}
+      hitSlop={choiceLayout.hitSlop}
       onPress={() => onValueChange(!value)}
       style={styles.row}
     >

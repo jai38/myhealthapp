@@ -4,6 +4,7 @@ import { Text } from '../Foundations/Text';
 import { Icon } from '../Foundations/Icon';
 import { size, space } from '../../tokens';
 import { t } from '../../strings';
+import { FieldLabel } from './FieldBox';
 import { fieldColors, fieldLayout, fieldState, sanitizeOtp } from './inputStyle';
 
 export interface OtpFieldProps {
@@ -37,7 +38,7 @@ export function OtpField({
 
   return (
     <View testID={testID} style={styles.wrapper}>
-      <Text variant="caption">{label}</Text>
+      <FieldLabel>{label}</FieldLabel>
       <View style={styles.row}>
         <TextInput
           ref={inputRef}

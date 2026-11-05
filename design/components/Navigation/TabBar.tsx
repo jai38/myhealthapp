@@ -41,7 +41,6 @@ export function TabBar({ active, onSelect, testID }: TabBarProps) {
               <Text variant="caption" style={[styles.label, { color: colors.fg }]} numberOfLines={1}>
                 {t(tab.labelKey)}
               </Text>
-              <View style={[styles.indicator, { backgroundColor: colors.indicator }]} />
             </Pressable>
           );
         })}
@@ -52,7 +51,7 @@ export function TabBar({ active, onSelect, testID }: TabBarProps) {
 
 const styles = StyleSheet.create({
   bar: {
-    backgroundColor: color.bg.screen,
+    backgroundColor: color.bg.card,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: color.border.subtle,
   },
@@ -73,13 +72,5 @@ const styles = StyleSheet.create({
   },
   label: {
     marginTop: space.xxs,
-  },
-  // Sits under the active tab, at the bottom edge of its item.
-  indicator: {
-    position: 'absolute',
-    bottom: 0,
-    left: space.md,
-    right: space.md,
-    height: 3,
   },
 });

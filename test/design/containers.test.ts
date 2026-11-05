@@ -10,8 +10,9 @@ import { color } from '../../design/tokens';
 import { contrastRatio, meetsTouchTarget, MIN_TEXT, MIN_UI } from '../../design/contrast';
 
 describe('icon tile colors meet UI contrast', () => {
-  for (const tone of ['blue', 'teal', 'neutral'] as const) {
-    it(`${tone} icon on its tile`, () => {
+  const tones = Object.keys(color.tile) as (keyof typeof color.tile)[];
+  for (const tone of tones) {
+    it(`${tone} glyph on its tile`, () => {
       const { icon, bg } = iconTileColors(tone);
       expect(contrastRatio(icon, bg)).toBeGreaterThanOrEqual(MIN_UI);
     });

@@ -1,5 +1,5 @@
 import type { IconName } from '../Foundations/iconNames';
-import { color, size } from '../../tokens';
+import { color } from '../../tokens';
 
 export interface ChoiceColors {
   fg: string;
@@ -10,6 +10,8 @@ export interface ChoiceColors {
 
 export const choiceCheckIcon: IconName = 'checkmark';
 
+// Choices are filled pills or tiles, so they carry no border. Selection is shown by
+// the filled blue fill plus a check icon, never by color alone.
 export function choiceColors({
   selected,
   disabled,
@@ -21,24 +23,26 @@ export function choiceColors({
     return {
       fg: color.text.secondary,
       bg: color.bg.subtle,
-      border: color.border.subtle,
+      border: 'transparent',
       icon: color.text.secondary,
     };
   }
   if (selected) {
     return {
-      fg: color.tone.info.fg,
-      bg: color.tone.info.bg,
-      border: color.action.primary,
-      icon: color.action.primary,
+      fg: color.text.inverse,
+      bg: color.action.primary,
+      border: 'transparent',
+      icon: color.text.inverse,
     };
   }
   return {
     fg: color.text.primary,
-    bg: color.bg.screen,
-    border: color.border.input,
-    icon: color.border.input,
+    bg: color.bg.subtle,
+    border: 'transparent',
+    icon: color.text.secondary,
   };
 }
 
-export const choiceLayout = { minHeight: size.touchMin, minWidth: size.touchMin } as const;
+// The visible box can be 36 high. hitSlop adds 6 on each side, so the touch target
+// is still 48. Every Pressable that uses this layout must pass hitSlop.
+export const choiceLayout = { minHeight: 36, minWidth: 48, hitSlop: 6 } as const;

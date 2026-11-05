@@ -6,6 +6,8 @@ export { ListRow } from './ListRow';
 export type { ListRowProps } from './ListRow';
 export { IconTile } from './IconTile';
 export type { IconTileProps } from './IconTile';
+export { ListGroup } from './ListGroup';
+export type { ListGroupProps } from './ListGroup';
 export { Accordion } from './Accordion';
 export type { AccordionProps } from './Accordion';
 export { SegmentedControl } from './SegmentedControl';
@@ -21,8 +23,9 @@ export {
   cardStyle,
   listRowLayout,
   iconTileSize,
+  iconTileRadius,
   iconTileColors,
   stepStates,
   SHEET_MAX_HEIGHT_RATIO,
 } from './containerStyle';
-export type { StepState } from './containerStyle';
+export type { StepState, TileTone } from './containerStyle';

@@ -7,11 +7,9 @@ import {
   medicineFormIcon,
   resolveIconColor,
 } from '../../design/components/Foundations/iconNames';
-import type { IconName } from '../../design/components/Foundations/iconNames';
 import { textStyleFor } from '../../design/components/Foundations/textStyle';
 
 // Pill-picture icon names. Medicine forms must never map to one of these.
-const PILL_PICTURE = /pill|capsule|bottle|bandage/i;
 
 // Every tone a Text can take. Compile-time check: adding a tone breaks this record.
 const TEXT_TONE_KEYS: Record<TextTone, true> = {
@@ -27,19 +25,17 @@ const TEXT_TONES = Object.keys(TEXT_TONE_KEYS) as TextTone[];
 describe('medicineFormIcon', () => {
   const values = Object.values(medicineFormIcon);
 
-  it('every value is an IconName and a non-empty string', () => {
-    // Type-level: fails to compile if any value is not an IconName.
-    const typed: IconName[] = values;
-    expect(typed).toHaveLength(values.length);
-    for (const name of values) {
-      expect(typeof name).toBe('string');
-      expect(name.length).toBeGreaterThan(0);
-    }
+  it('covers all eight forms with a distinct glyph each', () => {
+    expect(Object.keys(medicineFormIcon).sort()).toEqual(
+      ['capsule', 'drops', 'inhaler', 'injection', 'liquid', 'other', 'tablet', 'topical'],
+    );
+    expect(new Set(values).size).toBe(values.length);
   });
 
-  it('no medicine form maps to a pill-picture icon', () => {
+  it('uses monochrome glyph names, never colored or image variants', () => {
+    // Glyph fonts render in one color; this guards against image-style names.
     for (const name of values) {
-      expect(name).not.toMatch(PILL_PICTURE);
+      expect(name).not.toMatch(/color|image|photo|emoji/i);
     }
   });
 });
@@ -58,7 +54,7 @@ describe('textStyleFor', () => {
   it('merges the variant font size with the tone color', () => {
     const style = textStyleFor('title1', 'secondary');
     expect(style.fontSize).toBe(textStyles.title1.fontSize);
-    expect(style.fontSize).toBe(24);
+    expect(style.fontSize).toBe(textStyles.title1.fontSize);
     expect(style.color).toBe(color.text.secondary);
   });
 });

@@ -3,13 +3,16 @@ import {
   defaultPasswordRules,
   evaluatePasswordRules,
   fieldColors,
+  fieldHaloColor,
   fieldLayout,
+  fieldPaddingFor,
   fieldState,
   parseDecimal,
   sanitizeOtp,
 } from '../../design/components/Inputs/inputStyle';
 import type { FieldState } from '../../design/components/Inputs/inputStyle';
 import { color } from '../../design/tokens';
+import { buttonLayout } from '../../design/components/Actions/buttonStyle';
 import { contrastRatio, meetsTouchTarget, MIN_TEXT, MIN_UI } from '../../design/contrast';
 
 const bools = [true, false];
@@ -43,9 +46,9 @@ describe('field colors meet contrast in every state', () => {
       expect(contrastRatio(placeholder, bg)).toBeGreaterThanOrEqual(MIN_TEXT);
     });
 
-    it(`${state}: border meets 3:1 on the screen background`, () => {
+    it(`${state}: border meets 3:1 on the white field card`, () => {
       const { border } = fieldColors(state);
-      expect(contrastRatio(border, color.bg.screen)).toBeGreaterThanOrEqual(MIN_UI);
+      expect(contrastRatio(border, color.bg.card)).toBeGreaterThanOrEqual(MIN_UI);
     });
   }
 });
@@ -100,5 +103,29 @@ describe('parseDecimal', () => {
 describe('touch target', () => {
   it('the field box meets the 48 dp minimum', () => {
     expect(meetsTouchTarget({ minHeight: fieldLayout.minHeight, minWidth: 48 })).toBe(true);
+  });
+});
+
+describe('field shell', () => {
+  it('shows a halo only while focused or in error', () => {
+    expect(fieldHaloColor('default')).toBe('transparent');
+    expect(fieldHaloColor('disabled')).toBe('transparent');
+    expect(fieldHaloColor('focused')).not.toBe('transparent');
+    expect(fieldHaloColor('error')).not.toBe('transparent');
+  });
+
+  it('keeps the error halo distinct from the focus halo', () => {
+    expect(fieldHaloColor('error')).not.toBe(fieldHaloColor('focused'));
+  });
+
+  it('keeps text in place when the border thickens', () => {
+    for (const state of states) {
+      const { borderWidth } = fieldColors(state);
+      expect(borderWidth + fieldPaddingFor(borderWidth)).toBe(1 + fieldLayout.paddingHorizontal);
+    }
+  });
+
+  it('matches the button corner radius', () => {
+    expect(fieldLayout.borderRadius).toBe(buttonLayout.borderRadius);
   });
 });

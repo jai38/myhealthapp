@@ -5,9 +5,10 @@ import {
   iconButtonLayout,
   linkRowLayout,
   UNDO_DURATION_MS,
+  PRESSED_SCALE,
   ButtonVariant,
 } from '../../design/components/Actions/buttonStyle';
-import { color } from '../../design/tokens';
+import { color, size } from '../../design/tokens';
 import { contrastRatio, meetsTouchTarget, MIN_TEXT } from '../../design/contrast';
 import { t } from '../../design/strings';
 
@@ -20,8 +21,8 @@ describe('button colors meet text contrast', () => {
       for (const disabled of bools) {
         it(`${variant} pressed=${pressed} disabled=${disabled}`, () => {
           const { bg, fg } = buttonColors(variant, { pressed, disabled });
-          // A transparent fill sits on the screen behind it, so check against that.
-          const effectiveBg = bg === 'transparent' ? color.bg.screen : bg;
+          // A transparent fill sits on the white card behind it, so check against that.
+          const effectiveBg = bg === 'transparent' ? color.bg.card : bg;
           expect(contrastRatio(fg, effectiveBg)).toBeGreaterThanOrEqual(MIN_TEXT);
         });
       }
@@ -59,5 +60,16 @@ describe('undo toast', () => {
 
   it('uses the localised undo label', () => {
     expect(t('common.undo')).toBe('Undo');
+  });
+});
+
+describe('button press feel', () => {
+  it('shrinks only slightly when held', () => {
+    expect(PRESSED_SCALE).toBeGreaterThanOrEqual(0.95);
+    expect(PRESSED_SCALE).toBeLessThan(1);
+  });
+
+  it('matches the input field height', () => {
+    expect(buttonLayout.minHeight).toBe(size.inputHeight);
   });
 });

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Icon, Text } from '../Foundations';
 import { color, elevation, radius, size, space } from '../../tokens';
+import { FieldLabel } from './FieldBox';
 import { t } from '../../strings';
-import { choiceCheckIcon, choiceColors, choiceLayout } from './choiceStyle';
+import { choiceCheckIcon, choiceLayout } from './choiceStyle';
 
 export interface SelectSheetProps {
   label: string;
@@ -37,9 +38,7 @@ export function SelectSheet({
 
   return (
     <View>
-      <Text variant="caption" tone="secondary">
-        {label}
-      </Text>
+      <FieldLabel>{label}</FieldLabel>
       <Pressable
         testID={testID}
         accessibilityRole="button"
@@ -75,7 +74,6 @@ export function SelectSheet({
             <ScrollView style={styles.list}>
               {options.map((option) => {
                 const isSelected = option.value === value;
-                const c = choiceColors({ selected: isSelected, disabled: false });
                 return (
                   <Pressable
                     key={option.value}
@@ -83,17 +81,22 @@ export function SelectSheet({
                     accessibilityRole="radio"
                     accessibilityLabel={option.label}
                     accessibilityState={{ checked: isSelected }}
+                    hitSlop={choiceLayout.hitSlop}
                     onPress={() => pick(option.value)}
                     style={styles.option}
                   >
                     <Text
                       variant={isSelected ? 'bodyStrong' : 'body'}
-                      style={[styles.optionText, { color: c.fg }]}
+                      style={[
+                        styles.optionText,
+                        { color: isSelected ? color.text.link : color.text.primary },
+                      ]}
                     >
                       {option.label}
                     </Text>
+                    {/* The check icon marks the selection, not the color. */}
                     {isSelected ? (
-                      <Icon name={choiceCheckIcon} size="md" color={c.icon} />
+                      <Icon name={choiceCheckIcon} size="md" color={color.action.primary} />
                     ) : null}
                   </Pressable>
                 );
@@ -102,6 +105,7 @@ export function SelectSheet({
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={t('common.close')}
+              hitSlop={choiceLayout.hitSlop}
               onPress={() => setOpen(false)}
               style={styles.closeButton}
             >
@@ -124,8 +128,8 @@ const styles = StyleSheet.create({
     minHeight: size.inputHeight,
     paddingHorizontal: space.lg,
     borderWidth: 1,
-    borderRadius: radius.md,
-    backgroundColor: color.bg.screen,
+    borderRadius: radius.control,
+    backgroundColor: color.bg.card,
   },
   fieldText: {
     flex: 1,

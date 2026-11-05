@@ -60,6 +60,13 @@ export const contrastPairs: ContrastPair[] = [
   pair('text.secondary', color.text.secondary, 'bg.subtle', color.bg.subtle, MIN_TEXT),
   pair('text.tertiary', color.text.tertiary, 'bg.screen', color.bg.screen, MIN_TEXT),
   pair('text.link', color.text.link, 'bg.screen', color.bg.screen, MIN_TEXT),
+  // Most text now sits on white cards on the grey screen.
+  pair('text.primary', color.text.primary, 'bg.card', color.bg.card, MIN_TEXT),
+  pair('text.secondary', color.text.secondary, 'bg.card', color.bg.card, MIN_TEXT),
+  pair('text.tertiary', color.text.tertiary, 'bg.card', color.bg.card, MIN_TEXT),
+  pair('text.link', color.text.link, 'bg.card', color.bg.card, MIN_TEXT),
+  pair('text.link', color.text.link, 'bg.subtle', color.bg.subtle, MIN_TEXT),
+  pair('text.link', color.text.link, 'bg.tintBlue', color.bg.tintBlue, MIN_TEXT),
   pair('text.inverse', color.text.inverse, 'action.primary', color.action.primary, MIN_TEXT),
   pair(
     'text.inverse',
@@ -72,11 +79,17 @@ export const contrastPairs: ContrastPair[] = [
   ...tonePairs,
   pair('border.input', color.border.input, 'bg.screen', color.bg.screen, MIN_UI),
   pair('border.focus', color.border.focus, 'bg.screen', color.bg.screen, MIN_UI),
+  pair('border.input', color.border.input, 'bg.card', color.bg.card, MIN_UI),
+  // White glyphs on category tiles are UI parts: 3:1.
+  ...(Object.keys(color.tile) as (keyof typeof color.tile)[]).map((t) =>
+    pair('text.inverse', color.text.inverse, `tile.${t}`, color.tile[t], MIN_UI),
+  ),
 ];
 
-// These must fail. They keep the rule "blue link and tertiary text on white only" enforced.
+// These must fail. They keep two rules enforced: fill blue is never used as text
+// on the grey screen (use text.link), and tertiary text never sits on bg.subtle.
 export const forbiddenPairs: ContrastPair[] = [
-  pair('text.link', color.text.link, 'bg.subtle', color.bg.subtle, MIN_TEXT),
+  pair('action.primary', color.action.primary, 'bg.screen', color.bg.screen, MIN_TEXT),
   pair('text.tertiary', color.text.tertiary, 'bg.subtle', color.bg.subtle, MIN_TEXT),
 ];
 

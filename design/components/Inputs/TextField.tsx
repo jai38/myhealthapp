@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, View } from 'react-native';
 import type { TextInputProps } from 'react-native';
 import { Text } from '../Foundations/Text';
 import { Icon } from '../Foundations/Icon';
 import type { IconName } from '../Foundations/iconNames';
 import { maxFontScaleFor, textStyles } from '../../typography';
-import { space } from '../../tokens';
+import { color, space } from '../../tokens';
 import { t } from '../../strings';
-import { fieldColors, fieldLayout, fieldState } from './inputStyle';
+import { fieldColors, fieldState } from './inputStyle';
+import { FieldBox, FieldLabel } from './FieldBox';
 
 export interface TextFieldProps
   extends Omit<
@@ -49,23 +50,21 @@ export function TextField({
 }: TextFieldProps) {
   const [focused, setFocused] = useState(false);
   const hasError = !!error;
-  const colors = fieldColors(fieldState({ focused, error: hasError, disabled }));
+  const state = fieldState({ focused, error: hasError, disabled });
+  const colors = fieldColors(state);
   const showCharCount = showCount && maxLength !== undefined;
 
   return (
     <View testID={testID} style={styles.wrapper}>
-      <Text variant="caption">{label}</Text>
-      <View
-        style={[
-          styles.box,
-          {
-            borderColor: colors.border,
-            borderWidth: colors.borderWidth,
-            backgroundColor: colors.bg,
-          },
-        ]}
-      >
-        {leadingIcon ? <Icon name={leadingIcon} tone="secondary" /> : null}
+      <FieldLabel>{label}</FieldLabel>
+      <FieldBox state={state}>
+        {leadingIcon ? (
+          <Icon
+            name={leadingIcon}
+            tone="secondary"
+            color={state === 'focused' ? color.border.focus : undefined}
+          />
+        ) : null}
         <TextInput
           {...rest}
           testID={testID ? `${testID}-input` : undefined}
@@ -75,7 +74,7 @@ export function TextField({
           placeholderTextColor={colors.placeholder}
           editable={!disabled}
           maxLength={maxLength}
-          style={[styles.input, { color: colors.text }, style]}
+          style={[styles.input, webNoOutline, { color: colors.text }, style]}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);
@@ -89,7 +88,7 @@ export function TextField({
           accessibilityHint={hasError ? error : helper}
         />
         {trailing}
-      </View>
+      </FieldBox>
       {hasError ? (
         <View style={styles.errorRow}>
           <Icon name="warning-outline" tone="danger" />
@@ -118,17 +117,12 @@ export function TextField({
   );
 }
 
+// The field draws its own focus ring; drop the browser's default outline on web.
+const webNoOutline = Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null;
+
 const styles = StyleSheet.create({
   wrapper: {
-    gap: space.xs,
-  },
-  box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space.sm,
-    minHeight: fieldLayout.minHeight,
-    borderRadius: fieldLayout.borderRadius,
-    paddingHorizontal: fieldLayout.paddingHorizontal,
+    gap: space.xs + space.xxs,
   },
   input: {
     flex: 1,

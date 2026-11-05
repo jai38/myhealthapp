@@ -27,11 +27,11 @@ export function Gallery() {
   }
 
   return (
-    <Screen wave testID="gallery">
+    <Screen testID="gallery">
       <View style={{ paddingTop: space.lg, gap: space.sm }}>
         <Logo variant="full" />
         <Text variant="display">Component gallery</Text>
-        <Text tone="secondary">Developer only. Not in release builds.</Text>
+        <Text tone="secondary">Developer only. Not reachable in release builds.</Text>
       </View>
       <FoundationsSection />
       <ActionsSection />

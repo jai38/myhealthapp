@@ -53,15 +53,9 @@ export function ChipGroup({
               accessibilityLabel={option.label}
               accessibilityState={{ checked: isSelected, disabled }}
               disabled={disabled}
+              hitSlop={choiceLayout.hitSlop}
               onPress={() => pick(option.value, isSelected)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: c.bg,
-                  borderColor: c.border,
-                  borderWidth: isSelected ? 2 : 1,
-                },
-              ]}
+              style={[styles.chip, { backgroundColor: c.bg }]}
             >
               {isSelected ? <Icon name={choiceCheckIcon} size="sm" color={c.icon} /> : null}
               <Text variant="callout" style={{ color: c.fg }}>
@@ -86,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: space.xs,
     minHeight: choiceLayout.minHeight,
-    paddingHorizontal: space.md,
+    paddingHorizontal: space.lg,
     borderRadius: radius.full,
   },
 });

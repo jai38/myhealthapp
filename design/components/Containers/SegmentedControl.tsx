@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../Foundations/Text';
-import { color, elevation, radius, size, space } from '../../tokens';
+import { color, elevation, radius, space } from '../../tokens';
 
 export interface SegmentedControlOption<T extends string> {
   value: T;
@@ -33,6 +33,7 @@ export function SegmentedControl<T extends string>({
             accessibilityLabel={option.label}
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
+            hitSlop={SEGMENT_HIT_SLOP}
             style={[styles.segment, selected && styles.selected]}
           >
             <Text
@@ -49,6 +50,9 @@ export function SegmentedControl<T extends string>({
   );
 }
 
+// Segments are 36 tall; 6dp of slop above and below keeps the touch target at 48.
+const SEGMENT_HIT_SLOP = { top: 6, bottom: 6 } as const;
+
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
@@ -58,14 +62,15 @@ const styles = StyleSheet.create({
   },
   segment: {
     flex: 1,
-    minHeight: size.touchMin,
+    minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.sm,
+    borderRadius: radius.md - space.xxs,
     paddingHorizontal: space.sm,
   },
+  // The selected segment lifts off the track as a white pill with a soft shadow.
   selected: {
-    backgroundColor: color.bg.screen,
+    backgroundColor: color.bg.card,
     ...elevation.card,
   },
 });

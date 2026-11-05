@@ -41,7 +41,7 @@ export function ListRow({
         )}
       </View>
       {trailing !== undefined && <View style={styles.trailing}>{trailing}</View>}
-      {chevron && <Icon name="chevron-forward" size="md" tone="secondary" />}
+      {chevron && <Icon name="chevron-forward" size="sm" tone="tertiary" />}
     </>
   );
 
@@ -66,11 +66,13 @@ export function ListRow({
   );
 }
 
+// The row itself is transparent, so it sits on whatever card or group holds it.
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.md,
+    backgroundColor: 'transparent',
   },
   pressed: {
     backgroundColor: color.bg.subtle,

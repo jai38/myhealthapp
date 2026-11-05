@@ -2,16 +2,17 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from '../Foundations/Icon';
 import type { IconName } from '../Foundations/iconNames';
-import { radius } from '../../tokens';
-import { iconTileColors, iconTileSize } from './containerStyle';
+import { iconTileColors, iconTileRadius, iconTileSize } from './containerStyle';
+import type { TileTone } from './containerStyle';
 
 export interface IconTileProps {
   icon: IconName;
-  tone?: 'blue' | 'teal' | 'neutral';
+  tone?: TileTone;
   size?: 'md' | 'lg';
   testID?: string;
 }
 
+// Callers should pass filled glyph names (e.g. 'heart', 'medkit', 'document-text') for the category look.
 // Decorative: the tile carries no label, so the row or heading next to it names the content.
 export function IconTile({ icon, tone = 'blue', size = 'md', testID }: IconTileProps) {
   const colors = iconTileColors(tone);
@@ -23,7 +24,12 @@ export function IconTile({ icon, tone = 'blue', size = 'md', testID }: IconTileP
       accessible={false}
       style={[
         styles.tile,
-        { width: dimension, height: dimension, backgroundColor: colors.bg },
+        {
+          width: dimension,
+          height: dimension,
+          borderRadius: iconTileRadius[size],
+          backgroundColor: colors.bg,
+        },
       ]}
     >
       <Icon
@@ -40,6 +46,5 @@ const styles = StyleSheet.create({
   tile: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.lg,
   },
 });

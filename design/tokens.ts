@@ -5,11 +5,17 @@ const palette = {
   white: '#FFFFFF',
   clearBlue: '#2878C7',
   clearBluePressed: '#1F69B0',
-  teal: '#087E83',
+  teal: '#06706F',
   deepNavy: '#16324F',
   slate: '#526372',
-  slateTertiary: '#6A7884',
+  slateTertiary: '#627080',
   coolGrey: '#F2F5F7',
+  greyFill: '#E8ECF0',
+  tileRed: '#D14343',
+  tileOrange: '#B85E0A',
+  tilePurple: '#6A4FD0',
+  tileGreen: '#2E8B57',
+  tileGrey: '#6B7884',
   tintBlue: '#E8F1FB',
   tintTeal: '#E3F4F4',
   borderSubtle: '#E3E8ED',
@@ -28,9 +34,11 @@ const palette = {
 } as const;
 
 export const color = {
+  // Grouped layout, Apple Health style: grey screen, white cards and lists.
   bg: {
-    screen: palette.white,
-    subtle: palette.coolGrey,
+    screen: palette.coolGrey,
+    // Fills inside white cards: chips, segmented tracks, pressed rows.
+    subtle: palette.greyFill,
     card: palette.white,
     tintBlue: palette.tintBlue,
     tintTeal: palette.tintTeal,
@@ -38,16 +46,15 @@ export const color = {
   text: {
     primary: palette.deepNavy,
     secondary: palette.slate,
-    // White background only (4.53:1). Not allowed on bg.subtle.
+    // On white or the grey screen (4.62:1). Not on bg.subtle (4.26:1).
     tertiary: palette.slateTertiary,
     inverse: palette.white,
-    // Blue text sits on white only. On Cool Grey it measures 4.17:1, below 4.5:1.
-    link: palette.clearBlue,
+    // Deeper than the fill blue so it reads on white (5.67:1) and grey (5.18:1).
+    link: palette.clearBluePressed,
   },
   action: {
     primary: palette.clearBlue,
     primaryPressed: palette.clearBluePressed,
-    // Teal text sits on white only, for the same contrast reason as link.
     secondary: palette.teal,
     danger: palette.danger,
   },
@@ -55,6 +62,16 @@ export const color = {
     subtle: palette.borderSubtle,
     input: palette.borderInput,
     focus: palette.clearBlue,
+  },
+  // Category tiles: a white filled glyph on a colored rounded square.
+  tile: {
+    blue: palette.clearBlue,
+    teal: palette.teal,
+    red: palette.tileRed,
+    orange: palette.tileOrange,
+    purple: palette.tilePurple,
+    green: palette.tileGreen,
+    neutral: palette.tileGrey,
   },
   wave: {
     from: palette.waveFrom,
@@ -86,6 +103,8 @@ export const space = {
 export const radius = {
   sm: 8,
   md: 12,
+  // Buttons and other primary controls.
+  control: 14,
   lg: 16,
   xl: 24,
   full: 9999,
@@ -99,12 +118,13 @@ export const elevation = {
     shadowRadius: 0,
     elevation: 0,
   },
+  // Cards are flat white on the grey screen; only a hairline of depth.
   card: {
     shadowColor: palette.deepNavy,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 3,
+    elevation: 1,
   },
   raised: {
     shadowColor: palette.deepNavy,

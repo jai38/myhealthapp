@@ -2,22 +2,39 @@ import type { StatusIcon } from '../../status';
 import { color, size, textToneColor } from '../../tokens';
 import type { TextTone, ToneName } from '../../tokens';
 
-// Medicine forms use neutral outline icons, never colored pill pictures.
+// Medicine forms use monochrome shape glyphs (Material Community Icons), never
+// colored pill pictures. Rendered by MedicineIcon, not Icon.
 export const medicineFormIcon = {
-  tablet: 'ellipse-outline',
-  capsule: 'tablet-portrait-outline',
-  liquid: 'water-outline',
-  injection: 'eyedrop-outline',
-  inhaler: 'cloud-outline',
-  drops: 'water-outline',
-  topical: 'hand-left-outline',
-  other: 'medical-outline',
+  tablet: 'minus-circle-outline',
+  capsule: 'pill',
+  liquid: 'bottle-tonic-outline',
+  injection: 'needle',
+  inhaler: 'spray',
+  drops: 'eyedropper',
+  topical: 'lotion-outline',
+  other: 'medical-bag',
 } as const;
 
-type MedicineFormIcon = (typeof medicineFormIcon)[keyof typeof medicineFormIcon];
+export type MedicineForm = keyof typeof medicineFormIcon;
 
 type UiIcon =
   | 'checkmark'
+  // Filled glyphs for category tiles.
+  | 'heart'
+  | 'pulse'
+  | 'flask'
+  | 'calendar'
+  | 'time'
+  | 'person'
+  | 'scan'
+  | 'water'
+  | 'fitness'
+  | 'bandage'
+  | 'shield-checkmark'
+  | 'document-attach'
+  | 'alarm'
+  | 'add-circle'
+  | 'notifications'
   | 'cloud-done-outline'
   | 'sync-outline'
   | 'git-compare-outline'
@@ -56,7 +73,7 @@ type UiIcon =
   | 'clipboard-outline'
   | 'person-circle-outline';
 
-export type IconName = StatusIcon | MedicineFormIcon | UiIcon;
+export type IconName = StatusIcon | UiIcon;
 
 export const iconSize = {
   sm: size.iconSm,

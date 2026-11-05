@@ -29,7 +29,7 @@ export function fieldColors(state: FieldState): {
   switch (state) {
     case 'disabled':
       // Placeholder is secondary, not tertiary: tertiary fails contrast on bg.subtle.
-      // The border stays at border.input so it still meets 3:1 on bg.screen.
+      // The border stays at border.input so it still meets 3:1 on bg.card.
       return {
         border: color.border.input,
         borderWidth: 1,
@@ -41,7 +41,7 @@ export function fieldColors(state: FieldState): {
       return {
         border: color.action.danger,
         borderWidth: 2,
-        bg: color.bg.screen,
+        bg: color.bg.card,
         text: color.text.primary,
         placeholder: color.text.tertiary,
       };
@@ -49,7 +49,7 @@ export function fieldColors(state: FieldState): {
       return {
         border: color.border.focus,
         borderWidth: 2,
-        bg: color.bg.screen,
+        bg: color.bg.card,
         text: color.text.primary,
         placeholder: color.text.tertiary,
       };
@@ -57,7 +57,7 @@ export function fieldColors(state: FieldState): {
       return {
         border: color.border.input,
         borderWidth: 1,
-        bg: color.bg.screen,
+        bg: color.bg.card,
         text: color.text.primary,
         placeholder: color.text.tertiary,
       };
@@ -66,9 +66,25 @@ export function fieldColors(state: FieldState): {
 
 export const fieldLayout = {
   minHeight: size.inputHeight,
-  borderRadius: radius.md,
+  // Same corner as buttons so a form reads as one family.
+  borderRadius: radius.control,
   paddingHorizontal: space.lg,
 } as const;
+
+// A soft ring drawn just outside the field while focused or in error.
+// Decorative only: the 2 px border already carries the state at 3:1.
+export const FIELD_HALO_WIDTH = 3;
+
+export function fieldHaloColor(state: FieldState): string {
+  if (state === 'focused') return color.tone.info.bg;
+  if (state === 'error') return color.tone.danger.bg;
+  return 'transparent';
+}
+
+// Thicker borders eat into the padding so the text never shifts on focus.
+export function fieldPaddingFor(borderWidth: number): number {
+  return fieldLayout.paddingHorizontal - (borderWidth - 1);
+}
 
 export interface PasswordRule {
   key: StringKey;

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../Foundations';
-import { radius, space } from '../../tokens';
+import { color, elevation, font, radius, space } from '../../tokens';
 import { t } from '../../strings';
 import type { StringKey } from '../../strings';
-import { choiceColors, choiceLayout } from './choiceStyle';
 
 export type Severity = 1 | 2 | 3 | 4 | 5;
 
@@ -18,8 +17,9 @@ export interface SeverityScaleProps {
 
 const LEVELS: Severity[] = [1, 2, 3, 4, 5];
 
-// Same neutral colors for every segment. Severity is never implied by color:
-// the selected segment is marked by a thicker border and its checked state.
+// One segmented track. Every segment uses the same neutral colors: severity is
+// never implied by color. The selected segment is a raised white card with a
+// bold number, so the selection is also a shape change.
 export function SeverityScale({
   label,
   value,
@@ -32,11 +32,11 @@ export function SeverityScale({
       <Text variant="caption" tone="secondary">
         {label}
       </Text>
-      <View style={styles.row}>
+      <View style={styles.track}>
         {LEVELS.map((level) => {
           const selected = value === level;
-          const c = choiceColors({ selected, disabled });
           const word = t(`severity.${level}` as StringKey);
+          const ink = selected ? color.text.primary : color.text.secondary;
           return (
             <Pressable
               key={level}
@@ -46,19 +46,18 @@ export function SeverityScale({
               accessibilityState={{ checked: selected, disabled }}
               disabled={disabled}
               onPress={() => onChange(level)}
-              style={[
-                styles.segment,
-                {
-                  backgroundColor: c.bg,
-                  borderColor: c.border,
-                  borderWidth: selected ? 3 : 1,
-                },
-              ]}
+              style={[styles.segment, selected ? styles.selected : null]}
             >
-              <Text variant="title3" tone="primary" style={{ color: c.fg }}>
+              <Text
+                variant="title3"
+                style={[
+                  styles.number,
+                  { color: ink, fontFamily: selected ? font.semibold : font.regular },
+                ]}
+              >
                 {level}
               </Text>
-              <Text variant="caption" style={[styles.word, { color: c.fg }]}>
+              <Text variant="caption" style={[styles.word, { color: ink }]}>
                 {word}
               </Text>
             </Pressable>
@@ -70,19 +69,32 @@ export function SeverityScale({
 }
 
 const styles = StyleSheet.create({
-  row: {
+  track: {
     flexDirection: 'row',
-    gap: space.xxs,
     marginTop: space.xs,
+    padding: space.xxs,
+    borderRadius: radius.md,
+    backgroundColor: color.bg.subtle,
   },
   segment: {
     flex: 1,
-    minHeight: choiceLayout.minHeight,
+    minHeight: 56,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: space.xs,
     paddingHorizontal: space.xxs,
-    borderRadius: radius.md,
+    borderRadius: radius.md - space.xxs,
+  },
+  // A blue outline as well as the white fill, so the choice is clear on Android,
+  // where the shadow does not show.
+  selected: {
+    backgroundColor: color.bg.card,
+    borderWidth: 1.5,
+    borderColor: color.action.primary,
+    ...elevation.card,
+  },
+  number: {
+    textAlign: 'center',
   },
   word: {
     textAlign: 'center',

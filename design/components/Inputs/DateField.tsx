@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Icon, Text } from '../Foundations';
 import { color, radius, size, space } from '../../tokens';
 import { textStyles } from '../../typography';
+import { FieldLabel } from './FieldBox';
 import { t } from '../../strings';
 import type { StringKey } from '../../strings';
 import { ChipGroup } from './ChipGroup';
@@ -74,9 +75,7 @@ export function DateField({
 
   return (
     <View testID={testID} style={styles.wrap}>
-      <Text variant="caption" tone="secondary">
-        {label}
-      </Text>
+      <FieldLabel>{label}</FieldLabel>
 
       {allowPartial ? (
         <ChipGroup
@@ -95,6 +94,7 @@ export function DateField({
         {activePrecision === 'day' ? (
           <NumberBox
             caption={t('date.day')}
+            fieldLabel={label}
             value={fields.day}
             onChangeText={setField('day')}
             maxLength={2}
@@ -106,6 +106,7 @@ export function DateField({
         {activePrecision !== 'year' ? (
           <NumberBox
             caption={t('date.month')}
+            fieldLabel={label}
             value={fields.month}
             onChangeText={setField('month')}
             maxLength={2}
@@ -116,6 +117,7 @@ export function DateField({
         ) : null}
         <NumberBox
           caption={t('date.year')}
+          fieldLabel={label}
           value={fields.year}
           onChangeText={setField('year')}
           maxLength={4}
@@ -149,6 +151,8 @@ export function DateField({
 
 interface NumberBoxProps {
   caption: string;
+  // Spoken with the caption, so two date or time fields on one screen stay distinct.
+  fieldLabel: string;
   value: string;
   onChangeText: (text: string) => void;
   maxLength: number;
@@ -157,7 +161,7 @@ interface NumberBoxProps {
   testID?: string;
 }
 
-function NumberBox({ caption, value, onChangeText, maxLength, flex, disabled, testID }: NumberBoxProps) {
+function NumberBox({ caption, fieldLabel, value, onChangeText, maxLength, flex, disabled, testID }: NumberBoxProps) {
   return (
     <View style={[styles.box, { flex }]}>
       <Text variant="caption" tone="secondary">
@@ -170,7 +174,7 @@ function NumberBox({ caption, value, onChangeText, maxLength, flex, disabled, te
         keyboardType="number-pad"
         maxLength={maxLength}
         editable={!disabled}
-        accessibilityLabel={caption}
+        accessibilityLabel={`${fieldLabel}, ${caption}`}
         placeholderTextColor={color.text.tertiary}
         style={styles.input}
       />
@@ -196,8 +200,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.md,
     borderWidth: 1,
     borderColor: color.border.input,
-    borderRadius: radius.md,
-    backgroundColor: color.bg.screen,
+    borderRadius: radius.control,
+    backgroundColor: color.bg.card,
   },
   errorRow: {
     flexDirection: 'row',

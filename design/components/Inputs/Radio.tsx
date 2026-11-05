@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../Foundations';
-import { size, space } from '../../tokens';
-import { choiceColors, choiceLayout } from './choiceStyle';
+import { color, space } from '../../tokens';
+import { choiceLayout } from './choiceStyle';
 
 export interface RadioProps {
   label: string;
@@ -12,8 +12,12 @@ export interface RadioProps {
   testID?: string;
 }
 
+const RING = 22;
+const DOT = 12;
+
 export function Radio({ label, selected, onSelect, disabled = false, testID }: RadioProps) {
-  const c = choiceColors({ selected, disabled });
+  // Unselected: a 2px grey ring on white. Selected: a blue ring with a blue dot.
+  const accent = disabled ? color.text.secondary : color.action.primary;
   return (
     <Pressable
       testID={testID}
@@ -21,13 +25,26 @@ export function Radio({ label, selected, onSelect, disabled = false, testID }: R
       accessibilityLabel={label}
       accessibilityState={{ checked: selected, disabled }}
       disabled={disabled}
+      hitSlop={choiceLayout.hitSlop}
       onPress={onSelect}
       style={styles.row}
     >
-      <View style={[styles.outer, { backgroundColor: c.bg, borderColor: c.border }]}>
-        {selected ? <View style={[styles.dot, { backgroundColor: c.icon }]} /> : null}
+      <View
+        style={[
+          styles.outer,
+          {
+            backgroundColor: disabled ? color.bg.subtle : color.bg.card,
+            borderColor: selected ? accent : color.border.input,
+          },
+        ]}
+      >
+        {selected ? <View style={[styles.dot, { backgroundColor: accent }]} /> : null}
       </View>
-      <Text variant="body" style={[styles.label, { color: c.fg }]}>
+      {/* Label sits on the screen, not in the ring, so it uses text colors only. */}
+      <Text
+        variant="body"
+        style={[styles.label, { color: disabled ? color.text.secondary : color.text.primary }]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -78,17 +95,17 @@ const styles = StyleSheet.create({
     minHeight: choiceLayout.minHeight,
   },
   outer: {
-    width: size.iconLg,
-    height: size.iconLg,
-    borderRadius: size.iconLg / 2,
+    width: RING,
+    height: RING,
+    borderRadius: RING / 2,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   dot: {
-    width: size.iconMd - 4,
-    height: size.iconMd - 4,
-    borderRadius: (size.iconMd - 4) / 2,
+    width: DOT,
+    height: DOT,
+    borderRadius: DOT / 2,
   },
   label: {
     flex: 1,

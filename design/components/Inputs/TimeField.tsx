@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Icon, Text } from '../Foundations';
 import { color, radius, size, space } from '../../tokens';
 import { textStyles } from '../../typography';
+import { FieldLabel } from './FieldBox';
 import { t } from '../../strings';
 import { ChipGroup } from './ChipGroup';
 import { from12h, to12h } from './time';
@@ -47,13 +48,12 @@ export function TimeField({ label, value, onChange, disabled = false, testID }: 
 
   return (
     <View testID={testID} style={styles.wrap}>
-      <Text variant="caption" tone="secondary">
-        {label}
-      </Text>
+      <FieldLabel>{label}</FieldLabel>
 
       <View style={styles.row}>
         <NumberBox
           caption={t('time.hour')}
+          fieldLabel={label}
           value={hour}
           onChangeText={(text) => commit(text, minute, period)}
           disabled={disabled}
@@ -64,6 +64,7 @@ export function TimeField({ label, value, onChange, disabled = false, testID }: 
         </Text>
         <NumberBox
           caption={t('time.minute')}
+          fieldLabel={label}
           value={minute}
           onChangeText={(text) => commit(hour, text, period)}
           disabled={disabled}
@@ -95,13 +96,15 @@ export function TimeField({ label, value, onChange, disabled = false, testID }: 
 
 interface NumberBoxProps {
   caption: string;
+  // Spoken with the caption, so two date or time fields on one screen stay distinct.
+  fieldLabel: string;
   value: string;
   onChangeText: (text: string) => void;
   disabled: boolean;
   testID?: string;
 }
 
-function NumberBox({ caption, value, onChangeText, disabled, testID }: NumberBoxProps) {
+function NumberBox({ caption, fieldLabel, value, onChangeText, disabled, testID }: NumberBoxProps) {
   return (
     <View style={styles.box}>
       <Text variant="caption" tone="secondary">
@@ -114,7 +117,7 @@ function NumberBox({ caption, value, onChangeText, disabled, testID }: NumberBox
         keyboardType="number-pad"
         maxLength={2}
         editable={!disabled}
-        accessibilityLabel={caption}
+        accessibilityLabel={`${fieldLabel}, ${caption}`}
         placeholderTextColor={color.text.tertiary}
         style={styles.input}
       />
@@ -144,8 +147,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 1,
     borderColor: color.border.input,
-    borderRadius: radius.md,
-    backgroundColor: color.bg.screen,
+    borderRadius: radius.control,
+    backgroundColor: color.bg.card,
   },
   colon: {
     paddingBottom: space.md,

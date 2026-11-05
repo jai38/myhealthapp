@@ -28,11 +28,9 @@ export const tabs: { key: TabKey; labelKey: StringKey; icon: IconName; activeIco
   },
 ];
 
-export function tabColors(active: boolean): { fg: string; indicator: string } {
-  if (active) {
-    return { fg: color.action.primary, indicator: color.action.primary };
-  }
-  return { fg: color.text.secondary, indicator: 'transparent' };
+// The active tab is marked by a filled icon and the link color.
+export function tabColors(active: boolean): { fg: string } {
+  return { fg: active ? color.text.link : color.text.secondary };
 }
 
 export function badgeText(count: number): string | null {

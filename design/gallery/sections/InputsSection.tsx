@@ -49,7 +49,7 @@ export function InputsSection() {
   const [emptyName, setEmptyName] = useState('');
   const [filledName, setFilledName] = useState('Asha Rao');
   const [helperPhone, setHelperPhone] = useState('');
-  const [errorPhone, setErrorPhone] = useState('12345');
+  const [errorPhone, setErrorPhone] = useState('2500');
   const [countNote, setCountNote] = useState('');
 
   // EmailField
@@ -126,9 +126,9 @@ export function InputsSection() {
 
       <GalleryItem label="TextField, with helper">
         <TextField
-          label="Mobile number"
-          placeholder="10 digits"
-          helper="Used only for sign-in codes."
+          label="Height"
+          placeholder="In centimetres"
+          helper="You can change this later."
           value={helperPhone}
           onChangeText={setHelperPhone}
           keyboardType="number-pad"
@@ -137,10 +137,10 @@ export function InputsSection() {
 
       <GalleryItem label="TextField, with error">
         <TextField
-          label="Mobile number"
+          label="Height"
           value={errorPhone}
           onChangeText={setErrorPhone}
-          error="Enter a 10-digit mobile number"
+          error="Check this value. Height is usually between 50 and 250 cm."
           keyboardType="number-pad"
         />
       </GalleryItem>

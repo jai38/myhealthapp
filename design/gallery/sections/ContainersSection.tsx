@@ -7,6 +7,7 @@ import {
   Card,
   Dialog,
   IconTile,
+  ListGroup,
   ListRow,
   SectionHeader,
   SegmentedControl,
@@ -37,6 +38,17 @@ const PERIOD_OPTIONS = [
   { value: 'week' as const, label: 'Week' },
   { value: 'month' as const, label: 'Month' },
 ];
+
+// One filled glyph per tile tone, for the seven-tone example.
+const TILE_SAMPLES = [
+  { tone: 'blue', icon: 'medkit' },
+  { tone: 'teal', icon: 'water' },
+  { tone: 'red', icon: 'heart' },
+  { tone: 'orange', icon: 'flask' },
+  { tone: 'purple', icon: 'pulse' },
+  { tone: 'green', icon: 'shield-checkmark' },
+  { tone: 'neutral', icon: 'person' },
+] as const;
 
 export function ContainersSection() {
   const [period, setPeriod] = useState<Period>('day');
@@ -96,7 +108,7 @@ export function ContainersSection() {
         <ListRow
           title="Paracetamol 500 mg"
           subtitle={formatClock(DOSE_TIME)}
-          leading={<IconTile icon="medkit-outline" tone="blue" />}
+          leading={<IconTile icon="medkit" tone="blue" />}
           trailing={
             <StatusPill
               display={doseStatusDisplay({ kind: 'upcoming', scheduledAt: LATER_DOSE_TIME }, formatClock)}
@@ -109,24 +121,76 @@ export function ContainersSection() {
         <ListRow
           title="Asha Rao's records"
           subtitle="3 documents"
-          leading={<IconTile icon="document-text-outline" tone="teal" />}
+          leading={<IconTile icon="document-text" tone="teal" />}
           onPress={() => undefined}
         />
       </GalleryItem>
 
-      <GalleryItem label="IconTile: blue, teal and neutral, md">
-        <View style={{ flexDirection: 'row', gap: space.md }}>
-          <IconTile icon="medkit-outline" tone="blue" size="md" />
-          <IconTile icon="document-text-outline" tone="teal" size="md" />
-          <IconTile icon="person-outline" tone="neutral" size="md" />
+      <GalleryItem label="ListGroup: Today's medicines">
+        <ListGroup header="Today's medicines" footer="Synthetic sample data.">
+          <ListRow
+            title="Paracetamol 500 mg"
+            subtitle={formatClock(DOSE_TIME)}
+            leading={<IconTile icon="medkit" tone="blue" />}
+            trailing={
+              <StatusPill display={doseStatusDisplay({ kind: 'dueNow' }, formatClock)} />
+            }
+          />
+          <ListRow
+            title="Metformin 500 mg"
+            subtitle={formatClock(LATER_DOSE_TIME)}
+            leading={<IconTile icon="water" tone="teal" />}
+            trailing={
+              <StatusPill
+                display={doseStatusDisplay({ kind: 'upcoming', scheduledAt: LATER_DOSE_TIME }, formatClock)}
+              />
+            }
+          />
+          <ListRow
+            title="Atorvastatin 10 mg"
+            subtitle={formatClock(DOSE_TIME)}
+            leading={<IconTile icon="heart" tone="red" />}
+            trailing={
+              <StatusPill display={doseStatusDisplay({ kind: 'taken', takenAt: DOSE_TIME }, formatClock)} />
+            }
+          />
+        </ListGroup>
+      </GalleryItem>
+
+      <GalleryItem label="ListGroup: Settings-style">
+        <ListGroup header="Settings">
+          <ListRow
+            title="Reminders"
+            leading={<IconTile icon="notifications" tone="red" />}
+            onPress={() => undefined}
+          />
+          <ListRow
+            title="Profile"
+            subtitle="Asha Rao"
+            leading={<IconTile icon="person" tone="blue" />}
+            onPress={() => undefined}
+          />
+          <ListRow
+            title="Privacy and security"
+            leading={<IconTile icon="shield-checkmark" tone="green" />}
+            onPress={() => undefined}
+          />
+        </ListGroup>
+      </GalleryItem>
+
+      <GalleryItem label="IconTile: all seven tones, md">
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
+          {TILE_SAMPLES.map(({ tone, icon }) => (
+            <IconTile key={tone} icon={icon} tone={tone} size="md" />
+          ))}
         </View>
       </GalleryItem>
 
-      <GalleryItem label="IconTile: blue, teal and neutral, lg">
-        <View style={{ flexDirection: 'row', gap: space.md }}>
-          <IconTile icon="medkit-outline" tone="blue" size="lg" />
-          <IconTile icon="document-text-outline" tone="teal" size="lg" />
-          <IconTile icon="person-outline" tone="neutral" size="lg" />
+      <GalleryItem label="IconTile: all seven tones, lg">
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
+          {TILE_SAMPLES.map(({ tone, icon }) => (
+            <IconTile key={tone} icon={icon} tone={tone} size="lg" />
+          ))}
         </View>
       </GalleryItem>
 

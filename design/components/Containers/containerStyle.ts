@@ -1,11 +1,10 @@
-import { color, elevation, radius, size, space } from '../../tokens';
+import { color, elevation, radius, space } from '../../tokens';
 
 export const cardStyle = {
+  // Flat white card on the grey screen. No border; only a hairline of depth.
   plain: {
     backgroundColor: color.bg.card,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: color.border.subtle,
     padding: space.lg,
     ...elevation.card,
   },
@@ -13,27 +12,25 @@ export const cardStyle = {
     backgroundColor: color.bg.tintBlue,
     borderRadius: radius.xl,
     padding: space.xl,
-    ...elevation.raised,
+    ...elevation.none,
   },
 } as const;
 
 export const listRowLayout = {
-  minHeight: 64,
+  minHeight: 52,
   paddingVertical: space.md,
   paddingHorizontal: space.lg,
 } as const;
 
-export const iconTileSize = { md: size.tile, lg: size.tileLg } as const;
+export const iconTileSize = { md: 36, lg: 48 } as const;
 
-export function iconTileColors(tone: 'blue' | 'teal' | 'neutral'): { bg: string; icon: string } {
-  switch (tone) {
-    case 'blue':
-      return { bg: color.bg.tintBlue, icon: color.tone.info.fg };
-    case 'teal':
-      return { bg: color.bg.tintTeal, icon: color.tone.source.fg };
-    case 'neutral':
-      return { bg: color.bg.subtle, icon: color.text.secondary };
-  }
+export const iconTileRadius = { md: 10, lg: 12 } as const;
+
+export type TileTone = keyof typeof color.tile;
+
+// The glyph is always white. Every tile fill passes 3:1 against it (see contrast.ts).
+export function iconTileColors(tone: TileTone): { bg: string; icon: string } {
+  return { bg: color.tile[tone], icon: color.text.inverse };
 }
 
 export type StepState = 'done' | 'current' | 'upcoming';

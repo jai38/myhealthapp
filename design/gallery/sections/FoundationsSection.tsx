@@ -8,8 +8,9 @@ import {
   Text,
   WaveHeader,
   medicineFormIcon,
+  MedicineIcon,
 } from '../../components/Foundations';
-import type { IconProps } from '../../components/Foundations';
+import type { IconProps, MedicineForm } from '../../components/Foundations';
 import { color, radius, space } from '../../tokens';
 import type { TextTone } from '../../tokens';
 import type { TextStyleName } from '../../typography';
@@ -61,9 +62,9 @@ export function FoundationsSection() {
 
       <GalleryItem label="medicineFormIcon">
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
-          {Object.entries(medicineFormIcon).map(([form, icon]) => (
+          {(Object.keys(medicineFormIcon) as MedicineForm[]).map((form) => (
             <View key={form} style={{ width: 88, alignItems: 'center', gap: space.xs }}>
-              <Icon name={icon} size="lg" />
+              <MedicineIcon form={form} size="lg" tone="primary" />
               <Text variant="caption" tone="secondary">
                 {form}
               </Text>
