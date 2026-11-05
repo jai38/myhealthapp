@@ -9,6 +9,7 @@ import { UserSession } from '../../services/auth/auth-service';
 import { api } from '../../services/api/client';
 import { medicationStore } from '../../services/medications/medication-store';
 import { buildMedicationRecord } from './utils';
+import { confirmPrescriptionDraft } from './prescription-confirmation';
 
 export function usePrescriptionUpload({
   session,
@@ -84,24 +85,21 @@ export function usePrescriptionUpload({
   const handleConfirmPrescription = async (reviewPayload: any) => {
     if (!activeReviewData) return;
 
-    try {
-      await uploadService.confirmPrescription(activeReviewData.jobId, reviewPayload);
-    } catch {
-      // Safe offline fallback
+    const outcome = await confirmPrescriptionDraft({
+      payload: reviewPayload,
+      confirmOnServer: () => uploadService.confirmPrescription(activeReviewData.jobId, reviewPayload),
+      addActiveMedicine: async (m) => {
+        const newMed = buildMedicationRecord(m, reviewPayload, session?.patientProfileId);
+        await medicationStore.addMedication(newMed);
+      },
+    });
+
+    if (!outcome.ok) {
+      // Keep the review draft open so the patient can retry; the review screen shows this message.
+      throw new Error(outcome.message);
     }
 
-    // Immediately schedule any medicines marked as ACTIVE by the patient into local store
-    if (Array.isArray(reviewPayload.medicines)) {
-      for (const m of reviewPayload.medicines) {
-        if (m.is_active_medication) {
-          const newMed = buildMedicationRecord(m, reviewPayload, session?.patientProfileId);
-          await medicationStore.addMedication(newMed);
-        }
-      }
-    }
-
-
-    const activeCount = reviewPayload.medicines?.filter((m: any) => m.is_active_medication)?.length || 0;
+    const activeCount = outcome.activeCount;
     setConfirmationNotice(
       `Prescription confirmed! ${activeCount} active medication(s) added to your regimen.`
     );
