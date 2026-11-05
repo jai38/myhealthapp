@@ -1,37 +1,50 @@
 import React, { useState } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
-import { ScreenLayout } from '../../components/ScreenLayout';
-import { Card } from '../../components/Card';
+import { StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Screen } from '../../design/components/Foundations/Screen';
+import { Text } from '../../design/components/Foundations/Text';
+import { size, space } from '../../design/tokens';
+import { t } from '../../design/strings';
 import { DocumentPickerModal } from '../../components/DocumentPickerModal';
-import { ReviewPrescriptionScreen } from '../../features/prescriptions/ReviewPrescriptionScreen';
-import { ManualAddMedicationModal } from '../../features/medications/ManualAddMedicationModal';
-import { AccountModal } from '../../features/account/AccountModal';
-import { colors } from '../../theme/index';
-import { medicationStore, toLocalDateString } from '../../services/medications/medication-store';
+import { ReviewPrescriptionScreen } from '../prescriptions/ReviewPrescriptionScreen';
+import { ManualAddMedicationModal } from '../medications/ManualAddMedicationModal';
+import { medicationStore } from '../../services/medications/medication-store';
 import { useToday } from './useToday';
 import { usePrescriptionUpload } from './usePrescriptionUpload';
 import { useDoseActions } from './useDoseActions';
-import { doseDisplayStateFor, pickNextDose } from './todayModel';
-import { styles } from './styles-header';
-import { TodayHeader } from './TodayHeader';
-import { OnboardingHero } from './OnboardingHero';
-import { ActiveRegimenSection } from './ActiveRegimenSection';
-import { MetricsGrid } from './MetricsGrid';
-import { ActionHub } from './ActionHub';
-import { RecentActivity } from './RecentActivity';
-import { SecurityFooter } from './SecurityFooter';
+import { dueNowRest, asNeededMedications, formatTodayTime, todaySections } from './todaySections';
+import type { TodaySection } from './todaySections';
+import { TodayGreeting } from './TodayGreeting';
+import { TodayNextDose } from './TodayNextDose';
+import { TodayDoseSection } from './TodayDoseRow';
+import {
+  TodayAllDone,
+  TodayError,
+  TodayLoading,
+  TodayNewUser,
+  TodayNothingDue,
+} from './TodayStates';
+import { TodayAsNeeded, TodayQuickActions } from './TodayActions';
+import { TodayNotices, TodayProcessing } from './TodayNotices';
 
 export default function HomeScreen() {
-  const [isAccountModalVisible, setIsAccountModalVisible] = useState<boolean>(false);
+  const router = useRouter();
   const [isPickerVisible, setIsPickerVisible] = useState<boolean>(false);
   const [isManualAddVisible, setIsManualAddVisible] = useState<boolean>(false);
 
-  // Selected calendar date (Defaults to Today YYYY-MM-DD using timezone-safe local date)
-  const todayDateStr = toLocalDateString(new Date());
-  const [selectedDate, setSelectedDate] = useState<string>(todayDateStr);
-
-  const { session, medications, recentEvents, totalRecordsCount, loadDashboardData, nowMs } =
-    useToday();
+  const {
+    screenState,
+    groups,
+    next,
+    greeting,
+    isOffline,
+    lastUpdatedAt,
+    retry,
+    nowMs,
+    medications,
+    session,
+    loadDashboardData,
+  } = useToday();
   const {
     isProcessing,
     processingStatus,
@@ -45,53 +58,6 @@ export default function HomeScreen() {
   } = usePrescriptionUpload({ session, onPrescriptionChanged: loadDashboardData });
   const { actionNotice, actionDoseId, handleRecordAsNeededDose, handleRecordDoseAction } =
     useDoseActions(medications);
-
-  // Calendar date context
-  const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-  const formattedSelectedDate = selectedDateObj.toLocaleDateString('en-US', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  });
-  const isSelectedDateToday = selectedDate === todayDateStr;
-
-  // Doses and adherence for the selected calendar date
-  const dayDoses = medicationStore.getDosesForDate(selectedDate);
-  const { percentage: adherencePct, taken: takenDosesCount, total: totalDosesCount } =
-    medicationStore.getAdherenceForDate(selectedDate);
-
-  const actionableDoses = dayDoses.filter(
-    (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
-  );
-
-  // The one next-dose rule, shared with Medicines. Unrecorded past doses are never "next".
-  const medFor = (id: string) =>
-    medications.find((m) => m.id === id) || medicationStore.getMedicationById(id);
-  const nextDose = pickNextDose(actionableDoses, nowMs, medFor);
-  const nextDoseState = nextDose ? doseDisplayStateFor(nextDose, nowMs, medFor(nextDose.medicationId)) : null;
-  const diffMinutes = nextDose
-    ? Math.round((new Date(nextDose.scheduledTime).getTime() - nowMs) / 60000)
-    : 0;
-  const nextMed = nextDose
-    ? medications.find((m) => m.id === nextDose.medicationId) ||
-      medicationStore.getMedicationById(nextDose.medicationId)
-    : null;
-  const nextDoseDate = nextDose ? new Date(nextDose.scheduledTime) : null;
-  const nextTimeStr = nextDoseDate
-    ? nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : '';
-
-  const allCurrentMeds = medications.length > 0 ? medications : medicationStore.getMedications();
-  const activeMedsCount = allCurrentMeds.filter((m) => m.status === 'ACTIVE').length;
-  const hasActiveMedications = activeMedsCount > 0;
-
-  const asNeededMeds = allCurrentMeds.filter(
-    (m) =>
-      m.status === 'ACTIVE' &&
-      ((!m.reminderTimes || m.reminderTimes.length === 0) ||
-        m.prescribedInstructions?.toLowerCase().includes('as needed') ||
-        m.prescribedInstructions?.toLowerCase().includes('sos'))
-  );
 
   if (activeReviewData) {
     return (
@@ -109,97 +75,113 @@ export default function HomeScreen() {
     );
   }
 
+  const now = new Date(nowMs);
+  const medicationFor = (id: string) =>
+    medications.find((m) => m.id === id) ?? medicationStore.getMedicationById(id);
+  const allMeds = medications.length > 0 ? medications : medicationStore.getMedications();
+  const asNeeded = asNeededMedications(allMeds);
+  const sections = todaySections(screenState, groups, asNeeded.length > 0);
+  const show = (section: TodaySection) => sections.includes(section);
+  const openScan = () => setIsPickerVisible(true);
+  const openManualAdd = () => setIsManualAddVisible(true);
+  // `next` comes from useToday, which applies the shared next-dose rule (pickNextDose in todayModel).
+  const dueRest = dueNowRest(groups);
+
   return (
-    <ScreenLayout>
-      <TodayHeader
-        session={session}
-        formattedSelectedDate={formattedSelectedDate}
-        onOpenAccount={() => setIsAccountModalVisible(true)}
+    <Screen testID="today-screen">
+      <TodayGreeting
+        greeting={greeting}
+        now={now}
+        onOpenProfile={() => router.push('/profile')}
       />
 
-      {/* Instant Action Feedback Toast */}
-      {actionNotice && (
-        <View style={styles.actionNoticeBanner}>
-          <Text style={styles.actionNoticeText}>{actionNotice}</Text>
-        </View>
-      )}
+      {lastUpdatedAt !== null && isOffline ? (
+        <Text variant="caption" tone="secondary" testID="today-last-updated">
+          {t('feedback.lastUpdated', { time: formatTodayTime(new Date(lastUpdatedAt)) })}
+        </Text>
+      ) : null}
 
-      {/* Confirmation Banner */}
-      {confirmationNotice && (
-        <View style={styles.successBanner}>
-          <Text style={styles.successText}>✓ {confirmationNotice}</Text>
-        </View>
-      )}
+      <TodayNotices
+        actionNotice={actionNotice}
+        confirmationNotice={confirmationNotice}
+        uploadError={uploadError}
+      />
+      {isProcessing ? <TodayProcessing status={processingStatus} /> : null}
 
-      {/* Upload Error Banner */}
-      {uploadError && (
-        <View style={styles.errorBanner}>
-          <Text style={styles.errorText}>⚠️ {uploadError}</Text>
-        </View>
-      )}
+      {show('loading') ? <TodayLoading /> : null}
+      {show('error') ? <TodayError onRetry={retry} /> : null}
+      {show('newUser') ? <TodayNewUser onScan={openScan} onAddManual={openManualAdd} /> : null}
+      {show('nothingDue') ? <TodayNothingDue /> : null}
+      {show('allDone') ? <TodayAllDone /> : null}
 
-      {isProcessing && (
-        <Card style={styles.processingCard}>
-          <View style={styles.loadingRow}>
-            <ActivityIndicator size="small" color={colors.accentCoral} />
-            <Text style={styles.processingText}>{processingStatus}</Text>
-          </View>
-        </Card>
-      )}
+      {show('next') && next ? (
+        <TodayNextDose next={next} actionDoseId={actionDoseId} onRecord={handleRecordDoseAction} />
+      ) : null}
 
-      {!hasActiveMedications ? (
-        <OnboardingHero
-          isProcessing={isProcessing}
-          onScanPrescription={() => setIsPickerVisible(true)}
-          onAddManual={() => setIsManualAddVisible(true)}
-        />
-      ) : (
-        <ActiveRegimenSection
-          isProcessing={isProcessing}
-          onScanPrescription={() => setIsPickerVisible(true)}
-          onAddManual={() => setIsManualAddVisible(true)}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          todayDateStr={todayDateStr}
-          isSelectedDateToday={isSelectedDateToday}
-          formattedSelectedDate={formattedSelectedDate}
-          adherencePct={adherencePct}
-          takenDosesCount={takenDosesCount}
-          totalDosesCount={totalDosesCount}
-          nextDose={nextDose}
-          nextMed={nextMed}
-          nextDoseState={nextDoseState}
-          diffMinutes={diffMinutes}
-          nextTimeStr={nextTimeStr}
-          actionableDoses={actionableDoses}
+      {show('dueNow') ? (
+        <TodayDoseSection
+          title={t('today.dueNowTitle')}
+          items={dueRest}
+          medicationFor={medicationFor}
+          actions="taken"
           actionDoseId={actionDoseId}
-          handleRecordDoseAction={handleRecordDoseAction}
-          dayDoses={dayDoses}
-          medications={medications}
-          asNeededMeds={asNeededMeds}
-          handleRecordAsNeededDose={handleRecordAsNeededDose}
+          onRecord={handleRecordDoseAction}
+          testID="today-due-now"
         />
-      )}
+      ) : null}
 
-      <MetricsGrid
-        totalDosesCount={totalDosesCount}
-        adherencePct={adherencePct}
-        takenDosesCount={takenDosesCount}
-        activeMedsCount={activeMedsCount}
-        totalRecordsCount={totalRecordsCount}
-      />
+      {show('earlierNotConfirmed') ? (
+        <TodayDoseSection
+          title={t('today.earlierTitle')}
+          note={t('today.earlierNote')}
+          items={groups.earlierNotConfirmed}
+          medicationFor={medicationFor}
+          actions="takenOrSkip"
+          actionDoseId={actionDoseId}
+          onRecord={handleRecordDoseAction}
+          testID="today-earlier"
+        />
+      ) : null}
 
-      <ActionHub
-        isProcessing={isProcessing}
-        onScanPrescription={() => setIsPickerVisible(true)}
-        onAddManual={() => setIsManualAddVisible(true)}
-      />
+      {show('later') ? (
+        <TodayDoseSection
+          title={t('today.laterTitle')}
+          items={groups.later}
+          medicationFor={medicationFor}
+          actions="none"
+          actionDoseId={actionDoseId}
+          onRecord={handleRecordDoseAction}
+          testID="today-later"
+        />
+      ) : null}
 
-      <RecentActivity recentEvents={recentEvents} />
+      {show('done') ? (
+        <TodayDoseSection
+          title={t('today.doneTitle')}
+          items={groups.done}
+          medicationFor={medicationFor}
+          actions="none"
+          actionDoseId={actionDoseId}
+          onRecord={handleRecordDoseAction}
+          testID="today-done"
+        />
+      ) : null}
 
-      <SecurityFooter />
+      {show('asNeeded') ? (
+        <TodayAsNeeded
+          medications={asNeeded}
+          onTookDose={(med) => {
+            void handleRecordAsNeededDose(med);
+          }}
+        />
+      ) : null}
 
-      {/* Modals */}
+      {show('quickActions') ? (
+        <TodayQuickActions onScan={openScan} onAddManual={openManualAdd} disabled={isProcessing} />
+      ) : null}
+
+      <View style={styles.bottomInset} />
+
       <DocumentPickerModal
         visible={isPickerVisible}
         onClose={() => setIsPickerVisible(false)}
@@ -210,15 +192,17 @@ export default function HomeScreen() {
         visible={isManualAddVisible}
         onClose={() => setIsManualAddVisible(false)}
         onMedicationCreated={() => {
-          setConfirmationNotice('Medication added successfully and scheduled for reminders!');
+          setConfirmationNotice(t('today.medicationAdded'));
           loadDashboardData();
         }}
       />
-
-      <AccountModal
-        visible={isAccountModalVisible}
-        onClose={() => setIsAccountModalVisible(false)}
-      />
-    </ScreenLayout>
+    </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  // Clears the tab bar so the last item is never hidden behind it.
+  bottomInset: {
+    height: size.tabBarHeight + space.xl,
+  },
+});
