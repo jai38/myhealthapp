@@ -12,6 +12,8 @@ import { authGateState, showsSessionEndedNote } from '../features/auth/authGate'
 import { ErrorBoundary } from '../features/system/ErrorBoundary';
 import { ConnectivityBanner } from '../features/system/ConnectivityBanner';
 import { ConnectivityProvider } from '../services/network/useConnectivity';
+import { AppStatusGate } from '../features/app-status/AppStatusGate';
+import { useAppStatus } from '../features/app-status/useAppStatus';
 import { medicineOpenTarget } from '../features/shell/tabs';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
 import {
@@ -26,6 +28,8 @@ export default function RootLayout() {
   const pathname = usePathname();
   // Inter for every screen. Never blocks for long: on a load error the system font is used.
   const { loaded: fontsLoaded } = useAppFonts();
+  // Force update / maintenance check. Runs in the background and fails open; never delays launch.
+  const appStatus = useAppStatus();
 
   useEffect(() => {
     // Wait for AsyncStorage persisted session load
@@ -88,14 +92,16 @@ export default function RootLayout() {
     return (
       <SafeAreaProvider key="signedOut">
         <StatusBar style="dark" />
-        <ConnectivityProvider>
-          <ConnectivityBanner />
-          <View style={styles.appBody}>
-            <ErrorBoundary>
-              <AuthScreen sessionEnded={showsSessionEndedNote(gate)} />
-            </ErrorBoundary>
-          </View>
-        </ConnectivityProvider>
+        <AppStatusGate state={appStatus}>
+          <ConnectivityProvider>
+            <ConnectivityBanner />
+            <View style={styles.appBody}>
+              <ErrorBoundary>
+                <AuthScreen sessionEnded={showsSessionEndedNote(gate)} />
+              </ErrorBoundary>
+            </View>
+          </ConnectivityProvider>
+        </AppStatusGate>
       </SafeAreaProvider>
     );
   }
@@ -104,24 +110,26 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider key="signedIn">
       <StatusBar style="dark" />
-      <ConnectivityProvider>
-        <ConnectivityBanner />
-        <View style={styles.appBody}>
-          <ErrorBoundary>
-            <Stack
-              screenOptions={{
-                headerStyle: { backgroundColor: color.bg.card },
-                headerTintColor: color.text.primary,
-                headerTitleStyle: { fontWeight: '600' },
-                contentStyle: { backgroundColor: color.bg.screen },
-                headerShadowVisible: false,
-              }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            </Stack>
-          </ErrorBoundary>
-        </View>
-      </ConnectivityProvider>
+      <AppStatusGate state={appStatus}>
+        <ConnectivityProvider>
+          <ConnectivityBanner />
+          <View style={styles.appBody}>
+            <ErrorBoundary>
+              <Stack
+                screenOptions={{
+                  headerStyle: { backgroundColor: color.bg.card },
+                  headerTintColor: color.text.primary,
+                  headerTitleStyle: { fontWeight: '600' },
+                  contentStyle: { backgroundColor: color.bg.screen },
+                  headerShadowVisible: false,
+                }}
+              >
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              </Stack>
+            </ErrorBoundary>
+          </View>
+        </ConnectivityProvider>
+      </AppStatusGate>
     </SafeAreaProvider>
   );
 }

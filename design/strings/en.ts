@@ -5,6 +5,15 @@
 
 export const en = {
   'brand.name': 'Ayoreni',
+  'appStatus.requiredTitle': 'Update required',
+  'appStatus.requiredBody': 'This version of Ayoreni is no longer supported. Please update to keep using the app.',
+  'appStatus.update': 'Update',
+  'appStatus.maintenanceTitle': 'Back soon',
+  'appStatus.maintenanceBody': 'Ayoreni is being updated. Your information is safe. Please try again in a little while.',
+  'appStatus.tryAgain': 'Try again',
+  'appStatus.optionalTitle': 'A new version is available',
+  'appStatus.optionalBody': 'Update for the latest improvements.',
+  'appStatus.notNow': 'Not now',
   'common.retry': 'Retry',
   'common.cancel': 'Cancel',
   'common.done': 'Done',
