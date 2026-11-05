@@ -49,12 +49,12 @@ describe('Medication store: no fabricated adherence history', () => {
     expect(doses.every((d) => d.scheduledTime.slice(0, 10) >= todayStr)).toBe(true);
   });
 
-  it('past days report no taken doses and 0% adherence until an explicit action', async () => {
+  it('past days report no taken doses and no adherence figure until an explicit action', async () => {
     await medicationStore.addMedication(newMed);
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const adherence = medicationStore.getAdherenceForDate(toLocalDateString(yesterday));
-    expect(adherence).toEqual({ percentage: 0, taken: 0, total: 0 });
+    const adherence = medicationStore.getAdherenceForDate(toLocalDateString(yesterday), Date.now());
+    expect(adherence).toMatchObject({ percentage: null, taken: 0, total: 0 });
   });
 
   it('only an explicit TAKEN action changes a dose to TAKEN', async () => {

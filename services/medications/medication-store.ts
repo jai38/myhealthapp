@@ -6,6 +6,21 @@ import {
   cancelSnoozeRemindersForMedication,
   dismissDeliveredNotificationsForMedication,
 } from '../notifications/notification-service';
+import { doseDisplayStateFor } from '../../features/today/todayModel';
+
+export interface AdherenceCounts {
+  taken: number;
+  skipped: number;
+  /** Marked missed by the patient. Never inferred. */
+  missed: number;
+  /** Unrecorded and past the due window. Not taken, not presumed missed. */
+  notConfirmed: number;
+  /** Not yet due, due now, or snoozed. */
+  upcoming: number;
+  total: number;
+  /** Recorded doses only; null when nothing is recorded. */
+  percentage: number | null;
+}
 
 const STORAGE_KEYS = {
   MEDS: '@myhealthapp/persisted_meds',
@@ -384,19 +399,48 @@ class MedicationStore {
   }
 
   /**
-   * Calculates adherence percentage for a specific date (or today).
+   * Honest dose counts for a date (CLAUDE.md rule 15). An unrecorded dose is never
+   * counted as missed: it is `upcoming` until its due window ends, then `notConfirmed`.
+   * `percentage` covers recorded doses only (taken / (taken + skipped + missed by the
+   * user)), and is null when nothing is recorded. Doses of paused or stopped medicines
+   * are left out, as on Today.
    */
-  getAdherenceForDate(dateString: string): {
-    percentage: number;
-    taken: number;
-    total: number;
-  } {
-    const dayDoses = this.getDosesForDate(dateString);
-    const total = dayDoses.length;
-    const taken = dayDoses.filter((d) => d.status === 'TAKEN').length;
-    // No scheduled/recorded doses means no adherence to report, not 100%
-    const percentage = total > 0 ? Math.round((taken / total) * 100) : 0;
-    return { percentage, taken, total };
+  getAdherenceForDate(dateString: string, nowMs: number): AdherenceCounts {
+    const counts: AdherenceCounts = {
+      taken: 0,
+      skipped: 0,
+      missed: 0,
+      notConfirmed: 0,
+      upcoming: 0,
+      total: 0,
+      percentage: null,
+    };
+    for (const dose of this.getDosesForDate(dateString)) {
+      const state = doseDisplayStateFor(dose, nowMs, this.getMedicationById(dose.medicationId));
+      switch (state.kind) {
+        case 'taken':
+          counts.taken++;
+          break;
+        case 'skipped':
+          counts.skipped++;
+          break;
+        case 'missedByUser':
+          counts.missed++;
+          break;
+        case 'notConfirmed':
+          counts.notConfirmed++;
+          break;
+        case 'pausedOrStopped':
+          continue;
+        default:
+          // upcoming, dueNow, snoozed: still awaiting the patient.
+          counts.upcoming++;
+      }
+      counts.total++;
+    }
+    const recorded = counts.taken + counts.skipped + counts.missed;
+    counts.percentage = recorded > 0 ? Math.round((counts.taken / recorded) * 100) : null;
+    return counts;
   }
 
   /**

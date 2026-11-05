@@ -9,7 +9,8 @@ export interface WeekDay {
   dayLabel: string;
   dateNumber: number;
   dateString: string;
-  percentage: number;
+  /** Recorded doses only; null when nothing is recorded that day. */
+  percentage: number | null;
   isToday: boolean;
   isSelected: boolean;
 }
@@ -18,13 +19,13 @@ export interface WeekDay {
 export function WeeklyAdherenceCard({
   weekDays,
   setSelectedDate,
-  totalDosesCount,
   adherencePct,
+  notConfirmedCount,
 }: {
   weekDays: WeekDay[];
   setSelectedDate: (date: string) => void;
-  totalDosesCount: number;
-  adherencePct: number;
+  adherencePct: number | null;
+  notConfirmedCount: number;
 }) {
   return (
     <Card testID="medicines-week">
@@ -37,10 +38,15 @@ export function WeeklyAdherenceCard({
         </View>
         <View style={styles.rateChip}>
           <Text variant="bodyStrong" tone="link">
-            {totalDosesCount > 0 ? `${adherencePct}%` : '—'}
+            {adherencePct === null ? t('medicines.noData') : `${adherencePct}%`}
           </Text>
         </View>
       </View>
+      {notConfirmedCount > 0 ? (
+        <Text variant="caption" tone="secondary" testID="medicines-week-not-confirmed">
+          {t('medicines.notConfirmedCount', { count: notConfirmedCount })}
+        </Text>
+      ) : null}
 
       <View style={styles.bars}>
         {weekDays.map((item) => (
@@ -63,6 +69,7 @@ export function WeeklyAdherenceCard({
             ]}
           >
             <View style={styles.track}>
+              {item.percentage === null ? null : (
               <View
                 style={[
                   styles.fill,
@@ -76,6 +83,7 @@ export function WeeklyAdherenceCard({
                   },
                 ]}
               />
+              )}
             </View>
             <Text
               variant="caption"

@@ -5,6 +5,7 @@ import { color, radius, size, space } from '../../design/tokens';
 import { t } from '../../design/strings';
 import type { StringKey } from '../../design/strings';
 import { toLocalDateString, medicationStore } from '../../services/medications/medication-store';
+import { adherenceDotStatus } from './adherenceDots';
 
 // Design-token version of components/HorizontalDateStrip with the same props and behavior.
 // It shows the trailing seven days ending today, with a dot per day for adherence.
@@ -45,18 +46,8 @@ function buildWeek(): DayItem[] {
 
     const isToday = offset === 0;
     const dateString = toLocalDateString(d);
-    const adherence = medicationStore.getAdherenceForDate(dateString);
-
-    let adherenceStatus: DayItem['adherenceStatus'] = 'none';
-    if (adherence.total > 0) {
-      if (adherence.taken === adherence.total) {
-        adherenceStatus = 'complete';
-      } else if (adherence.taken > 0) {
-        adherenceStatus = 'partial';
-      } else {
-        adherenceStatus = 'pending';
-      }
-    }
+    const adherence = medicationStore.getAdherenceForDate(dateString, Date.now());
+    const adherenceStatus = adherenceDotStatus(adherence);
 
     result.push({
       dayLabel: isToday ? t('records.timeline.todayShort') : t(WEEKDAY_KEYS[d.getDay()]),

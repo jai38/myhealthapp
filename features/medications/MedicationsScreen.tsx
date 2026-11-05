@@ -95,14 +95,18 @@ export default function MedicationsScreen() {
 
   // Selected date dose list & adherence
   const dayDoses = medicationStore.getDosesForDate(selectedDate);
-  const { percentage: adherencePct, taken: takenDosesCount, total: totalDosesCount } =
-    medicationStore.getAdherenceForDate(selectedDate);
+  const nowMs = Date.now();
+  const {
+    percentage: adherencePct,
+    taken: takenDosesCount,
+    total: totalDosesCount,
+    notConfirmed: notConfirmedCount,
+  } = medicationStore.getAdherenceForDate(selectedDate, nowMs);
 
   const actionableDoses = dayDoses.filter(
     (d) => d.status === 'PENDING' || d.status === 'SNOOZED'
   );
   // The one next-dose rule, shared with Today. Unrecorded past doses are never "next".
-  const nowMs = Date.now();
   const nextDose =
     pickNextDose(actionableDoses, nowMs, (id) => medicationStore.getMedicationById(id)) ??
     undefined;
@@ -126,7 +130,7 @@ export default function MedicationsScreen() {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     const dateString = toLocalDateString(d);
-    const { percentage } = medicationStore.getAdherenceForDate(dateString);
+    const { percentage } = medicationStore.getAdherenceForDate(dateString, nowMs);
     const isToday = dateString === todayDateStr;
     const isSelected = dateString === selectedDate;
     return {
@@ -212,8 +216,8 @@ export default function MedicationsScreen() {
               <WeeklyAdherenceCard
                 weekDays={weekDays}
                 setSelectedDate={setSelectedDate}
-                totalDosesCount={totalDosesCount}
                 adherencePct={adherencePct}
+                notConfirmedCount={notConfirmedCount}
               />
               <DaySchedule
                 isSelectedToday={isSelectedToday}

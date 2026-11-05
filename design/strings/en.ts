@@ -513,6 +513,8 @@ export const en = {
   'medicines.statusCompleted': 'Completed',
   'medicines.statusDiscontinued': 'Discontinued',
   'medicines.weekTitle': 'Weekly adherence',
+  'medicines.noData': 'No data',
+  'medicines.notConfirmedCount': '{count} not confirmed',
   'medicines.weekSubtitle': 'Tap any day bar to view its medication schedule',
   'medicines.day.mon': 'M',
   'medicines.day.tue': 'T',

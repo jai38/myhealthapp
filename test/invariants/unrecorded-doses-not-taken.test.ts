@@ -77,9 +77,9 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
     expect(after.some((d) => d.status === 'TAKEN')).toBe(false);
     expect(after.every((d) => d.status === 'PENDING')).toBe(true);
     for (let offset = 0; offset <= 10; offset++) {
-      const a = medicationStore.getAdherenceForDate(day(start, offset));
+      const a = medicationStore.getAdherenceForDate(day(start, offset), Date.now());
       expect(a.taken, `day +${offset}`).toBe(0);
-      expect(a.percentage, `day +${offset}`).toBe(0);
+      expect(a.percentage, `day +${offset}`).toBeNull();
     }
   });
 
@@ -89,7 +89,7 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
     await medicationStore.recordAction(first.id, 'SNOOZED');
     vi.setSystemTime(new Date(2026, 10, 5, 9, 0, 0));
     const today = day(new Date(2026, 10, 2), 0);
-    const a = medicationStore.getAdherenceForDate(today);
+    const a = medicationStore.getAdherenceForDate(today, Date.now());
     expect(a.total).toBe(2);
     expect(a.taken).toBe(0);
     expect(medicationStore.getAllDoses().find((d) => d.id === second.id)!.status).toBe('PENDING');
@@ -99,8 +99,8 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
     await medicationStore.addMedication(mkMed());
     const [first] = medicationStore.getTodayDoses();
     await medicationStore.recordAction(first.id, 'TAKEN');
-    const a = medicationStore.getAdherenceForDate(toLocalDateString(new Date()));
-    expect(a).toEqual({ percentage: 50, taken: 1, total: 2 });
+    const a = medicationStore.getAdherenceForDate(toLocalDateString(new Date()), Date.now());
+    expect(a).toMatchObject({ percentage: 100, taken: 1, total: 2 });
   });
 
   describe('loading stored data through the real init path', () => {
@@ -145,7 +145,7 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
       const ids = medicationStore.getAllDoses().map((d) => d.id);
       expect(ids).not.toContain(fabricated.id);
       expect(ids).toEqual(expect.arrayContaining([realTaken.id, realSkipped.id, pending.id]));
-      expect(medicationStore.getAdherenceForDate('2026-10-01')).toEqual({ percentage: 100, taken: 1, total: 1 });
+      expect(medicationStore.getAdherenceForDate('2026-10-01', Date.now())).toMatchObject({ percentage: 100, taken: 1, total: 1 });
       expect(medicationStore.getAllDoses().find((d) => d.id === pending.id)!.status).toBe('PENDING');
       // The purge was persisted, so it does not come back on the next launch.
       expect(store.get('@myhealthapp/persisted_doses_user_seed')).not.toContain(fabricated.id);
@@ -157,7 +157,7 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
         dose({ id: 'dose-med-time-1-2026-10-03-2000', scheduledTime: '2026-10-03T20:00:00' }),
       ]);
       expect(medicationStore.getAllDoses().every((d) => d.status === 'PENDING')).toBe(true);
-      expect(medicationStore.getAdherenceForDate('2026-10-03')).toEqual({ percentage: 0, taken: 0, total: 2 });
+      expect(medicationStore.getAdherenceForDate('2026-10-03', Date.now())).toMatchObject({ percentage: null, taken: 0, notConfirmed: 2, total: 2 });
     });
   });
 
@@ -173,7 +173,7 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
     };
     await medicationStore.syncFromServer([mkMed()], [past]);
     expect(medicationStore.getAllDoses().find((d) => d.id === 'srv-1')!.status).toBe('PENDING');
-    expect(medicationStore.getAdherenceForDate('2026-10-20')).toEqual({ percentage: 0, taken: 0, total: 1 });
+    expect(medicationStore.getAdherenceForDate('2026-10-20', Date.now())).toMatchObject({ percentage: null, taken: 0, notConfirmed: 1, total: 1 });
   });
 
   it('guest mode starts with no taken history and no past doses', async () => {
@@ -185,7 +185,7 @@ describe('Invariant: unrecorded doses are never counted as taken', () => {
   });
 
   it('a day with no doses reports no adherence, never 100%', () => {
-    expect(medicationStore.getAdherenceForDate('2020-01-01')).toEqual({ percentage: 0, taken: 0, total: 0 });
+    expect(medicationStore.getAdherenceForDate('2020-01-01', Date.now())).toMatchObject({ percentage: null, taken: 0, total: 0 });
   });
 
   it.each([
