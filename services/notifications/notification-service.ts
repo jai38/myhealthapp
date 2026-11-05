@@ -28,7 +28,10 @@ const configureForegroundHandler = (notifs: any) => {
     handlerConfigured = true;
     notifs.setNotificationHandler({
       handleNotification: async () => ({
+        // shouldShowAlert is kept for older runtimes; SDK 53+ reads Banner/List.
         shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: true,
       }),
