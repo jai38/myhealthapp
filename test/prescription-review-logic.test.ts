@@ -4,6 +4,8 @@ import {
   buildReviewPayload,
   isAsNeededFrequency,
   normalizePrescriptionDate,
+  parseReminderTime,
+  sanitizeReminderTimes,
 } from '../features/prescriptions/review/reviewLogic';
 import type { EditableMedicine } from '../features/prescriptions/review/reviewTypes';
 
@@ -126,5 +128,59 @@ describe('review: confirm payload', () => {
     });
     expect(payload.medicines[0].name_as_written).toBe('Augmentin 625');
     expect(payload.medicines[0].normalized_medicine_name).toBe('Amoxicillin');
+  });
+});
+
+describe('reminder time validation', () => {
+  it.each([
+    ['08:00', '08:00'],
+    ['23:59', '23:59'],
+    ['00:00', '00:00'],
+    ['8:30', '08:30'],
+    [' 20:15 ', '20:15'],
+  ])('accepts %j as %j', (input, expected) => {
+    expect(parseReminderTime(input)).toBe(expected);
+  });
+
+  it.each(['25:99', '24:00', '12:60', '8:5', '8:', ':30', '0800', '08.00', 'ab:cd', '', '  ', '08:30:00', '-1:30'])(
+    'rejects %j',
+    (input) => {
+      expect(parseReminderTime(input)).toBeNull();
+    },
+  );
+
+  it('rejects null and undefined', () => {
+    expect(parseReminderTime(null)).toBeNull();
+    expect(parseReminderTime(undefined)).toBeNull();
+  });
+
+  it('sanitizeReminderTimes normalises, drops invalid and removes duplicates', () => {
+    expect(sanitizeReminderTimes(['8:30', '25:99', '08:30', '20:00'])).toEqual(['08:30', '20:00']);
+  });
+
+  it('never sends an invalid time to the server', () => {
+    const payload = buildReviewPayload({
+      documentId: 'doc-1',
+      prescriptionDate: '2026-11-01',
+      dateIsUncertain: false,
+      doctorName: '',
+      clinicName: '',
+      diagnosis: '',
+      medicines: [draft({ reminder_times: ['25:99', '9:00'] })],
+    });
+    expect(payload.medicines[0].reminder_times).toEqual(['09:00']);
+  });
+
+  it('a historical medicine with only invalid times gets no reminders', () => {
+    const payload = buildReviewPayload({
+      documentId: 'doc-1',
+      prescriptionDate: '2026-11-01',
+      dateIsUncertain: false,
+      doctorName: '',
+      clinicName: '',
+      diagnosis: '',
+      medicines: [draft({ is_active_medication: false, reminder_times: ['25:99'] })],
+    });
+    expect(payload.medicines[0].reminder_times).toBeUndefined();
   });
 });

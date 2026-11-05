@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from '../../../design/components/Actions/Button';
 import { ChipGroup } from '../../../design/components/Inputs/ChipGroup';
@@ -11,6 +11,7 @@ import { color, radius, space } from '../../../design/tokens';
 import { formatTime12Hour } from '../../medications/reminder-time-utils';
 import { DEFAULT_REMINDER_TIME, TIME_PRESET_VALUES } from './reviewTypes';
 import type { EditableMedicine } from './reviewTypes';
+import { parseReminderTime } from './reviewLogic';
 import { TextAction } from './TextAction';
 
 export interface ReminderTimesEditorProps {
@@ -30,8 +31,8 @@ const TIME_PRESET_OPTIONS = TIME_PRESET_VALUES.map((time) => ({
   label: t(TIME_PRESET_LABEL_KEYS[time]),
 }));
 
-// One card per daily dose: a quick preset row, then a free-typed HH:MM value.
-// The value is stored as typed, the same as before.
+// One card per daily dose: a quick preset row, then a typed HH:MM value.
+// Only a valid time is stored; anything else shows an inline error and is not saved.
 export function ReminderTimesEditor({ med, onUpdate }: ReminderTimesEditorProps) {
   const timesToShow =
     med.reminder_times && med.reminder_times.length > 0 ? med.reminder_times : [DEFAULT_REMINDER_TIME];
@@ -84,16 +85,11 @@ export function ReminderTimesEditor({ med, onUpdate }: ReminderTimesEditorProps)
             }}
           />
 
-          <TextField
-            label={t('prescriptions.review.customTimeLabel')}
+          <CustomTimeField
             value={timeStr}
-            placeholder={t('prescriptions.review.timePlaceholder')}
-            helper={t('prescriptions.review.timePreview', { time: formatTime12Hour(timeStr) })}
-            maxLength={5}
-            autoCapitalize="none"
-            onChangeText={(val) => {
+            onCommit={(next) => {
               const newTimes = [...(med.reminder_times || [DEFAULT_REMINDER_TIME])];
-              newTimes[timeIdx] = val;
+              newTimes[timeIdx] = next;
               onUpdate({ reminder_times: newTimes });
             }}
           />
@@ -118,6 +114,50 @@ export function ReminderTimesEditor({ med, onUpdate }: ReminderTimesEditorProps)
         />
       </View>
     </View>
+  );
+}
+
+function CustomTimeField({ value, onCommit }: { value: string; onCommit: (time: string) => void }) {
+  const [draft, setDraft] = useState(value);
+  const [invalid, setInvalid] = useState(false);
+
+  // A preset chip (or removing a dose) changes the stored value from outside.
+  useEffect(() => {
+    setDraft(value);
+    setInvalid(false);
+  }, [value]);
+
+  return (
+    <TextField
+      label={t('prescriptions.review.customTimeLabel')}
+      value={draft}
+      placeholder={t('prescriptions.review.timePlaceholder')}
+      helper={t('prescriptions.review.timePreview', { time: formatTime12Hour(value) })}
+      error={invalid ? t('prescriptions.review.timeInvalid') : undefined}
+      maxLength={5}
+      autoCapitalize="none"
+      onChangeText={(val) => {
+        setDraft(val);
+        const parsed = parseReminderTime(val);
+        if (parsed && val.length === 5) {
+          setInvalid(false);
+          if (parsed !== value) onCommit(parsed);
+        } else {
+          // Complete-length but invalid (e.g. 25:99) is flagged at once; shorter input is still being typed.
+          setInvalid(val.length >= 5);
+        }
+      }}
+      onBlur={() => {
+        const parsed = parseReminderTime(draft);
+        if (parsed) {
+          setInvalid(false);
+          setDraft(parsed);
+          if (parsed !== value) onCommit(parsed);
+        } else {
+          setInvalid(true);
+        }
+      }}
+    />
   );
 }
 

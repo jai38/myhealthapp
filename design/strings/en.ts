@@ -773,6 +773,7 @@ export const en = {
   'prescriptions.review.timeBedtime': '21:00 Bedtime',
   'prescriptions.review.customTimeLabel': 'Custom Time (HH:MM)',
   'prescriptions.review.timePlaceholder': '08:00',
+  'prescriptions.review.timeInvalid': 'Enter a valid 24-hour time as HH:MM, for example 08:00 or 20:30.',
   'prescriptions.review.timePreview': 'Reads as {time}',
   'prescriptions.review.addReminderTime': 'Add Reminder Time',
   'prescriptions.review.totalCountLabel': 'Total Dispensed Quantity (Optional - for refill tracking)',

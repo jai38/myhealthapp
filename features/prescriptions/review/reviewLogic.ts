@@ -3,6 +3,30 @@ import type { EditableMedicine } from './reviewTypes';
 
 // Pure review helpers. No React or React Native imports, so they can be tested directly.
 
+/**
+ * Validates a typed reminder time. Accepts 24-hour `HH:mm`, and `H:mm` (one-digit hour)
+ * which is unambiguous and normalised to `HH:mm`. A one-digit minute such as "8:5" is
+ * rejected: it could mean 8:05 or 8:50, and a reminder time is never guessed.
+ */
+export function parseReminderTime(input: string | null | undefined): string | null {
+  const m = /^(\d{1,2}):(\d{2})$/.exec((input ?? '').trim());
+  if (!m) return null;
+  const hour = Number(m[1]);
+  const minute = Number(m[2]);
+  if (hour > 23 || minute > 59) return null;
+  return `${String(hour).padStart(2, '0')}:${m[2]}`;
+}
+
+/** Normalises each time and drops the ones that are not valid times. */
+export function sanitizeReminderTimes(times: string[]): string[] {
+  const out: string[] = [];
+  for (const raw of times) {
+    const valid = parseReminderTime(raw);
+    if (valid && !out.includes(valid)) out.push(valid);
+  }
+  return out;
+}
+
 export function isAsNeededFrequency(frequencyText: string | undefined): boolean {
   return (
     frequencyText === 'As Needed' ||
@@ -133,8 +157,8 @@ export function buildReviewPayload(input: ReviewPayloadInput): any {
         is_active_medication: m.is_active_medication,
         reminder_times: isAsNeeded
           ? []
-          : m.reminder_times && m.reminder_times.length > 0
-          ? m.reminder_times
+          : sanitizeReminderTimes(m.reminder_times ?? []).length > 0
+          ? sanitizeReminderTimes(m.reminder_times ?? [])
           : m.is_active_medication
           ? [DEFAULT_REMINDER_TIME]
           : undefined,
