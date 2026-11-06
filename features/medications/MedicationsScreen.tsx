@@ -15,7 +15,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { onNotificationResponse } from '../../services/notifications/notification-service';
 import { useMedicationsData } from './useMedicationsData';
 import { NextDoseCard } from './NextDoseCard';
-import { pickNextDose } from '../today/todayModel';
+import { hasScheduledTime, pickNextDose } from '../today/todayModel';
+import { formatDoseClock } from './dose-display';
 import { WeeklyAdherenceCard } from './WeeklyAdherenceCard';
 import { DaySchedule } from './DaySchedule';
 import { MedicationList, type TabType } from './MedicationList';
@@ -114,9 +115,10 @@ export default function MedicationsScreen() {
     ? medications.find((m) => m.id === nextDose.medicationId) ||
       medicationStore.getMedicationById(nextDose.medicationId)
     : null;
-  const nextDoseDate = nextDose ? new Date(nextDose.scheduledTime) : null;
-  const nextTimeStr = nextDoseDate
-    ? nextDoseDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const nextTimeStr = nextDose
+    ? hasScheduledTime(nextDose)
+      ? formatDoseClock(new Date(nextDose.scheduledTime))
+      : t('status.timeUnknown')
     : '';
 
   // Weekly Adherence calculation for Monday - Sunday

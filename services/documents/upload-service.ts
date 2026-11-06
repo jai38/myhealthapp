@@ -93,7 +93,8 @@ export class MobileDocumentUploadService {
             file.size = info.size;
           }
         } catch (e) {
-          console.warn('Could not query file size from disk:', e);
+          // Log the error type only: the message can contain the file path or name (rule 8).
+          console.warn('Could not query file size from disk:', e instanceof Error ? e.name : typeof e);
         }
       }
     }
@@ -218,7 +219,8 @@ export class MobileDocumentUploadService {
         } catch (nativeErr: any) {
           const msg = nativeErr?.message || '';
           if (msg.includes('not available') || msg.includes('UnavailabilityError')) {
-            console.warn('Native uploadAsync unavailable, falling back to fetch upload:', msg);
+            // The native message can contain the file path or name, so it is not logged (rule 8).
+            console.warn('Native uploadAsync unavailable, falling back to fetch upload.');
           } else {
             throw nativeErr;
           }

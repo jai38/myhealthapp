@@ -7,11 +7,10 @@ import { SectionHeader } from '../../design/components/Containers/SectionHeader'
 import { MedicineIcon } from '../../design/components/Foundations/MedicineIcon';
 import { Text } from '../../design/components/Foundations/Text';
 import { StatusPill } from '../../design/components/Trust/StatusPill';
-import { doseStatusDisplay } from '../../design/status';
 import { space } from '../../design/tokens';
 import { t } from '../../design/strings';
 import type { MedicationRecord } from '../../services/medications/medication-service';
-import type { TodayDose } from './todayModel';
+import { doseStatusDisplayFor, hasScheduledTime, type TodayDose } from './todayModel';
 import { formatTodayTime, medicineFormFor } from './todaySections';
 import type { RecordFn } from './TodayNextDose';
 
@@ -35,7 +34,9 @@ export function TodayDoseRow({ item, medication, actions, actionDoseId, onRecord
   const otherBusy = actionDoseId !== null && !busy;
   const subtitle = TIME_IN_PILL.includes(state.kind)
     ? undefined
-    : t('today.scheduledAt', { time: formatTodayTime(new Date(item.scheduledMs)) });
+    : hasScheduledTime(dose)
+      ? t('today.scheduledAt', { time: formatTodayTime(new Date(item.scheduledMs)) })
+      : t('status.timeUnknown');
 
   return (
     <View style={styles.row} testID={`today-row-${dose.id}`}>
@@ -43,7 +44,7 @@ export function TodayDoseRow({ item, medication, actions, actionDoseId, onRecord
         title={medication?.nameAsWritten ?? t('today.unknownMedicine')}
         subtitle={subtitle}
         leading={<MedicineIcon form={medicineFormFor(medication?.dosageForm)} />}
-        trailing={<StatusPill display={doseStatusDisplay(state, formatTodayTime)} />}
+        trailing={<StatusPill display={doseStatusDisplayFor(dose, state, formatTodayTime)} />}
       />
       {actions !== 'none' ? (
         <View style={styles.actions}>

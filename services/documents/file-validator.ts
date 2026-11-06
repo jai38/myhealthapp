@@ -1,3 +1,5 @@
+import { t } from '../../design/strings';
+
 export const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -29,7 +31,7 @@ export function validatePickedFile(file: PickedFile): FileValidationResult {
   if (!file.name || typeof file.size !== 'number') {
     return {
       isValid: false,
-      error: 'Invalid file metadata received from document picker.',
+      error: t('files.invalidMetadata'),
     };
   }
 
@@ -37,7 +39,7 @@ export function validatePickedFile(file: PickedFile): FileValidationResult {
   if (file.size <= 0) {
     return {
       isValid: false,
-      error: 'Selected file is empty (0 bytes). Please select a valid document.',
+      error: t('files.empty'),
     };
   }
 
@@ -45,7 +47,7 @@ export function validatePickedFile(file: PickedFile): FileValidationResult {
     const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
     return {
       isValid: false,
-      error: `File size (${sizeInMB} MB) exceeds maximum allowable limit of 15 MB.`,
+      error: t('files.tooLarge', { sizeMb: sizeInMB }),
     };
   }
 

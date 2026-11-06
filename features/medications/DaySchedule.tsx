@@ -11,7 +11,8 @@ import { StatusPill } from '../../design/components/Trust/StatusPill';
 import { t } from '../../design/strings';
 import { space } from '../../design/tokens';
 import type { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
-import { doseStatusFor, formatDoseClock } from './dose-display';
+import { canActOnDose, canRecordDoseNow, doseStatusFor, formatDoseClock } from './dose-display';
+import { hasScheduledTime } from '../today/todayModel';
 
 // Icon for the dose row, from the medicine's dosage form. Pills are the default.
 function formFor(dosageForm: string | undefined): MedicineForm {
@@ -26,7 +27,6 @@ export function DaySchedule({
   formattedSelectedDate,
   todayDateStr,
   setSelectedDate,
-  actionableDoses,
   dayDoses,
   medications,
   actionDoseId,
@@ -38,7 +38,8 @@ export function DaySchedule({
   formattedSelectedDate: string;
   todayDateStr: string;
   setSelectedDate: (date: string) => void;
-  actionableDoses: DoseLog[];
+  /** Not used here any more: the row gate and pending count come from dose-display. */
+  actionableDoses?: DoseLog[];
   dayDoses: DoseLog[];
   medications: MedicationRecord[];
   actionDoseId: string | null;
@@ -50,6 +51,10 @@ export function DaySchedule({
   onAddMedicine: () => void;
   nowMs: number;
 }) {
+  // Pending = still awaiting an answer, medicine active. Paused or stopped medicines are not counted.
+  const pendingCount = dayDoses.filter((d) =>
+    canActOnDose(d, medications.find((m) => m.id === d.medicationId)),
+  ).length;
   return (
     <View style={styles.root} testID="medicines-day">
       <SectionHeader
@@ -62,9 +67,9 @@ export function DaySchedule({
         viewAllLabel={t('medicines.resetToToday')}
       />
       <Text variant="caption" tone="secondary">
-        {actionableDoses.length === 0
+        {pendingCount === 0
           ? t('medicines.allRecorded')
-          : t('medicines.pendingCount', { count: actionableDoses.length })}
+          : t('medicines.pendingCount', { count: pendingCount })}
       </Text>
 
       {dayDoses.length === 0 ? (
@@ -111,9 +116,11 @@ function DoseRow({
     snoozeMinutes?: number
   ) => Promise<void>;
 }) {
-  const timeStr = formatDoseClock(new Date(dose.scheduledTime));
-  const isTaken = dose.status === 'TAKEN';
-  const isSkipped = dose.status === 'SKIPPED';
+  const timeStr = hasScheduledTime(dose)
+    ? formatDoseClock(new Date(dose.scheduledTime))
+    : t('status.timeUnknown');
+  // One rule for the buttons: awaiting an answer, active medicine, and not in the future.
+  const canRecord = canRecordDoseNow(dose, med, nowMs);
   const meta = med?.strength
     ? t('medicines.doseMeta', { strength: med.strength, time: timeStr })
     : timeStr;
@@ -133,7 +140,7 @@ function DoseRow({
         </View>
       </View>
 
-      {!isTaken && !isSkipped ? (
+      {canRecord ? (
         <View style={styles.actions}>
           <View style={styles.actionSlot}>
             <Button

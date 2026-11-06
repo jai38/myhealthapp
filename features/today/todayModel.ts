@@ -5,7 +5,7 @@
 // - A dose is Taken only when the user recorded it. An unrecorded past dose is
 //   `notConfirmed`: never Taken, never Missed.
 // - A notification being delivered, dismissed or snoozed changes nothing here.
-import type { DoseDisplayState } from '../../design/status';
+import { doseStatusDisplay, type DoseDisplayState, type StatusDisplay } from '../../design/status';
 import type { StringKey } from '../../design/strings';
 import type { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
 
@@ -56,8 +56,10 @@ export function doseDisplayStateFor(
   const scheduledAt = new Date(scheduledMs);
 
   if (status === 'TAKEN') {
-    const takenMs = parseMs(dose.actionTime) ?? parseMs(dose.updatedAt) ?? scheduledMs;
-    return { kind: 'taken', takenAt: new Date(takenMs) };
+    // No recorded time at all: takenAt is an invalid Date, never the scheduled time.
+    // Use doseStatusDisplayFor so the label says "time unknown" instead of a time.
+    const takenMs = parseMs(dose.actionTime) ?? parseMs(dose.updatedAt);
+    return { kind: 'taken', takenAt: new Date(takenMs ?? Number.NaN) };
   }
   if (status === 'SKIPPED') return { kind: 'skipped' };
   if (status === 'MISSED') return { kind: 'missedByUser' };
@@ -76,6 +78,35 @@ export function doseDisplayStateFor(
   if (nowMs < scheduledMs) return { kind: 'upcoming', scheduledAt };
   if (nowMs < scheduledMs + windowMs) return { kind: 'dueNow' };
   return { kind: 'notConfirmed', scheduledAt };
+}
+
+/** True when the dose has a valid scheduled time. */
+export function hasScheduledTime(dose: Pick<DoseLog, 'scheduledTime'>): boolean {
+  return parseMs(dose.scheduledTime) !== null;
+}
+
+/** True when a Taken dose has a recorded time (actionTime, else updatedAt). */
+export function hasTakenTime(dose: Pick<DoseLog, 'actionTime' | 'updatedAt'>): boolean {
+  return parseMs(dose.actionTime) !== null || parseMs(dose.updatedAt) !== null;
+}
+
+/**
+ * Status pill content for a dose and its state. Same as doseStatusDisplay, except a
+ * dose with no valid scheduled time shows "Time unknown" (not a 1970 time), and a Taken
+ * dose with no recorded time shows "Taken, time unknown" (rule 13: never guess a time).
+ */
+export function doseStatusDisplayFor(
+  dose: DoseLog,
+  state: DoseDisplayState,
+  formatTime: (d: Date) => string,
+): StatusDisplay | null {
+  if (state.kind === 'taken' && !hasTakenTime(dose)) {
+    return { labelKey: 'status.takenTimeUnknown', tone: 'success', variant: 'soft', icon: 'checkmark-circle' };
+  }
+  if ((state.kind === 'notConfirmed' || state.kind === 'upcoming') && !hasScheduledTime(dose)) {
+    return { labelKey: 'status.timeUnknown', tone: 'neutral', variant: 'soft', icon: 'help-circle-outline' };
+  }
+  return doseStatusDisplay(state, formatTime);
 }
 
 /** Doses with their display state, sorted by time. Paused/stopped medicines are excluded. */

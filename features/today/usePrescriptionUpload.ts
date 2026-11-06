@@ -7,9 +7,11 @@ import {
 } from '../../services/documents/upload-service';
 import { UserSession } from '../../services/auth/auth-service';
 import { api } from '../../services/api/client';
+import { medicationService } from '../../services/medications/medication-service';
 import { medicationStore } from '../../services/medications/medication-store';
 import { buildMedicationRecord } from './utils';
 import { confirmPrescriptionDraft } from './prescription-confirmation';
+import { t } from '../../design/strings';
 
 export function usePrescriptionUpload({
   session,
@@ -28,7 +30,7 @@ export function usePrescriptionUpload({
 
   const handleFileSelected = async (file: PickedFile) => {
     setIsProcessing(true);
-    setProcessingStatus('Uploading prescription securely...');
+    setProcessingStatus(t('prescription.uploading'));
     setConfirmationNotice(null);
     setUploadError(null);
     let slowNoticeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -36,13 +38,11 @@ export function usePrescriptionUpload({
     try {
       const { document, job } = await uploadService.uploadAndExtractPrescription(file);
 
-      setProcessingStatus('Extracting prescription data (AI Clinical Parser)...');
+      setProcessingStatus(t('prescription.extracting'));
       // The AI reader runs as a separate service that sleeps when idle; the first document after a
       // quiet period waits 2-3 minutes for it to start.
       slowNoticeTimer = setTimeout(() => {
-        setProcessingStatus(
-          'Starting the AI reader. The first prescription after a quiet period can take up to 3 minutes. Please keep this screen open.'
-        );
+        setProcessingStatus(t('prescription.slowReader'));
       }, 15_000);
 
       const completedJob = await uploadService.pollJobUntilComplete(job.id, {
@@ -51,7 +51,8 @@ export function usePrescriptionUpload({
       });
 
       if (completedJob.status === 'FAILED') {
-        throw new Error(completedJob.errorMessage || 'AI extraction failed');
+        // The server's own failure text is not shown; the patient sees a generic message.
+        throw new Error(t('prescription.extractionFailed'));
       }
 
       const signedUrl = await uploadService.getPreviewUrl(document.id);
@@ -67,14 +68,16 @@ export function usePrescriptionUpload({
       });
     } catch (err: unknown) {
       if (err instanceof ExtractionWaitTimeoutError) {
-        const msg =
-          'Your prescription was uploaded, but reading it is taking longer than usual. Please upload it again in a few minutes.';
+        const msg = t('prescription.stillReading');
         setUploadError(msg);
-        Alert.alert('Still reading', msg);
+        Alert.alert(t('prescription.stillReadingTitle'), msg);
       } else {
-        const msg = err instanceof Error ? err.message : 'Upload failed';
+        // Error text from the network or server is not shown raw; the patient sees a generic message.
+        const msg = err instanceof Error && err.message === t('prescription.extractionFailed')
+          ? err.message
+          : t('prescription.uploadFailed');
         setUploadError(msg);
-        Alert.alert('Upload / Extraction Error', msg);
+        Alert.alert(t('prescription.uploadErrorTitle'), msg);
       }
     } finally {
       if (slowNoticeTimer) clearTimeout(slowNoticeTimer);
@@ -88,8 +91,9 @@ export function usePrescriptionUpload({
     const outcome = await confirmPrescriptionDraft({
       payload: reviewPayload,
       confirmOnServer: () => uploadService.confirmPrescription(activeReviewData.jobId, reviewPayload),
-      addActiveMedicine: async (m) => {
-        const newMed = buildMedicationRecord(m, reviewPayload, session?.patientProfileId);
+      fetchServerMedicines: () => medicationService.listMedications(),
+      addActiveMedicine: async (m, serverMedicine) => {
+        const newMed = buildMedicationRecord(m, reviewPayload, session?.patientProfileId, serverMedicine);
         await medicationStore.addMedication(newMed);
       },
     });
@@ -100,9 +104,7 @@ export function usePrescriptionUpload({
     }
 
     const activeCount = outcome.activeCount;
-    setConfirmationNotice(
-      `Prescription confirmed! ${activeCount} active medication(s) added to your regimen.`
-    );
+    setConfirmationNotice(t('prescription.confirmed', { count: activeCount }));
     setActiveReviewData(null);
     onPrescriptionChanged();
   };

@@ -42,6 +42,15 @@ export const en = {
   'status.skipped': 'Skipped',
   'status.missedByUser': 'Marked missed',
   'status.notConfirmed': 'Not confirmed',
+  'status.timeUnknown': 'Time unknown',
+  'status.takenTimeUnknown': 'Taken · time unknown',
+  'status.doseNoticeTaken': '{name} marked as taken.',
+  'status.doseNoticeSnoozed': '{name} snoozed for {minutes} minutes.',
+  'status.doseNoticeSkipped': 'Skipped {name} for this dose.',
+  'status.doseNoticeSavedOnPhone': 'Noted a dose of {name} at {time}. Saved on this phone only.',
+  'status.doseActionFailedTitle': 'Could not save',
+  'status.doseActionFailedBody': 'That was not saved, so nothing has changed. Please try again.',
+  'status.asNeededFailedBody': 'That dose was not noted. Please try again.',
 
   'today.greeting.morning': 'Good morning, {name}',
   'today.greeting.afternoon': 'Good afternoon, {name}',
@@ -259,11 +268,11 @@ export const en = {
   'legal.terms.s6Body':
     'You have the unilateral right to delete your account and all associated medical data at any time from your Account Settings. Upon deletion, all records, documents, and logs are permanently purged from active systems.',
 
-  'legal.privacy.hipaaBadge': 'HIPAA & DPDP Aligned',
+  'legal.privacy.hipaaBadge': 'Encrypted at rest and in transit',
   'legal.privacy.brokerBadge': 'Zero Data Brokerage',
   'legal.privacy.s1Title': '1. Commitment to Health Data Privacy',
   'legal.privacy.s1Body':
-    'Your health information is sensitive and private. MyHealth is architected around strict privacy-by-design principles adhering to HIPAA (US), DPDP (India), and GDPR (EU) patient rights standards.',
+    'Your health information is sensitive and private. MyHealth is built around privacy-by-design principles, and we collect only what is needed to provide the service.',
   'legal.privacy.s2Title': '2. What Health Data We Collect',
   'legal.privacy.s2Intro': 'We collect only the minimum necessary data to provide health organization services:',
   'legal.privacy.s2CredLabel': 'Account Credentials:',
@@ -312,14 +321,14 @@ export const en = {
   'profile.signInOrRegister': 'Sign In or Register',
   'profile.securityTitle': 'Security & Data Protection',
   'profile.active': 'Active',
-  'profile.encryptedTitle': 'End-to-End Encrypted Storage',
+  'profile.encryptedTitle': 'Encrypted at rest and in transit',
   'profile.encryptedBody': 'Your uploaded prescriptions, lab reports, and extracted clinical records are tenant-isolated and encrypted.',
   'profile.timezoneTitle': 'Synchronized Health Zone',
   'profile.timezoneBody': 'Detected Timezone: {timezone}. Reminders are automatically scheduled in your local clock time.',
   'profile.localTimeFallback': 'Local System Time',
   'profile.privacyTitle': 'Data Privacy & Terms',
-  'profile.hipaaAligned': 'HIPAA Aligned',
-  'profile.privacyBody': 'Your health records are protected with end-to-end encryption. We never sell your personal health information.',
+  'profile.protectedPill': 'Records protected',
+  'profile.privacyBody': 'Your health records are encrypted at rest and in transit. We never sell your personal health information.',
   'profile.privacyPolicy': 'Privacy Policy',
   'profile.termsOfService': 'Terms of Service',
   'profile.manageTitle': 'Account Management',
@@ -331,7 +340,7 @@ export const en = {
   'profile.signOutFailed': 'Sign out failed',
   'profile.notice': 'Notice',
   'profile.version': 'Ayoreni v{version}',
-  'profile.versionSubtext': 'Strict Clinical Safety & FHIR Aligned',
+  'profile.versionSubtext': 'Your health records, in your control',
 
   'records.timeline.sharePdf': 'Share PDF',
   'records.timeline.searchPlaceholder': 'Search by medicine, doctor, clinic, or diagnosis',
@@ -464,7 +473,7 @@ export const en = {
   'records.export.noRecordsTitle': 'No Records to Export',
   'records.export.noRecordsBody': 'No eligible medical records were found in the selected range. Please adjust your date range or section selection.',
   'records.export.generated': 'Report Generated',
-  'records.export.size': 'Document Size: {kb} KB | Private S3 Storage',
+  'records.export.size': 'Document Size: {kb} KB | Secure storage',
   'records.export.statEvents': 'Timeline Events',
   'records.export.statMeds': 'Medications',
   'records.export.statPages': 'PDF Pages',
@@ -581,6 +590,13 @@ export const en = {
   'medicines.reminders.permissionOff': 'Reminders could not be set because notifications are off. Turn on notifications for this app in your phone settings, then set the reminder times again.',
   'medicines.reminders.notSet': 'Reminders could not be set on this phone. Check that notifications are on for this app in your phone settings, then set the reminder times again.',
   'medicines.manual.addedWithoutReminders': '"{name}" has been saved to your medications list.',
+  // Reminder notifications. Generic on purpose: no medicine name on the lock screen.
+  'notifications.dose.advanceTitle': 'A medicine is due in 15 minutes',
+  'notifications.dose.dueTitle': 'Time for a medicine',
+  'notifications.dose.body': 'Scheduled for {time}.',
+  'notifications.dose.bodyWithInstructions': 'Scheduled for {time}. {instructions}',
+  'notifications.snooze.title': 'Snooze ended',
+  'notifications.snooze.body': 'Your {minutes}-minute snooze has ended. Open the app to record your dose.',
 
   'medicines.detail.title': 'Medication Details',
   'medicines.detail.loading': 'Loading clinical medication record...',
@@ -798,4 +814,42 @@ export const en = {
   'prescriptions.review.minOneMedicine': 'At least one medicine is required on a prescription.',
   'prescriptions.review.errorNameRequired': 'All medicines must have a name as written.',
   'prescriptions.review.errorConfirmFailed': 'Confirmation failed',
+
+  'prescription.uploading': 'Uploading prescription securely...',
+  'prescription.extracting': 'Reading prescription data...',
+  'prescription.slowReader':
+    'Starting the AI reader. The first prescription after a quiet period can take up to 3 minutes. Please keep this screen open.',
+  'prescription.stillReadingTitle': 'Still reading',
+  'prescription.stillReading':
+    'Your prescription was uploaded, but reading it is taking longer than usual. Please upload it again in a few minutes.',
+  'prescription.uploadErrorTitle': 'Upload / Extraction Error',
+  'prescription.uploadFailed': 'Upload failed',
+  'prescription.extractionFailed': 'We could not read this prescription. Please try again with a clearer photo.',
+  'prescription.confirmed': 'Prescription confirmed. {count} active medication(s) added to your regimen.',
+  'prescription.saveFailed': "We couldn't save this prescription. Check your connection and try again.",
+
+  'medications.notice.taken': '{name} marked as taken.',
+  'medications.notice.snoozed': '{name} snoozed for {minutes} minutes.',
+  'medications.notice.skipped': 'Skipped {name} for this dose.',
+  'medications.fallbackName': 'Medication',
+  'medications.actionFailedTitle': 'Action Failed',
+  'medications.actionFailedBody': 'Could not record dose action.',
+  'medications.loadFailed': 'Failed to load medication records.',
+
+  'api.networkError': 'Network connection unavailable or failed',
+  'api.sessionExpired': 'Session expired or unauthorized',
+  'api.httpError': 'HTTP {status} Error',
+
+  'auth.loginFailed': 'Login failed. Please check your credentials.',
+  'auth.signupFailed': 'Registration failed. Please try again.',
+  'auth.signupNoSession': 'We could not create this account. If you already have one, please sign in.',
+
+  'files.invalidMetadata': 'Invalid file metadata received from document picker.',
+  'files.empty': 'Selected file is empty (0 bytes). Please select a valid document.',
+  'files.tooLarge': 'File size ({sizeMb} MB) exceeds maximum allowable limit of 15 MB.',
+
+  'timeline.dateNotRecorded': 'Date not recorded',
+  'timeline.undated': 'Undated',
+
+  'profile.versionUnknown': 'Unknown',
 } as const;

@@ -86,14 +86,26 @@ describe('getAdherenceForDate', () => {
 });
 
 describe('adherenceDotStatus', () => {
-  const c = (taken: number, upcoming: number, total: number) => ({ taken, upcoming, total });
-  it('stays neutral for unrecorded days and days still in progress', () => {
-    expect(adherenceDotStatus(c(0, 0, 2))).toBe('pending');
-    expect(adherenceDotStatus(c(1, 1, 2))).toBe('pending');
+  const c = (taken: number, upcoming: number, total: number, skipped = 0, missed = 0) => ({
+    taken,
+    skipped,
+    missed,
+    upcoming,
+    total,
+  });
+  it('a day with no doses is none', () => {
     expect(adherenceDotStatus(c(0, 0, 0))).toBe('none');
   });
-  it('marks complete and partial from recorded and elapsed doses', () => {
+  it('a day where every dose is Not confirmed is neutral no-data, not caution', () => {
+    expect(adherenceDotStatus(c(0, 0, 2))).toBe('none');
+  });
+  it('one taken plus one Not confirmed is not caution: an unrecorded dose never colours the dot', () => {
+    expect(adherenceDotStatus(c(1, 0, 2))).not.toBe('partial');
+    expect(adherenceDotStatus(c(1, 0, 2))).toBe('pending');
+  });
+  it('all taken is complete; taken plus a recorded skip is partial; still-upcoming stays neutral', () => {
     expect(adherenceDotStatus(c(2, 0, 2))).toBe('complete');
-    expect(adherenceDotStatus(c(1, 0, 2))).toBe('partial');
+    expect(adherenceDotStatus(c(1, 0, 2, 1))).toBe('partial');
+    expect(adherenceDotStatus(c(1, 1, 3, 1))).toBe('pending');
   });
 });

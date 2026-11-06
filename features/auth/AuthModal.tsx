@@ -91,10 +91,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess(session);
       }
       onClose();
-    } catch (err: unknown) {
+    } catch {
       setLoading(false);
-      const msg = err instanceof Error ? err.message : t('auth.authFailed');
-      setErrorMessage(msg);
+      // Server error text is never shown; the patient sees the generic message.
+      setErrorMessage(t('auth.authFailed'));
     }
   };
 

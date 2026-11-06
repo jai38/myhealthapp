@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import Constants from 'expo-constants';
 import { Text } from '../../design/components';
 import { space } from '../../design/tokens';
 import { t } from '../../design/strings';
@@ -104,7 +105,7 @@ export const AccountContent: React.FC<AccountContentProps> = ({ resetKey, onSign
             {/* App Version Info */}
             <View style={styles.versionContainer}>
               <Text variant="caption" tone="tertiary">
-                {t('profile.version', { version: '1.0.0' })}
+                {t('profile.version', { version: Constants.expoConfig?.version ?? t('profile.versionUnknown') })}
               </Text>
               <Text variant="overline" tone="tertiary">
                 {t('profile.versionSubtext')}

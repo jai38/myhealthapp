@@ -4,11 +4,10 @@ import { Button } from '../../design/components/Actions/Button';
 import { Card } from '../../design/components/Containers/Card';
 import { StatusPill } from '../../design/components/Trust/StatusPill';
 import { Text } from '../../design/components/Foundations/Text';
-import { doseStatusDisplay } from '../../design/status';
 import { space } from '../../design/tokens';
 import { t } from '../../design/strings';
 import type { MedicationRecord } from '../../services/medications/medication-service';
-import type { TodayDose } from './todayModel';
+import { doseStatusDisplayFor, hasScheduledTime, type TodayDose } from './todayModel';
 import { formatTodayTime } from './todaySections';
 
 export type RecordAction = 'TAKEN' | 'SKIPPED' | 'SNOOZED';
@@ -20,12 +19,14 @@ export interface TodayNextDoseProps {
   onRecord: RecordFn;
 }
 
-// The one dose to act on now. Its status label comes from doseStatusDisplay only.
+// The one dose to act on now. Its status label comes from doseStatusDisplayFor only.
 export function TodayNextDose({ next, actionDoseId, onRecord }: TodayNextDoseProps) {
   const { dose, state, scheduledMs, medication } = next;
   const busy = actionDoseId === dose.id;
   const otherBusy = actionDoseId !== null && !busy;
-  const scheduled = formatTodayTime(new Date(scheduledMs));
+  const scheduled = hasScheduledTime(dose)
+    ? t('today.scheduledAt', { time: formatTodayTime(new Date(scheduledMs)) })
+    : t('status.timeUnknown');
 
   return (
     <Card variant="hero" testID="today-next-dose">
@@ -42,9 +43,9 @@ export function TodayNextDose({ next, actionDoseId, onRecord }: TodayNextDosePro
           </Text>
         ) : null}
         <Text variant="callout" tone="secondary">
-          {t('today.scheduledAt', { time: scheduled })}
+          {scheduled}
         </Text>
-        <StatusPill display={doseStatusDisplay(state, formatTodayTime)} testID="today-next-status" />
+        <StatusPill display={doseStatusDisplayFor(dose, state, formatTodayTime)} testID="today-next-status" />
       </View>
       <View style={styles.actions}>
         <Button

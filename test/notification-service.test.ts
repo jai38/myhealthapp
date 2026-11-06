@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { t } from '../design/strings';
 import {
   scheduleMedicationReminder,
   cancelAllRemindersForMedication,
@@ -142,7 +143,8 @@ describe('Notification & Alarm Service - Scheduled Triggers (Expo SDK 52)', () =
       minute: 15,
       channelId: MEDICATION_CHANNEL_ID,
     });
-    expect(advReminder?.content.title).toContain('Upcoming in 15m');
+    expect(advReminder?.content.title).toBe(t('notifications.dose.advanceTitle'));
+    expect(advReminder?.content.title).not.toContain('Metformin');
 
     // 2. Exact dose-time alarm (08:30)
     const dueReminder = scheduledCalls.find((c) => c.identifier?.endsWith('-due'));
@@ -153,7 +155,20 @@ describe('Notification & Alarm Service - Scheduled Triggers (Expo SDK 52)', () =
       minute: 30,
       channelId: MEDICATION_CHANNEL_ID,
     });
-    expect(dueReminder?.content.title).toContain('Time for Metformin 500mg');
+    expect(dueReminder?.content.title).toBe(t('notifications.dose.dueTitle'));
+    expect(JSON.stringify(dueReminder?.content)).not.toContain('Metformin');
+    expect(dueReminder?.content.body).toContain('Take with breakfast');
+    expect(dueReminder?.content.body).toContain('08:30');
+  });
+
+  it('with no instructions the body says only the scheduled time, never a made-up instruction', async () => {
+    await scheduleMedicationReminder('med-noinstr', 'Inhaler X', '09:00');
+    for (const suffix of ['-adv', '-due']) {
+      const call = scheduledCalls.find((c) => c.identifier?.endsWith(suffix));
+      expect(call?.content.body).toBe('Scheduled for 09:00.');
+      expect(call?.content.body).not.toMatch(/water|prepare/i);
+      expect(JSON.stringify(call?.content)).not.toContain('Inhaler X');
+    }
   });
 
   it('correctly handles midnight wraparound for 15m advance reminders', async () => {
@@ -190,7 +205,8 @@ describe('Notification & Alarm Service - Scheduled Triggers (Expo SDK 52)', () =
       repeats: false,
       channelId: MEDICATION_CHANNEL_ID,
     });
-    expect(snoozeCall.content.title).toContain('Snoozed Medication');
+    expect(snoozeCall.content.title).toBe(t('notifications.snooze.title'));
+    expect(JSON.stringify(snoozeCall.content)).not.toContain('Metformin');
   });
 
   it('cancels scheduled notifications and dismisses presented notifications for a medication', async () => {

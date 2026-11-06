@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { needsRefresh, type SessionEndReason } from '../../features/auth/authGate';
 import { cancelAllMedicationReminders } from '../notifications/notification-service';
+import { t } from '../../design/strings';
 
 export interface UserSession {
   userId: string;
@@ -165,7 +166,7 @@ class AuthService {
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
-      const message = body?.error?.message || 'Login failed. Please check your credentials.';
+      const message = body?.error?.message || t('auth.loginFailed');
       throw new Error(message);
     }
 
@@ -199,13 +200,13 @@ class AuthService {
     const body = await res.json().catch(() => null);
 
     if (!res.ok) {
-      const message = body?.error?.message || 'Registration failed. Please try again.';
+      const message = body?.error?.message || t('auth.signupFailed');
       throw new Error(message);
     }
 
     const { user, session } = body.data;
     if (!session) {
-      throw new Error('We could not create this account. If you already have one, please sign in.');
+      throw new Error(t('auth.signupNoSession'));
     }
     const userSession: UserSession = {
       userId: user.id || session.userId,

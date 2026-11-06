@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ApiClient, api } from '../api/client';
+import { t } from '../../design/strings';
 
 export const TimelineEventSchema = z.object({
   id: z.string(),
@@ -140,7 +141,7 @@ export function formatMedicalEventDate(
   isUncertain: boolean = false
 ): { formatted: string; periodLabel: string; year: string } {
   if (!dateString) {
-    return { formatted: 'Date not recorded', periodLabel: 'Undated', year: '' };
+    return { formatted: t('timeline.dateNotRecorded'), periodLabel: t('timeline.undated'), year: '' };
   }
 
   const parts = dateString.split('-');

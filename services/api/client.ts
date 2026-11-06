@@ -1,4 +1,5 @@
 import { z, ZodSchema } from 'zod';
+import { t } from '../../design/strings';
 
 export class ApiError extends Error {
   constructor(
@@ -65,7 +66,7 @@ export class ApiClient {
         headers,
       });
     } catch (err) {
-      throw new ApiError(0, 'NETWORK_ERROR', 'Network connection unavailable or failed', err);
+      throw new ApiError(0, 'NETWORK_ERROR', t('api.networkError'), err);
     }
 
     if (response.status === 401) {
@@ -73,12 +74,12 @@ export class ApiClient {
         const outcome = await this.refreshSession(sentToken);
         if (outcome === 'retry') return this.request<T>(endpoint, options, true);
         if (outcome === 'unreachable') {
-          throw new ApiError(0, 'NETWORK_ERROR', 'Network connection unavailable or failed');
+          throw new ApiError(0, 'NETWORK_ERROR', t('api.networkError'));
         }
       } else if (this.onUnauthorized) {
         this.onUnauthorized();
       }
-      throw new ApiError(401, 'UNAUTHORIZED', 'Session expired or unauthorized');
+      throw new ApiError(401, 'UNAUTHORIZED', t('api.sessionExpired'));
     }
 
     let json: unknown;
@@ -86,7 +87,7 @@ export class ApiClient {
       json = await response.json();
     } catch {
       if (!response.ok) {
-        throw new ApiError(response.status, 'HTTP_ERROR', `HTTP ${response.status} Error`);
+        throw new ApiError(response.status, 'HTTP_ERROR', t('api.httpError', { status: response.status }));
       }
       json = null;
     }

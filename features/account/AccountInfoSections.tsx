@@ -12,8 +12,8 @@ const ACTIVE_PILL: StatusDisplay = {
   icon: 'checkmark-circle',
 };
 
-const HIPAA_PILL: StatusDisplay = {
-  labelKey: 'profile.hipaaAligned',
+const PROTECTED_PILL: StatusDisplay = {
+  labelKey: 'profile.protectedPill',
   tone: 'success',
   variant: 'soft',
   icon: 'shield-checkmark-outline',
@@ -55,7 +55,7 @@ export function PrivacySection({ onOpenLegal }: PrivacySectionProps) {
     <View style={styles.section}>
       <SectionHeader title={t('profile.privacyTitle')} />
       <View style={styles.pill}>
-        <StatusPill display={HIPAA_PILL} />
+        <StatusPill display={PROTECTED_PILL} />
       </View>
       <Text variant="callout" tone="secondary" style={styles.body}>
         {t('profile.privacyBody')}

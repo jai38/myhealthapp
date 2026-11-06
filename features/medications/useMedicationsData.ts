@@ -8,6 +8,8 @@ import { medicationStore } from '../../services/medications/medication-store';
 import { buildReminderSyncPayload } from '../../services/medications/reminder-sync';
 import { syncAllMedicationReminders } from '../../services/notifications/notification-service';
 import { authService } from '../../services/auth/auth-service';
+import { t } from '../../design/strings';
+import { runDoseAction, type DoseAction } from '../today/useDoseActions';
 
 export function useMedicationsData() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,9 +35,17 @@ export function useMedicationsData() {
   const loadData = useCallback(async () => {
     setError(null);
     try {
+      // A failed request still lets the other one sync, and its failure is shown through `error`.
+      let loadFailed = false;
       const [allMeds, doses] = await Promise.all([
-        medicationService.listMedications().catch(() => []),
-        medicationService.getDoseOccurrences().catch(() => []),
+        medicationService.listMedications().catch(() => {
+          loadFailed = true;
+          return [];
+        }),
+        medicationService.getDoseOccurrences().catch(() => {
+          loadFailed = true;
+          return [];
+        }),
       ]);
 
       if (allMeds.length > 0 || doses.length > 0) {
@@ -46,8 +56,10 @@ export function useMedicationsData() {
 
       // Synchronize device alarms with all active medications
       syncAllMedicationReminders(buildReminderSyncPayload(medicationStore.getMedications())).catch(() => {});
-    } catch (err: any) {
-      setError(err?.message || 'Failed to load medication records.');
+
+      if (loadFailed) setError(t('medications.loadFailed'));
+    } catch {
+      setError(t('medications.loadFailed'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -71,34 +83,17 @@ export function useMedicationsData() {
   };
 
   // Instant Optimistic Dose Actions (Taken, Snooze, Skip)
-  const handleRecordDoseAction = async (
+  const handleRecordDoseAction = (
     doseId: string,
-    action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
+    action: DoseAction,
     snoozeMinutes?: number
-  ) => {
-    setActionDoseId(doseId);
-    try {
-      const updatedDose = await medicationStore.recordAction(doseId, action, snoozeMinutes);
-      const targetMed = medications.find((m) => m.id === updatedDose.medicationId);
-      const medName = targetMed?.nameAsWritten || 'Medication';
-
-      if (action === 'TAKEN') {
-        setActionNotice(`✓ ${medName} marked as taken!`);
-      } else if (action === 'SNOOZED') {
-        setActionNotice(`⏰ ${medName} snoozed for ${snoozeMinutes || 15} minutes.`);
-      } else if (action === 'SKIPPED') {
-        setActionNotice(`Skipped ${medName} for this dose.`);
-      }
-
-      setTimeout(() => {
-        setActionNotice(null);
-      }, 4000);
-    } catch {
-      Alert.alert('Action Failed', 'Could not record dose action.');
-    } finally {
-      setActionDoseId(null);
-    }
-  };
+  ) =>
+    runDoseAction(medications, doseId, action, snoozeMinutes, {
+      setActionNotice,
+      setActionDoseId,
+      onFailure: () =>
+        Alert.alert(t('medications.actionFailedTitle'), t('medications.actionFailedBody')),
+    });
 
   return {
     loading,

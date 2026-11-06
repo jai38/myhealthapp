@@ -339,7 +339,8 @@ class MedicationStore {
 
   /**
    * Optimistically records Taken, Snoozed, or Skipped.
-   * Persists immediately to local storage and syncs to backend if available.
+   * Signed in, the server save must succeed: on failure the dose is restored and the
+   * error is thrown. Signed out, it is kept on the phone only.
    */
   async recordAction(
     doseId: string,
@@ -367,7 +368,27 @@ class MedicationStore {
 
       await this.persist();
 
-      // Schedule local device notification if snoozed
+      // Signed in: the server must save it. If it does not, put the dose back as it was
+      // and tell the caller, so the screen and the next sync agree (nothing looks saved
+      // that is not). Signed out (guest demo) the dose is saved on the phone only.
+      if (authService.isAuthenticated()) {
+        try {
+          await medicationService.recordDoseAction(doseId, {
+            action,
+            snoozeMinutes,
+            actionTime: nowIso,
+          });
+        } catch (err) {
+          const idx = this.doses.findIndex((d) => d.id === doseId);
+          if (idx >= 0 && this.doses[idx] === updated) {
+            this.doses = [...this.doses.slice(0, idx), existing, ...this.doses.slice(idx + 1)];
+            await this.persist();
+          }
+          throw err;
+        }
+      }
+
+      // Device-side effects run only once the dose is really saved.
       if (action === 'SNOOZED') {
         const med = this.meds.find((m) => m.id === existing.medicationId);
         if (med) {
@@ -377,19 +398,6 @@ class MedicationStore {
         // Clear active snooze and dismiss any delivered notification banner
         cancelSnoozeRemindersForMedication(existing.medicationId).catch(() => {});
         dismissDeliveredNotificationsForMedication(existing.medicationId).catch(() => {});
-      }
-
-      // Background sync to backend if online and authenticated
-      if (authService.isAuthenticated()) {
-        medicationService
-          .recordDoseAction(doseId, {
-            action,
-            snoozeMinutes,
-            actionTime: nowIso,
-          })
-          .catch(() => {
-            // Safe fallback: keeps optimistic local state
-          });
       }
 
       return updated;

@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import { t } from '../../design/strings';
 
 // Safe dynamic accessor for expo-notifications to ensure compatibility across all test runners
 let customNotificationsModule: any = null;
@@ -100,8 +101,9 @@ export async function requestNotificationPermissions(): Promise<boolean> {
 
 /**
  * Schedules daily recurring notifications for a specific medication dose time:
- * 1. 15-minute advance reminder ("Upcoming in 15m")
- * 2. Exact dose-time alarm ("Time for [Med]")
+ * 1. 15-minute advance reminder
+ * 2. Exact dose-time alarm
+ * Text is generic (no medicine name) so nothing health-related shows on the lock screen.
  * 
  * Uses Expo DailyTriggerInput { type: 'daily', hour, minute } to ensure notifications
  * repeat daily at the scheduled clock time rather than firing immediately.
@@ -150,14 +152,20 @@ export async function scheduleMedicationReminder(
       advanceHour = (advanceHour - 1 + 24) % 24;
     }
 
+    // Lock-screen text is generic: no medicine name, and no instruction the prescription did not give.
+    const trimmedInstructions = instructions?.trim();
+    const doseBody = trimmedInstructions
+      ? t('notifications.dose.bodyWithInstructions', { time: timeString, instructions: trimmedInstructions })
+      : t('notifications.dose.body', { time: timeString });
+
     const dailyTriggerType =
       Notifications.SchedulableTriggerInputTypes?.DAILY || 'daily';
 
     await Notifications.scheduleNotificationAsync({
       identifier: `${baseIdentifier}-adv`,
       content: {
-        title: `🔔 Upcoming in 15m: ${medicationName}`,
-        body: `Scheduled for ${timeString}. ${instructions ? instructions : 'Prepare to take with water.'}`,
+        title: t('notifications.dose.advanceTitle'),
+        body: doseBody,
         sound: 'default',
         priority: Notifications.AndroidNotificationPriority?.HIGH ?? 'high',
         data: { medicationId, time: timeString, type: 'advance_reminder' },
@@ -175,10 +183,8 @@ export async function scheduleMedicationReminder(
     const notifId = await Notifications.scheduleNotificationAsync({
       identifier: `${baseIdentifier}-due`,
       content: {
-        title: `💊 Time for ${medicationName}`,
-        body: instructions
-          ? `${instructions} (${timeString}) • Open app to record Taken, Skip, or Snooze.`
-          : `Time to take your scheduled dose of ${medicationName} (${timeString}). Open to record.`,
+        title: t('notifications.dose.dueTitle'),
+        body: doseBody,
         sound: 'default',
         priority: Notifications.AndroidNotificationPriority?.MAX ?? 'max',
         data: { medicationId, time: timeString, type: 'dose_due' },
@@ -471,8 +477,8 @@ export async function scheduleSnoozeReminder(
     const notifId = await Notifications.scheduleNotificationAsync({
       identifier,
       content: {
-        title: `⏰ Snoozed Medication: ${medicationName}`,
-        body: `Your ${snoozeMinutes}-minute snooze has ended. Tap to record your dose.`,
+        title: t('notifications.snooze.title'),
+        body: t('notifications.snooze.body', { minutes: snoozeMinutes }),
         sound: 'default',
         priority: Notifications.AndroidNotificationPriority?.MAX ?? 'max',
         data: { medicationId, type: 'medication_snooze' },
