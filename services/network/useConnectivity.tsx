@@ -9,7 +9,7 @@ interface ConnectivityValue {
   refreshing: boolean;
 }
 
-const ConnectivityContext = createContext<ConnectivityValue>({
+export const ConnectivityContext = createContext<ConnectivityValue>({
   status: 'unknown',
   refresh: async () => {},
   refreshing: false,

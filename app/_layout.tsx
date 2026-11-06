@@ -16,6 +16,7 @@ import { AppStatusGate } from '../features/app-status/AppStatusGate';
 import { useAppStatus } from '../features/app-status/useAppStatus';
 import { medicineOpenTarget } from '../features/shell/tabs';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
+import { isPreviewEnabled, isPreviewPath } from '../features/dev-preview/previewGuard';
 import {
   requestNotificationPermissions,
   registerNotificationResponseListener,
@@ -68,8 +69,11 @@ export default function RootLayout() {
 
   const gate = authGateState({ initialized, session, endReason });
 
-  // Dev only: the component gallery opens without sign-in, so it needs no backend.
-  if (isGalleryEnabled(__DEV__) && isGalleryPath(pathname)) {
+  // Dev only: the component gallery and the screen preview open without sign-in, so they need no backend.
+  if (
+    (isGalleryEnabled(__DEV__) && isGalleryPath(pathname)) ||
+    (isPreviewEnabled(__DEV__) && isPreviewPath(pathname))
+  ) {
     return (
       <SafeAreaProvider>
         <StatusBar style="dark" />

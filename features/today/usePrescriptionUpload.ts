@@ -12,6 +12,7 @@ import { medicationStore } from '../../services/medications/medication-store';
 import { buildMedicationRecord } from './utils';
 import { confirmPrescriptionDraft } from './prescription-confirmation';
 import { t } from '../../design/strings';
+import { initialProcessingStatus } from '../dev-preview/previewSeam';
 
 export function usePrescriptionUpload({
   session,
@@ -20,8 +21,9 @@ export function usePrescriptionUpload({
   session: UserSession | null;
   onPrescriptionChanged: () => void;
 }) {
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [processingStatus, setProcessingStatus] = useState<string>('');
+  // Dev preview only: an upload can already be running. Always null in production.
+  const [isProcessing, setIsProcessing] = useState<boolean>(() => initialProcessingStatus() !== null);
+  const [processingStatus, setProcessingStatus] = useState<string>(() => initialProcessingStatus() ?? '');
   const [activeReviewData, setActiveReviewData] = useState<any | null>(null);
   const [confirmationNotice, setConfirmationNotice] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
