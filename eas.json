@@ -16,13 +16,26 @@
         "simulator": true
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1"
+        "EXPO_PUBLIC_APP_ENV": "prod"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "prod"
+      }
+    },
+    "dev": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "dev",
+        "EXPO_PUBLIC_DEV_API_URL": "https://xql2eh3n05.execute-api.ap-south-1.amazonaws.com/api/v1"
       }
     }
   },
