@@ -2,6 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { needsRefresh, type SessionEndReason } from '../../features/auth/authGate';
 import { cancelAllMedicationReminders } from '../notifications/notification-service';
 import { t } from '../../design/strings';
+import {
+  APP_ENV_STORAGE_KEY,
+  ENV_SCOPED_STORAGE_KEYS,
+  environmentFingerprint,
+  resolveApiBaseUrl,
+} from '../config/environment';
 
 export interface UserSession {
   userId: string;
@@ -93,8 +99,29 @@ class AuthService {
     this.ready = this.loadPersistedSession();
   }
 
+  /**
+   * Switching between prod, dev and local must never carry a session, cached medicines or scheduled
+   * reminders across: the other backend's IDs and tokens mean nothing here, and dev data must never
+   * appear next to real records. On a change, everything scoped to the old backend is cleared.
+   */
+  private async clearIfEnvironmentChanged(): Promise<void> {
+    const current = environmentFingerprint();
+    const previous = await safeStorage.getItem(APP_ENV_STORAGE_KEY);
+    if (previous === current) return;
+    if (previous !== null) {
+      for (const key of ENV_SCOPED_STORAGE_KEYS) await safeStorage.removeItem(key);
+      try {
+        await cancelAllMedicationReminders();
+      } catch {
+        // Notifications unavailable (tests, web): nothing scheduled to cancel.
+      }
+    }
+    await safeStorage.setItem(APP_ENV_STORAGE_KEY, current);
+  }
+
   private async loadPersistedSession(): Promise<void> {
     try {
+      await this.clearIfEnvironmentChanged();
       const raw = await safeStorage.getItem(STORAGE_KEYS.SESSION);
       if (raw) {
         // A cached session is kept even when its token is old, so an offline patient still gets in.
@@ -152,7 +179,7 @@ class AuthService {
   }
 
   private getBaseUrl(): string {
-    return process.env.EXPO_PUBLIC_API_URL || 'https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1';
+    return resolveApiBaseUrl();
   }
 
   async login(email: string, password: string): Promise<UserSession> {

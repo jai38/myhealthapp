@@ -149,10 +149,10 @@ export class ApiClient {
 }
 
 import { authService } from '../auth/auth-service';
+import { resolveApiBaseUrl } from '../config/environment';
 
-export const getApiBaseUrl = (): string => {
-  return process.env.EXPO_PUBLIC_API_URL || 'https://b3tvclkxnc.execute-api.ap-south-1.amazonaws.com/api/v1';
-};
+/** prod, dev or local, picked by EXPO_PUBLIC_APP_ENV (services/config/environment.ts). */
+export const getApiBaseUrl = (): string => resolveApiBaseUrl();
 
 // Default production-ready client instance with dynamic URL and persisted token
 export const api = new ApiClient({
