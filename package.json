@@ -8,7 +8,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start:prod": "node scripts/start-env.js prod",
+    "start:dev": "node scripts/start-env.js dev",
+    "start:local": "node scripts/start-env.js local"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
