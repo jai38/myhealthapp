@@ -1,0 +1,125 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=402">
+<title>AYORENI S03 Create Your Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Screen 3 · Create Your Account · 402 x 874 pt · Calm Glass v4
+   Hash: #light|#dark - default|filled|errors|dob|selfdescribe */
+:root{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#8A97A8;--act:#0071FF;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#E3EAF2;--offt:#8A97A8;
+--btint:#E4F0FC;--ok:#0B7F3F;--okb:#E3F5EA;--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;--sheet:#FFFFFF;--scrim:rgba(15,23,42,.28);--wheelsel:rgba(118,118,128,.12)}
+html.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
+--btint:rgba(46,144,255,.16);--ok:#5FD38D;--okb:rgba(95,211,141,.14);--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;--sheet:#0C1B2D;--scrim:rgba(0,0,0,.5);--wheelsel:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0}
+html,body{width:402px;height:874px;background:var(--bg);overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);position:relative;-webkit-font-smoothing:antialiased}
+.mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:6;background:linear-gradient(var(--bg) 70%,transparent)}
+.island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.sic{display:flex;gap:6px;align-items:center}
+.scroll{position:absolute;top:54px;left:0;width:402px;padding:10px 20px 0}
+.steps{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--t3)}
+.bar{display:flex;gap:6px;flex:1}
+.bar i{height:5px;border-radius:3px;flex:1;background:var(--off)}
+.bar i.on{background:linear-gradient(90deg,#0060FC,#0080FC 60%,#00C69C)}
+h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em;margin-top:20px}
+.sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:6px;letter-spacing:-.005em}
+.ver{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 12px 7px 10px;border-radius:999px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--t1)}
+.ver .tick{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ok);background:var(--okb);padding:3px 8px;border-radius:999px}
+.form{margin-top:16px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:16px}
+html:not(.dark) .form{outline:1px solid var(--hair);outline-offset:-1px}
+.f+.f{margin-top:14px}
+.lb{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:7px;display:flex;justify-content:space-between}
+.lb .opt{font-weight:400;color:var(--t3);font-size:13px}
+.lb .req{color:var(--t3);font-weight:500}
+.in{height:50px;border-radius:14px;background:var(--field);border:1.5px solid var(--fbd);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:17px;color:var(--t3);letter-spacing:-.01em}
+.in.v{color:var(--t1)}
+.in.fo{border-color:var(--act);box-shadow:0 0 0 4px rgba(0,113,255,.12)}
+.in.er{border-color:var(--err);box-shadow:0 0 0 4px var(--errb)}
+.in svg{color:var(--t3);flex:none}
+.em{display:none;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--err);margin-top:6px}
+.f.bad .em{display:flex}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{height:44px;border-radius:999px;border:1.5px solid var(--fbd);background:var(--field);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14.5px;font-weight:500;color:var(--t1);letter-spacing:-.015em;white-space:nowrap}
+.chip.sel{border-color:var(--act);background:var(--btint);color:var(--act);font-weight:600}
+.f.bad .chip{border-color:var(--err)}
+.ck{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:18px;color:var(--t2);margin-top:16px;padding:0 4px}
+.bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.bx svg{display:none}.ck.on .bx{background:#0071FF;border-color:#0071FF}.ck.on .bx svg{display:block}
+.ck.bad .bx{border-color:var(--err)}
+.ck a{color:var(--act);font-weight:600}
+.cta{position:absolute;left:0;bottom:0;width:402px;padding:14px 20px 44px;background:linear-gradient(transparent,var(--bg) 30%);z-index:4}
+.btn{height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;letter-spacing:-.01em;background:var(--off);color:var(--offt)}
+.on .btn{background:linear-gradient(180deg,#0080FC,#0060FC);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+html.dark .on .btn{box-shadow:none}
+.home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+/* date sheet */
+.scrim{display:none;position:absolute;inset:0;background:var(--scrim);z-index:7}
+.sheet{display:none;position:absolute;left:0;bottom:0;width:402px;height:372px;background:var(--sheet);border-radius:28px 28px 0 0;z-index:8;padding:8px 20px 0;box-shadow:0 -10px 30px rgba(0,0,0,.12)}
+.grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 10px}
+.sh{display:flex;justify-content:space-between;align-items:center;height:40px}
+.sh b{font-size:17px;font-weight:600}
+.sh span{font-size:17px;color:var(--t2)}.sh a{font-size:17px;font-weight:600;color:var(--act)}
+.wheel{position:relative;height:216px;margin-top:10px;display:grid;grid-template-columns:1fr 1.6fr 1.2fr;font:400 21px -apple-system,sans-serif;text-align:center;color:var(--t1);overflow:hidden}
+.wheel:before{content:"";position:absolute;left:0;right:0;top:72px;height:36px;border-radius:9px;background:var(--wheelsel)}
+.col div{height:36px;line-height:36px;position:relative}
+.col div.o1{opacity:.45;transform:scaleY(.92)}.col div.o2{opacity:.22;transform:scaleY(.8)}
+.wheel:after{content:"";position:absolute;inset:0;background:linear-gradient(var(--sheet),transparent 30%,transparent 70%,var(--sheet));pointer-events:none}
+.dob .scrim,.dob .sheet{display:block}
+</style>
+<script>
+const h=(location.hash||'#light-default').slice(1).split('-');
+document.documentElement.classList.toggle('dark',h[0]==='dark');window.S=h[1]||'default';
+</script>
+</head><body>
+<div class="mesh" style="width:300px;height:300px;right:-120px;top:-90px;background:var(--m2)"></div>
+<div class="mesh" style="width:280px;height:280px;left:-150px;top:380px;background:var(--m1)"></div>
+
+<div class="sbar"><span>9:43</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"/></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"/></svg></div></div>
+
+<div class="scroll" id="sc">
+<div class="steps"><div class="bar"><i class="on"></i><i></i></div><span>Step 1 of 2</span></div>
+<h1>Create Your Account</h1>
+<p class="sub">Just a few details to get started with your personal health companion.</p>
+<div class="ver"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18h3"/></svg>+91 ••••• •3210<span class="tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Verified</span></div>
+
+<div class="form">
+<div class="f" id="fn"><div class="lb">Full Name</div><div class="in" id="n">Enter your full name</div><div class="em">⚠ Please enter your full name.</div></div>
+<div class="f" id="fd"><div class="lb">Date of Birth</div><div class="in" id="d"><span>DD / MM / YYYY</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div><div class="em">⚠ Please enter your date of birth.</div></div>
+<div class="f" id="fg"><div class="lb">Gender</div><div class="chips" id="g"><div class="chip">Male</div><div class="chip">Female</div><div class="chip">Other / Self-describe</div><div class="chip">Prefer not to say</div></div>
+<div id="selfd" style="display:none;margin-top:10px"><div class="in fo v" style="font-size:16px">Non-binary<span style="display:inline-block;width:2px;height:20px;background:var(--act);margin-left:2px;margin-right:auto"></span></div><div style="font-size:12px;color:var(--t3);margin-top:6px">Optional · describe in your own words</div></div>
+<div class="em">⚠ Please choose an option.</div></div>
+<div class="f" id="fe"><div class="lb">Email Address <span class="opt">Optional</span></div><div class="in" id="e">name@example.com</div></div>
+</div>
+
+<div class="ck" id="ck"><div class="bx"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div><div>I consent to AYORENI processing my health information to provide this service. <a>Learn how we use it</a></div></div>
+</div>
+
+<div class="cta" id="cta"><div class="btn">Continue</div></div>
+
+<div class="scrim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="sh"><span>Cancel</span><b>Date of Birth</b><a>Done</a></div>
+<div class="wheel">
+<div class="col"><div class="o2">12</div><div class="o1">13</div><div>14</div><div class="o1">15</div><div class="o2">16</div></div>
+<div class="col"><div class="o2">June</div><div class="o1">July</div><div>August</div><div class="o1">September</div><div class="o2">October</div></div>
+<div class="col"><div class="o2">1990</div><div class="o1">1991</div><div>1992</div><div class="o1">1993</div><div class="o2">1994</div></div>
+</div></div>
+<div class="home"></div>
+
+<script>
+const S=window.S,$=id=>document.getElementById(id);
+const chips=[...document.querySelectorAll('.chip')];
+function fill(){ $('n').textContent='Ananya Sharma';$('n').classList.add('v');
+  $('d').firstElementChild.textContent='14 / 08 / 1992';$('d').classList.add('v');$('d').firstElementChild.style.color='var(--t1)';
+  chips[1].classList.add('sel');$('e').textContent='ananya@example.com';$('e').classList.add('v');$('ck').classList.add('on');$('cta').classList.add('on');}
+if(S==='filled') fill();
+if(S==='errors'){ $('fn').classList.add('bad');$('n').classList.add('er');$('fd').classList.add('bad');$('d').classList.add('er');$('fg').classList.add('bad');$('ck').classList.add('bad');}
+if(S==='dob'){ $('n').textContent='Ananya Sharma';$('n').classList.add('v');$('d').classList.add('fo');document.body.classList.add('dob');}
+if(S==='selfdescribe'){ fill();chips[1].classList.remove('sel');chips[2].classList.add('sel');$('selfd').style.display='block';$('sc').style.top='-40px';}
+</script>
+</body></html>

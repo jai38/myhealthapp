@@ -1,0 +1,119 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=402">
+<title>AYORENI S02 OTP</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Screen 2 · OTP Verification · 402 x 874 pt · Calm Glass v4
+   Hash: #light|#dark - default|filled|wrong|verifying|resend|expired */
+:root{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#8A97A8;--act:#0071FF;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#E3EAF2;--offt:#8A97A8;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+--kb:#D1D4DA;--key:#FFFFFF;--keyt:#0F172A;--keysh:0 1px 0 rgba(0,0,0,.3);--sug:#0F172A}
+html.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(16,37,58,.72);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;
+--kb:#2A2C31;--key:#5C5E64;--keyt:#FFFFFF;--keysh:0 1px 0 rgba(0,0,0,.5);--sug:#FFFFFF}
+*{box-sizing:border-box;margin:0}
+html,body{width:402px;height:874px;background:var(--bg);overflow:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);position:relative;-webkit-font-smoothing:antialiased}
+.mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.sic{display:flex;gap:6px;align-items:center}
+.top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between}
+.back{width:44px;height:44px;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1)}
+.mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.mini img{width:30px}
+.main{position:absolute;top:122px;left:20px;width:362px}
+.ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0060FC,#0080FC 60%,#00C69C 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+html.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.sub b{color:var(--t1);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.chg{display:inline-block;margin-top:6px;font-size:15px;font-weight:600;color:var(--act)}
+.boxes{display:flex;gap:9px;margin-top:26px}
+.b{width:53px;height:62px;border-radius:16px;background:var(--field);border:1.5px solid var(--fbd);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;box-shadow:var(--sh)}
+html:not(.dark) .b{box-shadow:0 4px 12px rgba(20,60,120,.05)}
+.b.f{border-color:var(--act);box-shadow:0 0 0 4px rgba(0,113,255,.12)}
+.b .caret{width:2px;height:28px;background:var(--act);border-radius:1px}
+.b.d{border-color:var(--fbd)}
+.gap{width:6px}
+.wrong .b{border-color:var(--err);box-shadow:0 0 0 4px var(--errb);color:var(--t1)}
+.msg{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:14px;font-weight:500;color:var(--t3);font-variant-numeric:tabular-nums;min-height:20px}
+.msg.e{color:var(--err);font-weight:600}
+.msg a{color:var(--act);font-weight:600}
+.cta{position:absolute;left:20px;width:362px}
+.btn{height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:var(--off);color:var(--offt)}
+.on .btn{background:linear-gradient(180deg,#0080FC,#0060FC);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+html.dark .on .btn{box-shadow:none}
+.sp{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;transform:rotate(45deg)}
+/* iOS number pad */
+.kb{position:absolute;left:0;bottom:0;width:402px;height:332px;background:var(--kb);padding:0 6px}
+.sugg{height:46px;display:flex;align-items:center;justify-content:center;flex-direction:column;font:400 13px -apple-system,sans-serif;color:var(--sug);opacity:.9}
+.sugg b{font:600 17px -apple-system,sans-serif;letter-spacing:.04em}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 0 0}
+.k{height:47px;border-radius:6px;background:var(--key);box-shadow:var(--keysh);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--keyt);font:400 25px -apple-system,sans-serif;line-height:24px}
+.k small{font:600 10px -apple-system,sans-serif;letter-spacing:.18em;line-height:11px}
+.k.n{background:transparent;box-shadow:none}
+.home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:3}
+</style>
+<script>
+const h=(location.hash||'#light-default').slice(1).split('-');
+document.documentElement.classList.toggle('dark',h[0]==='dark');window.S=h[1]||'default';
+</script>
+</head><body>
+<div class="mesh" style="width:300px;height:300px;right:-120px;top:-90px;background:var(--m2)"></div>
+<div class="mesh" style="width:280px;height:280px;left:-150px;top:300px;background:var(--m1)"></div>
+
+<div class="sbar"><span>9:42</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"/></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"/></svg></div></div>
+
+<div class="top"><div class="back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+<div class="mini"><img src="../../assets/logo/ayoreni-logo-final-cropped.png" alt="">AYORENI</div><div style="width:44px"></div></div>
+
+<div class="main">
+<div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18h3"/><path d="M9.5 10.5l2 2 3.5-4"/></svg></div>
+<h1>Enter verification code</h1>
+<p class="sub">We sent a 6-digit code to <b>+91 98765 43210</b></p>
+<span class="chg">Change number</span>
+<div class="boxes" id="bx"></div>
+<div class="msg" id="msg"></div>
+</div>
+
+<div class="cta" id="cta"><div class="btn" id="btn">Verify</div></div>
+
+<div class="kb" id="kb"><div class="sugg"><span>From Messages</span><b>482 913</b></div>
+<div class="keys">
+<div class="k">1<small>&nbsp;</small></div><div class="k">2<small>ABC</small></div><div class="k">3<small>DEF</small></div>
+<div class="k">4<small>GHI</small></div><div class="k">5<small>JKL</small></div><div class="k">6<small>MNO</small></div>
+<div class="k">7<small>PQRS</small></div><div class="k">8<small>TUV</small></div><div class="k">9<small>WXYZ</small></div>
+<div class="k n"></div><div class="k">0</div><div class="k n"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M8 2h15a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0123 18H8l-6.5-8z"/><path d="M12 7l6 6M18 7l-6 6" stroke-linecap="round"/></svg></div>
+</div></div>
+<div class="home"></div>
+
+<script>
+const S=window.S,bx=document.getElementById('bx'),msg=document.getElementById('msg'),cta=document.getElementById('cta'),btn=document.getElementById('btn'),kb=document.getElementById('kb');
+let digits=[];
+if(['filled','verifying','wrong'].includes(S)) digits=S==='wrong'?['4','8','2','9','1','8']:['4','8','2','9','1','3'];
+for(let i=0;i<6;i++){
+  const d=document.createElement('div');d.className='b';
+  if(digits[i]){d.textContent=digits[i];d.classList.add('d')}
+  else if(i===digits.length && S!=='verifying'){d.classList.add('f');d.innerHTML='<span class="caret"></span>'}
+  bx.appendChild(d); if(i===2){const g=document.createElement('div');g.className='gap';bx.appendChild(g)}
+}
+const clock='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const warn='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></svg>';
+msg.innerHTML=clock+'Resend code in 0:24';
+if(S==='resend'){msg.innerHTML='Didn’t get the code? <a>Resend code</a>'}
+if(S==='wrong'){bx.classList.add('wrong');msg.className='msg e';msg.innerHTML=warn+'That code isn’t right. 2 attempts left.'}
+if(S==='expired'){msg.className='msg e';msg.innerHTML=warn+'This code has expired.&nbsp;<a style="color:var(--act)">Send a new code</a>'}
+if(S==='filled'||S==='verifying'){cta.classList.add('on')}
+if(S==='verifying'){btn.innerHTML='<span class="sp"></span>Verifying…';msg.innerHTML=''}
+// keyboard visible while typing; hidden once code complete
+const kbUp=!['filled','verifying'].includes(S);
+if(!kbUp){kb.style.display='none';cta.style.bottom='44px'} else {cta.style.bottom=(332+12)+'px'}
+if(S!=='default') document.querySelector('.sugg').style.visibility='hidden';
+</script>
+</body></html>
