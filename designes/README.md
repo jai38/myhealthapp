@@ -1,5 +1,8 @@
 # AYORENI — Design files
 
+**Source of truth: Claude Design canvas → https://claude.ai/artifact/7f6T8pLUF6V4CTzCKeYmU9**
+All new screens are designed there. `claude-design/` holds a backup of the canvas source (`.dc.html` per screen, with Theme and State props). The HTML/PNG mockups in `design/mockups/` are the older static versions of S01–S07, kept for reference.
+
 Design source for the AYORENI health app (Calm Glass UI).
 
 | Path | What it is |

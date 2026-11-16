@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S02 OTP Verification</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.s02{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#8A97A8;--act:#0071FF;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#E3EAF2;--offt:#8A97A8;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+--kb:#D1D4DA;--key:#FFFFFF;--keyt:#0F172A;--keysh:0 1px 0 rgba(0,0,0,.3);--sug:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.s02.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(16,37,58,.72);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;
+--kb:#2A2C31;--key:#5C5E64;--keyt:#FFFFFF;--keysh:0 1px 0 rgba(0,0,0,.5);--sug:#FFFFFF}
+.s02 *{box-sizing:border-box;margin:0}
+.s02 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.s02 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.s02 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.s02 .sic{display:flex;gap:6px;align-items:center}
+.s02 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between}
+.s02 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.s02 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.s02 .mini img{width:30px}
+.s02 .main{position:absolute;top:122px;left:20px;width:362px}
+.s02 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0060FC,#0080FC 60%,#00C69C 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.s02.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.s02 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.s02 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.s02 .sub b{color:var(--t1);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.s02 .chg{display:inline-block;margin-top:6px;font-size:15px;font-weight:600;color:var(--act);text-decoration:none}
+.s02 .boxes{display:flex;gap:9px;margin-top:26px}
+.s02 .b{width:53px;height:62px;border-radius:16px;background:var(--field);border:1.5px solid var(--fbd);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;box-shadow:var(--sh)}
+.s02:not(.dark) .b{box-shadow:0 4px 12px rgba(20,60,120,.05)}
+.s02 .b.f{border-color:var(--act);box-shadow:0 0 0 4px rgba(0,113,255,.12)}
+.s02 .b .caret{width:2px;height:28px;background:var(--act);border-radius:1px}
+.s02 .gap{width:6px}
+.s02 .wrong .b{border-color:var(--err);box-shadow:0 0 0 4px var(--errb);color:var(--t1)}
+.s02 .msg{display:flex;align-items:center;gap:7px;margin-top:14px;font-size:14px;font-weight:500;color:var(--t3);font-variant-numeric:tabular-nums;min-height:20px}
+.s02 .msg.e{color:var(--err);font-weight:600}
+.s02 .msg a{color:var(--act);font-weight:600;text-decoration:none}
+.s02 .cta{position:absolute;left:20px;width:362px}
+.s02 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:var(--off);color:var(--offt)}
+.s02 .on .btn{background:linear-gradient(180deg,#0080FC,#0060FC);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.s02.dark .on .btn{box-shadow:none}
+.s02 .sp{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;transform:rotate(45deg)}
+.s02 .kb{position:absolute;left:0;bottom:0;width:402px;height:332px;background:var(--kb);padding:0 6px}
+.s02 .sugg{height:46px;display:flex;align-items:center;justify-content:center;flex-direction:column;font:400 13px -apple-system,sans-serif;color:var(--sug);opacity:.9}
+.s02 .sugg b{font:600 17px -apple-system,sans-serif;letter-spacing:.04em}
+.s02 .keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.s02 .k{height:47px;border-radius:6px;background:var(--key);box-shadow:var(--keysh);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--keyt);font:400 25px -apple-system,sans-serif;line-height:24px}
+.s02 .k small{font:600 10px -apple-system,sans-serif;letter-spacing:.18em;line-height:11px}
+.s02 .k.n{background:transparent;box-shadow:none}
+.s02 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:3}
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 300px; background: var(--m1)"></div>
+
+<div class="sbar" aria-hidden="true"><span>9:42</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<div class="mini"><img src="/_blob/e4f41c853a2d63dfe718d8db35175a37" alt="">AYORENI</div><div style="width: 44px"></div></div>
+
+<div class="main">
+<div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M10.5 18h3"></path><path d="M9.5 10.5l2 2 3.5-4"></path></svg></div>
+<h1>Enter verification code</h1>
+<p class="sub">We sent a 6-digit code to <b>+91 98765 43210</b></p>
+<a class="chg" href="#change">Change number</a>
+<div class="{{boxesCls}}">
+<sc-for list="{{boxes}}" as="bx" hint-placeholder-count="6">
+<div class="{{bx.cls}}">{{bx.digit}}<sc-if value="{{bx.caret}}" hint-placeholder-val="{{ false }}"><span class="caret"></span></sc-if></div>
+<sc-if value="{{bx.gapAfter}}" hint-placeholder-val="{{ false }}"><div class="gap"></div></sc-if>
+</sc-for>
+</div>
+<div class="{{msgCls}}">
+<sc-if value="{{showTimer}}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Resend code in 0:24</sc-if>
+<sc-if value="{{isResend}}" hint-placeholder-val="{{ false }}">Didn’t get the code? <a href="#resend">Resend code</a></sc-if>
+<sc-if value="{{isWrong}}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>That code isn’t right. 2 attempts left.</sc-if>
+<sc-if value="{{isExpired}}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>This code has expired.&nbsp;<a href="#new">Send a new code</a></sc-if>
+</div>
+</div>
+
+<div class="{{ctaCls}}" style="bottom: {{ctaBottom}}"><button class="btn" type="button">
+<sc-if value="{{isVerifying}}" hint-placeholder-val="{{ false }}"><span class="sp"></span>Verifying…</sc-if>
+<sc-if value="{{notVerifying}}" hint-placeholder-val="{{ true }}">Verify</sc-if>
+</button></div>
+
+<sc-if value="{{kbUp}}" hint-placeholder-val="{{ true }}">
+<div class="kb" aria-hidden="true"><div class="sugg" style="visibility: {{suggVis}}"><span>From Messages</span><b>482 913</b></div>
+<div class="keys">
+<div class="k">1<small>&nbsp;</small></div><div class="k">2<small>ABC</small></div><div class="k">3<small>DEF</small></div>
+<div class="k">4<small>GHI</small></div><div class="k">5<small>JKL</small></div><div class="k">6<small>MNO</small></div>
+<div class="k">7<small>PQRS</small></div><div class="k">8<small>TUV</small></div><div class="k">9<small>WXYZ</small></div>
+<div class="k n"></div><div class="k">0</div><div class="k n"><svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M8 2h15a1.5 1.5 0 011.5 1.5v13A1.5 1.5 0 0123 18H8l-6.5-8z"></path><path d="M12 7l6 6M18 7l-6 6" stroke-linecap="round"></path></svg></div>
+</div></div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","filled","wrong","verifying","resend","expired"],"default":"default"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'default';
+    let digits = [];
+    if (s === 'filled' || s === 'verifying') digits = ['4', '8', '2', '9', '1', '3'];
+    if (s === 'wrong') digits = ['4', '8', '2', '9', '1', '8'];
+    const boxes = [];
+    for (let i = 0; i < 6; i++) {
+      const has = !!digits[i];
+      const caret = !has && i === digits.length && s !== 'verifying';
+      boxes.push({ digit: has ? digits[i] : '', caret, cls: 'b' + (caret ? ' f' : ''), gapAfter: i === 2 });
+    }
+    const kbUp = s !== 'filled' && s !== 'verifying';
+    return {
+      rootCls: 's02' + (t === 'dark' ? ' dark' : ''),
+      boxes,
+      boxesCls: 'boxes' + (s === 'wrong' ? ' wrong' : ''),
+      msgCls: 'msg' + (s === 'wrong' || s === 'expired' ? ' e' : ''),
+      showTimer: s === 'default' || s === 'filled',
+      isResend: s === 'resend',
+      isWrong: s === 'wrong',
+      isExpired: s === 'expired',
+      isVerifying: s === 'verifying',
+      notVerifying: s !== 'verifying',
+      ctaCls: 'cta' + (s === 'filled' || s === 'verifying' ? ' on' : ''),
+      ctaBottom: kbUp ? '344px' : '44px',
+      kbUp,
+      suggVis: s === 'default' ? 'visible' : 'hidden'
+    };
+  }
+}
+</script>
+</body>
+</html>

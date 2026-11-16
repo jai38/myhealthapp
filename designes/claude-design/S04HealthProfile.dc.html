@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S04 Your Health Profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.s04{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#8A97A8;--act:#0071FF;--field:#FFFFFF;--fbd:#D9E3EE;--off:#E3EAF2;--offt:#8A97A8;--seg:#EEF2F7;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#028265;--ok:#0B7F3F;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--err:#D0101F;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;--pop:#FFFFFF;
+width:402px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.s04.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;--seg:rgba(255,255,255,.07);
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.12);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--err:#FF6B76;
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;--pop:#10253A}
+.s04 *{box-sizing:border-box;margin:0}
+.s04 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.s04 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:6;background:linear-gradient(var(--bg) 70%,transparent)}
+.s04 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.s04 .sic{display:flex;gap:6px;align-items:center}
+.s04 .wrap{position:relative;padding:64px 20px 150px}
+.s04.phone .wrap{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto}
+.s04 .nav{display:flex;align-items:center;gap:12px}
+.s04 .back{width:40px;height:40px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;flex:none;color:var(--t1);cursor:pointer}
+.s04 .bar{display:flex;gap:6px;flex:1}.s04 .bar i{height:5px;border-radius:3px;flex:1;background:linear-gradient(90deg,#0060FC,#0080FC 60%,#00C69C)}
+.s04 .skip{font-size:16px;font-weight:600;color:var(--act);flex:none;text-decoration:none}
+.s04 .stp{font-size:13px;color:var(--t3);margin-top:14px;font-weight:500}
+.s04 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em;margin-top:4px}
+.s04 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:6px;letter-spacing:-.005em}
+.s04 .sec{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);margin:24px 4px 8px}
+.s04 .card{border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:16px}
+.s04:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.s04 .lb{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline}
+.s04 .lb .opt{font-weight:400;color:var(--t3);font-size:13px}
+.s04 .row{display:flex;gap:10px;align-items:center}
+.s04 .in{height:50px;border-radius:14px;background:var(--field);border:1.5px solid var(--fbd);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:17px;color:var(--t3);letter-spacing:-.01em;flex:1;font-variant-numeric:tabular-nums}
+.s04 .in.v{color:var(--t1)}.s04 .in.fo{border-color:var(--act);box-shadow:0 0 0 4px rgba(0,113,255,.12)}
+.s04 .in .u{font-size:15px;color:var(--t3)}
+.s04 .seg{display:flex;background:var(--seg);border-radius:12px;padding:3px;height:40px;flex:none}
+.s04 .seg span{min-width:46px;padding:0 10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--t2);border-radius:9px}
+.s04 .seg span.on{background:var(--field);color:var(--t1);box-shadow:0 2px 6px rgba(20,60,120,.12)}
+.s04.dark .seg span.on{background:#1B3550}
+.s04 .f+.f{margin-top:16px}
+.s04 .bg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.s04 .chip{height:44px;border-radius:999px;border:1.5px solid var(--fbd);background:var(--field);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:var(--t1)}
+.s04 .chip.sel{border-color:var(--act);background:var(--btint);color:var(--act)}
+.s04 .chip.wide{grid-column:span 4;font-weight:500}
+.s04 .q{font-size:17px;font-weight:600;letter-spacing:-.015em;margin-bottom:12px}
+.s04 .opt-row{display:flex;align-items:center;gap:12px;height:54px;padding:0 14px;border-radius:16px;border:1.5px solid var(--fbd);background:var(--field);font-size:16px;font-weight:500;letter-spacing:-.01em}
+.s04 .opt-row+.opt-row{margin-top:8px}
+.s04 .rad{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center}
+.s04 .opt-row.sel{border-color:var(--act);background:var(--btint);font-weight:600}
+.s04 .opt-row.sel .rad{border:6.5px solid #0071FF;background:#fff}
+.s04 .info{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.s04 .info.g{background:var(--okb);color:var(--ok)}.s04 .info.b{background:var(--infob);color:var(--info)}
+.s04 .info svg{flex:none;margin-top:1px}
+.s04 .af{margin-top:14px;padding-top:14px;border-top:1px solid var(--hair)}
+.s04 .aft{font-size:15px;font-weight:700;margin-bottom:12px;letter-spacing:-.01em}
+.s04 .pop{margin-top:6px;border-radius:14px;background:var(--pop);border:1px solid var(--hair);box-shadow:0 10px 24px rgba(20,60,120,.12);overflow:hidden}
+.s04 .pop div{padding:11px 14px;font-size:15px;border-top:1px solid var(--hair)}.s04 .pop div:first-child{border-top:0}
+.s04 .pop b{font-weight:600}.s04 .pop small{color:var(--t3);font-size:12px;margin-left:6px}
+.s04 .sev{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.s04 .sev .chip{font-size:14px;font-weight:500;height:40px}
+.s04 .btn2{width:100%;border:0;font-family:inherit;cursor:pointer;height:46px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-top:16px;background:var(--btint);color:var(--act)}
+.s04 .saved{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:var(--field);border:1.5px solid var(--fbd);margin-top:14px}
+.s04 .ai{width:40px;height:40px;border-radius:12px;background:rgba(208,16,31,.08);color:var(--err);display:flex;align-items:center;justify-content:center;flex:none}
+.s04.dark .ai{background:rgba(255,107,118,.14)}
+.s04 .sx{flex:1}.s04 .sn{font-size:16px;font-weight:600;letter-spacing:-.01em}.s04 .sd{font-size:13px;color:var(--t2);margin-top:1px}
+.s04 .sev-pill{font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:#FFF1DB;color:#9A5B00}
+.s04.dark .sev-pill{background:rgba(245,184,74,.14);color:#F5B84A}
+.s04 .ed{color:var(--t3);display:flex;gap:14px}
+.s04 .add{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:16px;font-weight:600;color:var(--act);padding:6px 4px}
+.s04 .cta{position:absolute;left:0;bottom:0;width:402px;padding:18px 20px 44px;background:linear-gradient(transparent,var(--bg) 28%);z-index:4}
+.s04 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#0080FC,#0060FC);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.s04.dark .btn{box-shadow:none}
+.s04 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+</style>
+</helmet>
+<div class="{{rootCls}}" style="height: {{rootH}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 420px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 980px; background: var(--m2)"></div>
+
+<div class="wrap">
+<div class="nav"><button class="back" type="button" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<div class="bar"><i></i><i></i></div><a class="skip" href="#skip">Skip for Now</a></div>
+<p class="stp">Step 2 of 2</p>
+<h1>Your Health Profile</h1>
+<p class="sub">Add a few health details to personalize AYORENI. You can update them anytime.</p>
+
+<p class="sec">Body measurements</p>
+<div class="card">
+<div class="f"><div class="lb">Height <span class="opt">Optional</span></div>
+<div class="row"><div class="{{inCls}}"><span style="color: {{valColor}}">{{heightText}}</span><span class="u">cm</span></div><div class="seg"><span class="on">cm</span><span>in</span></div></div></div>
+<div class="f"><div class="lb">Weight <span class="opt">Optional</span></div>
+<div class="row"><div class="{{inCls}}"><span style="color: {{valColor}}">{{weightText}}</span><span class="u">kg</span></div><div class="seg"><span class="on">kg</span><span>lb</span></div></div></div>
+</div>
+
+<p class="sec">Blood group</p>
+<div class="card"><div class="bg">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="8"><div class="{{g.cls}}">{{g.label}}</div></sc-for>
+<div class="chip wide">I don't know</div></div></div>
+
+<p class="sec">Allergies</p>
+<div class="card">
+<p class="q">Do you have any known allergies?</p>
+<div class="{{oyCls}}"><span class="rad"></span>Yes, I have known allergies</div>
+<div class="{{onCls}}"><span class="rad"></span>No known allergies</div>
+<div class="{{ouCls}}"><span class="rad"></span>I'm not sure</div>
+
+<sc-if value="{{isNo}}" hint-placeholder-val="{{ false }}"><div class="info g"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg><span>We'll record this as 'No known allergies.' You can update it anytime in your Profile.</span></div></sc-if>
+<sc-if value="{{isNotSure}}" hint-placeholder-val="{{ false }}"><div class="info b"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><span>Your allergy status will be recorded as 'Unknown.' You can update it later when you have more information.</span></div></sc-if>
+
+<sc-if value="{{isYes}}" hint-placeholder-val="{{ false }}"><div class="af"><p class="aft">Add allergy</p>
+<div class="f"><div class="lb">Allergen</div><div class="in v fo">Penic<span style="display: inline-block; width: 2px; height: 20px; background: var(--act); margin-right: auto; margin-left: 1px"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></div>
+<div class="pop"><div><b>Penic</b>illin <small>Medicine</small></div><div><b>Penic</b>illin V <small>Medicine</small></div><div>Add "Penic" as typed</div></div></div>
+<div class="f"><div class="lb">Reaction <span class="opt">Optional</span></div><div class="in">e.g. rash, swelling, breathing trouble</div></div>
+<div class="f"><div class="lb">Severity <span class="opt">Optional</span></div><div class="sev"><div class="chip">Mild</div><div class="chip">Moderate</div><div class="chip">Severe</div><div class="chip">Not sure</div></div></div>
+<button class="btn2" type="button">Save Allergy</button></div></sc-if>
+
+<sc-if value="{{isSaved}}" hint-placeholder-val="{{ false }}"><div><div class="saved"><div class="ai"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 16H3z"></path><path d="M12 10v4M12 17h.01"></path></svg></div>
+<div class="sx"><div class="sn">Penicillin</div><div class="sd">Rash · <span class="sev-pill">Moderate</span></div></div>
+<div class="ed"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Edit allergy"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" role="img" aria-label="Delete allergy"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"></path></svg></div></div>
+<div class="add"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add Another Allergy</div></div></sc-if>
+</div>
+</div>
+
+<div class="sbar" aria-hidden="true"><span>9:44</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+
+<div class="cta"><button class="btn" type="button">Continue</button></div>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","yes","saved","no","notsure"],"default":"yes"},"viewport":{"editor":"enum","options":["full","phone"],"default":"full"},"$preview":{"width":402,"height":1680}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'yes';
+    const vp = this.props.viewport ?? 'full';
+    const filled = s !== 'default';
+    const labels = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'];
+    const opt = (k) => 'opt-row' + (k ? ' sel' : '');
+    return {
+      rootCls: 's04' + (t === 'dark' ? ' dark' : '') + (vp === 'phone' ? ' phone' : ''),
+      rootH: vp === 'phone' ? '874px' : '1680px',
+      inCls: 'in' + (filled ? ' v' : ''),
+      valColor: filled ? 'var(--t1)' : 'inherit',
+      heightText: filled ? '162' : 'Enter height',
+      weightText: filled ? '58' : 'Enter weight',
+      groups: labels.map((label, i) => ({ label, cls: 'chip' + (filled && i === 2 ? ' sel' : '') })),
+      oyCls: opt(s === 'yes' || s === 'saved'),
+      onCls: opt(s === 'no'),
+      ouCls: opt(s === 'notsure'),
+      isYes: s === 'yes',
+      isSaved: s === 'saved',
+      isNo: s === 'no',
+      isNotSure: s === 'notsure'
+    };
+  }
+}
+</script>
+</body>
+</html>

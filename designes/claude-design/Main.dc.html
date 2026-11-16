@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AYORENI design system and screen index</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0071FF}a:hover{color:#0060FC}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; box-sizing: border-box; padding: 56px 64px; background: #F7FAFC; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; display: flex; flex-direction: column; gap: 36px">
+  <div style="display: flex; align-items: center; gap: 20px">
+    <img src="/_blob/e4f41c853a2d63dfe718d8db35175a37" alt="AYORENI logo" style="width: 72px; height: auto">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <div style="font-size: 15px; font-weight: 700; letter-spacing: 0.24em; color: #5B6B7F">AYORENI</div>
+      <h1 style="margin: 0; font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -0.03em">Calm Glass UI v4 · Design system &amp; screen index</h1>
+      <p style="margin: 0; font-size: 16px; line-height: 23px; color: #5B6B7F">Frozen 2026-11-16. Canvas 402 × 874 pt (iPhone 17 Pro). Every screen below has a Theme (light / dark) and State tweak; the States boards show every state side by side for development.</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; flex-grow: 1; min-height: 0">
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 22px; background: #FFFFFF; border: 1px solid #E7EEF5; box-shadow: 0 8px 24px rgba(20,60,120,0.08)">
+      <h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Colour tokens</h2>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 56px 56px; gap: 6px 10px; font-size: 13px; line-height: 18px; color: #5B6B7F; font-weight: 600">
+        <div>Token</div><div>Light</div><div>Dark</div>
+      </div>
+      <sc-for list="{{colors}}" as="c" hint-placeholder-count="14">
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 56px 56px; gap: 10px; align-items: center">
+          <div style="display: flex; flex-direction: column">
+            <span style="font-size: 14px; font-weight: 600">{{c.name}}</span>
+            <span style="font-size: 12px; color: #5B6B7F; font-variant-numeric: tabular-nums">{{c.values}}</span>
+          </div>
+          <div style="height: 28px; border-radius: 8px; border: 1px solid #D9E3EE; background: {{c.light}}"></div>
+          <div style="height: 28px; border-radius: 8px; border: 1px solid #1B3550; background: {{c.dark}}"></div>
+        </div>
+      </sc-for>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 22px; background: #FFFFFF; border: 1px solid #E7EEF5; box-shadow: 0 8px 24px rgba(20,60,120,0.08)">
+      <h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Type · Plus Jakarta Sans</h2>
+      <sc-for list="{{type}}" as="t" hint-placeholder-count="11">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid #E7EEF5">
+          <span style="{{t.style}}">{{t.name}}</span>
+          <span style="font-size: 12px; color: #5B6B7F; font-variant-numeric: tabular-nums; white-space: nowrap">{{t.spec}}</span>
+        </div>
+      </sc-for>
+      <h2 style="margin: 12px 0 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Shape &amp; elevation</h2>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #5B6B7F">Radii: hero 28 · cards 22 · tiles 18 · inputs 16 · icon chips 12 · buttons, chips and tab bar are pills. Margin 16, section gap 22–26, row min height 68, touch targets ≥ 44. Light cards 0 8 24 rgba(20,60,120,.08) with blur 20–24; dark cards add an inset top highlight; no button glow in dark.</p>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 22px; background: #FFFFFF; border: 1px solid #E7EEF5; box-shadow: 0 8px 24px rgba(20,60,120,0.08)">
+      <h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Screens</h2>
+      <sc-for list="{{screens}}" as="s" hint-placeholder-count="7">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E7EEF5">
+          <span style="width: 40px; font-size: 14px; font-weight: 700; color: #0071FF; font-variant-numeric: tabular-nums">{{s.id}}</span>
+          <div style="flex-grow: 1; display: flex; flex-direction: column">
+            <span style="font-size: 15px; font-weight: 600">{{s.name}}</span>
+            <span style="font-size: 12px; color: #5B6B7F">{{s.flow}} · {{s.states}}</span>
+          </div>
+          <span style="{{s.pill}}">{{s.status}}</span>
+        </div>
+      </sc-for>
+      <h2 style="margin: 12px 0 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Product rules</h2>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #5B6B7F">Tabs: Today / Records / Medications / Profile. Dose statuses: Taken, Due now, Upcoming, Not confirmed, Missed (only when the user says so). Status chips always pair an icon with a word. Allergies live in the Health Profile (S04). Profile has 9 sections.</p>
+    </section>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const pillBase = 'font-size: 12px; font-weight: 600; border-radius: 999px; padding: 5px 10px; white-space: nowrap; ';
+    const locked = pillBase + 'background: #E3F5EA; color: #0B7F3F';
+    const review = pillBase + 'background: #FFF1DB; color: #9A5B00';
+    return {
+      colors: [
+        { name: 'bg', values: '#F7FAFC / #07111F', light: '#F7FAFC', dark: '#07111F' },
+        { name: 'surface-elevated', values: '#FFFFFF / #0C1B2D', light: '#FFFFFF', dark: '#0C1B2D' },
+        { name: 'glass-card', values: 'white 72% / #10253A 72%', light: 'rgba(255,255,255,0.72)', dark: 'rgba(16,37,58,0.72)' },
+        { name: 'text-primary', values: '#0F172A / #F7FAFF', light: '#0F172A', dark: '#F7FAFF' },
+        { name: 'text-secondary', values: '#5B6B7F / #B7C4D6', light: '#5B6B7F', dark: '#B7C4D6' },
+        { name: 'text-tertiary', values: '#8A97A8 / #8EA0B5', light: '#8A97A8', dark: '#8EA0B5' },
+        { name: 'primary-gradient', values: '#0080FC → #0060FC', light: 'linear-gradient(180deg,#0080FC,#0060FC)', dark: 'linear-gradient(180deg,#0080FC,#0060FC)' },
+        { name: 'action-blue', values: '#0071FF / #2E90FF', light: '#0071FF', dark: '#2E90FF' },
+        { name: 'brand-teal', values: '#00C69C', light: '#00C69C', dark: '#00C69C' },
+        { name: 'teal-text / icon', values: '#028265 / #20D7C5', light: '#028265', dark: '#20D7C5' },
+        { name: 'blue-tint', values: '#E4F0FC / blue 14%', light: '#E4F0FC', dark: 'rgba(46,144,255,0.14)' },
+        { name: 'teal-tint', values: '#E6F8F3 / teal 12%', light: '#E6F8F3', dark: 'rgba(32,215,197,0.12)' },
+        { name: 'error-text', values: '#D0101F / #FF6B76', light: '#D0101F', dark: '#FF6B76' },
+        { name: 'hero', values: '#0060FC → #0080FC → #00C69C', light: 'linear-gradient(135deg,#0060FC 0%,#0080FC 55%,#00C69C 135%)', dark: 'linear-gradient(135deg,#0060FC 0%,#0080FC 55%,#00C69C 135%)' }
+      ],
+      type: [
+        { name: 'AYORENI', spec: 'Wordmark 15 · 700 · +24%', style: 'font-size: 15px; font-weight: 700; letter-spacing: 0.24em' },
+        { name: 'Large Title', spec: '34/40 · 700 · −3%', style: 'font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -0.03em' },
+        { name: 'Title 1', spec: '28/34 · 700 · −2.5%', style: 'font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.025em' },
+        { name: 'Title 3 / Section', spec: '20/25 · 700 · −2%', style: 'font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em' },
+        { name: 'Headline', spec: '17/22 · 600 · −1.5%', style: 'font-size: 17px; line-height: 22px; font-weight: 600; letter-spacing: -0.015em' },
+        { name: 'Body', spec: '16–17/23 · 400', style: 'font-size: 16px; line-height: 23px; font-weight: 400' },
+        { name: 'Subhead / Meta', spec: '14–15/20 · 400', style: 'font-size: 14px; line-height: 20px; font-weight: 400' },
+        { name: 'Footnote', spec: '13/18 · 400–500', style: 'font-size: 13px; line-height: 18px; font-weight: 400' },
+        { name: 'OVERLINE', spec: '13 · 600 · +6% caps', style: 'font-size: 13px; font-weight: 600; letter-spacing: 0.06em' },
+        { name: 'Caption / chip', spec: '12/16 · 400 / 600', style: 'font-size: 12px; line-height: 16px; font-weight: 600' },
+        { name: 'Button', spec: '17/20 · 600 · −1%', style: 'font-size: 17px; line-height: 20px; font-weight: 600; letter-spacing: -0.01em' }
+      ],
+      screens: [
+        { id: 'S01', name: 'Mobile Number', flow: 'Flow 1', states: '4 states', status: 'Locked', pill: locked },
+        { id: 'S02', name: 'OTP Verification', flow: 'Flow 1', states: '6 states', status: 'Locked', pill: locked },
+        { id: 'S03', name: 'Create Your Account', flow: 'Flow 1', states: '5 states', status: 'Locked', pill: locked },
+        { id: 'S04', name: 'Your Health Profile', flow: 'Flow 1', states: '5 states', status: 'Locked', pill: locked },
+        { id: 'S05', name: 'Welcome / first-time Today', flow: 'Flow 1', states: '3 states', status: 'Locked', pill: locked },
+        { id: 'S06', name: 'Today (returning)', flow: 'Flow 2', states: '2 states', status: 'Locked', pill: locked },
+        { id: 'S07', name: 'Dose update + Mark as Taken', flow: 'Flow 2', states: '4 states + toast', status: 'In review', pill: review }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
