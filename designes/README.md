@@ -12,3 +12,8 @@ Design source for the AYORENI health app (Calm Glass UI).
 | `assets/logo/` | Final glossy "A" + pulse logo (PNG / WebP) |
 
 Screens S01–S06 are locked; S07 (dose update sheet + Mark as Taken toast) is in review.
+
+## Where designs live
+
+All AYORENI designs are pushed to the **`designes/initial-upload`** branch only.
+Developers should take designs from this branch, not from `main`.
