@@ -95,3 +95,19 @@ Shown when S03's date of birth is under 18 (block at launch, Phase 5 P4, pending
 - Back button; large glass shield; "Ayoreni is for adults for now" / "You need to be 18 or older to create an account."; blue note "We’re working on a safe way for parents and guardians to keep a child’s health records. Nothing you entered has been saved."; "Check Date of Birth" (back to S03 with the wheel open) / "Close".
 - Requirement: S03 data is not stored when the age check fails.
 
+## Flow 4 · Medications
+
+### M02 · Medication Details — REVIEW 2026-11-19
+Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · Medication Details" (props: theme, state, viewport full/phone) and "M02 · States". Built only from fields in `api.md` `MedicationDetail` (no invented data); quantity per dose isn't stored, so the dose line is strength · form · route.
+- States: `active` (prescribed), `manual` (added by you), `paused`, `stopped`, `inactive` (from an older prescription).
+- Nav: glass back button (to the previous tab) and a glass ⋯ button (same actions as Manage). No tab bar; this is a pushed screen.
+- Header: 60pt blue pill tile; name (normalizedMedicineName, else nameAsWritten) Title 1; "500 mg · Tablet · By mouth"; chips: status (● Active green, ❚❚ Paused amber, ✕ Stopped red, "Not in daily list" grey) + source (Prescribed blue / Added by you grey). Icon + word, never colour alone.
+- Status note under the header: Paused "Paused since <date>" / "No reminders or doses until you resume. Past doses stay in your history."; Stopped "Stopped on <date>" / "Reason: <discontinuedReason>. It stays in your records."; Inactive "Not in your daily list" / "This came from an older prescription, so it has no reminders. Start it only if you’re taking it now." + primary "Start Taking" (→ pick reminder times, then `POST /medications/:id/activate`).
+- **Today** card (active only): each of today's doses with the S06 chips; Taken shows the actual time. Paused, stopped and inactive medicines show no Today card and **no Taken / Skip** anywhere.
+- **How to take**: Instructions (prescribedInstructions); Reminders ("8:00 AM · 8:00 PM" / "Every day", Edit link; paused "Off while paused"; stopped "Turned off when stopped"; inactive "None" / "Set when you start taking it"); Course (start date / "No end date", or "12 Oct – 15 Nov 2026" / "Stopped early").
+- **Prescription** (prescribed): doctor, clinic, date; "As written" shows nameAsWritten verbatim in a grey code-style pill, "Exactly as on the prescription"; "View Prescription" opens the signed document URL. **Source** (added by you): "Added by you" / "On <date> · no prescription linked"; "As entered" verbatim.
+- **History**: newest 4 dose logs (scheduled time + day, chip, actual time or skip reason); past PENDING shows "? Not confirmed" / "Tap to update" (opens S07); "See All" → full intake history (M08, later). Hidden for inactive.
+- **Notes**: patient notes, "Only you can see your notes", Edit.
+- **Manage** (active / paused): Edit Reminder Times; Pause Medicine or Resume Medicine; Mark as Completed; Stop Medicine (red, asks for an optional reason, then `discontinue`). Footnote "Stopping or completing keeps the medicine and its history in your records." Completed/stopped medicines show no Manage card (the API can't restart them).
+- Decisions: names and dates in the design are mock data; the build uses the synthetic set ("Asha Test", "Testmed A 500 mg").
+

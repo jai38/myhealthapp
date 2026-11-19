@@ -149,6 +149,20 @@
       "w": 4476,
       "h": 2064,
       "title": "Account security · States (light / dark)"
+    },
+    "M02MedicationDetails.dc.html": {
+      "x": 0,
+      "y": 24016,
+      "w": 402,
+      "h": 1640,
+      "title": "M02 · Medication Details (full scroll)"
+    },
+    "M02States.dc.html": {
+      "x": 482,
+      "y": 24016,
+      "w": 2266,
+      "h": 3596,
+      "title": "M02 · States (light / dark, full scroll)"
     }
   },
   "order": [
@@ -171,7 +185,9 @@
     "A02RecoveryCode.dc.html",
     "A03NewDevice.dc.html",
     "A04Under18.dc.html",
-    "SecurityStates.dc.html"
+    "SecurityStates.dc.html",
+    "M02MedicationDetails.dc.html",
+    "M02States.dc.html"
   ],
   "notes": {
     "t01": {
@@ -229,6 +245,13 @@
       "text": "Flow 3 · Account security (Phase 5): app lock, recovery code, new device, under 18 · IN REVIEW",
       "kind": "title1",
       "maxW": 6404
+    },
+    "t09": {
+      "x": 0,
+      "y": 23756,
+      "text": "Medications · M02 Medication Details · IN REVIEW",
+      "kind": "title1",
+      "maxW": 2748
     }
   },
   "designSystems": []
