@@ -14,12 +14,12 @@ body{margin:0}
 .s02{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
 --t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
 --m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
---kb:#D1D4DA;--key:#FFFFFF;--keyt:#0F172A;--keysh:0 1px 0 rgba(0,0,0,.3);--sug:#0F172A;
+--kb:#D1D4DA;--key:#FFFFFF;--keyt:#0F172A;--keysh:0 1px 0 rgba(0,0,0,.3);--sug:#0F172A;--info:#0060D6;--infob:#E4F0FC;
 width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
 .s02.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
 --t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(16,37,58,.72);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
 --m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;
---kb:#2A2C31;--key:#5C5E64;--keyt:#FFFFFF;--keysh:0 1px 0 rgba(0,0,0,.5);--sug:#FFFFFF}
+--kb:#2A2C31;--key:#5C5E64;--keyt:#FFFFFF;--keysh:0 1px 0 rgba(0,0,0,.5);--sug:#FFFFFF;--info:#7DB8FF;--infob:rgba(46,144,255,.14)}
 .s02 *{box-sizing:border-box;margin:0}
 .s02 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
 .s02 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
@@ -58,6 +58,11 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 .s02 .k{height:47px;border-radius:6px;background:var(--key);box-shadow:var(--keysh);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--keyt);font:400 25px -apple-system,sans-serif;line-height:24px}
 .s02 .k small{font:600 10px -apple-system,sans-serif;letter-spacing:.18em;line-height:11px}
 .s02 .k.n{background:transparent;box-shadow:none}
+.s02 .mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;min-height:44px}
+.s02 .mrow .msg{margin-top:0}
+.s02 .paste{flex:none;display:inline-flex;align-items:center;gap:7px;height:44px;padding:0 16px;border-radius:999px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);color:var(--act);font-family:inherit;font-size:15px;font-weight:600;letter-spacing:-.01em;cursor:pointer}
+.s02 .wa{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--infob);color:var(--info);font-size:14px;line-height:20px}
+.s02 .wa svg{flex:none;margin-top:2px}.s02 .wa b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
 .s02 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:3}
 </style>
 </helmet>
@@ -76,7 +81,7 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 <div class="main">
 <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"></rect><path d="M10.5 18h3"></path><path d="M9.5 10.5l2 2 3.5-4"></path></svg></div>
 <h1>Enter verification code</h1>
-<p class="sub">We sent a 6-digit code to <b>+91 98765 43210</b></p>
+<p class="sub">We sent a code on WhatsApp to <b>+91 98765 43210</b></p>
 <a class="chg" href="#change">Change number</a>
 <div class="{{boxesCls}}">
 <sc-for list="{{boxes}}" as="bx" hint-placeholder-count="6">
@@ -84,21 +89,32 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 <sc-if value="{{bx.gapAfter}}" hint-placeholder-val="{{ false }}"><div class="gap"></div></sc-if>
 </sc-for>
 </div>
+<div class="mrow">
+<sc-if value="{{showMsg}}" hint-placeholder-val="{{ true }}">
 <div class="{{msgCls}}">
 <sc-if value="{{showTimer}}" hint-placeholder-val="{{ true }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Resend code in 0:24</sc-if>
 <sc-if value="{{isResend}}" hint-placeholder-val="{{ false }}">Didn’t get the code? <a href="#resend">Resend code</a></sc-if>
 <sc-if value="{{isWrong}}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>That code isn’t right. 2 attempts left.</sc-if>
 <sc-if value="{{isExpired}}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>This code has expired.&nbsp;<a href="#new">Send a new code</a></sc-if>
 </div>
+</sc-if>
+<sc-if value="{{showPaste}}" hint-placeholder-val="{{ true }}">
+<button class="paste" type="button" aria-label="Paste code"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="4" rx="1.5"></rect><path d="M8 5H6.5A1.5 1.5 0 005 6.5v13A1.5 1.5 0 006.5 21h11a1.5 1.5 0 001.5-1.5v-13A1.5 1.5 0 0017.5 5H16"></path></svg>Paste</button>
+</sc-if>
+</div>
+<sc-if value="{{noWa}}" hint-placeholder-val="{{ false }}">
+<div class="wa" role="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><div><b>We couldn’t send your code</b>This number doesn’t seem to use WhatsApp. Check the number, or use one that has WhatsApp.</div></div>
+</sc-if>
 </div>
 
 <div class="{{ctaCls}}" style="bottom: {{ctaBottom}}"><button class="btn" type="button">
 <sc-if value="{{isVerifying}}" hint-placeholder-val="{{ false }}"><span class="sp"></span>Verifying…</sc-if>
-<sc-if value="{{notVerifying}}" hint-placeholder-val="{{ true }}">Verify</sc-if>
+<sc-if value="{{showVerify}}" hint-placeholder-val="{{ true }}">Verify</sc-if>
+<sc-if value="{{noWa}}" hint-placeholder-val="{{ false }}">Use Another Number</sc-if>
 </button></div>
 
 <sc-if value="{{kbUp}}" hint-placeholder-val="{{ true }}">
-<div class="kb" aria-hidden="true"><div class="sugg" style="visibility: {{suggVis}}"><span>From Messages</span><b>482 913</b></div>
+<div class="kb" aria-hidden="true"><div class="sugg"></div>
 <div class="keys">
 <div class="k">1<small>&nbsp;</small></div><div class="k">2<small>ABC</small></div><div class="k">3<small>DEF</small></div>
 <div class="k">4<small>GHI</small></div><div class="k">5<small>JKL</small></div><div class="k">6<small>MNO</small></div>
@@ -109,7 +125,7 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 <div class="home"></div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","filled","wrong","verifying","resend","expired"],"default":"default"},"$preview":{"width":402,"height":874}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","filled","wrong","verifying","resend","expired","nowhatsapp"],"default":"default"},"$preview":{"width":402,"height":874}}'>
 class Component extends DCLogic {
   renderVals() {
     const t = this.props.theme ?? 'light';
@@ -120,10 +136,11 @@ class Component extends DCLogic {
     const boxes = [];
     for (let i = 0; i < 6; i++) {
       const has = !!digits[i];
-      const caret = !has && i === digits.length && s !== 'verifying';
+      const caret = !has && i === digits.length && s !== 'verifying' && s !== 'nowhatsapp';
       boxes.push({ digit: has ? digits[i] : '', caret, cls: 'b' + (caret ? ' f' : ''), gapAfter: i === 2 });
     }
-    const kbUp = s !== 'filled' && s !== 'verifying';
+    const noWa = s === 'nowhatsapp';
+    const kbUp = s !== 'filled' && s !== 'verifying' && !noWa;
     return {
       rootCls: 's02' + (t === 'dark' ? ' dark' : ''),
       boxes,
@@ -134,11 +151,13 @@ class Component extends DCLogic {
       isWrong: s === 'wrong',
       isExpired: s === 'expired',
       isVerifying: s === 'verifying',
-      notVerifying: s !== 'verifying',
-      ctaCls: 'cta' + (s === 'filled' || s === 'verifying' ? ' on' : ''),
+      showVerify: s !== 'verifying' && !noWa,
+      noWa,
+      showMsg: !noWa,
+      showPaste: s === 'default' || s === 'resend',
+      ctaCls: 'cta' + (s === 'filled' || s === 'verifying' || noWa ? ' on' : ''),
       ctaBottom: kbUp ? '344px' : '44px',
-      kbUp,
-      suggVis: s === 'default' ? 'visible' : 'hidden'
+      kbUp
     };
   }
 }

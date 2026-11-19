@@ -13,11 +13,11 @@
 body{margin:0}
 .s01{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
 --t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
---m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;--info:#0060D6;--infob:#E4F0FC;
 width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
 .s01.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
 --t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
---m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF;--info:#7DB8FF;--infob:rgba(46,144,255,.14)}
 .s01 *{box-sizing:border-box;margin:0}
 .s01 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
 .s01 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
@@ -68,6 +68,8 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 .s01 .on .btn{background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
 .s01.dark .on .btn{box-shadow:none}
 .s01 .sp{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;transform:rotate(45deg)}
+.s01 .wa{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--infob);color:var(--info);font-size:13px;line-height:18px}
+.s01 .wa svg{flex:none;margin-top:1px}.s01 .wa b{display:block;font-size:14px;font-weight:600;color:var(--t1);margin-bottom:2px}
 .s01 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home)}
 </style>
 </helmet>
@@ -92,7 +94,7 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 
 <div class="{{formCls}}">
 <div class="lb">Continue with mobile number</div>
-<div class="hp">We'll send you a 6-digit verification code.</div>
+<div class="hp">We’ll send a 6-digit code on WhatsApp.</div>
 <div class="fld"><div class="cc">+91<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div>
 <div class="{{phCls}}">
 <sc-if value="{{isDefault}}" hint-placeholder-val="{{ true }}">Mobile number</sc-if>
@@ -100,6 +102,9 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 <sc-if value="{{isReady}}" hint-placeholder-val="{{ false }}"><span class="caret"></span></sc-if>
 <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">12345 6789</sc-if>
 </div></div>
+<sc-if value="{{noWa}}" hint-placeholder-val="{{ false }}">
+<div class="wa" role="status"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><div><b>No WhatsApp on this number</b>We send codes on WhatsApp only for now. Try a number that uses WhatsApp.</div></div>
+</sc-if>
 <sc-if value="{{isError}}" hint-placeholder-val="{{ false }}">
 <div class="em"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>Enter a valid 10-digit mobile number.</div>
 </sc-if>
@@ -113,7 +118,7 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 <div class="home"></div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","ready","error","sending"],"default":"default"},"$preview":{"width":402,"height":874}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","ready","error","sending","nowhatsapp"],"default":"default"},"$preview":{"width":402,"height":874}}'>
 class Component extends DCLogic {
   renderVals() {
     const t = this.props.theme ?? 'light';
@@ -122,6 +127,7 @@ class Component extends DCLogic {
     if (s === 'ready') form += ' focus agreed';
     if (s === 'sending') form += ' agreed';
     if (s === 'error') form += ' error agreed';
+    if (s === 'nowhatsapp') form += ' agreed';
     return {
       rootCls: 's01' + (t === 'dark' ? ' dark' : ''),
       formCls: form,
@@ -132,7 +138,8 @@ class Component extends DCLogic {
       isSending: s === 'sending',
       notSending: s !== 'sending',
       isError: s === 'error',
-      hasNum: s === 'ready' || s === 'sending'
+      hasNum: s === 'ready' || s === 'sending' || s === 'nowhatsapp',
+      noWa: s === 'nowhatsapp'
     };
   }
 }

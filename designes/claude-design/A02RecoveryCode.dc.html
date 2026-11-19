@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A02 Recovery code</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.a02{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.a02.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.a02 *{box-sizing:border-box;margin:0}
+.a02 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.a02 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.a02 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.a02 .sic{display:flex;gap:6px;align-items:center}
+.a02 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.a02 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.a02 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.a02 .mini img{width:30px}
+.a02 .main{position:absolute;top:122px;left:20px;width:362px}
+.a02 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.a02.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.a02 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.a02 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.a02 .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.a02:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.a02 .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.a02 .row+.row{border-top:1px solid var(--hair)}
+.a02 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.a02 .mb{background:var(--btint);color:var(--act)}.a02 .ms{background:var(--ttint);color:var(--tl)}
+.a02 .rx{flex:1;min-width:0}.a02 .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.a02 .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.a02 .chev{color:var(--t3);flex:none}
+.a02 .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.a02 .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.a02 .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.a02 .note svg{flex:none;margin-top:2px}.a02 .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.a02 .n-info{background:var(--infob);color:var(--info)}.a02 .n-err{background:var(--errb);color:var(--err)}.a02 .n-amb{background:var(--ambb);color:var(--amb)}.a02 .n-ok{background:var(--okb);color:var(--ok)}
+.a02 .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.a02 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.a02.dark .btn{box-shadow:none}
+.a02 .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.a02 .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.a02 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.a02 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.a02 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.a02 .bx svg{display:none}.a02 .ck.on .bx{background:var(--act);border-color:var(--act)}.a02 .ck.on .bx svg{display:block}
+.a02 .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.a02.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.a02 .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.a02 .code{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:20px 16px 14px;text-align:center}
+.a02:not(.dark) .code{outline:1px solid var(--hair);outline-offset:-1px}
+.a02 .cv{font-size:22px;line-height:30px;font-weight:700;letter-spacing:.08em;font-variant-numeric:tabular-nums;color:var(--t1)}
+.a02 .cl{font-size:13px;color:var(--t2);margin-top:6px}
+.a02 .cpy{margin-top:14px;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.a02 .lb{font-size:15px;font-weight:600;letter-spacing:-.01em;margin:22px 0 7px}
+.a02 .in{height:56px;border-radius:16px;background:var(--field);border:1.5px solid var(--act);box-shadow:0 0 0 4px rgba(0,113,255,.12);display:flex;align-items:center;padding:0 16px;font-size:20px;font-weight:600;letter-spacing:.08em;font-variant-numeric:tabular-nums;text-transform:uppercase}
+.a02 .in.er{border-color:var(--err);box-shadow:0 0 0 4px var(--errb)}
+.a02 .caret{display:inline-block;width:2px;height:24px;background:var(--act);margin-left:2px}
+.a02 .hint{font-size:13px;color:var(--t2);margin-top:8px}
+.a02 .em{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--err);margin-top:8px}
+.a02 .lnk{display:inline-block;margin-top:18px;font-size:15px;font-weight:600;color:var(--act);text-decoration:none}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>9:47</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<sc-if value="{{isShow}}" hint-placeholder-val="{{ true }}">
+<div class="top"><div style="width: 44px"></div><div class="mini"><img src="/_blob/e4f41c853a2d63dfe718d8db35175a37" alt="">AYORENI</div><div style="width: 44px"></div></div>
+<div class="main">
+<div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M11 12l8-8M16 7l2 2M14 9l2 2"></path></svg></div>
+<h1>Save your recovery code</h1>
+<p class="sub">If you change phones, this code proves it’s you. We’ll show it only once.</p>
+<div class="code"><div class="cv">K7QF-29XD-M4PL-8RWC</div><div class="cl">Your recovery code</div>
+<button class="cpy" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0013.5 4h-7A2.5 2.5 0 004 6.5v7A2.5 2.5 0 006.5 16H8"></path></svg>Copy Code</button></div>
+<div class="note n-amb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><div>Keep it somewhere safe, like your password manager. Ayoreni will never ask for it on a call or chat.</div></div>
+<div class="{{ckCls}}"><div class="bx"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></div><div>I’ve saved my recovery code</div></div>
+</div>
+<sc-if value="{{isCopied}}" hint-placeholder-val="{{ false }}">
+<div class="toast" role="status"><span class="tk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span><span style="flex: 1">Recovery code copied</span></div>
+</sc-if>
+<div class="cta"><button class="{{btnCls}}" type="button">Continue</button></div>
+</sc-if>
+<sc-if value="{{isEntry}}" hint-placeholder-val="{{ false }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<div class="mini"><img src="/_blob/e4f41c853a2d63dfe718d8db35175a37" alt="">AYORENI</div><div style="width: 44px"></div></div>
+<div class="main">
+<div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M11 12l8-8M16 7l2 2M14 9l2 2"></path></svg></div>
+<h1>Enter your recovery code</h1>
+<p class="sub">You’re signing in on a new phone. Enter the code you saved when you set up Ayoreni.</p>
+<p class="lb">Recovery code</p>
+<div class="{{inCls}}">{{codeText}}<sc-if value="{{isEnter}}" hint-placeholder-val="{{ true }}"><span class="caret"></span></sc-if></div>
+<sc-if value="{{isEnter}}" hint-placeholder-val="{{ true }}"><p class="hint">16 letters and numbers. Dashes are added for you.</p></sc-if>
+<sc-if value="{{isWrong}}" hint-placeholder-val="{{ false }}"><div class="em"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg>That code doesn’t match. Check it and try again.</div></sc-if>
+<a class="lnk" href="#no-code">I don’t have my code</a>
+</div>
+<div class="cta"><button class="{{enterBtnCls}}" type="button">Continue</button></div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["show","copied","enter","wrong"],"default":"show"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'show';
+    return {
+      rootCls: 'a02' + (t === 'dark' ? ' dark' : ''),
+      isShow: s === 'show' || s === 'copied',
+      isCopied: s === 'copied',
+      ckCls: 'ck' + (s === 'copied' ? ' on' : ''),
+      btnCls: 'btn' + (s === 'copied' ? '' : ' off'),
+      isEntry: s === 'enter' || s === 'wrong',
+      isEnter: s === 'enter',
+      isWrong: s === 'wrong',
+      inCls: 'in' + (s === 'wrong' ? ' er' : ''),
+      codeText: s === 'wrong' ? 'K7QF-29XD-M4PL-8RWE' : 'K7QF-29XD-M4PL-8R',
+      enterBtnCls: 'btn'
+    };
+  }
+}
+</script>
+</body>
+</html>

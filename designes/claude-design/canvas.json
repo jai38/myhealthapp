@@ -1,44 +1,235 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-11-16T17:30:00Z"},
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-16T17:30:00Z"
+  },
   "title": "AYORENI App Screens",
-  "launch": {"view": "canvas"},
+  "launch": {
+    "view": "canvas"
+  },
   "pages": [],
   "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1000, "title": "AYORENI · Calm Glass UI v4 · Design system & screen index"},
-    "S01MobileNumber.dc.html": {"x": 0, "y": 1360, "w": 402, "h": 874, "title": "S01 · Mobile Number"},
-    "S01States.dc.html": {"x": 482, "y": 1360, "w": 1824, "h": 2064, "title": "S01 · States (light / dark)"},
-    "S02OTP.dc.html": {"x": 0, "y": 3784, "w": 402, "h": 874, "title": "S02 · OTP Verification"},
-    "S02States.dc.html": {"x": 482, "y": 3784, "w": 2708, "h": 2064, "title": "S02 · States (light / dark)"},
-    "S03CreateAccount.dc.html": {"x": 0, "y": 6208, "w": 402, "h": 874, "title": "S03 · Create Your Account"},
-    "S03States.dc.html": {"x": 482, "y": 6208, "w": 2266, "h": 2064, "title": "S03 · States (light / dark)"},
-    "S04HealthProfile.dc.html": {"x": 0, "y": 8632, "w": 402, "h": 1680, "title": "S04 · Your Health Profile (full scroll)"},
-    "S04States.dc.html": {"x": 482, "y": 8632, "w": 2266, "h": 3676, "title": "S04 · States (light / dark, full scroll)"},
-    "S05Welcome.dc.html": {"x": 0, "y": 12668, "w": 402, "h": 874, "title": "S05 · Welcome / first-time Today"},
-    "S05States.dc.html": {"x": 482, "y": 12668, "w": 1382, "h": 2064, "title": "S05 · States (light / dark)"},
-    "S06Today.dc.html": {"x": 0, "y": 15092, "w": 402, "h": 1700, "title": "S06 · Today, returning user (full scroll)"},
-    "S06States.dc.html": {"x": 482, "y": 15092, "w": 940, "h": 3716, "title": "S06 · States (light / dark, full scroll)"},
-    "S07DoseUpdate.dc.html": {"x": 0, "y": 19168, "w": 402, "h": 874, "title": "S07 · Dose update sheet"},
-    "S07States.dc.html": {"x": 482, "y": 19168, "w": 1824, "h": 2064, "title": "S07 · States (light / dark)"}
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "title": "AYORENI · Calm Glass UI v4 · Design system & screen index"
+    },
+    "S01MobileNumber.dc.html": {
+      "x": 0,
+      "y": 1360,
+      "w": 402,
+      "h": 874,
+      "title": "S01 · Mobile Number"
+    },
+    "S01States.dc.html": {
+      "x": 482,
+      "y": 1360,
+      "w": 2266,
+      "h": 2064,
+      "title": "S01 · States (light / dark)"
+    },
+    "S02OTP.dc.html": {
+      "x": 0,
+      "y": 3784,
+      "w": 402,
+      "h": 874,
+      "title": "S02 · OTP Verification"
+    },
+    "S02States.dc.html": {
+      "x": 482,
+      "y": 3784,
+      "w": 3150,
+      "h": 2064,
+      "title": "S02 · States (light / dark)"
+    },
+    "S03CreateAccount.dc.html": {
+      "x": 0,
+      "y": 6208,
+      "w": 402,
+      "h": 874,
+      "title": "S03 · Create Your Account"
+    },
+    "S03States.dc.html": {
+      "x": 482,
+      "y": 6208,
+      "w": 2266,
+      "h": 2064,
+      "title": "S03 · States (light / dark)"
+    },
+    "S04HealthProfile.dc.html": {
+      "x": 0,
+      "y": 8632,
+      "w": 402,
+      "h": 1680,
+      "title": "S04 · Your Health Profile (full scroll)"
+    },
+    "S04States.dc.html": {
+      "x": 482,
+      "y": 8632,
+      "w": 2266,
+      "h": 3676,
+      "title": "S04 · States (light / dark, full scroll)"
+    },
+    "S05Welcome.dc.html": {
+      "x": 0,
+      "y": 12668,
+      "w": 402,
+      "h": 874,
+      "title": "S05 · Welcome / first-time Today"
+    },
+    "S05States.dc.html": {
+      "x": 482,
+      "y": 12668,
+      "w": 1382,
+      "h": 2064,
+      "title": "S05 · States (light / dark)"
+    },
+    "S06Today.dc.html": {
+      "x": 0,
+      "y": 15092,
+      "w": 402,
+      "h": 1700,
+      "title": "S06 · Today, returning user (full scroll)"
+    },
+    "S06States.dc.html": {
+      "x": 482,
+      "y": 15092,
+      "w": 940,
+      "h": 3716,
+      "title": "S06 · States (light / dark, full scroll)"
+    },
+    "S07DoseUpdate.dc.html": {
+      "x": 0,
+      "y": 19168,
+      "w": 402,
+      "h": 874,
+      "title": "S07 · Dose update sheet"
+    },
+    "S07States.dc.html": {
+      "x": 482,
+      "y": 19168,
+      "w": 1824,
+      "h": 2064,
+      "title": "S07 · States (light / dark)"
+    },
+    "A01AppLock.dc.html": {
+      "x": 0,
+      "y": 21592,
+      "w": 402,
+      "h": 874,
+      "title": "A01 · App lock"
+    },
+    "A02RecoveryCode.dc.html": {
+      "x": 482,
+      "y": 21592,
+      "w": 402,
+      "h": 874,
+      "title": "A02 · Recovery code"
+    },
+    "A03NewDevice.dc.html": {
+      "x": 964,
+      "y": 21592,
+      "w": 402,
+      "h": 874,
+      "title": "A03 · New-device check"
+    },
+    "A04Under18.dc.html": {
+      "x": 1446,
+      "y": 21592,
+      "w": 402,
+      "h": 874,
+      "title": "A04 · Under 18"
+    },
+    "SecurityStates.dc.html": {
+      "x": 1928,
+      "y": 21592,
+      "w": 4476,
+      "h": 2064,
+      "title": "Account security · States (light / dark)"
+    }
   },
   "order": [
     "Main.dc.html",
-    "S01MobileNumber.dc.html", "S01States.dc.html",
-    "S02OTP.dc.html", "S02States.dc.html",
-    "S03CreateAccount.dc.html", "S03States.dc.html",
-    "S04HealthProfile.dc.html", "S04States.dc.html",
-    "S05Welcome.dc.html", "S05States.dc.html",
-    "S06Today.dc.html", "S06States.dc.html",
-    "S07DoseUpdate.dc.html", "S07States.dc.html"
+    "S01MobileNumber.dc.html",
+    "S01States.dc.html",
+    "S02OTP.dc.html",
+    "S02States.dc.html",
+    "S03CreateAccount.dc.html",
+    "S03States.dc.html",
+    "S04HealthProfile.dc.html",
+    "S04States.dc.html",
+    "S05Welcome.dc.html",
+    "S05States.dc.html",
+    "S06Today.dc.html",
+    "S06States.dc.html",
+    "S07DoseUpdate.dc.html",
+    "S07States.dc.html",
+    "A01AppLock.dc.html",
+    "A02RecoveryCode.dc.html",
+    "A03NewDevice.dc.html",
+    "A04Under18.dc.html",
+    "SecurityStates.dc.html"
   ],
   "notes": {
-    "t01": {"x": 0, "y": 1100, "text": "Flow 1 · S01 Mobile Number · LOCKED", "kind": "title1", "maxW": 2306},
-    "t02": {"x": 0, "y": 3524, "text": "Flow 1 · S02 OTP Verification · LOCKED", "kind": "title1", "maxW": 3190},
-    "t03": {"x": 0, "y": 5948, "text": "Flow 1 · S03 Create Your Account · LOCKED", "kind": "title1", "maxW": 2748},
-    "t04": {"x": 0, "y": 8372, "text": "Flow 1 · S04 Your Health Profile · LOCKED", "kind": "title1", "maxW": 2748},
-    "t05": {"x": 0, "y": 12408, "text": "Flow 1 · S05 Welcome / first-time Today · LOCKED", "kind": "title1", "maxW": 1864},
-    "t06": {"x": 0, "y": 14832, "text": "Flow 2 · S06 Today (returning) · LOCKED", "kind": "title1", "maxW": 1422},
-    "t07": {"x": 0, "y": 18908, "text": "Flow 2 · S07 Dose update + Mark as Taken · LOCKED", "kind": "title1", "maxW": 2306}
+    "t01": {
+      "x": 0,
+      "y": 1100,
+      "text": "Flow 1 · S01 Mobile Number · LOCKED · WhatsApp update IN REVIEW",
+      "kind": "title1",
+      "maxW": 2748
+    },
+    "t02": {
+      "x": 0,
+      "y": 3524,
+      "text": "Flow 1 · S02 OTP Verification · LOCKED · WhatsApp update IN REVIEW",
+      "kind": "title1",
+      "maxW": 3632
+    },
+    "t03": {
+      "x": 0,
+      "y": 5948,
+      "text": "Flow 1 · S03 Create Your Account · LOCKED",
+      "kind": "title1",
+      "maxW": 2748
+    },
+    "t04": {
+      "x": 0,
+      "y": 8372,
+      "text": "Flow 1 · S04 Your Health Profile · LOCKED",
+      "kind": "title1",
+      "maxW": 2748
+    },
+    "t05": {
+      "x": 0,
+      "y": 12408,
+      "text": "Flow 1 · S05 Welcome / first-time Today · LOCKED",
+      "kind": "title1",
+      "maxW": 1864
+    },
+    "t06": {
+      "x": 0,
+      "y": 14832,
+      "text": "Flow 2 · S06 Today (returning) · LOCKED",
+      "kind": "title1",
+      "maxW": 1422
+    },
+    "t07": {
+      "x": 0,
+      "y": 18908,
+      "text": "Flow 2 · S07 Dose update + Mark as Taken · LOCKED",
+      "kind": "title1",
+      "maxW": 2306
+    },
+    "t08": {
+      "x": 0,
+      "y": 21332,
+      "text": "Flow 3 · Account security (Phase 5): app lock, recovery code, new device, under 18 · IN REVIEW",
+      "kind": "title1",
+      "maxW": 6404
+    }
   },
   "designSystems": []
 }

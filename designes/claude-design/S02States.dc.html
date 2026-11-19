@@ -13,11 +13,11 @@
 body{margin:0}
 </style>
 </helmet>
-<div style="width: 2708px; height: 2064px; box-sizing: border-box; padding: 48px; background: #E9EEF4; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; display: flex; flex-direction: column; gap: 56px">
+<div style="width: 3150px; height: 2064px; box-sizing: border-box; padding: 48px; background: #E9EEF4; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; display: flex; flex-direction: column; gap: 56px">
   <div style="display: flex; flex-direction: column; gap: 16px">
     <div style="font-size: 22px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em">Light</div>
     <div style="display: flex; gap: 40px">
-      <sc-for list="{{light}}" as="it" hint-placeholder-count="6">
+      <sc-for list="{{light}}" as="it" hint-placeholder-count="7">
         <div style="display: flex; flex-direction: column; gap: 10px; width: 402px">
           <div style="font-size: 15px; line-height: 24px; font-weight: 600; color: #5B6B7F">{{it.label}}</div>
           <div style="width: 402px; height: 874px; border-radius: 44px; overflow: hidden; box-shadow: 0 20px 50px rgba(20,60,120,0.16)">
@@ -30,7 +30,7 @@ body{margin:0}
   <div style="display: flex; flex-direction: column; gap: 16px">
     <div style="font-size: 22px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em">Dark</div>
     <div style="display: flex; gap: 40px">
-      <sc-for list="{{dark}}" as="it" hint-placeholder-count="6">
+      <sc-for list="{{dark}}" as="it" hint-placeholder-count="7">
         <div style="display: flex; flex-direction: column; gap: 10px; width: 402px">
           <div style="font-size: 15px; line-height: 24px; font-weight: 600; color: #5B6B7F">{{it.label}}</div>
           <div style="width: 402px; height: 874px; border-radius: 44px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.30)">
@@ -42,16 +42,17 @@ body{margin:0}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2708,"height":2064}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3150,"height":2064}}'>
 class Component extends DCLogic {
   renderVals() {
     const states = [
-      { state: 'default', label: 'Default (keyboard + autofill)' },
+      { state: 'default', label: 'Default (keyboard + Paste)' },
       { state: 'filled', label: 'Code entered' },
       { state: 'verifying', label: 'Verifying' },
       { state: 'wrong', label: 'Wrong code' },
       { state: 'resend', label: 'Resend available' },
-      { state: 'expired', label: 'Code expired' }
+      { state: 'expired', label: 'Code expired' },
+      { state: 'nowhatsapp', label: 'No WhatsApp (late failure)' }
     ];
     return {
       light: states.map((s) => ({ ...s, theme: 'light' })),
