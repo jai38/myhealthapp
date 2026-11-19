@@ -34,7 +34,7 @@ describe('design tokens', () => {
 describe('text styles', () => {
   it('every style has fontFamily, fontSize and lineHeight, with lineHeight >= fontSize', () => {
     const entries = Object.entries(textStyles);
-    expect(entries.length).toBe(9);
+    expect(entries.length).toBe(14);
     for (const [, style] of entries) {
       expect(style.fontFamily).toBeTruthy();
       expect(style.fontSize).toBeGreaterThan(0);
@@ -46,6 +46,31 @@ describe('text styles', () => {
     expect(maxFontScaleFor('display')).toBe(1.3);
     expect(maxFontScaleFor('title1')).toBe(1.3);
     expect(maxFontScaleFor('body')).toBe(1.6);
+  });
+});
+
+describe('v4 type scale', () => {
+  it('uses Plus Jakarta Sans at 400, 600 and 700 only', () => {
+    const families = new Set(Object.values(textStyles).map((s) => s.fontFamily));
+    expect([...families].sort()).toEqual(
+      ['PlusJakartaSans_400Regular', 'PlusJakartaSans_600SemiBold', 'PlusJakartaSans_700Bold'],
+    );
+  });
+
+  it('matches the spec sizes, line heights and tracking', () => {
+    expect(textStyles.display).toMatchObject({ fontSize: 34, lineHeight: 40, letterSpacing: -1.02 });
+    expect(textStyles.title1).toMatchObject({ fontSize: 28, lineHeight: 34, letterSpacing: -0.7 });
+    expect(textStyles.title2).toMatchObject({ fontSize: 20, lineHeight: 25, letterSpacing: -0.4 });
+    expect(textStyles.title3).toMatchObject({ fontSize: 17, lineHeight: 22 });
+    expect(textStyles.body).toMatchObject({ fontSize: 17, lineHeight: 23 });
+    expect(textStyles.button).toMatchObject({ fontSize: 17, lineHeight: 20 });
+    expect(textStyles.chip).toMatchObject({ fontSize: 12, lineHeight: 16 });
+    expect(textStyles.tab).toMatchObject({ fontSize: 10.5, lineHeight: 13 });
+    expect(textStyles.overline).toMatchObject({ textTransform: 'uppercase', letterSpacing: 0.78 });
+  });
+
+  it('nothing is smaller than the 10.5 tab label', () => {
+    for (const s of Object.values(textStyles)) expect(s.fontSize).toBeGreaterThanOrEqual(10.5);
   });
 });
 

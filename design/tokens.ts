@@ -413,10 +413,9 @@ export const size = {
 } as const;
 
 export const font = {
-  regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
+  regular: 'PlusJakartaSans_400Regular',
+  semibold: 'PlusJakartaSans_600SemiBold',
+  bold: 'PlusJakartaSans_700Bold',
 } as const;
 
 export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inverse' | 'link' | 'danger';

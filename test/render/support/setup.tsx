@@ -74,12 +74,11 @@ vi.mock('react-native-svg', () => {
   };
 });
 
-vi.mock('@expo-google-fonts/inter', () => ({
+vi.mock('@expo-google-fonts/plus-jakarta-sans', () => ({
   useFonts: () => [true, null],
-  Inter_400Regular: 0,
-  Inter_500Medium: 0,
-  Inter_600SemiBold: 0,
-  Inter_700Bold: 0,
+  PlusJakartaSans_400Regular: 0,
+  PlusJakartaSans_600SemiBold: 0,
+  PlusJakartaSans_700Bold: 0,
 }));
 
 vi.mock('expo-constants', () => ({
