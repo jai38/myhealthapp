@@ -179,6 +179,9 @@ export const AccessibilityInfo = {
 
 const WINDOW = { width: 360, height: 800, scale: 2, fontScale: 1 };
 export const useWindowDimensions = () => WINDOW;
+// The system light/dark setting. Tests set globalThis.__rnColorScheme to 'dark' to simulate it.
+export const useColorScheme = (): 'light' | 'dark' =>
+  (globalThis as { __rnColorScheme?: 'light' | 'dark' }).__rnColorScheme ?? 'light';
 export const Dimensions = {
   get: () => WINDOW,
   addEventListener: () => ({ remove: () => {} }),

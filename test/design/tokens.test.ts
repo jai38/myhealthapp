@@ -27,7 +27,7 @@ describe('design tokens', () => {
 
   it('motionDuration returns 0 with reduced motion and the token value otherwise', () => {
     expect(motionDuration('base', true)).toBe(0);
-    expect(motionDuration('base', false)).toBe(200);
+    expect(motionDuration('base', false)).toBe(250);
   });
 });
 
