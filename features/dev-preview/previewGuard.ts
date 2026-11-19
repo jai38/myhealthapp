@@ -9,6 +9,9 @@ export type PreviewScreen = 'today' | 'records' | 'medicines' | 'profile';
 export const PREVIEW_STATES = {
   today: [
     'newUser',
+    // S06 (04b brief): one Due now and one Not confirmed; afterTaken taps Mark as Taken.
+    'returning',
+    'afterTaken',
     'nothingDue',
     'dueNow',
     'manyDue',
@@ -16,6 +19,8 @@ export const PREVIEW_STATES = {
     'allDone-uploading',
     'error',
     'offline',
+    'uploading',
+    'loading',
   ],
   records: ['timeline', 'filteredEmpty', 'reports'],
   medicines: ['list', 'empty'],
@@ -25,6 +30,13 @@ export const PREVIEW_STATES = {
 export const PREVIEW_SCREENS = Object.keys(PREVIEW_STATES) as PreviewScreen[];
 
 export const MAX_PREVIEW_FONT_SCALE = 2;
+
+export type PreviewTheme = 'light' | 'dark';
+
+/** `theme` query value. Anything but "dark" means light, the app's theme today. */
+export function parsePreviewTheme(value: string | string[] | undefined): PreviewTheme {
+  return first(value) === 'dark' ? 'dark' : 'light';
+}
 
 export function isPreviewEnabled(isDev: boolean): boolean {
   return isDev === true;

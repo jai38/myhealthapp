@@ -9,13 +9,14 @@ import {
   parsePreviewFontScale,
   parsePreviewScreen,
   parsePreviewState,
+  parsePreviewTheme,
 } from '../features/dev-preview/previewGuard';
 import { initialProcessingStatus, setPreviewSeam } from '../features/dev-preview/previewSeam';
 import { FROZEN_NOW, PREVIEW_EVENTS, frozenNowMs, previewScenario } from '../features/dev-preview/fixtures';
 import { answer } from '../features/dev-preview/previewApi';
 import { effectiveFontScale, applyPreviewFontScale } from '../features/dev-preview/previewFontScale';
 import { freezeClock } from '../features/dev-preview/previewClock';
-import { groupTodayDoses, todayScreenState } from '../features/today/todayModel';
+import { groupTodayDoses, toTodayDoses, todayScreenState } from '../features/today/todayModel';
 import { textStyles } from '../design/typography';
 
 describe('screen preview guard', () => {
@@ -177,6 +178,54 @@ describe('preview fake backend', () => {
 
   it('does not know any other route', async () => {
     expect((await get('/auth/login')).status).toBe(404);
+  });
+
+  it('records a dose action only on the dose it names, and Undo returns it to pending', async () => {
+    const s = previewScenario('today', 'returning');
+    const due = s.doses.find((d) => d.scheduledTime.endsWith('T10:00:00') && d.medicationId === 'tm-b')!;
+    const before = s.doses.filter((d) => d.id !== due.id).map((d) => d.status);
+
+    const taken = answer(s, 'POST', `/medications/doses/${due.id}/action`, new URLSearchParams(), { action: 'TAKEN' });
+    expect(taken.status).toBe(200);
+    expect(s.doses.find((d) => d.id === due.id)!.status).toBe('TAKEN');
+    expect(s.doses.find((d) => d.id === due.id)!.actionTime).not.toBeNull();
+    expect(s.doses.filter((d) => d.id !== due.id).map((d) => d.status)).toEqual(before);
+
+    answer(s, 'PATCH', `/medications/doses/${due.id}/action`, new URLSearchParams(), { action: 'PENDING' });
+    expect(s.doses.find((d) => d.id === due.id)!.status).toBe('PENDING');
+    expect(s.doses.find((d) => d.id === due.id)!.actionTime).toBeNull();
+  });
+
+  it('refuses an unknown action or dose', () => {
+    const s = previewScenario('today', 'returning');
+    const id = s.doses[0]!.id;
+    expect(answer(s, 'POST', `/medications/doses/${id}/action`, new URLSearchParams(), { action: 'NOPE' }).status).toBe(400);
+    expect(answer(s, 'POST', '/medications/doses/nope/action', new URLSearchParams(), { action: 'TAKEN' }).status).toBe(404);
+  });
+});
+
+describe('preview S06 states', () => {
+  it('returning has one Due now, one Not confirmed and one Taken, nothing invented', () => {
+    const s = previewScenario('today', 'returning');
+    const kinds = toTodayDoses(
+      s.doses.filter((d) => d.scheduledTime.startsWith('2026-11-06')),
+      frozenNowMs(),
+    ).map((d) => d.state.kind);
+    expect(kinds.filter((k) => k === 'dueNow')).toHaveLength(1);
+    expect(kinds.filter((k) => k === 'notConfirmed')).toHaveLength(1);
+    expect(kinds.filter((k) => k === 'taken')).toHaveLength(1);
+    expect(kinds).not.toContain('missedByUser');
+  });
+
+  it('loading and uploading are their own scenarios', () => {
+    expect(previewScenario('today', 'loading').loading).toBe(true);
+    expect(previewScenario('today', 'uploading').uploading).toBe(true);
+  });
+
+  it('theme is light unless dark is asked for', () => {
+    expect(parsePreviewTheme('dark')).toBe('dark');
+    expect(parsePreviewTheme(undefined)).toBe('light');
+    expect(parsePreviewTheme('purple')).toBe('light');
   });
 });
 

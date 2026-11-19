@@ -16,9 +16,37 @@ function serverError(): Response {
   return json(500, { error: { code: 'PREVIEW_FORCED_ERROR', message: 'Synthetic server error for the preview.' } });
 }
 
-/** Answers one API call from the scenario. */
-export function answer(scenario: PreviewScenario, method: string, path: string, query: URLSearchParams): Response {
+const ACTION_PATH = /^\/medications\/doses\/([^/]+)\/action$/;
+const ACTIONS = new Set(['TAKEN', 'SKIPPED', 'SNOOZED', 'PENDING', 'MISSED']);
+
+/** Answers one API call from the scenario. A dose action changes the scenario's own doses. */
+export function answer(
+  scenario: PreviewScenario,
+  method: string,
+  path: string,
+  query: URLSearchParams,
+  body: unknown = null,
+): Response {
   if (scenario.apiFails) return serverError();
+
+  const action = ACTION_PATH.exec(path);
+  if (action && (method === 'POST' || method === 'PATCH')) {
+    const index = scenario.doses.findIndex((d) => d.id === decodeURIComponent(action[1]!));
+    const b = (body ?? {}) as { action?: string; actionTime?: string };
+    if (index < 0) return json(404, { error: { code: 'NOT_FOUND', message: 'No such dose in the preview.' } });
+    if (!b.action || !ACTIONS.has(b.action)) {
+      return json(400, { error: { code: 'VALIDATION_ERROR', message: 'Unknown action.' } });
+    }
+    const now = new Date().toISOString();
+    const updated = {
+      ...scenario.doses[index]!,
+      status: b.action as (typeof scenario.doses)[number]['status'],
+      actionTime: b.action === 'PENDING' ? null : (method === 'POST' && b.actionTime) || now,
+      updatedAt: now,
+    };
+    scenario.doses[index] = updated;
+    return json(200, { data: updated, message: 'Recorded in the preview.' });
+  }
 
   if (method === 'GET' && path === '/medications') {
     const status = query.get('status');
@@ -74,9 +102,18 @@ export function installPreviewApi(scenario: PreviewScenario): () => void {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
     if (url.startsWith(base)) {
       const method = (init?.method ?? (typeof input === 'object' && 'method' in input ? input.method : 'GET')).toUpperCase();
+      if (scenario.loading) return new Promise<Response>(() => {});
       const parsed = new URL(url);
       const path = parsed.pathname.slice(new URL(base).pathname.length) || '/';
-      return answer(scenario, method, path, parsed.searchParams);
+      let body: unknown = null;
+      if (typeof init?.body === 'string') {
+        try {
+          body = JSON.parse(init.body);
+        } catch {
+          body = null;
+        }
+      }
+      return answer(scenario, method, path, parsed.searchParams, body);
     }
     const origin = typeof location !== 'undefined' ? location.origin : '';
     if (url.startsWith('/') || (origin !== '' && url.startsWith(origin)) || url.startsWith('data:') || url.startsWith('blob:')) {

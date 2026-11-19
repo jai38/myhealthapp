@@ -143,6 +143,15 @@ const MANY_DUE_TODAY: DoseLog[] = [
   dose(D, 0, '21:30', 'pending'),
 ];
 
+// S06 default: one taken, one nobody recorded ("Not confirmed"), one due now, two later.
+const RETURNING_TODAY: DoseLog[] = [
+  dose(A, 0, '08:00', 'pending'),
+  dose(D, 0, '09:00', 'taken'),
+  dose(B, 0, '10:00', 'pending'),
+  dose(C, 0, '13:00', 'pending'),
+  dose(A, 0, '20:00', 'pending'),
+];
+
 // Everything scheduled today is recorded.
 const ALL_DONE_TODAY: DoseLog[] = [
   dose(A, 0, '07:00', 'taken'),
@@ -209,6 +218,8 @@ export interface PreviewScenario {
   offline: boolean;
   /** True: an upload is already running when Today opens. */
   uploading: boolean;
+  /** True: the fake backend never answers, so the screen stays loading. */
+  loading: boolean;
 }
 
 const BASE: PreviewScenario = {
@@ -218,6 +229,7 @@ const BASE: PreviewScenario = {
   apiFails: false,
   offline: false,
   uploading: false,
+  loading: false,
 };
 
 function withDoses(today: DoseLog[]): Partial<PreviewScenario> {
@@ -228,6 +240,13 @@ function withDoses(today: DoseLog[]): Partial<PreviewScenario> {
 export function previewScenario(screen: PreviewScreen, state: string): PreviewScenario {
   if (screen === 'today') {
     switch (state) {
+      case 'returning':
+      case 'afterTaken':
+        return { ...BASE, ...withDoses(RETURNING_TODAY) };
+      case 'uploading':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), uploading: true };
+      case 'loading':
+        return { ...BASE, loading: true };
       case 'nothingDue':
         return { ...BASE, ...withDoses([]) };
       case 'dueNow':

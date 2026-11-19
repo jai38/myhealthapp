@@ -14,7 +14,8 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { TabBar } from '../../design/components/Navigation/TabBar';
 import type { TabKey } from '../../design/components/Navigation/navStyle';
 import { useAppFonts } from '../../design/fonts';
-import { color } from '../../design/tokens';
+import { color, themes } from '../../design/tokens';
+import { ThemeProvider } from '../../design/theme';
 import { t } from '../../design/strings';
 import { authService } from '../../services/auth/auth-service';
 import type { UserSession } from '../../services/auth/auth-service';
@@ -31,7 +32,7 @@ import { frozenNowMs, PREVIEW_SESSION, previewScenario } from './fixtures';
 import { blocked, installPreviewApi } from './previewApi';
 import { freezeClock } from './previewClock';
 import { applyPreviewFontScale } from './previewFontScale';
-import type { PreviewScreen } from './previewGuard';
+import type { PreviewScreen, PreviewTheme } from './previewGuard';
 import { setPreviewSeam } from './previewSeam';
 
 export interface PreviewHostProps {
@@ -39,6 +40,8 @@ export interface PreviewHostProps {
   state: string;
   /** 1 = normal text. 2 approximates Android's largest system font (see previewFontScale.ts). */
   fontScale: number;
+  /** Pins the v4 theme. Parts still on the light `color` export stay light. */
+  theme?: PreviewTheme;
 }
 
 const TAB_FOR_SCREEN: Record<PreviewScreen, TabKey> = {
@@ -89,7 +92,7 @@ function ScreenFor({ screen }: { screen: PreviewScreen }) {
   }
 }
 
-export function PreviewHost({ screen, state, fontScale }: PreviewHostProps) {
+export function PreviewHost({ screen, state, fontScale, theme = 'light' }: PreviewHostProps) {
   const { loaded: fontsLoaded } = useAppFonts();
   const [ready, setReady] = useState(false);
   const scenario = useMemo(() => previewScenario(screen, state), [screen, state]);
@@ -104,7 +107,9 @@ export function PreviewHost({ screen, state, fontScale }: PreviewHostProps) {
       undo.push(installPreviewApi(scenario));
       undo.push(freezeClock(nowMs));
       setPreviewSeam(
-        { processingStatus: scenario.uploading ? t('prescription.uploading') : null },
+        {
+          processingStatus: scenario.uploading ? t('prescription.uploading') : null,
+        },
         __DEV__,
       );
       undo.push(() => setPreviewSeam(null, __DEV__));
@@ -158,21 +163,31 @@ export function PreviewHost({ screen, state, fontScale }: PreviewHostProps) {
   const titleKey = shellTabs.find((s) => s.key === tab)?.titleKey ?? 'nav.today';
 
   return (
-    <ConnectivityContext.Provider value={connectivity}>
-      <View style={styles.root} testID={`preview-${screen}-${state}`}>
-        <ConnectivityBanner />
-        <ScreenHeader title={t(titleKey)} />
-        <View style={styles.body}>
-          <ScreenFor screen={screen} />
+    <ThemeProvider scheme={theme}>
+      <ConnectivityContext.Provider value={connectivity}>
+        <View
+          style={[styles.root, { backgroundColor: themes[theme].color.bg.screen }]}
+          testID={`preview-${screen}-${state}`}
+        >
+          <ConnectivityBanner />
+          <ScreenHeader title={t(titleKey)} />
+          <View style={styles.body}>
+            <ScreenFor screen={screen} />
+          </View>
+          <TabBar active={tab} onSelect={() => {}} testID="tab-bar" />
         </View>
-        <TabBar active={tab} onSelect={() => {}} testID="tab-bar" />
-      </View>
-    </ConnectivityContext.Provider>
+      </ConnectivityContext.Provider>
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.bg.screen },
   body: { flex: 1 },
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: color.bg.screen },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: color.bg.screen,
+  },
 });

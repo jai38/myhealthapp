@@ -8,10 +8,13 @@
 //   node scripts/screens.mjs --out <dir>              -> a different folder (for example the "after" set)
 //   node scripts/screens.mjs --only today,medicines   -> some screens only
 //   node scripts/screens.mjs --state today:allDone    -> one state only (repeatable)
+//   node scripts/screens.mjs --themes light,dark      -> each theme (default light); dark files end -dark
+//   node scripts/screens.mjs --check-labels           -> exit 5 if a button or tab label spills out of
+//                                                       its button or wraps (04b task 10)
 //
 // Each state is captured three ways, named <screen>-<state>_<variant>.png:
 //   360        360 x 800 phone, normal text
-//   430        430 x 932 large phone, normal text
+//   402        402 x 874, the design canvas (iPhone 17 Pro), normal text
 //   360-fs2    360 x 800 with fontScale=2, the preview's approximation of Android's largest
 //              system font (see features/dev-preview/previewFontScale.ts)
 // When a screen scrolls, a second image <name>_full.png shows all of its content.
@@ -30,7 +33,7 @@ const DEFAULT_OUT = resolve(projectRoot, '..', 'docs', 'phases', '04b-screens', 
 
 const VARIANTS = [
   { name: '360', width: 360, height: 800, fontScale: 1 },
-  { name: '430', width: 430, height: 932, fontScale: 1 },
+  { name: '402', width: 402, height: 874, fontScale: 1 },
   { name: '360-fs2', width: 360, height: 800, fontScale: 2 },
 ];
 
@@ -61,11 +64,13 @@ async function loadStates() {
 }
 
 function parseArgs(argv) {
-  const args = { out: DEFAULT_OUT, only: null, states: [] };
+  const args = { out: DEFAULT_OUT, only: null, states: [], themes: ['light'], checkLabels: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--out') args.out = resolve(argv[++i]);
     else if (argv[i] === '--only') args.only = argv[++i].split(',');
     else if (argv[i] === '--state') args.states.push(argv[++i]);
+    else if (argv[i] === '--themes') args.themes = argv[++i].split(',');
+    else if (argv[i] === '--check-labels') args.checkLabels = true;
     else throw new Error(`Unknown argument ${argv[i]}`);
   }
   return args;
@@ -112,7 +117,28 @@ function measure() {
       if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) clipped.push(describe(el));
     }
   }
+  // Button and tab labels (04b decision 3): one line, inside the button. A label spills when its
+  // text box passes the button's edge or is cut short; it wraps when it takes more than one line.
+  const labelOverflow = [];
+  const labelWrap = [];
+  for (const button of document.querySelectorAll('[role="button"], [role="tab"]')) {
+    const b = button.getBoundingClientRect();
+    if (!visible(button, b)) continue;
+    for (const el of button.querySelectorAll('*')) {
+      const isText = el.children.length === 0 && (el.textContent || '').trim() !== '';
+      if (!isText) continue;
+      const r = el.getBoundingClientRect();
+      if (!visible(el, r)) continue;
+      if (r.right > b.right + 1 || r.left < b.left - 1 || el.scrollWidth > el.clientWidth + 1) {
+        labelOverflow.push(describe(el));
+      }
+      const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+      if (Number.isFinite(lineHeight) && r.height > lineHeight * 1.5) labelWrap.push(describe(el));
+    }
+  }
   return {
+    labelOverflow: labelOverflow.slice(0, 8),
+    labelWrap: labelWrap.slice(0, 8),
     pageScrollsHorizontally: document.documentElement.scrollWidth > vw + 1,
     scrolls: scrollExtra > 0,
     scrollExtra,
@@ -170,13 +196,14 @@ async function main() {
   const index = [];
   const outsideRequests = new Set();
   try {
+    for (const theme of args.themes)
     for (const variant of VARIANTS) {
       const context = await browser.newContext({
         viewport: { width: variant.width, height: variant.height },
         deviceScaleFactor: 2,
         timezoneId: 'Asia/Kolkata',
         locale: 'en-IN',
-        colorScheme: 'light',
+        colorScheme: theme === 'dark' ? 'dark' : 'light',
         reducedMotion: 'reduce',
       });
       // The preview must never reach a real server: anything outside localhost is refused and listed.
@@ -193,8 +220,9 @@ async function main() {
         const url =
           `${BASE_URL}/dev/preview/${screen}?state=${encodeURIComponent(state)}` +
           (variant.fontScale > 1 ? `&fontScale=${variant.fontScale}` : '') +
+          (theme === 'dark' ? '&theme=dark' : '') +
           (extra.query ?? '');
-        const name = `${screen}-${state}_${variant.name}`;
+        const name = `${screen}-${state}_${variant.name}${theme === 'dark' ? '-dark' : ''}`;
 
         const page = await context.newPage();
         const consoleErrors = [];
@@ -213,7 +241,7 @@ async function main() {
         const file = `${name}.png`;
         await page.screenshot({ path: join(args.out, file), animations: 'disabled' });
         const m = await page.evaluate(measure);
-        const entry = { file, screen, state, variant: variant.name, ...m, fullFile: null, consoleErrors };
+        const entry = { file, screen, state, theme, variant: variant.name, ...m, fullFile: null, consoleErrors };
 
         if (m.scrolls) {
           // Show all the content: grow the window by what the scroll area hides, then restore it.
@@ -238,6 +266,11 @@ async function main() {
 
   await writeFile(join(args.out, 'index.json'), `${JSON.stringify(index, null, 2)}\n`, 'utf8');
   console.log(`Wrote ${index.length} states to ${args.out}`);
+  const spilled = index.filter((e) => e.labelOverflow.length > 0 || e.labelWrap.length > 0);
+  for (const e of spilled) {
+    console.error(`Label does not fit in ${e.file}: ${[...e.labelOverflow, ...e.labelWrap].join('; ')}`);
+  }
+  if (args.checkLabels && spilled.length > 0) process.exitCode = 5;
   if (outsideRequests.size > 0) {
     console.error(`Refused ${outsideRequests.size} request(s) outside localhost:\n  ${[...outsideRequests].join('\n  ')}`);
   } else {
