@@ -11,7 +11,8 @@ Expo SDK 57, React Native 0.86, React 19.2, TypeScript 6 strict, Expo Router. `.
 ```bash
 npm ci
 npm run typecheck
-npx vitest run
+npx vitest run                                     # unit + render projects
+npx vitest run --project render                    # render tests only (test/render/)
 npm run start:dev | start:prod | start:local      # which API the app talks to
 npx expo start --web --port 8081                   # web build for previews
 node scripts/screens.mjs --out <dir>               # screenshots of /dev/preview states
@@ -31,3 +32,4 @@ A push to `main` deploys GitHub Pages and builds an Android APK. Work on the pha
 - AI output is a draft until the patient confirms it. Uncertain values are flagged, never guessed. `nameAsWritten` stays separate from `normalizedMedicineName`.
 - No secrets in the bundle. No health data in logs. Never send `patientProfileId`; identity comes from the token.
 - Touching a clinical rule requires a regression test. Layout work adds render tests where the brief asks for them.
+- Render tests (`test/render/`) use React Native Testing Library over a test-only `react-native` stand-in (`test/render/support/react-native.tsx`) and render tabs through the dev preview (`renderPreview(tab, state)`). They check what renders, not layout; use `scripts/screens.mjs` for the look.
