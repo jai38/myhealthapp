@@ -18,7 +18,7 @@
     "S05States.dc.html": {"x": 482, "y": 12668, "w": 1382, "h": 2064, "title": "S05 · States (light / dark)"},
     "S06Today.dc.html": {"x": 0, "y": 15092, "w": 402, "h": 1700, "title": "S06 · Today, returning user (full scroll)"},
     "S06States.dc.html": {"x": 482, "y": 15092, "w": 940, "h": 3716, "title": "S06 · States (light / dark, full scroll)"},
-    "S07DoseUpdate.dc.html": {"x": 0, "y": 19168, "w": 402, "h": 874, "title": "S07 · Dose update sheet (REVIEW)"},
+    "S07DoseUpdate.dc.html": {"x": 0, "y": 19168, "w": 402, "h": 874, "title": "S07 · Dose update sheet"},
     "S07States.dc.html": {"x": 482, "y": 19168, "w": 1824, "h": 2064, "title": "S07 · States (light / dark)"}
   },
   "order": [
@@ -38,7 +38,7 @@
     "t04": {"x": 0, "y": 8372, "text": "Flow 1 · S04 Your Health Profile · LOCKED", "kind": "title1", "maxW": 2748},
     "t05": {"x": 0, "y": 12408, "text": "Flow 1 · S05 Welcome / first-time Today · LOCKED", "kind": "title1", "maxW": 1864},
     "t06": {"x": 0, "y": 14832, "text": "Flow 2 · S06 Today (returning) · LOCKED", "kind": "title1", "maxW": 1422},
-    "t07": {"x": 0, "y": 18908, "text": "Flow 2 · S07 Dose update + Mark as Taken · IN REVIEW", "kind": "title1", "maxW": 2306}
+    "t07": {"x": 0, "y": 18908, "text": "Flow 2 · S07 Dose update + Mark as Taken · LOCKED", "kind": "title1", "maxW": 2306}
   },
   "designSystems": []
 }

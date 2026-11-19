@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#0071FF}a:hover{color:#0060FC}
+a{color:#0062DB}a:hover{color:#0058C9}
 </style>
 </helmet>
 <div style="width: 1440px; height: 1000px; box-sizing: border-box; padding: 56px 64px; background: #F7FAFC; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; display: flex; flex-direction: column; gap: 36px">
@@ -20,7 +20,7 @@ a{color:#0071FF}a:hover{color:#0060FC}
     <div style="display: flex; flex-direction: column; gap: 4px">
       <div style="font-size: 15px; font-weight: 700; letter-spacing: 0.24em; color: #5B6B7F">AYORENI</div>
       <h1 style="margin: 0; font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -0.03em">Calm Glass UI v4 · Design system &amp; screen index</h1>
-      <p style="margin: 0; font-size: 16px; line-height: 23px; color: #5B6B7F">Frozen 2026-11-16. Canvas 402 × 874 pt (iPhone 17 Pro). Every screen below has a Theme (light / dark) and State tweak; the States boards show every state side by side for development.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 23px; color: #5B6B7F">Frozen 2026-11-16; light-mode contrast fixed 2026-11-19 (all text ≥ 4.5:1). Canvas 402 × 874 pt (iPhone 17 Pro). Every screen below has a Theme (light / dark) and State tweak; the States boards show every state side by side for development.</p>
     </div>
   </div>
 
@@ -59,7 +59,7 @@ a{color:#0071FF}a:hover{color:#0060FC}
       <h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 700; letter-spacing: -0.02em">Screens</h2>
       <sc-for list="{{screens}}" as="s" hint-placeholder-count="7">
         <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #E7EEF5">
-          <span style="width: 40px; font-size: 14px; font-weight: 700; color: #0071FF; font-variant-numeric: tabular-nums">{{s.id}}</span>
+          <span style="width: 40px; font-size: 14px; font-weight: 700; color: #0062DB; font-variant-numeric: tabular-nums">{{s.id}}</span>
           <div style="flex-grow: 1; display: flex; flex-direction: column">
             <span style="font-size: 15px; font-weight: 600">{{s.name}}</span>
             <span style="font-size: 12px; color: #5B6B7F">{{s.flow}} · {{s.states}}</span>
@@ -78,7 +78,7 @@ a{color:#0071FF}a:hover{color:#0060FC}
 class Component extends DCLogic {
   renderVals() {
     const pillBase = 'font-size: 12px; font-weight: 600; border-radius: 999px; padding: 5px 10px; white-space: nowrap; ';
-    const locked = pillBase + 'background: #E3F5EA; color: #0B7F3F';
+    const locked = pillBase + 'background: #E3F5EA; color: #097539';
     const review = pillBase + 'background: #FFF1DB; color: #9A5B00';
     return {
       colors: [
@@ -87,15 +87,15 @@ class Component extends DCLogic {
         { name: 'glass-card', values: 'white 72% / #10253A 72%', light: 'rgba(255,255,255,0.72)', dark: 'rgba(16,37,58,0.72)' },
         { name: 'text-primary', values: '#0F172A / #F7FAFF', light: '#0F172A', dark: '#F7FAFF' },
         { name: 'text-secondary', values: '#5B6B7F / #B7C4D6', light: '#5B6B7F', dark: '#B7C4D6' },
-        { name: 'text-tertiary', values: '#8A97A8 / #8EA0B5', light: '#8A97A8', dark: '#8EA0B5' },
-        { name: 'primary-gradient', values: '#0080FC → #0060FC', light: 'linear-gradient(180deg,#0080FC,#0060FC)', dark: 'linear-gradient(180deg,#0080FC,#0060FC)' },
-        { name: 'action-blue', values: '#0071FF / #2E90FF', light: '#0071FF', dark: '#2E90FF' },
+        { name: 'text-tertiary', values: '#647387 / #8EA0B5', light: '#647387', dark: '#8EA0B5' },
+        { name: 'primary-gradient', values: '#006AE6 → #0058E8', light: 'linear-gradient(180deg,#006AE6,#0058E8)', dark: 'linear-gradient(180deg,#006AE6,#0058E8)' },
+        { name: 'action-blue', values: '#0062DB / #2E90FF', light: '#0062DB', dark: '#2E90FF' },
         { name: 'brand-teal', values: '#00C69C', light: '#00C69C', dark: '#00C69C' },
-        { name: 'teal-text / icon', values: '#028265 / #20D7C5', light: '#028265', dark: '#20D7C5' },
+        { name: 'teal-text / icon', values: '#007358 / #20D7C5', light: '#007358', dark: '#20D7C5' },
         { name: 'blue-tint', values: '#E4F0FC / blue 14%', light: '#E4F0FC', dark: 'rgba(46,144,255,0.14)' },
         { name: 'teal-tint', values: '#E6F8F3 / teal 12%', light: '#E6F8F3', dark: 'rgba(32,215,197,0.12)' },
         { name: 'error-text', values: '#D0101F / #FF6B76', light: '#D0101F', dark: '#FF6B76' },
-        { name: 'hero', values: '#0060FC → #0080FC → #00C69C', light: 'linear-gradient(135deg,#0060FC 0%,#0080FC 55%,#00C69C 135%)', dark: 'linear-gradient(135deg,#0060FC 0%,#0080FC 55%,#00C69C 135%)' }
+        { name: 'hero', values: '#0058E6 → #0068EE → #00B894', light: 'linear-gradient(135deg,#0058E6 0%,#0068EE 55%,#00B894 135%)', dark: 'linear-gradient(135deg,#0058E6 0%,#0068EE 55%,#00B894 135%)' }
       ],
       type: [
         { name: 'AYORENI', spec: 'Wordmark 15 · 700 · +24%', style: 'font-size: 15px; font-weight: 700; letter-spacing: 0.24em' },
@@ -117,7 +117,7 @@ class Component extends DCLogic {
         { id: 'S04', name: 'Your Health Profile', flow: 'Flow 1', states: '5 states', status: 'Locked', pill: locked },
         { id: 'S05', name: 'Welcome / first-time Today', flow: 'Flow 1', states: '3 states', status: 'Locked', pill: locked },
         { id: 'S06', name: 'Today (returning)', flow: 'Flow 2', states: '2 states', status: 'Locked', pill: locked },
-        { id: 'S07', name: 'Dose update + Mark as Taken', flow: 'Flow 2', states: '4 states + toast', status: 'In review', pill: review }
+        { id: 'S07', name: 'Dose update + Mark as Taken', flow: 'Flow 2', states: '4 states + toast', status: 'Locked', pill: locked }
       ]
     };
   }

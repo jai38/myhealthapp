@@ -24,7 +24,7 @@ Paste this at the start of a development session.
 | S04 Your Health Profile | Locked | default, yes, saved, no, notsure |
 | S05 Welcome / first-time Today | Locked | incomplete, sheet, complete |
 | S06 Today (returning) | Locked | default, toast (after Mark as Taken) |
-| S07 Dose update sheet + Mark as Taken toast | **In review** (not locked) | ask, taken, other, skipped |
+| S07 Dose update sheet + Mark as Taken toast | Locked 2026-11-19 | ask, taken, other, skipped |
 | Medication Details (opens on medicine row tap) | Next to design | — |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
@@ -32,7 +32,7 @@ Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 ## 3. Design system (frozen — Calm Glass UI v4)
 - Canvas 402 × 874 pt (iPhone 17 Pro); content scrolls, never squeezed.
 - **Font: Plus Jakarta Sans** — 700/600/400; Large Title 34/40, Title 1 28/34, Section 20/25, Headline 17/22, Body 16–17/23, Meta 14–15/20, Footnote 13/18, Caption/chip 12/16, Button 17/20, Tab 10.5/13. Tabular figures for times, doses, readings.
-- **Colours (light / dark):** bg `#F7FAFC` / `#07111F`; surface `#FFFFFF` / `#0C1B2D`; glass card `rgba(255,255,255,.72)` / `rgba(16,37,58,.72)`; text `#0F172A`/`#F7FAFF`, `#5B6B7F`/`#B7C4D6`, `#8A97A8`/`#8EA0B5`; primary gradient `#0080FC → #0060FC`; action blue `#0071FF` / `#2E90FF`; brand teal `#00C69C`; teal text `#028265` / `#20D7C5`; error `#D0101F` / `#FF6B76`. Hero `linear-gradient(135deg,#0060FC 0%,#0080FC 55%,#00C69C 135%)`.
+- **Colours (light / dark):** bg `#F7FAFC` / `#07111F`; surface `#FFFFFF` / `#0C1B2D`; glass card `rgba(255,255,255,.72)` / `rgba(16,37,58,.72)`; text `#0F172A`/`#F7FAFF`, `#5B6B7F`/`#B7C4D6`, `#647387`/`#8EA0B5`; primary gradient `#006AE6 → #0058E8`; action blue `#0062DB` / `#2E90FF`; brand teal `#00C69C`; teal text `#007358` / `#20D7C5`; error `#D0101F` / `#FF6B76`. Hero `linear-gradient(135deg,#0058E6 0%,#0068EE 55%,#00B894 135%)`, text in the left 60%. Light-mode contrast fixed 2026-11-19: see the spec's "Contrast fix" table.
 - **Dose chips (icon + word, never colour only):** ✓ Taken (green, with actual time), ● Due now (primary gradient), Upcoming (grey), ? Not confirmed (amber, "Tap to update"), Missed (red, only when the user says so).
 - **Shape:** radii hero 28 · cards 22 · tiles 18 · inputs 16 · icon chips 12; buttons/chips/tab bar are pills. Margin 16, row min height 68, touch targets ≥ 44.
 - **Elevation:** light cards `0 8px 24px rgba(20,60,120,.08)` + blur 20–24; dark cards add an inset top highlight; button glow in light only.
@@ -54,7 +54,6 @@ Found on 2026-11-19; resolve before building screens:
 - `app/(tabs)/` has health-plan, index, medications, profile, records, reports, timeline — the design locks four tabs (Today / Records / Medications / Profile).
 
 ## 6. Open items
-1. Lock S07 (waiting on product owner).
 2. Design Medication Details next, on the same canvas.
 3. Share the canvas with the team (Share menu on the canvas page).
 4. The canvas was ported from the locked HTML mockups with the same CSS but has not yet been checked visually side by side against the old PNGs.

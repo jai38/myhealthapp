@@ -1,4 +1,4 @@
-# AYORENI — Design System Spec: Calm Glass UI v4 (FROZEN 2026-11-16)
+# AYORENI — Design System Spec: Calm Glass UI v4 (FROZEN 2026-11-16, contrast fix 2026-11-19)
 
 Replaces palette v3. Direction brief: `calm-glass-ui-brief.md`. Reference render: `mockups/today-calm-glass.html` and `mockups/today-*.png`.
 Canvas: iPhone 17 Pro logical **402 × 874 pt** (export @3x = 1206 × 2622). Content scrolls naturally; never squeeze to fit.
@@ -17,11 +17,11 @@ Header lockup: logo 42pt wide + "AYORENI" wordmark.
 | divider | `#E7EEF5` | `rgba(255,255,255,0.06)` | Row separators |
 | text-primary | `#0F172A` | `#F7FAFF` | |
 | text-secondary | `#5B6B7F` | `#B7C4D6` | |
-| text-tertiary | `#8A97A8` | `#8EA0B5` | Counts, metadata |
-| primary-gradient | `#0080FC → #0060FC` | same | Primary buttons, Due now chip |
-| action-blue | `#0071FF` | `#2E90FF` | Links, active tab, blue icons |
+| text-tertiary | `#647387` | `#8EA0B5` | Counts, metadata, placeholders, inactive tab labels |
+| primary-gradient | `#006AE6 → #0058E8` | same | Primary buttons, Due now chip (white text ≥ 4.99:1 at the top) |
+| action-blue | `#0062DB` | `#2E90FF` | Links, active tab, blue icons, checkbox and radio fills |
 | brand-teal | `#00C69C` | `#00C69C` | Logo-matched fills, gradient end |
-| teal-text/icon | `#028265` | `#20D7C5` | Teal icons, Supplement tag text |
+| teal-text/icon | `#007358` | `#20D7C5` | Teal icons, Supplement tag text |
 | teal-glow | `#6CE7D8` | `#6CE7D8` | Glows only |
 | blue-tint | `#E4F0FC` | `rgba(46,144,255,0.14)` | Blue icon chips, active tab pill |
 | teal-tint | `#E6F8F3` | `rgba(32,215,197,0.12)` | Teal icon chips, Supplement tag |
@@ -31,14 +31,14 @@ Header lockup: logo 42pt wide + "AYORENI" wordmark.
 Mesh background: soft blurred blobs (blur 48) of `rgba(0,198,156,0.20)` and `rgba(0,128,252,0.16)` (dark: 0.13 / 0.20) behind content so glass reads.
 
 ## Hero card
-`linear-gradient(135deg, #0060FC 0%, #0080FC 55%, #00C69C 135%)`, radius 28, padding 22, white text kept on the blue side.
+`linear-gradient(135deg, #0058E6 0%, #0068EE 55%, #00B894 135%)`, radius 28, padding 22. White text stays in the blue part: the left 60% of the card (≥ 4.5:1 there); the teal end is decoration only. Small pills on the hero use `rgba(0,20,70,0.18)` fill with a `rgba(255,255,255,0.32)` border (not a white fill).
 Teal-glow radial bottom-right; 1px `rgba(255,255,255,0.28)` border; top sheen `rgba(255,255,255,0.14)` → transparent.
 Shadow light `0 14px 30px rgba(0,96,252,0.26)`; dark adds `0 0 0 1px rgba(108,231,216,0.18)`.
 
 ## Dose status chips (icon + word, never colour alone)
 | Status | Light text / bg | Dark text / bg | Rule |
 |---|---|---|---|
-| ✓ Taken | `#0B7F3F` / `#E3F5EA` | `#5FD38D` / `rgba(95,211,141,0.14)` | Show actual time "at 8:12 AM" |
+| ✓ Taken | `#097539` / `#E3F5EA` | `#5FD38D` / `rgba(95,211,141,0.14)` | Show actual time "at 8:12 AM" |
 | ● Due now | white on primary-gradient | same | One "Mark as Taken" button in the group |
 | Upcoming | `#5B6B7F` / `#EEF2F7` | `#B7C4D6` / `rgba(255,255,255,0.07)` | |
 | ? Not confirmed | `#9A5B00` / `#FFF1DB` | `#F5B84A` / `rgba(245,184,74,0.14)` | Past dose with no log; "Tap to update" |
@@ -61,7 +61,7 @@ Large text gets negative tracking; body is Regular 400 (not Medium); weights sta
 | Caption / chip | 12/16 | 400 (caption), 600 (chip) | 0 | Timestamps, status chips (minimum size) |
 | Button | 17/20 | 600 | −1% | All buttons |
 | Tab label | 10.5/13 | 600 | +1% | Bottom tabs only |
-Accent: sign-in headline second line may use the blue→teal gradient as text fill (once per screen max).
+Accent: sign-in headline second line may use the blue→teal gradient as text fill (once per screen max): light `#0058E6 → #006AE6 45% → #008F74` (large text, ≥ 3.6:1 end to end).
 Tabular figures for all times, doses, readings. Support larger system text without truncation.
 
 Logo sizes: sign-in 92pt wide (soft blue drop shadow) + wordmark below; header 48pt wide + wordmark right.
@@ -89,3 +89,21 @@ Rounded outline, 2pt stroke, round caps/joins; filled only for the active tab. B
 
 ## Accessibility
 Text ≥ 4.5:1 (secondary included); never colour-only status; ≥ 44pt targets; readable dark mode; large-text support.
+
+## Contrast fix (2026-11-19)
+Fixes the light-mode failures in `ayoreni-docs` `docs/phases/04b-brief.md`. Glass and tints measured blended over bg `#F7FAFC`. Dark mode already passed and is unchanged.
+
+| Pair (light) | Was | Now | Ratio now |
+|---|---|---|---|
+| text-tertiary on bg / glass card / tab bar | `#8A97A8` (2.83–2.97) | `#647387` | 4.61 / 4.78 / 4.78 |
+| action-blue on blue-tint (active tab) | `#0071FF` (3.78) | `#0062DB` | 4.82 |
+| action-blue links on bg / white | `#0071FF` (4.17 / 4.37) | `#0062DB` | 5.31 / 5.57 |
+| white on primary-gradient | top `#0080FC` (3.82) | `#006AE6 → #0058E8` | 4.99 → 5.90 |
+| white on hero | stops `#0060FC/#0080FC/#00C69C` (3.82 at mid) | `#0058E6/#0068EE/#00B894`, text in left 60% | ≥ 4.65 where text sits; hero pill 6.29 |
+| teal-text on teal-tint (Supplement tag) | `#028265` (4.35) | `#007358` | 5.31 |
+| Taken text on Taken fill | `#0B7F3F` (4.49) | `#097539` | 5.12 (also used for the S03 Verified tick and S04 green note) |
+| disabled button text on disabled fill | `#8A97A8` on `#E3EAF2` (2.45) | `#5B6B7F` on `#EBEFF4` | 4.72 |
+
+**Disabled controls:** decision: disabled labels also meet 4.5:1, so people can still read what the button will do. The disabled state is shown by the flat grey fill (no gradient, no glow), not by faint text. Disabled text links (e.g. Save in a sheet) use text-tertiary `#647387`.
+
+Non-text uses of action-blue (focus ring `rgba(0,113,255,0.12)`, icon chips) keep ≥ 3:1. Checkbox and radio fills follow action-blue.

@@ -12,8 +12,8 @@
 <style>
 body{margin:0}
 .s03{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
---t1:#0F172A;--t2:#5B6B7F;--t3:#8A97A8;--act:#0071FF;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#E3EAF2;--offt:#8A97A8;
---btint:#E4F0FC;--ok:#0B7F3F;--okb:#E3F5EA;--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;--sheet:#FFFFFF;--scrim:rgba(15,23,42,.28);--wheelsel:rgba(118,118,128,.12);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ok:#097539;--okb:#E3F5EA;--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;--sheet:#FFFFFF;--scrim:rgba(15,23,42,.28);--wheelsel:rgba(118,118,128,.12);
 width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
 .s03.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
 --t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#8EA0B5;
@@ -50,12 +50,12 @@ width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;
 .s03 .f.bad .chip{border-color:var(--err)}
 .s03 .ck{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:18px;color:var(--t2);margin-top:16px;padding:0 4px}
 .s03 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
-.s03 .bx svg{display:none}.s03 .ck.on .bx{background:#0071FF;border-color:#0071FF}.s03 .ck.on .bx svg{display:block}
+.s03 .bx svg{display:none}.s03 .ck.on .bx{background:var(--act);border-color:var(--act)}.s03 .ck.on .bx svg{display:block}
 .s03 .ck.bad .bx{border-color:var(--err)}
 .s03 .ck a{color:var(--act);font-weight:600;text-decoration:none}
 .s03 .cta{position:absolute;left:0;bottom:0;width:402px;padding:14px 20px 44px;background:linear-gradient(transparent,var(--bg) 30%);z-index:4}
 .s03 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600;letter-spacing:-.01em;background:var(--off);color:var(--offt)}
-.s03 .on .btn{background:linear-gradient(180deg,#0080FC,#0060FC);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.s03 .on .btn{background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
 .s03.dark .on .btn{box-shadow:none}
 .s03 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
 .s03 .scrim{position:absolute;inset:0;background:var(--scrim);z-index:7}

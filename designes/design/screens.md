@@ -57,7 +57,7 @@ Mockup: `mockups/today-calm-glass.html` (#dark for dark), PNGs `mockups/today-*.
 - One "Mark as Taken" under the Due now row; Upcoming Appointment card; Quick Actions; floating tabs.
 - Decisions: hide empty groups; max 4–5 rows per group then "Show all"; tapping Not confirmed opens dose-update sheet (Taken at time / Skipped / Missed, never automatic); all done → hero "All done for today ✓", full ring, no confetti.
 
-### S07 · Dose update sheet + Mark as Taken confirmation — REVIEW
+### S07 · Dose update sheet + Mark as Taken confirmation — LOCKED 2026-11-19
 Mockups: `mockups/s07-dose-update.html` (#light|#dark - ask|taken|other|skipped) over Today; `today-calm-glass.html#toast` / `#dark-toast` for the Mark as Taken toast. PNGs `mockups/s07-*.png`.
 - Sheet "Update dose": Cancel / Save (Save disabled until a choice); medicine card (name, dose, scheduled time).
 - "Did you take this dose?": Yes, I took it → when: As scheduled / Just now / Other time (wheel, can't be in the future); No, I skipped it (optional reason chips: Felt unwell, Doctor advised, Ran out, Side effects, Other); No, I missed it.
