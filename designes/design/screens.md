@@ -111,3 +111,15 @@ Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · 
 - **Manage** (active / paused): Edit Reminder Times; Pause Medicine or Resume Medicine; Mark as Completed; Stop Medicine (red, asks for an optional reason, then `discontinue`). Footnote "Stopping or completing keeps the medicine and its history in your records." Completed/stopped medicines show no Manage card (the API can't restart them).
 - Decisions: names and dates in the design are mock data; the build uses the synthetic set ("Asha Test", "Testmed A 500 mg").
 
+## Side track L · Landing page — REVIEW 2026-11-21 (owner)
+Canvas page "Landing page": board **L01** (desktop 1440, light; props `theme` light/dark, `layout` desktop/phone) and **L02** (phone 360 light and dark, desktop dark). Brief: `ayoreni-docs` `docs/phases/landing-brief.md`. Replaces the old MyHealth page in `jai38/MyHealth`.
+- Build as static HTML + CSS, Calm Glass v4 tokens with the 2026-11-19 contrast values, Plus Jakarta Sans. One breakpoint: the `phone` layout below 720 px (single column, 16 px gutter, full-width buttons). No tracking scripts, no forms, no download link.
+- Nav: logo + AYORENI; How it works · Privacy (hidden on phone) · Contact pill.
+- Hero: amber tag "In early testing"; H1 "Your prescriptions and medicines, *in one calm place.*" (second line gradient, as S01); lead "Ayoreni reads your prescriptions, keeps your health records in order and shows what to take today. You check everything before it’s saved."; "See How It Works" / "Contact Us"; fine print "Not in the app stores yet. A small group is testing an early Android version." Right: phone mock of the Today screen drawn with synthetic data only (Asha; Testmed A 500 mg, Testvit D 1000 IU, Testmed B 10 mg) and the caption "Sample data. Not real medicines." Build it as HTML/CSS or an SVG, not a screenshot, so it stays light.
+- How it works (3 cards): Snap a prescription · Check what it read ("Nothing is saved as fact until you confirm it.") · See today’s medicines ("You mark each dose taken yourself.").
+- In the app now: Today · Records (timeline and a PDF summary for your doctor) · Medications.
+- Coming next, labelled "These aren’t in the app yet": Sign in with WhatsApp · Health profile · Reminders · Family.
+- Privacy in plain words: You decide what’s saved · How a prescription is read (processed on our servers; documents private to your account) · No ads, we don’t sell your data · Where your data is kept, **placeholder until the owner confirms the hosting wording** (brief task 2).
+- Contact: gradient card "Questions about Ayoreni?" with a mailto button for the temporary support address from Phase 5 task 18. Footer: logo, "Ayoreni helps you keep track of your health. It doesn’t replace your doctor’s advice.", © 2026 Ayoreni.
+- Not used, by rule: "never miss a dose", HIPAA/DPDP, zero-knowledge, encryption strengths, "certified", package scanning, a waitlist.
+

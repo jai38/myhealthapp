@@ -30,6 +30,15 @@
       "x": 1446,
       "y": 21592
     },
+    "Artboard-8ogp.dc.html": {
+      "h": 600,
+      "handmade": true,
+      "page": "page-cs7dhx",
+      "title": "Artboard 1",
+      "w": 800,
+      "x": 0,
+      "y": 0
+    },
     "M02MedicationDetails.dc.html": {
       "h": 1640,
       "title": "M02 · Medication Details (full scroll)",
@@ -155,6 +164,23 @@
       "w": 4476,
       "x": 1928,
       "y": 21592
+    },
+    "L01Landing.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 3600,
+      "title": "L01 · Landing page · desktop · light",
+      "page": "landing",
+      "expand": "fill"
+    },
+    "L02LandingVariants.dc.html": {
+      "x": 1560,
+      "y": 0,
+      "w": 2336,
+      "h": 4530,
+      "title": "L02 · Landing page · phone (light, dark) and desktop dark",
+      "page": "landing"
     }
   },
   "createdOnFiles": {
@@ -237,6 +263,14 @@
       "w": 240,
       "x": 0,
       "y": 23756
+    },
+    "t10": {
+      "x": 0,
+      "y": -260,
+      "text": "Side track L · Ayoreni landing page · IN REVIEW (owner)",
+      "kind": "title1",
+      "maxW": 3896,
+      "page": "landing"
     }
   },
   "order": [
@@ -261,8 +295,24 @@
     "A04Under18.dc.html",
     "SecurityStates.dc.html",
     "M02MedicationDetails.dc.html",
-    "M02States.dc.html"
+    "M02States.dc.html",
+    "Artboard-8ogp.dc.html",
+    "L01Landing.dc.html",
+    "L02LandingVariants.dc.html"
   ],
-  "pages": [],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Page 1"
+    },
+    {
+      "id": "page-cs7dhx",
+      "name": "Page 2"
+    },
+    {
+      "id": "landing",
+      "name": "Landing page"
+    }
+  ],
   "title": "AYORENI App Screens"
 }
