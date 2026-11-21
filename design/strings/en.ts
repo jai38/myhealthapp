@@ -98,7 +98,7 @@ export const en = {
 
   'nav.today': 'Today',
   'nav.records': 'Records',
-  'nav.medicines': 'Medicines',
+  'nav.medicines': 'Medications',
   'nav.healthPlan': 'Health Plan',
   'nav.profile': 'Profile',
   'nav.notifications': 'Notifications',

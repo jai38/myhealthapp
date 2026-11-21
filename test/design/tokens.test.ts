@@ -42,9 +42,10 @@ describe('text styles', () => {
     }
   });
 
-  it('caps display and title1 at 1.3 and every other style at 1.6', () => {
+  it('caps display and title1 at 1.3, tab labels at 1.15 and every other style at 1.6', () => {
     expect(maxFontScaleFor('display')).toBe(1.3);
     expect(maxFontScaleFor('title1')).toBe(1.3);
+    expect(maxFontScaleFor('tab')).toBe(1.15);
     expect(maxFontScaleFor('body')).toBe(1.6);
   });
 });

@@ -4,6 +4,7 @@ import { Stack, router, usePathname } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { color } from '../design/tokens';
+import { APP_THEME_PIN, ThemeProvider } from '../design/theme';
 import { useAppFonts } from '../design/fonts';
 import { authService, UserSession, SessionEndReason } from '../services/auth/auth-service';
 import { AuthScreen } from '../features/auth/AuthScreen';
@@ -22,7 +23,7 @@ import {
   registerNotificationResponseListener,
 } from '../services/notifications/notification-service';
 
-export default function RootLayout() {
+function RootLayoutContent() {
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
   const [endReason, setEndReason] = useState<SessionEndReason | null>(authService.getEndReason());
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -143,3 +144,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+// The app is light until every screen reads useTheme() (see design/theme.tsx). The gallery and
+// the screen preview pin their own theme inside this.
+export default function RootLayout() {
+  return (
+    <ThemeProvider scheme={APP_THEME_PIN}>
+      <RootLayoutContent />
+    </ThemeProvider>
+  );
+}

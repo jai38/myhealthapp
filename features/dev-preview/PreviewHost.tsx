@@ -16,6 +16,7 @@ import type { TabKey } from '../../design/components/Navigation/navStyle';
 import { useAppFonts } from '../../design/fonts';
 import { color, themes } from '../../design/tokens';
 import { ThemeProvider } from '../../design/theme';
+import { TabBarClearanceProvider } from '../../design/components/Navigation/TabBarClearance';
 import { t } from '../../design/strings';
 import { authService } from '../../services/auth/auth-service';
 import type { UserSession } from '../../services/auth/auth-service';
@@ -164,6 +165,7 @@ export function PreviewHost({ screen, state, fontScale, theme = 'light' }: Previ
 
   return (
     <ThemeProvider scheme={theme}>
+      <TabBarClearanceProvider>
       <ConnectivityContext.Provider value={connectivity}>
         <View
           style={[styles.root, { backgroundColor: themes[theme].color.bg.screen }]}
@@ -177,6 +179,7 @@ export function PreviewHost({ screen, state, fontScale, theme = 'light' }: Previ
           <TabBar active={tab} onSelect={() => {}} testID="tab-bar" />
         </View>
       </ConnectivityContext.Provider>
+      </TabBarClearanceProvider>
     </ThemeProvider>
   );
 }

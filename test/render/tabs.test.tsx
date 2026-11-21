@@ -96,3 +96,21 @@ describe('Profile tab', () => {
     expect(await screen.findByText(t('profile.signOut'))).toBeTruthy();
   });
 });
+
+describe('tab bar (04b task 9)', () => {
+  it('has four tabs, Today, Records, Medications and Profile, and no Health Plan', async () => {
+    await renderPreview('today', 'nothingDue');
+    for (const key of ['today', 'records', 'medicines', 'profile']) {
+      expect(screen.getByTestId(`tab-bar-${key}`)).toBeTruthy();
+    }
+    expect(screen.queryByTestId('tab-bar-healthPlan')).toBeNull();
+    expect(screen.getAllByRole('tab')).toHaveLength(4);
+    expect(screen.getByTestId('tab-bar-medicines')).toHaveAccessibleName('Medications');
+  });
+
+  it('shows no search and no notification bell (decision D3)', async () => {
+    await renderPreview('today', 'nothingDue');
+    expect(screen.queryByLabelText(/search/i)).toBeNull();
+    expect(screen.queryByLabelText(/notification/i)).toBeNull();
+  });
+});

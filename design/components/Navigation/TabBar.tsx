@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '../Foundations/Icon';
 import { Text } from '../Foundations/Text';
-import { color, size, space } from '../../tokens';
+import { size, space } from '../../tokens';
+import { useTheme } from '../../theme';
 import { t } from '../../strings';
-import { tabBarLayout, tabColors, tabs } from './navStyle';
+import { tabBarBottom, tabBarLayout, tabs } from './navStyle';
 import type { TabKey } from './navStyle';
 
 export interface TabBarProps {
@@ -14,50 +15,65 @@ export interface TabBarProps {
   testID?: string;
 }
 
-// Presentational only. Routing is wired in Phase 4.
+// v4 floating frosted pill: inset 16, 30 above the bottom edge, 68 high, radius 34. It floats
+// over the screen, so each tab's scrolling content adds tabBarClearance() at the bottom.
+// Blur is drawn on web; native shows the translucent fill alone until expo-blur is added.
 export function TabBar({ active, onSelect, testID }: TabBarProps) {
   const insets = useSafeAreaInsets();
+  const { color: c, shadow } = useTheme();
   return (
     <View
       testID={testID}
       accessibilityRole="tablist"
-      style={[styles.bar, { paddingBottom: insets.bottom }]}
+      style={[
+        styles.bar,
+        shadow.card,
+        {
+          bottom: tabBarBottom(insets.bottom),
+          backgroundColor: c.bg.tabBar,
+          borderColor: c.bg.glassEdge,
+        },
+        Platform.OS === 'web' ? ({ backdropFilter: 'blur(24px)' } as object) : null,
+      ]}
     >
-      <View style={styles.row}>
-        {tabs.map((tab) => {
-          const selected = tab.key === active;
-          const colors = tabColors(selected);
-          return (
-            <Pressable
-              key={tab.key}
-              testID={testID && `${testID}-${tab.key}`}
-              accessibilityRole="tab"
-              accessibilityLabel={t(tab.labelKey)}
-              accessibilityState={{ selected }}
-              onPress={() => onSelect(tab.key)}
-              style={({ pressed }) => [styles.item, pressed && styles.pressed]}
-            >
-              <Icon name={selected ? tab.activeIcon : tab.icon} size="md" color={colors.fg} />
-              <Text variant="caption" style={[styles.label, { color: colors.fg }]} numberOfLines={1}>
-                {t(tab.labelKey)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      {tabs.map((tab) => {
+        const selected = tab.key === active;
+        const fg = selected ? c.text.link : c.text.tertiary;
+        return (
+          <Pressable
+            key={tab.key}
+            testID={testID && `${testID}-${tab.key}`}
+            accessibilityRole="tab"
+            accessibilityLabel={t(tab.labelKey)}
+            accessibilityState={{ selected }}
+            onPress={() => onSelect(tab.key)}
+            style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+          >
+            <View style={[styles.pill, selected ? { backgroundColor: c.bg.tintBlue } : null]}>
+              <Icon name={selected ? tab.activeIcon : tab.icon} size="md" color={fg} />
+            </View>
+            {/* The tab style caps system text at TAB_LABEL_MAX_SCALE (typography.ts). */}
+            <Text variant="tab" style={{ color: fg }} numberOfLines={1}>
+              {t(tab.labelKey)}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   bar: {
-    backgroundColor: color.bg.card,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: color.border.subtle,
-  },
-  row: {
+    position: 'absolute',
+    left: tabBarLayout.inset,
+    right: tabBarLayout.inset,
+    minHeight: tabBarLayout.height,
+    borderRadius: tabBarLayout.radius,
+    borderWidth: 1,
     flexDirection: 'row',
-    height: tabBarLayout.height,
+    alignItems: 'center',
+    paddingHorizontal: space.xxs,
   },
   item: {
     flex: 1,
@@ -65,12 +81,15 @@ const styles = StyleSheet.create({
     minHeight: size.touchMin,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: space.xs,
+    gap: space.xxs,
+    paddingVertical: space.xs,
+  },
+  pill: {
+    paddingHorizontal: space.md,
+    paddingVertical: space.xxs,
+    borderRadius: 9999,
   },
   pressed: {
-    backgroundColor: color.bg.subtle,
-  },
-  label: {
-    marginTop: space.xxs,
+    opacity: 0.7,
   },
 });

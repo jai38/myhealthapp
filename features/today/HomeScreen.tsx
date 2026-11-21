@@ -180,7 +180,6 @@ export default function HomeScreen() {
         <TodayQuickActions onScan={openScan} onAddManual={openManualAdd} disabled={isProcessing} />
       ) : null}
 
-      <View style={styles.bottomInset} />
 
       <DocumentPickerModal
         visible={isPickerVisible}
@@ -201,8 +200,4 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Clears the tab bar so the last item is never hidden behind it.
-  bottomInset: {
-    height: size.tabBarHeight + space.xl,
-  },
 });

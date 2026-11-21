@@ -17,10 +17,12 @@ import { authService } from '../../services/auth/auth-service';
 import { TimelineDateStrip } from './TimelineDateStrip';
 import { TimelineEventRow } from './TimelineEventRow';
 import { TimelineFilters } from './TimelineFilters';
+import { useTabBarClearance } from '../../design/components/Navigation/TabBarClearance';
 
 const PAGE_SIZE = 20;
 
 export default function TimelineView() {
+  const clearance = useTabBarClearance();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
@@ -192,7 +194,7 @@ export default function TimelineView() {
         data={events}
         keyExtractor={(item) => item.id}
         renderItem={renderTimelineItem}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: clearance }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

@@ -20,6 +20,7 @@ import { formatDoseClock } from './dose-display';
 import { WeeklyAdherenceCard } from './WeeklyAdherenceCard';
 import { DaySchedule } from './DaySchedule';
 import { MedicationList, type TabType } from './MedicationList';
+import { useTabBarClearance } from '../../design/components/Navigation/TabBarClearance';
 
 const DAY_KEYS: StringKey[] = [
   'medicines.day.mon',
@@ -33,6 +34,7 @@ const DAY_KEYS: StringKey[] = [
 
 // The Medicines tab header and safe area come from the tab shell, so this screen has no title of its own.
 export default function MedicationsScreen() {
+  const clearance = useTabBarClearance();
   const [activeTab, setActiveTab] = useState<TabType>('active');
 
   // Selected calendar day for schedule inspection (default today)
@@ -157,7 +159,7 @@ export default function MedicationsScreen() {
     <>
       <Screen scroll={false} testID="medicines-screen">
         <ScrollView
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

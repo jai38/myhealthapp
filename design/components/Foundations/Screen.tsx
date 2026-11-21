@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { color, space } from '../../tokens';
 import { RefreshScroll } from './RefreshScroll';
 import { WaveHeader } from './WaveHeader';
+import { useTabBarClearance } from '../Navigation/TabBarClearance';
 
 export interface ScreenProps {
   children?: React.ReactNode;
@@ -24,6 +25,8 @@ export function Screen({
   wave = false,
   testID,
 }: ScreenProps) {
+  const clearance = useTabBarClearance();
+  const contentStyle = [styles.content, clearance > 0 ? { paddingBottom: clearance } : null];
   // The wave sits inside the scrolling content, so it scrolls away with the
   // header instead of staying pinned behind the page.
   const waveNode = wave ? (
@@ -39,12 +42,13 @@ export function Screen({
   );
   const body =
     scroll && onRefresh ? (
-      <RefreshScroll onRefresh={onRefresh} contentContainerStyle={styles.content}>
+      <RefreshScroll onRefresh={onRefresh} contentContainerStyle={contentStyle}>
         {content}
       </RefreshScroll>
     ) : scroll ? (
-      <ScrollView contentContainerStyle={styles.content}>{content}</ScrollView>
+      <ScrollView contentContainerStyle={contentStyle}>{content}</ScrollView>
     ) : (
+      // Without scroll, the screen's own scroll view adds useTabBarClearance().
       <View style={styles.fill}>{content}</View>
     );
 

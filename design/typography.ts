@@ -49,7 +49,11 @@ export const tabularNums: TextStyle = { fontVariant: ['tabular-nums'] };
 
 export const DEFAULT_MAX_FONT_SCALE = 1.6;
 
+/** Tab labels grow only a little with system text, as on iOS, so all four fit (04b task 9). */
+export const TAB_LABEL_MAX_SCALE = 1.15;
+
 // Large display text would overflow its line box at 1.6x, so it is capped lower.
 export function maxFontScaleFor(name: TextStyleName): number {
+  if (name === 'tab') return TAB_LABEL_MAX_SCALE;
   return name === 'display' || name === 'title1' ? 1.3 : DEFAULT_MAX_FONT_SCALE;
 }

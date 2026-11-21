@@ -1,5 +1,6 @@
 export * from './navStyle';
 export { TabBar } from './TabBar';
+export { TabBarClearanceProvider, useTabBarClearance } from './TabBarClearance';
 export type { TabBarProps } from './TabBar';
 export { TopBar } from './TopBar';
 export type { TopBarProps } from './TopBar';

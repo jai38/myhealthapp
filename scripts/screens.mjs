@@ -121,9 +121,13 @@ function measure() {
   // text box passes the button's edge or is cut short; it wraps when it takes more than one line.
   const labelOverflow = [];
   const labelWrap = [];
+  // Only real labels: a tab, or a button whose text is at most four words. A tappable list row
+  // or card is a button too, but its text is content, not a label.
   for (const button of document.querySelectorAll('[role="button"], [role="tab"]')) {
     const b = button.getBoundingClientRect();
     if (!visible(button, b)) continue;
+    const words = (button.innerText || '').trim().split(/\s+/).filter(Boolean);
+    if (button.getAttribute('role') !== 'tab' && (words.length === 0 || words.length > 4)) continue;
     for (const el of button.querySelectorAll('*')) {
       const isText = el.children.length === 0 && (el.textContent || '').trim() !== '';
       if (!isText) continue;

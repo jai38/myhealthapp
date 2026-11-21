@@ -1,9 +1,10 @@
 import type { IconName } from '../Foundations/iconNames';
-import { color, size } from '../../tokens';
+import { color, layout, size, space } from '../../tokens';
 import { t } from '../../strings';
 import type { StringKey } from '../../strings';
 
-export type TabKey = 'today' | 'records' | 'medicines' | 'healthPlan' | 'profile';
+// Four tabs (04b task 9). Health Plan is not a tab until its phase (18); its route stays, unlinked.
+export type TabKey = 'today' | 'records' | 'medicines' | 'profile';
 
 export const tabs: { key: TabKey; labelKey: StringKey; icon: IconName; activeIcon: IconName }[] = [
   { key: 'today', labelKey: 'nav.today', icon: 'home-outline', activeIcon: 'home' },
@@ -15,12 +16,6 @@ export const tabs: { key: TabKey; labelKey: StringKey; icon: IconName; activeIco
   },
   { key: 'medicines', labelKey: 'nav.medicines', icon: 'medkit-outline', activeIcon: 'medkit' },
   {
-    key: 'healthPlan',
-    labelKey: 'nav.healthPlan',
-    icon: 'clipboard-outline',
-    activeIcon: 'clipboard',
-  },
-  {
     key: 'profile',
     labelKey: 'nav.profile',
     icon: 'person-circle-outline',
@@ -28,9 +23,12 @@ export const tabs: { key: TabKey; labelKey: StringKey; icon: IconName; activeIco
   },
 ];
 
-// The active tab is marked by a filled icon and the link color.
-export function tabColors(active: boolean): { fg: string } {
-  return { fg: active ? color.text.link : color.text.secondary };
+// v4: the active tab has a filled icon in a blue-tint pill and an action-blue label; inactive
+// tabs have an outline icon and a tertiary label.
+export function tabColors(active: boolean): { fg: string; pill: string | null } {
+  return active
+    ? { fg: color.text.link, pill: color.bg.tintBlue }
+    : { fg: color.text.tertiary, pill: null };
 }
 
 export function badgeText(count: number): string | null {
@@ -44,7 +42,23 @@ export function bellLabel(count: number): string {
   return t('nav.notificationsCount', { count });
 }
 
-export const tabBarLayout = { height: size.tabBarHeight, itemMinWidth: size.touchMin } as const;
+export const tabBarLayout = {
+  height: size.tabBarHeight,
+  itemMinWidth: size.touchMin,
+  inset: layout.tabBar.inset,
+  bottom: layout.tabBar.bottom,
+  radius: layout.tabBar.radius,
+} as const;
+
+/** Distance from the bar's bottom edge to the screen's: the spec's 30, or more over a taller home indicator. */
+export function tabBarBottom(safeAreaBottom: number): number {
+  return Math.max(tabBarLayout.bottom, safeAreaBottom);
+}
+
+/** Bottom padding a tab's scrolling content needs so its last row clears the floating bar. */
+export function tabBarClearance(safeAreaBottom: number): number {
+  return tabBarLayout.height + tabBarBottom(safeAreaBottom) + space.lg;
+}
 
 export function initials(name: string): string {
   const words = name.trim().split(/\s+/).filter((w) => w.length > 0);
