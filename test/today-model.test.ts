@@ -201,9 +201,9 @@ describe('greeting', () => {
   it('uses the first name only, with a no-name variant', () => {
     const g = greetingFor(9, '  Asha  Rao ');
     expect(g.params).toEqual({ name: 'Asha' });
-    expect(t(g.key, g.params)).toBe('Good morning, Asha');
+    expect(t(g.key, g.params)).toBe('Good morning, Asha 👋');
     const n = greetingFor(9, undefined);
     expect(n.params).toBeUndefined();
-    expect(t(n.key)).toBe('Good morning');
+    expect(t(n.key)).toBe('Good morning 👋');
   });
 });

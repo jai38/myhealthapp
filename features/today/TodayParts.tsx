@@ -94,7 +94,7 @@ export function TodayGroupCard({
     <View style={styles.group} testID={`today-group-${group.part}`}>
       <GroupHeader
         title={t(DAY_PART_TITLE[group.part])}
-        count={t('today.groupCount', { taken: String(group.taken), total: String(group.total) })}
+        count={group.total === 1 ? t('today.groupCountOne') : t('today.groupCount', { count: String(group.total) })}
       />
       <GlassCard padding={space.md}>
         {shown.map((item) => {
