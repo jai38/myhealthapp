@@ -11,47 +11,19 @@ afterEach(() => {
 });
 
 describe('Today tab', () => {
-  it('new user: the first-use state and no dose list', async () => {
+  // S06 states in detail: test/render/today.test.tsx.
+  it('new user: the first-use state and no hero', async () => {
     await renderPreview('today', 'newUser');
     expect(await screen.findByTestId('today-new-user')).toBeTruthy();
-    expect(screen.queryByTestId('today-next-dose')).toBeNull();
+    expect(screen.queryByTestId('today-hero')).toBeNull();
   });
 
-  it('nothing due: says so, with no next dose', async () => {
-    await renderPreview('today', 'nothingDue');
-    expect(await screen.findByTestId('today-nothing-due')).toBeTruthy();
-    expect(screen.queryByTestId('today-next-dose')).toBeNull();
-  });
-
-  it('due now: the next dose with Taken, Snooze and Skip', async () => {
-    await renderPreview('today', 'dueNow');
-    expect(await screen.findByTestId('today-next-name')).toHaveTextContent('Testmed B 20 mg');
-    expect(await screen.findByTestId('today-next-taken')).toBeTruthy();
-    expect(await screen.findByTestId('today-next-snooze')).toBeTruthy();
-    expect(await screen.findByTestId('today-next-skip')).toBeTruthy();
-  });
-
-  it('many due: the due-now list and the earlier not-confirmed doses', async () => {
-    await renderPreview('today', 'manyDue');
-    expect(await screen.findByTestId('today-due-now')).toBeTruthy();
-    expect(await screen.findByTestId('today-earlier')).toBeTruthy();
-  });
-
-  it('all done: one all-done card and no next dose', async () => {
-    await renderPreview('today', 'allDone');
-    expect(await screen.findByTestId('today-all-done')).toBeTruthy();
-    expect(screen.queryByTestId('today-next-dose')).toBeNull();
-  });
-
-  it('error: the error state, not an empty day', async () => {
+  it('error: the error in the notice slot with Retry, not an empty day', async () => {
     await renderPreview('today', 'error');
-    expect(await screen.findByTestId('today-error')).toBeTruthy();
+    expect(await screen.findByTestId('today-notice-error')).toBeTruthy();
+    expect(screen.getByTestId('today-notice-action')).toBeTruthy();
     expect(screen.queryByTestId('today-new-user')).toBeNull();
-  });
-
-  it('offline: the offline banner over the cached day', async () => {
-    await renderPreview('today', 'offline');
-    expect(await screen.findByTestId('offline-banner')).toBeTruthy();
+    expect(screen.queryByTestId('today-hero')).toBeNull();
   });
 });
 

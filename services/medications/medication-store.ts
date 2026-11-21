@@ -407,6 +407,40 @@ class MedicationStore {
   }
 
   /**
+   * Undoes a Taken or Skip the user just recorded (S06's Undo, about 5 s): the dose goes back
+   * to PENDING, so Today shows it as Due now (or Not confirmed) again. Never Missed.
+   * Signed in, the server must save it (PATCH back to PENDING); on failure the recorded state
+   * is restored and the error is thrown. Signed out, it is kept on the phone only.
+   */
+  async undoAction(doseId: string): Promise<DoseLog> {
+    const idx = this.doses.findIndex((d) => d.id === doseId);
+    if (idx < 0) throw new Error(`Dose ${doseId} not found`);
+    const existing = this.doses[idx];
+    const reverted: DoseLog = {
+      ...existing,
+      status: 'PENDING',
+      actionTime: null,
+      updatedAt: new Date().toISOString(),
+    };
+    this.doses = [...this.doses.slice(0, idx), reverted, ...this.doses.slice(idx + 1)];
+    await this.persist();
+
+    if (authService.isAuthenticated()) {
+      try {
+        await medicationService.correctDoseAction(doseId, { action: 'PENDING' });
+      } catch (err) {
+        const at = this.doses.findIndex((d) => d.id === doseId);
+        if (at >= 0 && this.doses[at] === reverted) {
+          this.doses = [...this.doses.slice(0, at), existing, ...this.doses.slice(at + 1)];
+          await this.persist();
+        }
+        throw err;
+      }
+    }
+    return reverted;
+  }
+
+  /**
    * Honest dose counts for a date (CLAUDE.md rule 15). An unrecorded dose is never
    * counted as missed: it is `upcoming` until its due window ends, then `notConfirmed`.
    * `percentage` covers recorded doses only (taken / (taken + skipped + missed by the

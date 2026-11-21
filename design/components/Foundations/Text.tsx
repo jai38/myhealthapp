@@ -5,6 +5,7 @@ import { maxFontScaleFor, tabularNums } from '../../typography';
 import type { TextStyleName } from '../../typography';
 import type { TextTone } from '../../tokens';
 import { textStyleFor } from './textStyle';
+import { useTheme } from '../../theme';
 
 export interface TextProps extends RNTextProps {
   variant?: TextStyleName;
@@ -34,6 +35,7 @@ export function Text({
   children,
   ...rest
 }: TextProps) {
+  const theme = useTheme();
   return (
     <RNText
       {...rest}
@@ -41,7 +43,7 @@ export function Text({
       numberOfLines={numberOfLines}
       maxFontSizeMultiplier={maxFontSizeMultiplier ?? maxFontScaleFor(variant)}
       accessibilityRole={HEADING_VARIANTS.has(variant) ? 'header' : rest.accessibilityRole}
-      style={[textStyleFor(variant, tone), tabular ? tabularNums : null, align ? { textAlign: align } : null, style]}
+      style={[textStyleFor(variant, tone, theme.color), tabular ? tabularNums : null, align ? { textAlign: align } : null, style]}
     >
       {children}
     </RNText>

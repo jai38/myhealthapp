@@ -68,7 +68,14 @@ export function useToday(): UseTodayResult {
 
   const groups = useMemo(() => groupTodayDoses(todayDoses, nowMs, medFor), [todayDoses, nowMs, medFor]);
 
-  const screenState = todayScreenState({ initialized, loadFailed, medications, doses: todayDoses, nowMs });
+  const screenState = todayScreenState({
+    initialized,
+    loadFailed,
+    medications,
+    doses: todayDoses,
+    nowMs,
+    loadSettled: lastUpdatedAt !== null || loadFailed,
+  });
 
   const next = groups.next
     ? { ...groups.next, medication: medFor(groups.next.dose.medicationId) ?? null }

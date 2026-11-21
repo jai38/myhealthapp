@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { radius, size, space } from '../../tokens';
+import { font, radius, size, space } from '../../tokens';
 import { useTheme } from '../../theme';
 import type { IconName } from '../Foundations/iconNames';
 import { Icon } from '../Foundations/Icon';
@@ -34,7 +34,7 @@ export function QuickActionTile({ label, icon, tone = 'blue', onPress, disabled 
         <View style={[styles.chip, { backgroundColor: tone === 'teal' ? c.bg.tintTeal : c.bg.tintBlue }]}>
           <Icon name={icon} size="md" color={tone === 'teal' ? c.text.teal : c.action.blue} />
         </View>
-        <Text variant="title3" style={{ color: c.text.primary }}>
+        <Text variant="callout" style={[styles.label, { color: c.text.primary }]}>
           {label}
         </Text>
       </GlassCard>
@@ -44,7 +44,9 @@ export function QuickActionTile({ label, icon, tone = 'blue', onPress, disabled 
 
 const styles = StyleSheet.create({
   press: { flex: 1, minHeight: size.touchMin },
-  tile: { gap: space.md, minHeight: 104 },
+  tile: { gap: space.md, minHeight: 96, padding: space.md },
+  // Footnote-sized headline: two words on one line in a half-width tile at 360.
+  label: { fontFamily: font.semibold },
   chip: { width: 40, height: 40, borderRadius: radius.iconChip, alignItems: 'center', justifyContent: 'center' },
   dim: { opacity: 0.6 },
 });

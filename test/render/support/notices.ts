@@ -1,17 +1,18 @@
 // TEST ONLY. Phase 4b rule: one notice at a time. Upload progress, "saved", errors and
 // "all done" share one slot, so two of them must never be on screen together.
 //
-// Until the shared notice slot lands (brief task 6), each kind of notice is its own component,
-// so this lists their test IDs. When the slot replaces them, point this at the slot's testID.
+// Today shows notices through one NoticeSlot; the Undo toast counts as a notice too.
 import { screen } from '@testing-library/react-native';
 
 export const NOTICE_TEST_IDS = [
-  'today-action-notice', // a dose was recorded / an action failed
-  'today-confirmation-notice', // "saved"
-  'today-upload-error',
-  'today-processing', // upload progress
-  'today-all-done',
-  'today-error', // load error with Retry
+  // The single notice slot on Today (design/components/Glass/NoticeSlot), one ID per kind.
+  'today-notice-error',
+  'today-notice-offline',
+  'today-notice-uploading',
+  'today-notice-saved',
+  'today-notice-info',
+  // The Mark as Taken toast with Undo: it must never stack with a slot notice either.
+  'today-undo-toast',
 ] as const;
 
 /** The test IDs of every notice currently rendered. */

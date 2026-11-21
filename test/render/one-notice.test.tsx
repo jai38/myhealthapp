@@ -3,7 +3,8 @@
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react-native';
-import { TodayNotices, TodayProcessing } from '../../features/today/TodayNotices';
+import { NoticeSlot } from '../../design/components/Glass';
+import { UndoToast } from '../../design/components/Actions/UndoToast';
 import { PREVIEW_STATES } from '../../features/dev-preview/previewGuard';
 import { expectAtMostOneNotice, renderedNotices } from './support/notices';
 import { renderPreview } from './support/renderPreview';
@@ -12,27 +13,25 @@ describe('the one-notice check', () => {
   it('fails when two notices render at once', async () => {
     await render(
       <>
-        <TodayNotices actionNotice={null} confirmationNotice="Saved" uploadError={null} />
-        <TodayProcessing status="Uploading" />
+        <NoticeSlot testID="today-notice" notices={[{ id: 'u', kind: 'uploading', message: 'Uploading' }]} />
+        <UndoToast visible message="Saved" onUndo={() => {}} onDismiss={() => {}} testID="today-undo-toast" />
       </>,
     );
-    expect(renderedNotices()).toEqual(['today-confirmation-notice', 'today-processing']);
-    expect(() => expectAtMostOneNotice()).toThrow(/today-confirmation-notice, today-processing/);
+    expect(renderedNotices()).toEqual(['today-notice-uploading', 'today-undo-toast']);
+    expect(() => expectAtMostOneNotice()).toThrow(/today-notice-uploading, today-undo-toast/);
   });
 
   it('passes with a single notice', async () => {
-    await render(<TodayProcessing status="Uploading" />);
+    await render(<NoticeSlot testID="today-notice" notices={[{ id: 'u', kind: 'uploading', message: 'Uploading' }]} />);
     expect(() => expectAtMostOneNotice()).not.toThrow();
   });
 });
 
-// Known failure (task 3 audit, Today 1): while a prescription uploads on an all-done day, the
-// progress card and the all-done card stack. The shared notice slot (brief task 6) and the
-// Today rebuild (task 7) fix it; at that point this entry fails as "passed unexpectedly" and
-// must move to the passing list.
+// Task 3 audit, Today 1: upload progress and "All done" used to stack. Since the S06 rebuild,
+// "All done" lives in the hero and progress in the single notice slot, so every state passes.
 // Each Today state ends on one of these. Waiting for it means the data has loaded, so the
 // check cannot pass just because nothing has rendered yet.
-const SETTLED = ['today-new-user', 'today-nothing-due', 'today-next-dose', 'today-all-done', 'today-error'];
+const SETTLED = ['today-new-user', 'today-hero', 'today-notice-error', 'today-loading'];
 
 async function waitForToday(): Promise<void> {
   await waitFor(() => {
@@ -40,12 +39,9 @@ async function waitForToday(): Promise<void> {
   });
 }
 
-const KNOWN_STACKED: readonly string[] = ['allDone-uploading'];
-
 describe('Today shows at most one notice', () => {
   for (const state of PREVIEW_STATES.today) {
-    const test = KNOWN_STACKED.includes(state) ? it.fails : it;
-    test(`${state}${KNOWN_STACKED.includes(state) ? ' (known: stacks two, fixed by task 6/7)' : ''}`, async () => {
+    it(state, async () => {
       await renderPreview('today', state);
       await waitForToday();
       expectAtMostOneNotice();

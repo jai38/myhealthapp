@@ -39,6 +39,14 @@ const VARIANTS = [
 
 // Extra URL parts and user steps that reach a state. Everything else is just ?state=<state>.
 const EXTRA = {
+  // S06 after Mark as Taken: the toast with Undo and the updated hero, reached by the tap.
+  'today:afterTaken': {
+    steps: async (page) => {
+      await page.click('[data-testid="today-mark-taken"]');
+      await page.waitForSelector('[data-testid="today-undo-toast"]', { timeout: 15000 });
+      await page.waitForTimeout(400);
+    },
+  },
   // The real Records screen reads ?view= from the URL, as it does in the app.
   'records:reports': { query: '&view=reports' },
   // "Filtered with no results" is reached the way a person reaches it: by typing a search.

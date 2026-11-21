@@ -172,7 +172,7 @@ export function PreviewHost({ screen, state, fontScale, theme = 'light' }: Previ
           testID={`preview-${screen}-${state}`}
         >
           <ConnectivityBanner />
-          <ScreenHeader title={t(titleKey)} />
+          <ScreenHeader title={t(titleKey)} variant={screen === 'today' ? 'brand' : 'title'} />
           <View style={styles.body}>
             <ScreenFor screen={screen} />
           </View>

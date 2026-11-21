@@ -134,3 +134,19 @@ describe('resolveThemeName', () => {
     expect(resolveThemeName('light', 'dark')).toBe('dark');
   });
 });
+
+import { themedToneColor } from '../../design/components/Foundations/textStyle';
+import { textToneColor } from '../../design/tokens';
+
+describe('themedToneColor', () => {
+  it('in the light theme equals the light text tones the app uses today', () => {
+    for (const tone of Object.keys(textToneColor) as (keyof typeof textToneColor)[]) {
+      expect(themedToneColor(tone, themes.light.color)).toBe(textToneColor[tone]);
+    }
+  });
+
+  it('in the dark theme uses the dark text tokens', () => {
+    expect(themedToneColor('primary', themes.dark.color)).toBe('#F7FAFF');
+    expect(themedToneColor('danger', themes.dark.color)).toBe('#FF6B76');
+  });
+});

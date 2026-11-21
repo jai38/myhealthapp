@@ -6,3 +6,4 @@ export * from './contrast';
 export * from './status';
 export * from './strings';
 export * from './components';
+export * from './useFontScale';

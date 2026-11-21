@@ -102,6 +102,7 @@ export const en = {
   'today.uploadRecord': 'Upload Record',
   'today.addMedication': 'Add Medication',
   'today.markedTaken': '{name} marked as taken at {time}',
+  'today.openMedicine': 'Open medicine',
   'today.offlineNoMark': 'You are offline. Marking a dose needs a connection.',
   'dose.supplement': 'Supplement',
   'wheel.hour': 'Hour',

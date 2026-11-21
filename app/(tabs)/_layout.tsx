@@ -17,7 +17,18 @@ export default function TabLayout() {
       }}
     >
       {shellTabs.map((tab) => (
-        <Tabs.Screen key={tab.key} name={tab.routeName} options={{ title: t(tab.titleKey) }} />
+        <Tabs.Screen
+          key={tab.key}
+          name={tab.routeName}
+          options={{
+            title: t(tab.titleKey),
+            // S06: Today's header is the logo lockup; the other tabs keep their title.
+            header:
+              tab.key === 'today'
+                ? () => <ScreenHeader title={t(tab.titleKey)} variant="brand" />
+                : ({ options }) => <ScreenHeader title={String(options.title ?? '')} />,
+          }}
+        />
       ))}
       {/* Old routes only redirect to Records. They stay out of the tab bar. */}
       {hiddenRouteNames.map((name) => (

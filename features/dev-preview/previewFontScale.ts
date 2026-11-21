@@ -25,6 +25,8 @@ export function applyPreviewFontScale(systemScale: number): () => void {
     const style = textStyles[name] as unknown as MutableStyle;
     originals.set(name, { fontSize: style.fontSize, lineHeight: style.lineHeight });
   }
+  const g = globalThis as { __previewFontScale?: number };
+  g.__previewFontScale = systemScale;
   if (systemScale > 1) {
     for (const name of names) {
       const base = originals.get(name) as MutableStyle;
@@ -35,6 +37,7 @@ export function applyPreviewFontScale(systemScale: number): () => void {
     }
   }
   return () => {
+    delete g.__previewFontScale;
     for (const name of names) {
       const base = originals.get(name) as MutableStyle;
       const style = textStyles[name] as unknown as MutableStyle;
