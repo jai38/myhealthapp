@@ -84,10 +84,14 @@ jobs:
 
   # The backend runs on AWS Mumbai since the Phase 2 cutover; Render and v0.1.0-preview are retired.
   # One matrix entry per backend, so a second environment (for example a test copy) can be added here.
+  #
+  # Runs on every push to main (as before), and on a manual run (workflow_dispatch) from any
+  # branch, so a phase branch can be tried on a phone before it merges. A branch run only
+  # uploads the APK as an Actions artifact: no EAS cloud build, no GitHub release, no Pages.
   build-android-apk:
     name: Build Android APK (${{ matrix.backend }})
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -127,7 +131,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Try EAS Cloud Build (if quota available)
-        if: matrix.eas_profile != ''
+        if: matrix.eas_profile != '' && github.ref == 'refs/heads/main'
         run: |
           if [ -n "${{ secrets.EXPO_TOKEN }}" ]; then
             echo "Attempting EAS Cloud Build..."
@@ -144,12 +148,13 @@ jobs:
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: myhealthapp-preview-apk-${{ matrix.backend }}
+          # main keeps its name; a branch run adds the run number, so builds don't overwrite.
+          name: myhealthapp-preview-apk-${{ matrix.backend }}${{ github.ref != 'refs/heads/main' && format('-branch-run-{0}', github.run_number) || '' }}
           path: android/app/build/outputs/apk/release/*.apk
           retention-days: 14
 
       - name: Update GitHub Release with Standalone APK
-        if: success()
+        if: success() && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
