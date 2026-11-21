@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { color, space } from '../../tokens';
 import { RefreshScroll } from './RefreshScroll';
 import { WaveHeader } from './WaveHeader';
+import { useTabBarClearance } from '../Navigation/TabBarClearance';
+import { useTheme } from '../../theme';
 
 export interface ScreenProps {
   children?: React.ReactNode;
@@ -12,6 +14,8 @@ export interface ScreenProps {
   // Fixed above the scrolling body, so it does not scroll away.
   header?: React.ReactNode;
   wave?: boolean;
+  /** Floats over the screen, outside the scroll: toasts. */
+  overlay?: React.ReactNode;
   testID?: string;
 }
 
@@ -22,8 +26,12 @@ export function Screen({
   onRefresh,
   header,
   wave = false,
+  overlay,
   testID,
 }: ScreenProps) {
+  const clearance = useTabBarClearance();
+  const { color: c } = useTheme();
+  const contentStyle = [styles.content, clearance > 0 ? { paddingBottom: clearance } : null];
   // The wave sits inside the scrolling content, so it scrolls away with the
   // header instead of staying pinned behind the page.
   const waveNode = wave ? (
@@ -39,21 +47,23 @@ export function Screen({
   );
   const body =
     scroll && onRefresh ? (
-      <RefreshScroll onRefresh={onRefresh} contentContainerStyle={styles.content}>
+      <RefreshScroll onRefresh={onRefresh} contentContainerStyle={contentStyle}>
         {content}
       </RefreshScroll>
     ) : scroll ? (
-      <ScrollView contentContainerStyle={styles.content}>{content}</ScrollView>
+      <ScrollView contentContainerStyle={contentStyle}>{content}</ScrollView>
     ) : (
+      // Without scroll, the screen's own scroll view adds useTabBarClearance().
       <View style={styles.fill}>{content}</View>
     );
 
   return (
-    <View testID={testID} style={styles.root}>
+    <View testID={testID} style={[styles.root, { backgroundColor: c.bg.screen }]}>
       <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
         {header ? <View style={styles.gutter}>{header}</View> : null}
         {body}
       </SafeAreaView>
+      {overlay}
     </View>
   );
 }

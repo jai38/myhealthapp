@@ -192,12 +192,17 @@ export function todayScreenState(input: {
   medications: MedicationRecord[];
   doses: DoseLog[];
   nowMs: number;
+  /**
+   * False while the first server load is still running. With nothing cached, Today then shows
+   * loading, not "Add your first medicine". Omitted means settled.
+   */
+  loadSettled?: boolean;
 }): TodayScreenState {
-  const { initialized, loadFailed, medications, doses, nowMs } = input;
+  const { initialized, loadFailed, medications, doses, nowMs, loadSettled = true } = input;
   const nothingCached = medications.length === 0 && doses.length === 0;
   if (nothingCached) {
     if (loadFailed) return 'error';
-    if (!initialized) return 'loading';
+    if (!initialized || !loadSettled) return 'loading';
   }
   if (medications.length === 0) return 'newUser';
   const items = toTodayDoses(doses, nowMs, (id) => medications.find((m) => m.id === id));

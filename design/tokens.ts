@@ -1,89 +1,320 @@
 // Design tokens for the Ayoreni component system. Components use the semantic
 // names exported below, never a raw hex value.
 
-const palette = {
-  white: '#FFFFFF',
-  clearBlue: '#2878C7',
-  clearBluePressed: '#1F69B0',
-  teal: '#06706F',
-  deepNavy: '#16324F',
-  slate: '#526372',
-  slateTertiary: '#627080',
-  coolGrey: '#F2F5F7',
-  greyFill: '#E8ECF0',
+// Calm Glass UI v4, frozen 16 November 2026: `designes/design/colour-shape-spec.md` on the
+// design branch `designes/initial-upload`. Hex values are the spec's unless marked interim.
+
+// Light-mode text pairs that fail 4.5:1 with the spec's value (04b brief, "Contrast failures").
+// Each failing value lives behind one token here, darkened just enough to pass. When the designer
+// fixes the spec (04b task 6), change only that line. `specFailing` keeps the spec's values so the
+// contrast tests show why each interim exists.
+const interimLight = {
+  // Spec text-tertiary #8A97A8: 2.83:1 on bg, 2.94:1 on cards and the tab bar.
+  textTertiary: '#6A7481',
+  // Spec action-blue #0071FF as text: 4.17:1 on bg, 4.37:1 on white, 3.78:1 on blue-tint.
+  link: '#0065E4',
+  // Spec primary-gradient top #0080FC: white text 3.82:1.
+  primaryFrom: '#0074E5',
+  // Spec teal-text #028265: 4.35:1 on teal-tint.
+  tealText: '#027F63',
+  // Spec Taken chip #0B7F3F: 4.49:1 on #E3F5EA.
+  takenText: '#0B7E3F',
+} as const;
+
+export const specFailing = {
+  textTertiary: '#8A97A8',
+  actionBlue: '#0071FF',
+  primaryFrom: '#0080FC',
+  tealText: '#028265',
+  takenText: '#0B7F3F',
+} as const;
+
+export type ThemeName = 'light' | 'dark';
+
+export interface StatusColors {
+  fg: string;
+  bg: string;
+}
+
+export interface ShadowToken {
+  shadowColor: string;
+  shadowOffset: { width: number; height: number };
+  shadowOpacity: number;
+  shadowRadius: number;
+  elevation: number;
+}
+
+export interface ThemeColors {
+  bg: {
+    /** Screen background, under the mesh. */
+    screen: string;
+    /** Sheets and other solid surfaces. */
+    surface: string;
+    /** Cards, tiles and icon buttons (translucent; blur behind it where the platform can). */
+    glass: string;
+    glassEdge: string;
+    /** Hairline under the glass edge (light only; dark uses glassEdge alone). */
+    glassHairline: string;
+    divider: string;
+    tintBlue: string;
+    tintTeal: string;
+    tabBar: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    inverse: string;
+    /** Links and the active tab label: action blue, kept readable as text. */
+    link: string;
+    /** Teal icons and the Supplement tag. */
+    teal: string;
+    error: string;
+    /** Disabled button labels. WCAG exempts disabled controls; the designer decides (04b brief). */
+    disabled: string;
+  };
+  action: {
+    /** Fills, icons and the focus ring. Not for text: use text.link. */
+    blue: string;
+    /** Primary gradient, top to bottom: buttons and the Due now chip. */
+    primaryFrom: string;
+    primaryTo: string;
+    disabledBg: string;
+  };
+  brand: {
+    teal: string;
+    tealGlow: string;
+    /** Notification dot only. */
+    alertDot: string;
+  };
+  hero: {
+    /** 135 degrees: from 0%, mid 55%, to 135%. White text stays on the blue side. */
+    from: string;
+    mid: string;
+    to: string;
+    border: string;
+    sheen: string;
+    glow: string;
+  };
+  /** Blurred blobs (blur 48) behind content so the glass reads. */
+  mesh: { teal: string; blue: string };
+  /** Dose status chips. Always an icon and a word, never colour alone. */
+  dose: {
+    taken: StatusColors;
+    /** White on the primary gradient. */
+    dueNow: { fg: string; from: string; to: string };
+    upcoming: StatusColors;
+    notConfirmed: StatusColors;
+    missed: StatusColors;
+  };
+  supplement: StatusColors;
+}
+
+export interface Theme {
+  name: ThemeName;
+  color: ThemeColors;
+  shadow: { card: ShadowToken; hero: ShadowToken; button: ShadowToken | null };
+}
+
+const lightColors: ThemeColors = {
+  bg: {
+    screen: '#F7FAFC',
+    surface: '#FFFFFF',
+    glass: 'rgba(255,255,255,0.72)',
+    glassEdge: 'rgba(255,255,255,0.95)',
+    glassHairline: '#E7EEF5',
+    divider: '#E7EEF5',
+    tintBlue: '#E4F0FC',
+    tintTeal: '#E6F8F3',
+    tabBar: 'rgba(255,255,255,0.80)',
+  },
+  text: {
+    primary: '#0F172A',
+    secondary: '#5B6B7F',
+    tertiary: interimLight.textTertiary,
+    inverse: '#FFFFFF',
+    link: interimLight.link,
+    teal: interimLight.tealText,
+    error: '#D0101F',
+    disabled: '#8A97A8',
+  },
+  action: {
+    blue: '#0071FF',
+    primaryFrom: interimLight.primaryFrom,
+    primaryTo: '#0060FC',
+    disabledBg: '#E3EAF2',
+  },
+  brand: { teal: '#00C69C', tealGlow: '#6CE7D8', alertDot: '#FF091B' },
+  hero: {
+    from: '#0060FC',
+    mid: '#0080FC',
+    to: '#00C69C',
+    border: 'rgba(255,255,255,0.28)',
+    sheen: 'rgba(255,255,255,0.14)',
+    glow: '#6CE7D8',
+  },
+  mesh: { teal: 'rgba(0,198,156,0.20)', blue: 'rgba(0,128,252,0.16)' },
+  dose: {
+    taken: { fg: interimLight.takenText, bg: '#E3F5EA' },
+    dueNow: { fg: '#FFFFFF', from: interimLight.primaryFrom, to: '#0060FC' },
+    upcoming: { fg: '#5B6B7F', bg: '#EEF2F7' },
+    notConfirmed: { fg: '#9A5B00', bg: '#FFF1DB' },
+    missed: { fg: '#D0101F', bg: '#FDE8EA' },
+  },
+  supplement: { fg: interimLight.tealText, bg: '#E6F8F3' },
+};
+
+const darkColors: ThemeColors = {
+  bg: {
+    screen: '#07111F',
+    surface: '#0C1B2D',
+    glass: 'rgba(16,37,58,0.72)',
+    glassEdge: 'rgba(46,144,255,0.16)',
+    glassHairline: 'rgba(46,144,255,0.16)',
+    divider: 'rgba(255,255,255,0.06)',
+    tintBlue: 'rgba(46,144,255,0.14)',
+    tintTeal: 'rgba(32,215,197,0.12)',
+    tabBar: 'rgba(12,27,45,0.84)',
+  },
+  text: {
+    primary: '#F7FAFF',
+    secondary: '#B7C4D6',
+    tertiary: '#8EA0B5',
+    inverse: '#FFFFFF',
+    link: '#2E90FF',
+    teal: '#20D7C5',
+    error: '#FF6B76',
+    disabled: '#8EA0B5',
+  },
+  action: {
+    blue: '#2E90FF',
+    // The spec gives one gradient for both themes.
+    primaryFrom: interimLight.primaryFrom,
+    primaryTo: '#0060FC',
+    disabledBg: 'rgba(255,255,255,0.07)',
+  },
+  brand: { teal: '#00C69C', tealGlow: '#6CE7D8', alertDot: '#FF091B' },
+  hero: {
+    from: '#0060FC',
+    mid: '#0080FC',
+    to: '#00C69C',
+    border: 'rgba(255,255,255,0.28)',
+    sheen: 'rgba(255,255,255,0.14)',
+    glow: '#6CE7D8',
+  },
+  mesh: { teal: 'rgba(0,198,156,0.13)', blue: 'rgba(0,128,252,0.20)' },
+  dose: {
+    taken: { fg: '#5FD38D', bg: 'rgba(95,211,141,0.14)' },
+    dueNow: { fg: '#FFFFFF', from: interimLight.primaryFrom, to: '#0060FC' },
+    upcoming: { fg: '#B7C4D6', bg: 'rgba(255,255,255,0.07)' },
+    notConfirmed: { fg: '#F5B84A', bg: 'rgba(245,184,74,0.14)' },
+    missed: { fg: '#FF6B76', bg: 'rgba(255,107,118,0.14)' },
+  },
+  supplement: { fg: '#20D7C5', bg: 'rgba(32,215,197,0.12)' },
+};
+
+// React Native shadows: the spec's CSS blur becomes shadowRadius at about half the blur.
+export const themes: Record<ThemeName, Theme> = {
+  light: {
+    name: 'light',
+    color: lightColors,
+    shadow: {
+      // 0 8px 24px rgba(20,60,120,0.08)
+      card: { shadowColor: '#143C78', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 3 },
+      // 0 14px 30px rgba(0,96,252,0.26)
+      hero: { shadowColor: '#0060FC', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.26, shadowRadius: 15, elevation: 6 },
+      // 0 6–8px 14–18px rgba(0,96,252,0.28–0.32)
+      button: { shadowColor: '#0060FC', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
+    },
+  },
+  dark: {
+    name: 'dark',
+    color: darkColors,
+    shadow: {
+      // 0 8px 24px rgba(0,0,0,0.35), plus an inset top highlight drawn by the card itself.
+      card: { shadowColor: '#000000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.35, shadowRadius: 12, elevation: 3 },
+      // The hero edge glow, 0 0 0 1px rgba(108,231,216,0.18), is a border on the card.
+      hero: { shadowColor: '#000000', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.35, shadowRadius: 15, elevation: 6 },
+      // No button glow in dark.
+      button: null,
+    },
+  },
+};
+
+/** Inset top highlight on dark cards. */
+export const darkCardHighlight = 'rgba(255,255,255,0.05)';
+/** Hero edge in dark mode. */
+export const darkHeroEdge = 'rgba(108,231,216,0.18)';
+
+// Colours that v4 doesn't define, kept for the Phase 3 parts that still use them (category tiles,
+// the wave header). They go when those parts are redrawn.
+const legacy = {
   tileRed: '#D14343',
   tileOrange: '#B85E0A',
   tilePurple: '#6A4FD0',
   tileGreen: '#2E8B57',
   tileGrey: '#6B7884',
-  tintBlue: '#E8F1FB',
-  tintTeal: '#E3F4F4',
-  borderSubtle: '#E3E8ED',
-  borderInput: '#7D8B97',
   waveFrom: '#BFE3F7',
   waveTo: '#7FD3E6',
-  danger: '#B42318',
-  successText: '#1E7A45',
-  successFill: '#E7F5EC',
-  cautionText: '#8A5300',
-  cautionFill: '#FFF3DD',
-  dangerFill: '#FDECEA',
-  neutralText: '#46525C',
-  neutralFill: '#EDF0F3',
-  sourceText: '#066A6E',
+  // Not in the spec: a pressed primary and an input border that reaches 3:1 on bg.
+  primaryPressed: '#0052D9',
 } as const;
 
+const L = lightColors;
+
+// The light theme in the Phase 3 shape. Existing screens import this and so pick up v4's light
+// colours (04b decision D4). New and rebuilt parts read `useTheme()` instead, which follows the
+// system's light or dark setting.
 export const color = {
-  // Grouped layout, Apple Health style: grey screen, white cards and lists.
   bg: {
-    screen: palette.coolGrey,
-    // Fills inside white cards: chips, segmented tracks, pressed rows.
-    subtle: palette.greyFill,
-    card: palette.white,
-    tintBlue: palette.tintBlue,
-    tintTeal: palette.tintTeal,
+    screen: L.bg.screen,
+    // Fills inside cards: chips, segmented tracks, pressed rows.
+    subtle: L.dose.upcoming.bg,
+    card: L.bg.surface,
+    tintBlue: L.bg.tintBlue,
+    tintTeal: L.bg.tintTeal,
   },
   text: {
-    primary: palette.deepNavy,
-    secondary: palette.slate,
-    // On white or the grey screen (4.62:1). Not on bg.subtle (4.26:1).
-    tertiary: palette.slateTertiary,
-    inverse: palette.white,
-    // Deeper than the fill blue so it reads on white (5.67:1) and grey (5.18:1).
-    link: palette.clearBluePressed,
+    primary: L.text.primary,
+    secondary: L.text.secondary,
+    // Not on bg.subtle (see forbiddenPairs).
+    tertiary: L.text.tertiary,
+    inverse: L.text.inverse,
+    link: L.text.link,
   },
   action: {
-    primary: palette.clearBlue,
-    primaryPressed: palette.clearBluePressed,
-    secondary: palette.teal,
-    danger: palette.danger,
+    // Solid fills take the gradient's deeper end until buttons draw the gradient (task 11).
+    primary: L.action.primaryTo,
+    primaryPressed: legacy.primaryPressed,
+    secondary: L.text.teal,
+    danger: L.text.error,
   },
   border: {
-    subtle: palette.borderSubtle,
-    input: palette.borderInput,
-    focus: palette.clearBlue,
+    subtle: L.bg.divider,
+    input: L.text.tertiary,
+    focus: L.action.blue,
   },
   // Category tiles: a white filled glyph on a colored rounded square.
   tile: {
-    blue: palette.clearBlue,
-    teal: palette.teal,
-    red: palette.tileRed,
-    orange: palette.tileOrange,
-    purple: palette.tilePurple,
-    green: palette.tileGreen,
-    neutral: palette.tileGrey,
+    blue: L.action.primaryTo,
+    teal: L.text.teal,
+    red: legacy.tileRed,
+    orange: legacy.tileOrange,
+    purple: legacy.tilePurple,
+    green: legacy.tileGreen,
+    neutral: legacy.tileGrey,
   },
   wave: {
-    from: palette.waveFrom,
-    to: palette.waveTo,
+    from: legacy.waveFrom,
+    to: legacy.waveTo,
   },
   tone: {
-    info: { fg: palette.clearBluePressed, bg: palette.tintBlue },
-    success: { fg: palette.successText, bg: palette.successFill },
-    caution: { fg: palette.cautionText, bg: palette.cautionFill },
-    danger: { fg: palette.danger, bg: palette.dangerFill },
-    neutral: { fg: palette.neutralText, bg: palette.neutralFill },
-    source: { fg: palette.sourceText, bg: palette.tintTeal },
+    info: { fg: L.text.link, bg: L.bg.tintBlue },
+    success: { fg: L.dose.taken.fg, bg: L.dose.taken.bg },
+    caution: { fg: L.dose.notConfirmed.fg, bg: L.dose.notConfirmed.bg },
+    danger: { fg: L.dose.missed.fg, bg: L.dose.missed.bg },
+    neutral: { fg: L.dose.upcoming.fg, bg: L.dose.upcoming.bg },
+    source: { fg: L.supplement.fg, bg: L.supplement.bg },
   },
 } as const;
 
@@ -108,26 +339,38 @@ export const radius = {
   lg: 16,
   xl: 24,
   full: 9999,
+  // v4 shape. Buttons, chips and the tab bar are pills (full).
+  hero: 28,
+  card: 22,
+  tile: 18,
+  input: 16,
+  iconChip: 12,
+  iconChipLg: 14,
+} as const;
+
+// v4 layout on the 4 pt grid.
+export const layout = {
+  screenMargin: 16,
+  sectionGap: 24,
+  cardPadding: 16,
+  tileGap: 12,
+  rowMinHeight: 68,
+  tabBar: { inset: 16, bottom: 30, height: 68, radius: 34 },
+  heroPadding: 22,
 } as const;
 
 export const elevation = {
   none: {
-    shadowColor: palette.deepNavy,
+    shadowColor: '#143C78',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
   },
-  // Cards are flat white on the grey screen; only a hairline of depth.
-  card: {
-    shadowColor: palette.deepNavy,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 3,
-    elevation: 1,
-  },
+  // v4 light card: 0 8px 24px rgba(20,60,120,0.08).
+  card: themes.light.shadow.card,
   raised: {
-    shadowColor: palette.deepNavy,
+    shadowColor: '#143C78',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.08,
     shadowRadius: 16,
@@ -135,7 +378,7 @@ export const elevation = {
   },
   // Negative y offset: the shadow falls upward, from a sheet rising off the bottom edge.
   sheet: {
-    shadowColor: palette.deepNavy,
+    shadowColor: '#143C78',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.12,
     shadowRadius: 20,
@@ -144,8 +387,10 @@ export const elevation = {
 } as const;
 
 export const motion = {
-  duration: { fast: 120, base: 200, slow: 320 },
-  easing: { standard: 'ease-out' },
+  // Chips and taps; cards and tabs; sheets.
+  duration: { fast: 150, base: 250, slow: 350 },
+  // cubic-bezier(0.2, 0, 0, 1), no bounce.
+  easing: { standard: 'ease-out', bezier: [0.2, 0, 0, 1] as const },
 } as const;
 
 // With reduced motion on, every duration is 0. Looping animation must check
@@ -164,14 +409,13 @@ export const size = {
   avatar: 32,
   buttonHeight: 52,
   inputHeight: 52,
-  tabBarHeight: 64,
+  tabBarHeight: 68,
 } as const;
 
 export const font = {
-  regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
+  regular: 'PlusJakartaSans_400Regular',
+  semibold: 'PlusJakartaSans_600SemiBold',
+  bold: 'PlusJakartaSans_700Bold',
 } as const;
 
 export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'inverse' | 'link' | 'danger';

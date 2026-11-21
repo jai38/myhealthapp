@@ -1,7 +1,8 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../Foundations/Text';
-import { color, elevation, radius, space } from '../../tokens';
+import { radius, space } from '../../tokens';
+import { useTheme } from '../../theme';
 
 export interface SegmentedControlOption<T extends string> {
   value: T;
@@ -21,8 +22,13 @@ export function SegmentedControl<T extends string>({
   onChange,
   testID,
 }: SegmentedControlProps<T>) {
+  const { color: c, shadow } = useTheme();
   return (
-    <View accessibilityRole="tablist" style={styles.track} testID={testID}>
+    <View
+      accessibilityRole="tablist"
+      style={[styles.track, { backgroundColor: c.dose.upcoming.bg }]}
+      testID={testID}
+    >
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -34,12 +40,13 @@ export function SegmentedControl<T extends string>({
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
             hitSlop={SEGMENT_HIT_SLOP}
-            style={[styles.segment, selected && styles.selected]}
+            style={[styles.segment, selected && [{ backgroundColor: c.bg.surface }, shadow.card]]}
           >
             <Text
               variant={selected ? 'bodyStrong' : 'body'}
-              tone={selected ? 'primary' : 'secondary'}
               align="center"
+              numberOfLines={1}
+              style={{ color: selected ? c.text.primary : c.text.secondary }}
             >
               {option.label}
             </Text>
@@ -56,8 +63,8 @@ const SEGMENT_HIT_SLOP = { top: 6, bottom: 6 } as const;
 const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
-    backgroundColor: color.bg.subtle,
-    borderRadius: radius.md,
+    // v4: a pill track with a pill segment.
+    borderRadius: radius.full,
     padding: space.xxs,
   },
   segment: {
@@ -65,12 +72,7 @@ const styles = StyleSheet.create({
     minHeight: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.md - space.xxs,
+    borderRadius: radius.full,
     paddingHorizontal: space.sm,
-  },
-  // The selected segment lifts off the track as a white pill with a soft shadow.
-  selected: {
-    backgroundColor: color.bg.card,
-    ...elevation.card,
   },
 });
