@@ -5,3 +5,4 @@ export * from './Containers';
 export * from './Navigation';
 export * from './Feedback';
 export * from './Trust';
+export * from './Glass';

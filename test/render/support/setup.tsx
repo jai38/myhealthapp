@@ -71,6 +71,7 @@ vi.mock('react-native-svg', () => {
     Defs: svgHost('Defs'),
     LinearGradient: svgHost('LinearGradient'),
     Stop: svgHost('Stop'),
+    Mask: svgHost('Mask'),
   };
 });
 

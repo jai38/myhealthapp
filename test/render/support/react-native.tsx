@@ -56,12 +56,17 @@ type PressableProps = AnyProps & {
 };
 
 export const Pressable = React.forwardRef<unknown, PressableProps>(
-  ({ children, style, disabled, accessibilityState, ...props }, ref) =>
+  ({ children, style, disabled, accessibilityState, onPress, onLongPress, ...props }, ref) =>
     React.createElement(
       'View',
       {
         accessible: true,
         ...props,
+        // Like React Native, a disabled Pressable declines the touch, so it ignores presses.
+        // RNTL reads this to decide whether a press reaches the handler.
+        onStartShouldSetResponder: () => !disabled,
+        onPress,
+        onLongPress,
         ref,
         style: typeof style === 'function' ? style({ pressed: false }) : style,
         accessibilityState: disabled ? { ...(accessibilityState ?? {}), disabled: true } : accessibilityState,
