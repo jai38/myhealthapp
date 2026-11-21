@@ -20,11 +20,18 @@ export interface HeroCardProps {
   testID?: string;
 }
 
-// The spec's 135° gradient reaches teal at 135%, so at the card's far corner it is part way
-// from the 55% blue to teal: #00A7C6.
-const HERO_END = '#00A7C6';
+// The spec's 135° gradient reaches teal at 135%, so the card's far corner (100%) is part way
+// from the 55% blue to teal.
+export function heroEndColor(mid: string, teal: string): string {
+  const t = (100 - 55) / (135 - 55);
+  const ch = (hex: string, i: number) => parseInt(hex.slice(1 + 2 * i, 3 + 2 * i), 16);
+  return `#${[0, 1, 2]
+    .map((i) => Math.round(ch(mid, i) + (ch(teal, i) - ch(mid, i)) * t).toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase()}`;
+}
 
-// v4 hero: blue to teal gradient, white text kept on the blue (left) side, ring on the right.
+// v4 hero: blue to teal gradient, white text kept in the left 60% (the blue side), ring on the right.
 export function HeroCard({ label, headline, lines = [], taken, total, testID }: HeroCardProps) {
   const { name, color: c, shadow } = useTheme();
   return (
@@ -41,7 +48,7 @@ export function HeroCard({ label, headline, lines = [], taken, total, testID }: 
         stops={[
           { offset: 0, color: c.hero.from },
           { offset: 0.55, color: c.hero.mid },
-          { offset: 1, color: HERO_END },
+          { offset: 1, color: heroEndColor(c.hero.mid, c.hero.to) },
         ]}
       />
       <View style={styles.row}>

@@ -1,4 +1,4 @@
-import { color, specFailing, themes } from './tokens';
+import { color, themes } from './tokens';
 import type { ThemeName } from './tokens';
 
 // WCAG 2.x contrast helpers. Pairs are built from semantic tokens only.
@@ -142,8 +142,12 @@ export function themeContrastPairs(name: ThemeName): ContrastPair[] {
     p('text.inverse', c.text.inverse, 'action.primaryFrom', c.action.primaryFrom),
     p('text.inverse', c.text.inverse, 'action.primaryTo', c.action.primaryTo),
     p('dose.dueNow.fg', c.dose.dueNow.fg, 'dose.dueNow.from', c.dose.dueNow.from),
-    // Hero text stays on the blue side (the spec); the teal end is never under text.
+    // Hero text stays in the left 60%, on the blue stops; the teal end is never under text.
     p('text.inverse', c.text.inverse, 'hero.from', c.hero.from),
+    p('text.inverse', c.text.inverse, 'hero.mid', c.hero.mid),
+    p('text.inverse', c.text.inverse, 'hero.pill on hero.mid', flatten(c.hero.pill, c.hero.mid)),
+    // Disabled labels meet 4.5:1 too (the designer's decision, 19 November 2026).
+    p('text.disabled', c.text.disabled, 'action.disabledBg', flatten(c.action.disabledBg, surface)),
     // Blue fills and icons are UI parts: 3:1.
     p('action.blue', c.action.blue, 'bg.screen', screen, MIN_UI),
     p('action.blue', c.action.blue, 'bg.glass', glass, MIN_UI),
@@ -151,22 +155,10 @@ export function themeContrastPairs(name: ThemeName): ContrastPair[] {
   return pairs;
 }
 
-// These must fail. They keep two rules enforced: fill blue is never used as text
-// (use text.link), and tertiary text never sits on bg.subtle.
+// These must fail. They keep a rule enforced: tertiary text never sits on bg.subtle.
+// (Since the designer's contrast fix, action blue is also the link colour and passes as text.)
 export const forbiddenPairs: ContrastPair[] = [
-  pair('action.blue (light)', themes.light.color.action.blue, 'bg.screen', color.bg.screen, MIN_TEXT),
   pair('text.tertiary', color.text.tertiary, 'bg.subtle', color.bg.subtle, MIN_TEXT),
-];
-
-// The spec's own light values for the pairs behind interim tokens (tokens.ts, interimLight). Each
-// must still fail; when one passes, the designer's fix has landed and its interim can go.
-const lightScreen = themes.light.color.bg.screen;
-export const specFailingPairs: ContrastPair[] = [
-  pair('spec text-tertiary', specFailing.textTertiary, 'bg', lightScreen, MIN_TEXT),
-  pair('spec action-blue as text', specFailing.actionBlue, 'white', '#FFFFFF', MIN_TEXT),
-  pair('white', '#FFFFFF', 'spec primary-gradient top', specFailing.primaryFrom, MIN_TEXT),
-  pair('spec teal-text', specFailing.tealText, 'teal-tint', themes.light.color.bg.tintTeal, MIN_TEXT),
-  pair('spec Taken', specFailing.takenText, 'Taken chip', themes.light.color.dose.taken.bg, MIN_TEXT),
 ];
 
 export interface TouchStyle {

@@ -69,7 +69,8 @@ export function BottomSheet({ visible, onClose, title, children, confirm, testID
                 label={confirm.label}
                 onPress={confirm.onPress}
                 disabled={confirm.disabled}
-                color={confirm.disabled ? c.text.disabled : c.text.link}
+                // A disabled text link uses tertiary text (designer, 19 November 2026).
+                color={confirm.disabled ? c.text.tertiary : c.text.link}
                 strong
                 testID={testID && `${testID}-confirm`}
               />

@@ -2,31 +2,30 @@
 // names exported below, never a raw hex value.
 
 // Calm Glass UI v4, frozen 16 November 2026: `designes/design/colour-shape-spec.md` on the
-// design branch `designes/initial-upload`. Hex values are the spec's unless marked interim.
+// design branch `designes/initial-upload`, with its contrast fix of 19 November 2026.
 
-// Light-mode text pairs that fail 4.5:1 with the spec's value (04b brief, "Contrast failures").
-// Each failing value lives behind one token here, darkened just enough to pass. When the designer
-// fixes the spec (04b task 6), change only that line. `specFailing` keeps the spec's values so the
-// contrast tests show why each interim exists.
-const interimLight = {
-  // Spec text-tertiary #8A97A8: 2.83:1 on bg, 2.94:1 on cards and the tab bar.
-  textTertiary: '#6A7481',
-  // Spec action-blue #0071FF as text: 4.17:1 on bg, 4.37:1 on white, 3.78:1 on blue-tint.
-  link: '#0065E4',
-  // Spec primary-gradient top #0080FC: white text 3.82:1.
-  primaryFrom: '#0074E5',
-  // Spec teal-text #028265: 4.35:1 on teal-tint.
-  tealText: '#027F63',
-  // Spec Taken chip #0B7F3F: 4.49:1 on #E3F5EA.
-  takenText: '#0B7E3F',
+// Light values from the designer's contrast fix (colour-shape-spec.md, "Contrast fix
+// (2026-11-19)", 04b task 6). Every text pair meets 4.5:1, disabled labels included.
+const fixedLight = {
+  textTertiary: '#647387',
+  actionBlue: '#0062DB',
+  primaryFrom: '#006AE6',
+  primaryTo: '#0058E8',
+  tealText: '#007358',
+  takenText: '#097539',
+  disabledText: '#5B6B7F',
+  disabledBg: '#EBEFF4',
 } as const;
 
-export const specFailing = {
-  textTertiary: '#8A97A8',
-  actionBlue: '#0071FF',
-  primaryFrom: '#0080FC',
-  tealText: '#028265',
-  takenText: '#0B7F3F',
+// The hero gradient is the same in both themes. White text stays in its left 60%.
+const hero = {
+  from: '#0058E6',
+  mid: '#0068EE',
+  to: '#00B894',
+  border: 'rgba(255,255,255,0.28)',
+  sheen: 'rgba(255,255,255,0.14)',
+  glow: '#6CE7D8',
+  pill: 'rgba(0,20,70,0.18)',
 } as const;
 
 export type ThemeName = 'light' | 'dark';
@@ -70,7 +69,7 @@ export interface ThemeColors {
     /** Teal icons and the Supplement tag. */
     teal: string;
     error: string;
-    /** Disabled button labels. WCAG exempts disabled controls; the designer decides (04b brief). */
+    /** Disabled button labels: still 4.5:1 (the designer's decision). Disabled links use tertiary. */
     disabled: string;
   };
   action: {
@@ -95,6 +94,8 @@ export interface ThemeColors {
     border: string;
     sheen: string;
     glow: string;
+    /** Fill behind a pill or chip on the hero. */
+    pill: string;
   };
   /** Blurred blobs (blur 48) behind content so the glass reads. */
   mesh: { teal: string; blue: string };
@@ -131,37 +132,30 @@ const lightColors: ThemeColors = {
   text: {
     primary: '#0F172A',
     secondary: '#5B6B7F',
-    tertiary: interimLight.textTertiary,
+    tertiary: fixedLight.textTertiary,
     inverse: '#FFFFFF',
-    link: interimLight.link,
-    teal: interimLight.tealText,
+    link: fixedLight.actionBlue,
+    teal: fixedLight.tealText,
     error: '#D0101F',
-    disabled: '#8A97A8',
+    disabled: fixedLight.disabledText,
   },
   action: {
-    blue: '#0071FF',
-    primaryFrom: interimLight.primaryFrom,
-    primaryTo: '#0060FC',
-    disabledBg: '#E3EAF2',
+    blue: fixedLight.actionBlue,
+    primaryFrom: fixedLight.primaryFrom,
+    primaryTo: fixedLight.primaryTo,
+    disabledBg: fixedLight.disabledBg,
   },
   brand: { teal: '#00C69C', tealGlow: '#6CE7D8', alertDot: '#FF091B' },
-  hero: {
-    from: '#0060FC',
-    mid: '#0080FC',
-    to: '#00C69C',
-    border: 'rgba(255,255,255,0.28)',
-    sheen: 'rgba(255,255,255,0.14)',
-    glow: '#6CE7D8',
-  },
+  hero,
   mesh: { teal: 'rgba(0,198,156,0.20)', blue: 'rgba(0,128,252,0.16)' },
   dose: {
-    taken: { fg: interimLight.takenText, bg: '#E3F5EA' },
-    dueNow: { fg: '#FFFFFF', from: interimLight.primaryFrom, to: '#0060FC' },
+    taken: { fg: fixedLight.takenText, bg: '#E3F5EA' },
+    dueNow: { fg: '#FFFFFF', from: fixedLight.primaryFrom, to: fixedLight.primaryTo },
     upcoming: { fg: '#5B6B7F', bg: '#EEF2F7' },
     notConfirmed: { fg: '#9A5B00', bg: '#FFF1DB' },
     missed: { fg: '#D0101F', bg: '#FDE8EA' },
   },
-  supplement: { fg: interimLight.tealText, bg: '#E6F8F3' },
+  supplement: { fg: fixedLight.tealText, bg: '#E6F8F3' },
 };
 
 const darkColors: ThemeColors = {
@@ -189,23 +183,16 @@ const darkColors: ThemeColors = {
   action: {
     blue: '#2E90FF',
     // The spec gives one gradient for both themes.
-    primaryFrom: interimLight.primaryFrom,
-    primaryTo: '#0060FC',
+    primaryFrom: fixedLight.primaryFrom,
+    primaryTo: fixedLight.primaryTo,
     disabledBg: 'rgba(255,255,255,0.07)',
   },
   brand: { teal: '#00C69C', tealGlow: '#6CE7D8', alertDot: '#FF091B' },
-  hero: {
-    from: '#0060FC',
-    mid: '#0080FC',
-    to: '#00C69C',
-    border: 'rgba(255,255,255,0.28)',
-    sheen: 'rgba(255,255,255,0.14)',
-    glow: '#6CE7D8',
-  },
+  hero,
   mesh: { teal: 'rgba(0,198,156,0.13)', blue: 'rgba(0,128,252,0.20)' },
   dose: {
     taken: { fg: '#5FD38D', bg: 'rgba(95,211,141,0.14)' },
-    dueNow: { fg: '#FFFFFF', from: interimLight.primaryFrom, to: '#0060FC' },
+    dueNow: { fg: '#FFFFFF', from: fixedLight.primaryFrom, to: fixedLight.primaryTo },
     upcoming: { fg: '#B7C4D6', bg: 'rgba(255,255,255,0.07)' },
     notConfirmed: { fg: '#F5B84A', bg: 'rgba(245,184,74,0.14)' },
     missed: { fg: '#FF6B76', bg: 'rgba(255,107,118,0.14)' },
@@ -222,9 +209,9 @@ export const themes: Record<ThemeName, Theme> = {
       // 0 8px 24px rgba(20,60,120,0.08)
       card: { shadowColor: '#143C78', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 12, elevation: 3 },
       // 0 14px 30px rgba(0,96,252,0.26)
-      hero: { shadowColor: '#0060FC', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.26, shadowRadius: 15, elevation: 6 },
+      hero: { shadowColor: '#0058E8', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.26, shadowRadius: 15, elevation: 6 },
       // 0 6–8px 14–18px rgba(0,96,252,0.28–0.32)
-      button: { shadowColor: '#0060FC', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
+      button: { shadowColor: '#0058E8', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
     },
   },
   dark: {
@@ -256,8 +243,8 @@ const legacy = {
   tileGrey: '#6B7884',
   waveFrom: '#BFE3F7',
   waveTo: '#7FD3E6',
-  // Not in the spec: a pressed primary and an input border that reaches 3:1 on bg.
-  primaryPressed: '#0052D9',
+  // Not in the spec: a pressed primary, a little deeper than the gradient's end.
+  primaryPressed: '#004CCB',
 } as const;
 
 const L = lightColors;

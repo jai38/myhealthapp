@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   contrastRatio,
   flatten,
-  specFailingPairs,
   themeContrastPairs,
 } from '../../design/contrast';
 import { color, layout, motion, radius, size, themes } from '../../design/tokens';
@@ -42,9 +41,8 @@ describe('v4 themes (Calm Glass UI v4)', () => {
     expect([l.text.primary, d.text.primary]).toEqual(['#0F172A', '#F7FAFF']);
     expect([l.text.secondary, d.text.secondary]).toEqual(['#5B6B7F', '#B7C4D6']);
     expect(d.text.tertiary).toBe('#8EA0B5');
-    expect([l.action.blue, d.action.blue]).toEqual(['#0071FF', '#2E90FF']);
+    expect([l.action.blue, d.action.blue]).toEqual(['#0062DB', '#2E90FF']);
     expect([l.text.error, d.text.error]).toEqual(['#D0101F', '#FF6B76']);
-    expect([l.hero.from, l.hero.mid, l.hero.to]).toEqual(['#0060FC', '#0080FC', '#00C69C']);
     expect(l.dose.notConfirmed).toEqual({ fg: '#9A5B00', bg: '#FFF1DB' });
     expect(l.dose.missed).toEqual({ fg: '#D0101F', bg: '#FDE8EA' });
     expect(d.dose.taken).toEqual({ fg: '#5FD38D', bg: 'rgba(95,211,141,0.14)' });
@@ -109,13 +107,29 @@ describe.each(['light', 'dark'] as const)('%s theme contrast', (name) => {
   );
 });
 
-describe('spec values behind interim tokens', () => {
-  it.each(specFailingPairs.map((p) => [p.name, p] as const))(
-    '%s still fails, so its interim token stays',
-    (_name, p) => {
-      expect(contrastRatio(p.fg, p.bg)).toBeLessThan(p.min);
-    },
-  );
+describe("the designer's contrast fix (19 November 2026)", () => {
+  it('uses the fixed light values, with no interim tokens left', () => {
+    const l = themes.light.color;
+    expect(l.text.tertiary).toBe('#647387');
+    expect([l.action.blue, l.text.link]).toEqual(['#0062DB', '#0062DB']);
+    expect([l.action.primaryFrom, l.action.primaryTo]).toEqual(['#006AE6', '#0058E8']);
+    expect([l.hero.from, l.hero.mid, l.hero.to]).toEqual(['#0058E6', '#0068EE', '#00B894']);
+    expect(l.hero.pill).toBe('rgba(0,20,70,0.18)');
+    expect(l.text.teal).toBe('#007358');
+    expect(l.dose.taken).toEqual({ fg: '#097539', bg: '#E3F5EA' });
+    expect([l.text.disabled, l.action.disabledBg]).toEqual(['#5B6B7F', '#EBEFF4']);
+  });
+
+  it('the old spec values really failed, which is why they changed', () => {
+    expect(contrastRatio('#8A97A8', '#F7FAFC')).toBeLessThan(4.5);
+    expect(contrastRatio('#FFFFFF', '#0080FC')).toBeLessThan(4.5);
+    expect(contrastRatio('#8A97A8', '#E3EAF2')).toBeLessThan(4.5);
+  });
+
+  it('leaves dark mode unchanged', () => {
+    const d = themes.dark.color;
+    expect([d.text.tertiary, d.action.blue, d.text.teal]).toEqual(['#8EA0B5', '#2E90FF', '#20D7C5']);
+  });
 });
 
 describe('resolveThemeName', () => {
