@@ -12,13 +12,13 @@ Mockup: `mockups/s01-mobile-number.html` (#light|#dark - default|ready|error|sen
 - Continue enabled only with valid number + ticked box.
 - Valid number: 10 digits starting 6–9; strip pasted +91 / leading 0 / spaces. Display as "98765 43210".
 - Country picker visible; launch India (+91) only.
-- **WhatsApp update 2026-11-19 — REVIEW** (canvas board S01, state `nowhatsapp`). Sign-in is WhatsApp only. Helper line is now "We’ll send a 6-digit code on WhatsApp." New state **No WhatsApp on this number** (when the request returns `422 WHATSAPP_UNAVAILABLE` straight away): number stays filled, calm blue note under the field, "No WhatsApp on this number" / "We send codes on WhatsApp only for now. Try a number that uses WhatsApp."; Continue disabled until the number changes. Not an error colour: the number itself is valid.
+- **WhatsApp update — LOCKED 2026-11-21** (canvas board S01, state `nowhatsapp`). Sign-in is WhatsApp only. Helper line is now "We’ll send a 6-digit code on WhatsApp." New state **No WhatsApp on this number** (when the request returns `422 WHATSAPP_UNAVAILABLE` straight away): number stays filled, calm blue note under the field, "No WhatsApp on this number" / "We send codes on WhatsApp only for now. Try a number that uses WhatsApp."; Continue disabled until the number changes. Not an error colour: the number itself is valid.
 - States: default, ready, invalid ("Enter a valid 10-digit mobile number."), sending ("Sending code…"), no WhatsApp (above), no internet ("No internet connection. Check your connection and try again."), rate limit ("Too many attempts. Please try again in 10 minutes."), keyboard open (illustration hides, logo shrinks; not yet drawn).
 
 ### S02 · OTP Verification — LOCKED 2026-11-16
 Mockup: `mockups/s02-otp.html` (#light|#dark - default|filled|wrong|verifying|resend|expired), PNGs `mockups/s02-*.png`.
 - Back button + small logo lockup; gradient phone icon; "Enter verification code"; "We sent a 6-digit code to +91 98765 43210"; "Change number"; six boxes (3+3); resend timer; Verify pinned above keyboard.
-- ~~iOS SMS autofill ("From Messages")~~ replaced 2026-11-19. **WhatsApp update — REVIEW** (canvas board S02, state `nowhatsapp`):
+- ~~iOS SMS autofill ("From Messages")~~ replaced 2026-11-19. **WhatsApp update — LOCKED 2026-11-21** (canvas board S02, state `nowhatsapp`):
   - Subtitle: "We sent a code on WhatsApp to +91 98765 43210".
   - The keyboard suggestion bar no longer offers "From Messages" (iOS can't autofill from WhatsApp). Instead a glass **Paste** pill (clipboard icon, accessible name "Paste code") sits at the right of the timer row while the code is empty (default, resend). Pasting fills all six boxes and auto-verifies. Android adds one-tap autofill later (Phase 5 task 13); Paste stays as the fallback.
   - New state **We couldn’t send your code** (late failure: delivery status `WHATSAPP_UNAVAILABLE` arrives after the request): keyboard closes, boxes stay empty, blue note "This number doesn’t seem to use WhatsApp. Check the number, or use one that has WhatsApp.", primary button "Use Another Number" returns to S01 with the number selected; "Change number" link stays.
@@ -68,29 +68,29 @@ Mockups: `mockups/s07-dose-update.html` (#light|#dark - ask|taken|other|skipped)
 - Footnote: "This only updates your log. It doesn't change your schedule or reminders."
 - Mark as Taken on Today logs the current time instantly; dark toast "<Medicine> marked as taken at <time>" with Undo (~5 s); hero count and ring update.
 
-## Flow 3 · Account security (Phase 5) — REVIEW 2026-11-19
+## Flow 3 · Account security (Phase 5) — LOCKED 2026-11-21
 Canvas: boards A01–A04 plus "Account security · States". Order for a new user: S03 → (under 18: A04, stop) → **A01 app lock offer** → **A02 recovery code (shown once)** → S04. Returning user on a new phone: S02 verified → **A03 new-device check** → passkey or **A02 enter recovery code** → Today.
 
-### A01 · App lock — REVIEW
+### A01 · App lock — LOCKED 2026-11-21
 States `offer`, `locked`, `failed`.
 - Offer (right after S03, on by default): shield-lock tile; "Keep your health records private" / "Lock Ayoreni with Face ID, fingerprint or your phone’s PIN. Only you can open it."; glass card: App lock (switch, on) "Face ID, fingerprint or phone PIN"; "Locks when you leave" / "Opening the app again asks for it"; "Stays on this phone" / "Your face or fingerprint never leaves your phone"; footnote "You can change this anytime in Profile → Privacy & Security."; buttons "Turn On App Lock" / "Not Now".
 - Locked (app returns from the background): no health data visible; logo + wordmark; "Ayoreni is locked" / "Unlock to see your health information."; large glass Face ID button; "Unlock" / "Use Phone PIN". The system prompt opens on its own when the screen appears.
 - Biometric failed: Face ID glyph turns error red; red note "We couldn’t confirm it’s you" / "Try again, or use your phone’s PIN instead."; primary becomes "Use Phone PIN", secondary "Try Again".
 - Build: `expo-local-authentication`; use the device's own name for the method where available (Face ID / Touch ID / fingerprint).
 
-### A02 · Recovery code — REVIEW
+### A02 · Recovery code — LOCKED 2026-11-21
 States `show`, `copied`, `enter`, `wrong`. The code is synthetic in the design (`K7QF-29XD-M4PL-8RWC`): 16 characters, shown in 4 groups.
 - Shown once (after A01): key tile; "Save your recovery code" / "If you change phones, this code proves it’s you. We’ll show it only once."; glass code card with "Copy Code"; amber note "Keep it somewhere safe, like your password manager. Ayoreni will never ask for it on a call or chat."; checkbox "I’ve saved my recovery code"; Continue disabled until ticked.
 - Copied: toast "Recovery code copied"; checkbox ticked; Continue enabled.
 - Enter (new device): back button; "Enter your recovery code" / "You’re signing in on a new phone. Enter the code you saved when you set up Ayoreni."; focused field (uppercase, dashes added automatically); hint "16 letters and numbers. Dashes are added for you."; link "I don’t have my code" → A03 records-hidden path if the account qualifies, else support.
 - Wrong: red field; "That code doesn’t match. Check it and try again."
 
-### A03 · New-device check — REVIEW
+### A03 · New-device check — LOCKED 2026-11-21
 States `check`, `hidden`. Rules from Phase 5 P2 (90 days and the support path still to be confirmed by the owner).
 - Check (new phone, account has a passkey or recovery code): shield tile; "Confirm it’s you" / "This number is signing in on a new phone. To keep your records safe, confirm with one of these."; masked number pill; two glass option rows: "Use a passkey" / "Saved on your old phone or password manager"; "Enter recovery code" / "The code you saved when you signed up"; footer "Don’t have either? Contact support". Show only the options the account actually has.
 - Records hidden (no passkey or code, inactive ≥ 90 days): lock tile; "Your records are kept safe" / "This number hadn’t been used for a while, so we’ve hidden its records until our support team confirms it’s you."; blue note "Phone numbers are sometimes given to someone new. This keeps the records private if that happened."; steps 1–3 (Contact support → We confirm it’s you → Your records come back, "Nothing is deleted meanwhile"); "Contact Support" / "Sign Out". No support turnaround time is promised.
 
-### A04 · Under 18 — REVIEW
+### A04 · Under 18 — LOCKED 2026-11-21
 Shown when S03's date of birth is under 18 (block at launch, Phase 5 P4, pending legal review of a guardian path).
 - Back button; large glass shield; "Ayoreni is for adults for now" / "You need to be 18 or older to create an account."; blue note "We’re working on a safe way for parents and guardians to keep a child’s health records. Nothing you entered has been saved."; "Check Date of Birth" (back to S03 with the wheel open) / "Close".
 - Requirement: S03 data is not stored when the age check fails.

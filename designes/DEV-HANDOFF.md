@@ -25,7 +25,9 @@ Paste this at the start of a development session.
 | S05 Welcome / first-time Today | Locked | incomplete, sheet, complete |
 | S06 Today (returning) | Locked | default, toast (after Mark as Taken) |
 | S07 Dose update sheet + Mark as Taken toast | Locked 2026-11-19 | ask, taken, other, skipped |
-| Medication Details (opens on medicine row tap) | Next to design | — |
+| S01/S02 WhatsApp update (copy, Paste, no-WhatsApp state) | Locked 2026-11-21 | S01 +nowhatsapp, S02 +nowhatsapp |
+| A01 App lock · A02 Recovery code · A03 New-device check · A04 Under 18 | Locked 2026-11-21 | see `screens.md` Flow 3 |
+| M02 Medication Details | In review (owner handling) | active, manual, paused, stopped, inactive |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 
