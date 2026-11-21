@@ -150,3 +150,19 @@ describe('themedToneColor', () => {
     expect(themedToneColor('danger', themes.dark.color)).toBe('#FF6B76');
   });
 });
+
+import { choiceColors } from '../../design/components/Inputs/choiceStyle';
+
+describe('choiceColors with a theme', () => {
+  it('in the light theme equals the light chip colours', () => {
+    for (const selected of [true, false]) {
+      for (const disabled of [true, false]) {
+        expect(choiceColors({ selected, disabled, theme: themes.light.color })).toEqual(choiceColors({ selected, disabled }));
+      }
+    }
+  });
+
+  it('in the dark theme uses the dark fills', () => {
+    expect(choiceColors({ selected: false, disabled: false, theme: themes.dark.color }).bg).toBe('rgba(255,255,255,0.07)');
+  });
+});

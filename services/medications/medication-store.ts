@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MedicationRecord, DoseLog, medicationService } from './medication-service';
+import { MedicationRecord, DoseLog, SkipReason, medicationService } from './medication-service';
 import { authService } from '../auth/auth-service';
 import {
   scheduleSnoozeReminder,
@@ -338,25 +338,32 @@ class MedicationStore {
   }
 
   /**
-   * Optimistically records Taken, Snoozed, or Skipped.
+   * Optimistically records Taken, Snoozed, Skipped or Missed: only ever from the patient's tap.
+   * `options.actionTime` is when a dose was taken (S07: as scheduled or another time; never
+   * the future, which the caller and the server both refuse). `options.skipReason` goes with
+   * SKIPPED only. MISSED is only the patient's own answer.
    * Signed in, the server save must succeed: on failure the dose is restored and the
    * error is thrown. Signed out, it is kept on the phone only.
    */
   async recordAction(
     doseId: string,
-    action: 'TAKEN' | 'SKIPPED' | 'SNOOZED',
-    snoozeMinutes: number = 15
+    action: 'TAKEN' | 'SKIPPED' | 'SNOOZED' | 'MISSED',
+    snoozeMinutes: number = 15,
+    options: { actionTime?: string; skipReason?: SkipReason } = {}
   ): Promise<DoseLog> {
     const targetIdx = this.doses.findIndex((d) => d.id === doseId);
     const nowIso = new Date().toISOString();
+    const actionTime = options.actionTime ?? nowIso;
+    const skipReason = action === 'SKIPPED' ? options.skipReason : undefined;
 
     if (targetIdx >= 0) {
       const existing = this.doses[targetIdx];
       const updated: DoseLog = {
         ...existing,
         status: action,
-        actionTime: action === 'TAKEN' ? nowIso : existing.actionTime,
+        actionTime: action === 'TAKEN' || action === 'MISSED' ? actionTime : existing.actionTime,
         snoozeMinutes: action === 'SNOOZED' ? snoozeMinutes : existing.snoozeMinutes,
+        skipReason: skipReason ?? null,
         updatedAt: nowIso,
       };
 
@@ -375,8 +382,9 @@ class MedicationStore {
         try {
           await medicationService.recordDoseAction(doseId, {
             action,
-            snoozeMinutes,
-            actionTime: nowIso,
+            ...(action === 'SNOOZED' ? { snoozeMinutes } : {}),
+            actionTime,
+            ...(skipReason ? { skipReason } : {}),
           });
         } catch (err) {
           const idx = this.doses.findIndex((d) => d.id === doseId);
@@ -394,7 +402,7 @@ class MedicationStore {
         if (med) {
           scheduleSnoozeReminder(med.id, med.nameAsWritten, snoozeMinutes).catch(() => {});
         }
-      } else if (action === 'TAKEN' || action === 'SKIPPED') {
+      } else if (action === 'TAKEN' || action === 'SKIPPED' || action === 'MISSED') {
         // Clear active snooze and dismiss any delivered notification banner
         cancelSnoozeRemindersForMedication(existing.medicationId).catch(() => {});
         dismissDeliveredNotificationsForMedication(existing.medicationId).catch(() => {});
@@ -420,6 +428,7 @@ class MedicationStore {
       ...existing,
       status: 'PENDING',
       actionTime: null,
+      skipReason: null,
       updatedAt: new Date().toISOString(),
     };
     this.doses = [...this.doses.slice(0, idx), reverted, ...this.doses.slice(idx + 1)];

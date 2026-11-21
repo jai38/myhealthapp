@@ -73,6 +73,8 @@ export interface TodayGroupCardProps {
   onMarkTaken: (doseId: string) => void;
   onOpen: (item: TodayDose) => void;
   onMore: (item: TodayDose) => void;
+  /** Whether S07 opens for the row; a Not confirmed one then says "Tap to update". */
+  canUpdate: (item: TodayDose) => boolean;
 }
 
 /** Morning, Afternoon or Evening: up to ROWS_BEFORE_SHOW_ALL rows, then "Show all". */
@@ -86,6 +88,7 @@ export function TodayGroupCard({
   onMarkTaken,
   onOpen,
   onMore,
+  canUpdate,
 }: TodayGroupCardProps) {
   const { color: c } = useTheme();
   const shown = expanded ? group.items : group.items.slice(0, ROWS_BEFORE_SHOW_ALL);
@@ -114,6 +117,7 @@ export function TodayGroupCard({
                 form={medicineFormFor(med?.dosageForm)}
                 state={item.state}
                 formatTime={formatTodayTime}
+                hint={item.state.kind === 'notConfirmed' && canUpdate(item) ? t('today.tapToUpdate') : undefined}
                 onPress={() => onOpen(item)}
                 onMore={() => onMore(item)}
               />

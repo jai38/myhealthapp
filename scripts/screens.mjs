@@ -38,7 +38,18 @@ const VARIANTS = [
 ];
 
 // Extra URL parts and user steps that reach a state. Everything else is just ?state=<state>.
+const tapSave = (waitFor) => ({
+  steps: async (page) => {
+    await page.click('[data-testid="dose-update-confirm"]');
+    await page.waitForSelector(waitFor, { timeout: 15000 });
+    await page.waitForTimeout(400);
+  },
+});
+
 const EXTRA = {
+  // S07 saving and save failed: reached by tapping Save on the chosen answer.
+  'today:update-saving': tapSave('[data-testid="dose-update-confirm"]:has-text("Saving")'),
+  'today:update-failed': tapSave('[data-testid="dose-update-failed"]'),
   // S06 after Mark as Taken: the toast with Undo and the updated hero, reached by the tap.
   'today:afterTaken': {
     steps: async (page) => {

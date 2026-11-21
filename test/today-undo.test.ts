@@ -103,3 +103,51 @@ describe('medicationStore.undoAction (S06 Undo)', () => {
     await expect(medicationStore.undoAction('nope')).rejects.toThrow(/not found/);
   });
 });
+
+describe('medicationStore.recordAction from S07', () => {
+  beforeEach(async () => {
+    await medicationStore.clearUserStorage();
+    await medicationStore.addMedication(med());
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('sends a chosen taken time and keeps it on the dose', async () => {
+    vi.spyOn(authService, 'isAuthenticated').mockReturnValue(true);
+    const post = vi.spyOn(medicationService, 'recordDoseAction').mockResolvedValue(saved({ status: 'TAKEN' }));
+    const [first] = medicationStore.getTodayDoses();
+    const when = new Date(Date.now() - 30 * 60_000).toISOString();
+    await medicationStore.recordAction(first.id, 'TAKEN', undefined, { actionTime: when });
+    expect(post).toHaveBeenCalledWith(first.id, { action: 'TAKEN', actionTime: when });
+    expect(medicationStore.getAllDoses().find((d) => d.id === first.id)!.actionTime).toBe(when);
+  });
+
+  it('sends MISSED only when asked, and a skip reason only with SKIPPED', async () => {
+    vi.spyOn(authService, 'isAuthenticated').mockReturnValue(true);
+    const post = vi.spyOn(medicationService, 'recordDoseAction').mockResolvedValue(saved());
+    const [first] = medicationStore.getTodayDoses();
+    await medicationStore.recordAction(first.id, 'SKIPPED', undefined, { skipReason: 'RAN_OUT' });
+    expect(post.mock.calls[0]![1]).toMatchObject({ action: 'SKIPPED', skipReason: 'RAN_OUT' });
+    expect(medicationStore.getAllDoses().find((d) => d.id === first.id)!.skipReason).toBe('RAN_OUT');
+
+    await medicationStore.recordAction(first.id, 'MISSED', undefined, { skipReason: 'RAN_OUT' });
+    expect(post.mock.calls[1]![1]).toEqual(expect.objectContaining({ action: 'MISSED' }));
+    expect(post.mock.calls[1]![1]).not.toHaveProperty('skipReason');
+    expect(medicationStore.getAllDoses().find((d) => d.id === first.id)!.status).toBe('MISSED');
+  });
+
+  it('sends no snooze minutes with anything but SNOOZED', async () => {
+    vi.spyOn(authService, 'isAuthenticated').mockReturnValue(true);
+    const post = vi.spyOn(medicationService, 'recordDoseAction').mockResolvedValue(saved());
+    const [first] = medicationStore.getTodayDoses();
+    await medicationStore.recordAction(first.id, 'TAKEN');
+    expect(post.mock.calls[0]![1]).not.toHaveProperty('snoozeMinutes');
+  });
+
+  it('a failed Missed is not left on screen as Missed', async () => {
+    vi.spyOn(authService, 'isAuthenticated').mockReturnValue(true);
+    vi.spyOn(medicationService, 'recordDoseAction').mockRejectedValue(new Error('network'));
+    const [first] = medicationStore.getTodayDoses();
+    await expect(medicationStore.recordAction(first.id, 'MISSED')).rejects.toThrow();
+    expect(medicationStore.getAllDoses().find((d) => d.id === first.id)!.status).toBe('PENDING');
+  });
+});

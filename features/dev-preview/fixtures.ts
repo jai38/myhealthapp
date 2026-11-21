@@ -5,6 +5,7 @@ import type { DoseLog, MedicationRecord } from '../../services/medications/medic
 import type { TimelineEvent } from '../../services/timeline/timeline-service';
 import type { UserSession } from '../../services/auth/auth-service';
 import type { PreviewScreen } from './previewGuard';
+import type { PreviewDoseDraft, PreviewSeam } from './previewSeam';
 
 /** The frozen clock: Friday 6 November 2026, 10:30 local time. */
 export const FROZEN_NOW = { year: 2026, month: 11, day: 6, hour: 10, minute: 30 } as const;
@@ -220,6 +221,11 @@ export interface PreviewScenario {
   uploading: boolean;
   /** True: the fake backend never answers, so the screen stays loading. */
   loading: boolean;
+  /** S07: a dose action never answers (saving) or fails (save failed with Retry). */
+  actionHangs: boolean;
+  actionFails: boolean;
+  /** S07: open the Dose update sheet for this dose with this answer chosen. */
+  doseUpdate: PreviewSeam['doseUpdate'];
 }
 
 const BASE: PreviewScenario = {
@@ -230,7 +236,17 @@ const BASE: PreviewScenario = {
   offline: false,
   uploading: false,
   loading: false,
+  actionHangs: false,
+  actionFails: false,
+  doseUpdate: null,
 };
+
+/** The Not confirmed dose in the returning day: Testmed A 500 mg at 08:00. */
+export const PREVIEW_NOT_CONFIRMED_DOSE = `preview-dose-tm-a-${dayString(0)}-0800`;
+
+function sheet(draft: Partial<PreviewDoseDraft>): PreviewSeam['doseUpdate'] {
+  return { doseId: PREVIEW_NOT_CONFIRMED_DOSE, draft };
+}
 
 function withDoses(today: DoseLog[]): Partial<PreviewScenario> {
   return { medications: SIX_ACTIVE, doses: [...today, ...comingDays(SIX_ACTIVE)] };
@@ -247,6 +263,26 @@ export function previewScenario(screen: PreviewScreen, state: string): PreviewSc
         return { ...BASE, ...withDoses(RETURNING_TODAY), uploading: true };
       case 'loading':
         return { ...BASE, loading: true };
+      case 'update-ask':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), doseUpdate: sheet({}) };
+      case 'update-taken':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), doseUpdate: sheet({ choice: 'took', when: 'scheduled' }) };
+      case 'update-other':
+        return {
+          ...BASE,
+          ...withDoses(RETURNING_TODAY),
+          doseUpdate: sheet({ choice: 'took', when: 'other', otherTime: new Date(localAt(0, '09:15')) }),
+        };
+      case 'update-skipped':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), doseUpdate: sheet({ choice: 'skipped', reason: 'FELT_UNWELL' }) };
+      case 'update-missed':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), doseUpdate: sheet({ choice: 'missed' }) };
+      case 'update-saving':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), actionHangs: true, doseUpdate: sheet({ choice: 'missed' }) };
+      case 'update-failed':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), actionFails: true, doseUpdate: sheet({ choice: 'missed' }) };
+      case 'update-offline':
+        return { ...BASE, ...withDoses(RETURNING_TODAY), offline: true, doseUpdate: sheet({ choice: 'took' }) };
       case 'nothingDue':
         return { ...BASE, ...withDoses([]) };
       case 'dueNow':

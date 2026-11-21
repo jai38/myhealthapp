@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon, Text } from '../Foundations';
 import { radius, space } from '../../tokens';
+import { useTheme } from '../../theme';
 import { choiceCheckIcon, choiceColors, choiceLayout } from './choiceStyle';
 
 export interface ChipGroupProps {
@@ -26,6 +27,7 @@ export function ChipGroup({
   label,
   testID,
 }: ChipGroupProps) {
+  const theme = useTheme();
   const pick = (value: string, isSelected: boolean) => {
     if (multi) {
       onChange(isSelected ? selected.filter((v) => v !== value) : [...selected, value]);
@@ -44,7 +46,7 @@ export function ChipGroup({
       <View style={styles.wrap}>
         {options.map((option) => {
           const isSelected = selected.includes(option.value);
-          const c = choiceColors({ selected: isSelected, disabled });
+          const c = choiceColors({ selected: isSelected, disabled, theme: theme.color });
           return (
             <Pressable
               key={option.value}

@@ -5,7 +5,7 @@
 // - An unrecorded past dose shows Not confirmed. Nothing here marks a dose Missed.
 // - The hero counts recorded Taken doses only.
 // - Paused and stopped medicines' doses never appear (todayModel leaves them out).
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../design/components/Foundations/Screen';
@@ -21,6 +21,7 @@ import { ReviewPrescriptionScreen } from '../prescriptions/ReviewPrescriptionScr
 import { ManualAddMedicationModal } from '../medications/ManualAddMedicationModal';
 import { medicationStore } from '../../services/medications/medication-store';
 import { medicineOpenTarget } from '../shell/tabs';
+import { previewDoseUpdate } from '../dev-preview/previewSeam';
 import { useToday } from './useToday';
 import { usePrescriptionUpload } from './usePrescriptionUpload';
 import { useDoseActions } from './useDoseActions';
@@ -35,6 +36,10 @@ import {
 } from './todayView';
 import type { DayPart } from './todayView';
 import { TodayNewUser } from './TodayStates';
+import { DoseUpdateSheet } from './DoseUpdateSheet';
+import { canOpenDoseUpdate } from './doseUpdate';
+import type { DoseUpdateRequest } from './doseUpdate';
+import type { DoseLog } from '../../services/medications/medication-service';
 import { TodayAsNeeded } from './TodayActions';
 import {
   TodayGreetingV4,
@@ -44,8 +49,7 @@ import {
   TodaySkeleton,
 } from './TodayParts';
 
-/** Kinds a row's menu can record now: Taken or Skip. Upcoming doses can't be recorded yet. */
-const ACTIONABLE = new Set<TodayDose['state']['kind']>(['dueNow', 'notConfirmed', 'snoozed']);
+const SAVED_NOTICE_MS = 4000;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -54,6 +58,8 @@ export default function HomeScreen() {
   const [expanded, setExpanded] = useState<ReadonlySet<DayPart>>(new Set());
   const [undo, setUndo] = useState<{ doseId: string; message: string } | null>(null);
   const [menuFor, setMenuFor] = useState<TodayDose | null>(null);
+  const [updating, setUpdating] = useState<TodayDose | null>(null);
+  const [savedNotice, setSavedNotice] = useState<string | null>(null);
 
   const {
     screenState,
@@ -63,6 +69,7 @@ export default function HomeScreen() {
     isOffline,
     lastUpdatedAt,
     retry,
+    nowMs,
     medications,
     session,
     loadDashboardData,
@@ -78,7 +85,19 @@ export default function HomeScreen() {
     handleFileSelected,
     handleConfirmPrescription,
   } = usePrescriptionUpload({ session, onPrescriptionChanged: loadDashboardData });
-  const { actionNotice, handleRecordAsNeededDose, handleRecordDoseAction } = useDoseActions(medications);
+  const { actionNotice, handleRecordAsNeededDose } = useDoseActions(medications);
+
+  // Dev preview only (null in release): open S07 for one dose once it has loaded.
+  const previewSheet = previewDoseUpdate();
+  const [previewOpened, setPreviewOpened] = useState(false);
+  useEffect(() => {
+    if (!previewSheet || previewOpened) return;
+    const item = allTodayItems(groups).find((d) => d.dose.id === previewSheet.doseId);
+    if (item) {
+      setPreviewOpened(true);
+      setUpdating(item);
+    }
+  }, [previewSheet, previewOpened, groups]);
 
   if (activeReviewData) {
     return (
@@ -115,13 +134,36 @@ export default function HomeScreen() {
     loadError: screenState === 'error' ? t('feedback.errorBody') : null,
     uploadError,
     uploading: isProcessing ? processingStatus : null,
-    saved: confirmationNotice ?? actionNotice,
+    saved: savedNotice ?? confirmationNotice ?? actionNotice,
   });
 
   const openUpload = () => setIsPickerVisible(true);
   const openManualAdd = () => setIsManualAddVisible(true);
   const openMedicine = (item: TodayDose) =>
     router.push(medicineOpenTarget(item.dose.medicationId, Date.now().toString()));
+  // S07 opens only for a Due now or Not confirmed dose; other rows open the medicine.
+  const canUpdate = (item: TodayDose) =>
+    canOpenDoseUpdate(item.dose, medicationFor(item.dose.medicationId), nowMs);
+  const openRow = (item: TodayDose) => (canUpdate(item) ? setUpdating(item) : openMedicine(item));
+
+  // S07 Save: records exactly what the patient chose. Throws when not saved, so the sheet
+  // offers Retry; the store has already put the dose back as it was.
+  const saveUpdate = async (dose: DoseLog, request: DoseUpdateRequest) => {
+    await medicationStore.recordAction(
+      dose.id,
+      request.action,
+      undefined,
+      request.action === 'TAKEN'
+        ? { actionTime: request.actionTime }
+        : request.action === 'SKIPPED' && request.skipReason
+          ? { skipReason: request.skipReason }
+          : {},
+    );
+    setUpdating(null);
+    const name = medicationFor(dose.medicationId)?.nameAsWritten || t('today.unknownMedicine');
+    setSavedNotice(t('doseUpdate.saved', { name }));
+    setTimeout(() => setSavedNotice(null), SAVED_NOTICE_MS);
+  };
 
   // Mark as Taken: the user's explicit tap logs the current time, then offers Undo.
   const markTaken = async (doseId: string) => {
@@ -202,7 +244,8 @@ export default function HomeScreen() {
                 markTakenId={markTakenId}
                 markTakenDisabledReason={offlineReason}
                 onMarkTaken={(id) => void markTaken(id)}
-                onOpen={openMedicine}
+                onOpen={openRow}
+                canUpdate={canUpdate}
                 onMore={setMenuFor}
               />
             ))}
@@ -221,30 +264,16 @@ export default function HomeScreen() {
         testID="today-row-menu"
       >
         <View style={styles.menu}>
-          {menuFor && ACTIONABLE.has(menuFor.state.kind) ? (
-            <>
-              <Button
-                label={t('today.taken')}
-                disabled={isOffline}
-                onPress={() => {
-                  const id = menuFor.dose.id;
-                  setMenuFor(null);
-                  void handleRecordDoseAction(id, 'TAKEN');
-                }}
-                testID="today-row-menu-taken"
-              />
-              <Button
-                label={t('today.skip')}
-                variant="secondary"
-                disabled={isOffline}
-                onPress={() => {
-                  const id = menuFor.dose.id;
-                  setMenuFor(null);
-                  void handleRecordDoseAction(id, 'SKIPPED');
-                }}
-                testID="today-row-menu-skip"
-              />
-            </>
+          {menuFor && canUpdate(menuFor) ? (
+            <Button
+              label={t('today.updateDose')}
+              onPress={() => {
+                const item = menuFor;
+                setMenuFor(null);
+                setUpdating(item);
+              }}
+              testID="today-row-menu-update"
+            />
           ) : null}
           {menuFor ? (
             <Button
@@ -260,6 +289,16 @@ export default function HomeScreen() {
           ) : null}
         </View>
       </BottomSheet>
+
+      <DoseUpdateSheet
+        dose={updating?.dose ?? null}
+        medication={updating ? (medicationFor(updating.dose.medicationId) ?? null) : null}
+        nowMs={nowMs}
+        offline={isOffline}
+        onClose={() => setUpdating(null)}
+        onSave={saveUpdate}
+        initialDraft={previewSheet && updating?.dose.id === previewSheet.doseId ? previewSheet.draft : undefined}
+      />
 
       <DocumentPickerModal
         visible={isPickerVisible}

@@ -4,6 +4,19 @@
 export interface PreviewSeam {
   /** Status text of an upload that is already running when Today opens. */
   processingStatus: string | null;
+  /**
+   * S07 states: open the Dose update sheet for this dose once Today has loaded, with this
+   * answer already chosen (as the patient would have tapped it). Nothing is saved until Save.
+   */
+  doseUpdate?: { doseId: string; draft: Partial<PreviewDoseDraft> } | null;
+}
+
+/** The S07 answer, as plain data (see features/today/doseUpdate.ts). */
+export interface PreviewDoseDraft {
+  choice: 'took' | 'skipped' | 'missed' | null;
+  when: 'scheduled' | 'now' | 'other';
+  otherTime: Date | null;
+  reason: 'FELT_UNWELL' | 'DOCTOR_ADVISED' | 'RAN_OUT' | 'SIDE_EFFECTS' | 'OTHER' | null;
 }
 
 let current: PreviewSeam | null = null;
@@ -15,4 +28,9 @@ export function setPreviewSeam(seam: PreviewSeam | null, isDev: boolean): void {
 
 export function initialProcessingStatus(): string | null {
   return current?.processingStatus ?? null;
+}
+
+/** The S07 sheet the preview opens, or null (always null in a release build). */
+export function previewDoseUpdate(): PreviewSeam['doseUpdate'] {
+  return current?.doseUpdate ?? null;
 }

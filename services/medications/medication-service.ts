@@ -17,7 +17,13 @@ export const MedicationStatusSchema = z.enum([
 
 export type MedicationStatus = z.infer<typeof MedicationStatusSchema>;
 
-export const DoseStatusSchema = z.enum(['PENDING', 'TAKEN', 'SKIPPED', 'SNOOZED']);
+// MISSED comes only from the patient's own "No, I missed it" (S07; backend PR #9). It is never
+// set automatically: an unrecorded past dose stays PENDING and shows Not confirmed.
+export const DoseStatusSchema = z.enum(['PENDING', 'TAKEN', 'SKIPPED', 'SNOOZED', 'MISSED']);
+
+/** Why a dose was skipped, when the patient chose to say (S07; backend PR #9). */
+export const SkipReasonSchema = z.enum(['FELT_UNWELL', 'DOCTOR_ADVISED', 'RAN_OUT', 'SIDE_EFFECTS', 'OTHER']);
+export type SkipReason = z.infer<typeof SkipReasonSchema>;
 
 export type DoseStatus = z.infer<typeof DoseStatusSchema>;
 
@@ -56,6 +62,7 @@ export const DoseLogSchema = z.object({
   actionTime: z.string().nullable().optional(),
   snoozeMinutes: z.number().nullable().optional(),
   notes: z.string().nullable().optional(),
+  skipReason: SkipReasonSchema.nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -250,15 +257,17 @@ export class MedicationService {
   }
 
   /**
-   * Records explicit patient-reported action (TAKEN, SKIPPED, SNOOZED).
+   * Records an explicit patient-reported action (TAKEN, SKIPPED, SNOOZED, MISSED).
+   * Only a patient's tap calls this; never a notification.
    */
   async recordDoseAction(
     doseId: string,
     payload: {
-      action: 'TAKEN' | 'SKIPPED' | 'SNOOZED';
+      action: 'TAKEN' | 'SKIPPED' | 'SNOOZED' | 'MISSED';
       notes?: string;
       snoozeMinutes?: number;
       actionTime?: string;
+      skipReason?: SkipReason;
     }
   ): Promise<DoseLog> {
     const res = await this.client.post<{ data: DoseLog; message: string }>(
@@ -275,8 +284,9 @@ export class MedicationService {
   async correctDoseAction(
     doseId: string,
     payload: {
-      action: 'TAKEN' | 'SKIPPED' | 'PENDING';
+      action: 'TAKEN' | 'SKIPPED' | 'MISSED' | 'PENDING';
       notes?: string;
+      skipReason?: SkipReason;
     }
   ): Promise<DoseLog> {
     const res = await this.client.patch<{ data: DoseLog; message: string }>(

@@ -30,9 +30,10 @@ export function answer(
   if (scenario.apiFails) return serverError();
 
   const action = ACTION_PATH.exec(path);
+  if (action && (method === 'POST' || method === 'PATCH') && scenario.actionFails) return serverError();
   if (action && (method === 'POST' || method === 'PATCH')) {
     const index = scenario.doses.findIndex((d) => d.id === decodeURIComponent(action[1]!));
-    const b = (body ?? {}) as { action?: string; actionTime?: string };
+    const b = (body ?? {}) as { action?: string; actionTime?: string; skipReason?: string };
     if (index < 0) return json(404, { error: { code: 'NOT_FOUND', message: 'No such dose in the preview.' } });
     if (!b.action || !ACTIONS.has(b.action)) {
       return json(400, { error: { code: 'VALIDATION_ERROR', message: 'Unknown action.' } });
@@ -42,6 +43,7 @@ export function answer(
       ...scenario.doses[index]!,
       status: b.action as (typeof scenario.doses)[number]['status'],
       actionTime: b.action === 'PENDING' ? null : (method === 'POST' && b.actionTime) || now,
+      skipReason: b.action === 'SKIPPED' && b.skipReason ? (b.skipReason as (typeof scenario.doses)[number]['skipReason']) : null,
       updatedAt: now,
     };
     scenario.doses[index] = updated;
@@ -103,6 +105,9 @@ export function installPreviewApi(scenario: PreviewScenario): () => void {
     if (url.startsWith(base)) {
       const method = (init?.method ?? (typeof input === 'object' && 'method' in input ? input.method : 'GET')).toUpperCase();
       if (scenario.loading) return new Promise<Response>(() => {});
+      if (scenario.actionHangs && /\/medications\/doses\/[^/]+\/action$/.test(url.split('?')[0]!)) {
+        return new Promise<Response>(() => {});
+      }
       const parsed = new URL(url);
       const path = parsed.pathname.slice(new URL(base).pathname.length) || '/';
       let body: unknown = null;

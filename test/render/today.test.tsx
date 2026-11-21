@@ -122,15 +122,21 @@ describe('S06 Today', () => {
     expect(screen.queryByText(/reading/i)).toBeNull();
   });
 
-  it('a row menu records Taken or Skip only on an explicit tap', async () => {
+  it('a row menu offers Update dose for a Not confirmed dose, and records nothing by itself', async () => {
     await renderPreview('today', 'returning');
     await hero();
     await fireEvent.press(screen.getByTestId(`today-row-${NOT_CONFIRMED}-more`));
     expect(screen.getByTestId('today-row-menu')).toBeTruthy();
+    expect(screen.queryByTestId('today-row-menu-taken')).toBeNull();
+    await fireEvent.press(screen.getByTestId('today-row-menu-update'));
+    expect(screen.getByTestId('dose-update')).toBeTruthy();
     expect(screen.getByTestId(`today-row-${NOT_CONFIRMED}-status`)).toHaveTextContent('Not confirmed');
-    await fireEvent.press(screen.getByTestId('today-row-menu-skip'));
-    await waitFor(() =>
-      expect(screen.getByTestId(`today-row-${NOT_CONFIRMED}-status`)).toHaveTextContent(t('status.skipped')),
-    );
+  });
+
+  it('a Not confirmed row says "Tap to update"; an upcoming row does not', async () => {
+    await renderPreview('today', 'returning');
+    await hero();
+    expect(screen.getByTestId(`today-row-${NOT_CONFIRMED}`)).toHaveTextContent(/Tap to update/);
+    expect(screen.getByTestId(`today-row-preview-dose-tm-c-${DAY}-1300`)).not.toHaveTextContent(/Tap to update/);
   });
 });

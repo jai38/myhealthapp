@@ -110,6 +110,7 @@ export function PreviewHost({ screen, state, fontScale, theme = 'light' }: Previ
       setPreviewSeam(
         {
           processingStatus: scenario.uploading ? t('prescription.uploading') : null,
+          doseUpdate: scenario.doseUpdate,
         },
         __DEV__,
       );
