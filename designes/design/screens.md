@@ -137,3 +137,6 @@ Requirements: the owner's post-Welcome update of 2026-11-22 (document classifica
 ### S-RX-01 · Add Health Record — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-01-add-health-record.md` (approved with all recommendations: photos joined into one PDF with originals kept; PDF or photos, not both; discard dialog, no draft; offline selection with queued upload). Canvas: boards R01 and R01 States.
 
+### S-RX-02 · Review Your Document — SPEC REVIEW 2026-11-22
+Spec: `specs/S-RX-02-review-your-document.md`. Visual design after the spec is approved.
+
