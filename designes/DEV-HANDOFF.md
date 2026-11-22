@@ -34,6 +34,7 @@ Paste this at the start of a development session.
 | S-RX-02 Review Your Document | Locked 2026-11-22 (spec `designes/design/specs/S-RX-02-review-your-document.md`) | ready, flagged, pdf, uploading, duplicate, failed, offline, remove |
 | S-RX-03 Confirm Classification & Verify Information | Locked 2026-11-22 (spec `designes/design/specs/S-RX-03-confirm-and-verify.md`) | reading, failed, type, picker, mixed, check, item, duplicate, pending, mismatch, basic |
 | S-RX-04 Medication Reconciliation & Optional Scheduling | Locked 2026-11-22 (spec `designes/design/specs/S-RX-04-reconcile-and-schedule.md`) | list, compare, taking, reaction, finish, setup, change, tests, confirm |
+| S-RX-05 Completion Summary | Locked 2026-11-22 (spec `designes/design/specs/S-RX-05-completion-summary.md`) | done, partial, reminderset, recordonly, reading, failed, notifoff, other |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 

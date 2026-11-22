@@ -146,6 +146,7 @@ Spec: `specs/S-RX-03-confirm-and-verify.md` (approved with all recommendations).
 ### S-RX-04 · Medication Reconciliation & Optional Scheduling — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-04-reconcile-and-schedule.md` (approved with all recommendations). Canvas: board R04 with state boards R04 A (list and decisions) and R04 B (setup, tests, confirm).
 
-### S-RX-05 · Completion Summary — SPEC APPROVED 2026-11-22 · design REVIEW
+### S-RX-05 · Completion Summary — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-05-completion-summary.md` (approved with all recommendations). Canvas: boards R05 and R05 States.
 
+**Flow 5 (Add Health Record journey, S-RX-01 → S-RX-05) — COMPLETE and LOCKED 2026-11-22.** Next per the owner's plan: Laboratory Report extraction specification (category 2).

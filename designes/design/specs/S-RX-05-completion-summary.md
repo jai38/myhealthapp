@@ -1,6 +1,6 @@
 # S-RX-05 · Completion Summary — functional specification
 
-**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-05 with recommendations"; all PROPOSED items and OPEN-1–4 recommendations accepted) · design REVIEW · **Date:** 2026-11-22 · **Stage:** 5 of 5 (S-RX-01 → S-RX-02 → S-RX-03 → S-RX-04 → **S-RX-05**).
+**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-05 with recommendations"; all PROPOSED items and OPEN-1–4 recommendations accepted) · design APPROVED 2026-11-22 (canvas boards R05 and R05 States) · LOCKED · **Date:** 2026-11-22 · **Stage:** 5 of 5 (S-RX-01 → S-RX-02 → S-RX-03 → S-RX-04 → **S-RX-05**).
 **Sources:** Continuation brief §6 (S-RX-05); Medication Reconciliation v1.0 §5 (stage table), §8.1, §10 (completion contract), RX-MAT-20; Verification & Recovery v1.0 RX-VER-09, 11, 12, 14; v0.3 workflow review §7 (reference only). Locked: S-RX-01–04, D-RX-2 (Records to Review on Today), visual baseline `8c62eb0`.
 **Labels:** APPROVED · DECIDED · PROPOSED (needs approval) · OPEN.
 

@@ -387,7 +387,7 @@
     "t15": {
       "x": 0,
       "y": 41776,
-      "text": "Flow 5 · S-RX-05 Completion Summary · spec APPROVED, design IN REVIEW",
+      "text": "Flow 5 · S-RX-05 Completion Summary · LOCKED (spec and design approved 22 Nov) · journey S-RX-01–05 complete",
       "kind": "title1",
       "maxW": 4074
     }
