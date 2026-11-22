@@ -140,6 +140,6 @@ Spec: `specs/S-RX-01-add-health-record.md` (approved with all recommendations: p
 ### S-RX-02 · Review Your Document — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-02-review-your-document.md` (approved with all recommendations). Canvas: boards R02 and R02 States.
 
-### S-RX-03 · Confirm Classification & Verify Information — SPEC APPROVED 2026-11-22 · design REVIEW
+### S-RX-03 · Confirm Classification & Verify Information — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-03-confirm-and-verify.md` (approved with all recommendations). Canvas: board R03 with state boards R03 A (reading and type) and R03 B (check and save).
 

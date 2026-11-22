@@ -1,6 +1,6 @@
 # S-RX-03 · Confirm Classification & Verify Information — functional specification
 
-**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-03 with recommendations"; all PROPOSED items and OPEN-1–6 recommendations accepted) · design REVIEW · **Date:** 2026-11-22 · **Stage:** 3 of 5 (S-RX-01 → S-RX-02 → **S-RX-03** → S-RX-04 → S-RX-05). This is the record-save boundary.
+**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-03 with recommendations"; all PROPOSED items and OPEN-1–6 recommendations accepted) · design APPROVED 2026-11-22 (canvas boards R03, R03 States A and B) · LOCKED · **Date:** 2026-11-22 · **Stage:** 3 of 5 (S-RX-01 → S-RX-02 → **S-RX-03** → S-RX-04 → S-RX-05). This is the record-save boundary.
 **Sources:** Continuation brief §4–§8; Document Classification v1.0 (§1–§6, CLR-01–09); Medication Reconciliation v1.0 §3–§6, RX-MAT-10/12/17, §11 (RX-OD-02/03/09/10/13); Verification & Recovery v1.0 §2–§5, RX-VER-01/02/03/05/06/12; v0.3 workflow review §5 and v0.2 field review §4–§5 (reference only); v0.1 draft §6 (reference only). Locked: S-RX-01, S-RX-02, visual baseline `8c62eb0`.
 **Labels:** APPROVED · DECIDED · PROPOSED (needs approval) · OPEN.
 
