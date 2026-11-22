@@ -366,7 +366,7 @@
     "t14": {
       "x": 0,
       "y": 37168,
-      "text": "Flow 5 · S-RX-04 Medication Reconciliation & Optional Scheduling · spec APPROVED, design IN REVIEW",
+      "text": "Flow 5 · S-RX-04 Medication Reconciliation & Optional Scheduling · LOCKED (spec and design approved 22 Nov)",
       "kind": "title1",
       "maxW": 2748
     }
