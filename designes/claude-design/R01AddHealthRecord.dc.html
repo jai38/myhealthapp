@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-01 Add Health Record</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.r01{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.r01.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.r01 *{box-sizing:border-box;margin:0}
+.r01 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.r01 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.r01 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.r01 .sic{display:flex;gap:6px;align-items:center}
+.r01 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.r01 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.r01 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.r01 .mini img{width:30px}
+.r01 .main{position:absolute;top:122px;left:20px;width:362px}
+.r01 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.r01.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.r01 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.r01 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.r01 .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.r01:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.r01 .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.r01 .row+.row{border-top:1px solid var(--hair)}
+.r01 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.r01 .mb{background:var(--btint);color:var(--act)}.r01 .ms{background:var(--ttint);color:var(--tl)}
+.r01 .rx{flex:1;min-width:0}.r01 .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.r01 .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.r01 .chev{color:var(--t3);flex:none}
+.r01 .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.r01 .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.r01 .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.r01 .note svg{flex:none;margin-top:2px}.r01 .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.r01 .n-info{background:var(--infob);color:var(--info)}.r01 .n-err{background:var(--errb);color:var(--err)}.r01 .n-amb{background:var(--ambb);color:var(--amb)}.r01 .n-ok{background:var(--okb);color:var(--ok)}
+.r01 .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.r01 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.r01.dark .btn{box-shadow:none}
+.r01 .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.r01 .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.r01 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.r01 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.r01 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.r01 .bx svg{display:none}.r01 .ck.on .bx{background:var(--act);border-color:var(--act)}.r01 .ck.on .bx svg{display:block}
+.r01 .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.r01.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.r01 .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.r01 .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.r01 .main{top:114px}
+.r01 .for{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border-radius:999px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);font-size:14px;font-weight:500}
+.r01 .for .av{width:22px;height:22px;border-radius:50%;background:var(--btint);color:var(--act);display:flex;align-items:center;justify-content:center}
+.r01 .for b{font-weight:600}
+.r01 h1{margin-top:18px}
+.r01 .card{padding:4px 14px;margin-top:20px}
+.r01 .row{min-height:64px;padding:8px 0;width:100%;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left;cursor:pointer}
+.r01 .row+.row{border-top:1px solid var(--hair)}
+.r01 .mi{width:44px;height:44px;border-radius:13px}
+.r01 .row.off .rt{color:var(--t2)}
+.r01 .row.off .mi{background:var(--off);color:var(--t3)}
+.r01 .rs.warn{color:var(--amb);font-weight:500}
+.r01 .set{flex:none;height:34px;padding:0 14px;border-radius:999px;background:var(--btint);color:var(--act);font-size:14px;font-weight:600;display:flex;align-items:center}
+.r01 .tips{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:6px 4px;font-size:15px;font-weight:600;color:var(--act);text-decoration:none}
+.r01 .offl{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--infob);color:var(--info);font-size:13px;line-height:18px;font-weight:500}
+.r01 .sh{display:flex;align-items:baseline;justify-content:space-between;margin:20px 4px 10px}
+.r01 .st{font-size:17px;font-weight:700;letter-spacing:-.015em}
+.r01 .sc{font-size:13px;color:var(--t2);font-variant-numeric:tabular-nums}
+.r01 .strip{display:flex;gap:10px;overflow:hidden;margin-right:-20px;padding:4px 0 6px}
+.r01 .th{position:relative;flex:none;width:92px;height:120px;border-radius:14px;background:#FFFFFF;border:1px solid var(--hair);box-shadow:0 6px 16px rgba(20,60,120,.12);padding:16px 12px 0;overflow:hidden}
+.r01.dark .th{background:#E9EEF4;border-color:rgba(255,255,255,.2);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.r01 .th i{display:block;height:5px;border-radius:3px;background:#D5DEEA;margin-bottom:7px}
+.r01 .th i:nth-child(1){width:55%;background:#9DB4D3}.r01 .th i:nth-child(3){width:80%}.r01 .th i:nth-child(5){width:65%}
+.r01 .pn{position:absolute;left:6px;bottom:6px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:rgba(15,23,42,.78);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:3px;font-variant-numeric:tabular-nums}
+.r01 .x{position:absolute;right:4px;top:4px;width:26px;height:26px;border-radius:50%;border:0;padding:0;background:rgba(15,23,42,.72);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.r01 .add{flex:none;width:92px;height:120px;border-radius:14px;border:1.5px dashed var(--fbd);background:var(--card);color:var(--act);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.r01 .sk{background:var(--off);border-color:transparent;box-shadow:none;display:flex;align-items:center;justify-content:center}
+.r01 .spin{width:22px;height:22px;border:2.5px solid var(--fbd);border-top-color:var(--act);border-radius:50%}
+.r01 .pdf{display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh)}
+.r01:not(.dark) .pdf{outline:1px solid var(--hair);outline-offset:-1px}
+.r01 .pi{width:48px;height:58px;border-radius:10px;background:var(--errb);color:var(--err);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;letter-spacing:.04em;flex:none}
+.r01 .pdf .x2{width:44px;height:44px;border-radius:50%;border:0;background:var(--off);color:var(--t2);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
+.r01 .cap{font-size:13px;line-height:18px;color:var(--t2);margin:10px 4px 0}
+.r01 .cap a{color:var(--act);font-weight:600;text-decoration:none}
+.r01 .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.r01.dark .scrim{background:rgba(0,0,0,.55)}
+.r01 .alert{position:absolute;left:58px;width:286px;top:330px;z-index:31;border-radius:22px;background:rgba(255,255,255,.96);backdrop-filter:blur(30px);text-align:center;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.r01.dark .alert{background:rgba(22,40,62,.96)}
+.r01 .alert .at{font-size:17px;font-weight:700;padding:20px 18px 4px}
+.r01 .alert .ab{font-size:14px;line-height:20px;color:var(--t2);padding:0 18px 18px}
+.r01 .alert button{display:block;width:100%;height:48px;border:0;border-top:1px solid var(--hair);background:none;font-family:inherit;font-size:17px;cursor:pointer}
+.r01 .alert .dz{color:var(--err);font-weight:600}.r01 .alert .ke{color:var(--act);font-weight:600}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>10:12</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+<span class="ttl">Add Health Record</span><div style="width: 44px"></div></div>
+<div class="main">
+<span class="for"><span class="av"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg></span>For: <b>You · Ananya Sharma</b></span>
+<sc-if value="{{isOffline}}" hint-placeholder-val="{{ false }}"><div class="offl" role="status"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 8.5a15 15 0 0120 0M5.5 12a10 10 0 0113 0M9 15.5a5 5 0 016 0"></path><path d="M3 3l18 18"></path><circle cx="12" cy="19" r="1" fill="currentColor"></circle></svg>You’re offline. You can add pages now. We’ll upload them when you’re back online.</div></sc-if>
+<h1>Scan or upload a medical document</h1>
+<sc-if value="{{showSub}}" hint-placeholder-val="{{ true }}"><p class="sub">A prescription, lab report, discharge summary or any other health document. You’ll review what we read before it’s treated as fact.</p></sc-if>
+
+<sc-if value="{{showOptions}}" hint-placeholder-val="{{ true }}">
+<div class="card">
+<button class="{{camCls}}" type="button"><div class="mi mb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg></div><div class="rx"><div class="rt">Take Photo</div><div class="{{camHintCls}}">{{camHint}}</div></div><sc-if value="{{camOff}}" hint-placeholder-val="{{ false }}"><span class="set">Settings</span></sc-if><sc-if value="{{camOn}}" hint-placeholder-val="{{ true }}"><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></sc-if></button>
+<button class="row" type="button"><div class="mi mb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></div><div class="rx"><div class="rt">Choose from Photos</div><div class="rs">Pick one or more pictures</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+<button class="row" type="button"><div class="mi ms"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l5 5v13H6z"></path><path d="M14 3v5h5"></path><path d="M12 17v-6M9.5 13.5L12 11l2.5 2.5"></path></svg></div><div class="rx"><div class="rt">Upload File</div><div class="rs">PDF, JPG or PNG · up to 15 MB</div></div><svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+</div>
+</sc-if>
+
+<sc-if value="{{isError}}" hint-placeholder-val="{{ false }}"><div class="note n-err" role="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg><div><b>This file is over 15 MB</b>Try a smaller file, or take photos of the pages instead.</div></div></sc-if>
+<sc-if value="{{showTips}}" hint-placeholder-val="{{ true }}"><a class="tips" href="#tips"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"></path><path d="M12 3a6 6 0 00-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0012 3z"></path></svg>Tips for a clear photo</a></sc-if>
+
+<sc-if value="{{hasPhotos}}" hint-placeholder-val="{{ false }}">
+<div class="sh"><span class="st">Selected</span><span class="sc">{{countText}}</span></div>
+<div class="strip">
+<sc-for list="{{pages}}" as="p" hint-placeholder-count="3"><div class="th"><i></i><i></i><i></i><i></i><i></i><i></i><span class="pn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path></svg>{{p.n}}</span><button class="x" type="button" aria-label="{{p.label}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div></sc-for>
+<button class="add" type="button"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Add Page</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isPreparing}}" hint-placeholder-val="{{ false }}">
+<div class="sh"><span class="st">Selected</span><span class="sc">Preparing pages…</span></div>
+<div class="strip"><div class="th sk"><span class="spin"></span></div><div class="th sk"><span class="spin"></span></div><div class="th sk"><span class="spin"></span></div><div class="th sk"><span class="spin"></span></div></div>
+</sc-if>
+
+<sc-if value="{{isPdf}}" hint-placeholder-val="{{ false }}">
+<div class="sh"><span class="st">Selected</span><span class="sc">1 file · 2 pages</span></div>
+<div class="pdf"><span class="pi">PDF</span><div class="rx"><div class="rt">Prescription-12-Oct.pdf</div><div class="rs">2 pages · 1.4 MB</div></div><button class="x2" type="button" aria-label="Remove file"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+<p class="cap">A PDF is added as it is. To add photos instead, remove the file. <a href="#other">Choose a different file</a></p>
+</sc-if>
+</div>
+
+<div class="cta"><button class="{{btnCls}}" type="button">Continue</button></div>
+
+<sc-if value="{{isDiscard}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="alert" role="alertdialog" aria-label="Discard 3 pages?"><p class="at">Discard 3 pages?</p><p class="ab">The photos you took for this record won’t be kept.</p><button class="dz" type="button">Discard</button><button class="ke" type="button">Keep Editing</button></div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["empty","photos","pdf","preparing","cameraoff","fileerror","offline","discard"],"default":"empty"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'empty';
+    const n = s === 'offline' ? 2 : 3;
+    const photos = s === 'photos' || s === 'offline' || s === 'discard';
+    const pages = [];
+    for (let i = 1; i <= n; i++) pages.push({ n: i, label: 'Remove page ' + i + ' of ' + n });
+    const camOff = s === 'cameraoff';
+    const ready = photos || s === 'pdf';
+    return {
+      rootCls: 'r01' + (t === 'dark' ? ' dark' : ''),
+      isOffline: s === 'offline',
+      showSub: !photos && s !== 'preparing' && s !== 'pdf',
+      showOptions: s !== 'pdf',
+      camCls: 'row' + (camOff ? ' off' : ''),
+      camHintCls: 'rs' + (camOff ? ' warn' : ''),
+      camHint: camOff ? 'Camera access is off' : 'Best for paper documents · add several pages',
+      camOff, camOn: !camOff,
+      isError: s === 'fileerror',
+      showTips: s === 'empty' || s === 'cameraoff' || s === 'fileerror',
+      hasPhotos: photos,
+      pages,
+      countText: n + ' pages',
+      isPreparing: s === 'preparing',
+      isPdf: s === 'pdf',
+      btnCls: 'btn' + (ready ? '' : ' off'),
+      isDiscard: s === 'discard'
+    };
+  }
+}
+</script>
+</body>
+</html>

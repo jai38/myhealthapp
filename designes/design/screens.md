@@ -134,6 +134,6 @@ Requirements: the owner's post-Welcome update of 2026-11-22 (document classifica
 - D-RX-3 · Generated doctor PDF reports live in Records → Documents with their own "Report" label (not one of the nine document categories, never Pending Verification).
 - D-RX-4 · The new specifications plus the locked baseline are treated as complete for this flow; the Master Blueprint and 40-change register aren't needed unless they touch document upload.
 
-### S-RX-01 · Add Health Record — SPEC REVIEW 2026-11-22
-Spec: `specs/S-RX-01-add-health-record.md`. Visual design after the spec is approved.
+### S-RX-01 · Add Health Record — SPEC APPROVED 2026-11-22 · design REVIEW
+Spec: `specs/S-RX-01-add-health-record.md` (approved with all recommendations: photos joined into one PDF with originals kept; PDF or photos, not both; discard dialog, no draft; offline selection with queued upload). Canvas: boards R01 and R01 States.
 

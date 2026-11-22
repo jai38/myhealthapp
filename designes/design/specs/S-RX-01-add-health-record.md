@@ -1,6 +1,6 @@
 # S-RX-01 · Add Health Record — functional specification
 
-**Status:** REVIEW (spec only; no visual design yet) · **Date:** 2026-11-22 · **Stage:** 1 of 5 in the connected prescription journey (S-RX-01 → S-RX-05).
+**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-01 with recommendations"; all PROPOSED items in this spec, incl. OPEN-1–4 recommendations, accepted) · visual design next · **Date:** 2026-11-22 · **Stage:** 1 of 5 in the connected prescription journey (S-RX-01 → S-RX-05).
 **Sources:** Continuation brief 2026-11-22 §2, §6; Document Classification v1.0 §1, §5; Medication Reconciliation v1.0 §5 (stage table); Verification & Recovery v1.0 §2, §5; v0.3 workflow review §3 (reference only); v0.1 draft §4, §13, §14 (reference only); `ayoreni-docs` `api.md` (documents upload limits). Locked baseline `8c62eb0` (visual system, S01–S07, A01–A04).
 **Labels:** APPROVED = owner-approved behaviour; DECIDED = owner decision of 2026-11-22 in this session; PROPOSED = my recommendation for this screen, needs your approval; OPEN = needs a decision or specialist/technical input.
 
