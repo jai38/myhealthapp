@@ -2,7 +2,7 @@
 
 **Locked on:** 2026-11-22
 **Locked commit:** `4fe65ee` (Merge PR #2 — Ayoreni app IDs and a separate dev app)
-**Git tag:** `baseline-approved-2026-11-22`
+**Git tag:** `baseline-approved-2026-11-22` (create on `4fe65ee` when merged; tag pushes are blocked from this session)
 
 Everything present in the codebase at the locked commit is the **approved** design
 and functionality of the Ayoreni (My Health App) mobile client. It is frozen.
@@ -16,7 +16,7 @@ and functionality of the Ayoreni (My Health App) mobile client. It is frozen.
    existing behaviour as a side effect.
 3. Bug fixes to locked items are allowed only when requested, and must keep the
    approved look and behaviour.
-4. To see exactly what was approved: `git diff baseline-approved-2026-11-22`.
+4. To see exactly what was approved: `git diff 4fe65ee`.
 
 ## Locked design system (`design/`)
 
