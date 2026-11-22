@@ -195,6 +195,20 @@
       "w": 3592,
       "h": 2064,
       "title": "S-RX-01 · States (light / dark)"
+    },
+    "R02ReviewDocument.dc.html": {
+      "x": 0,
+      "y": 30396,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-02 · Review Your Document"
+    },
+    "R02States.dc.html": {
+      "x": 482,
+      "y": 30396,
+      "w": 3592,
+      "h": 2064,
+      "title": "S-RX-02 · States (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -292,6 +306,13 @@
       "text": "Flow 5 · Add Health Record journey · S-RX-01 Add Health Record · LOCKED (spec and design approved 22 Nov)",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t12": {
+      "x": 0,
+      "y": 30136,
+      "text": "Flow 5 · S-RX-02 Review Your Document · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 4074
     }
   },
   "order": [
@@ -321,7 +342,9 @@
     "L01Landing.dc.html",
     "L02LandingVariants.dc.html",
     "R01AddHealthRecord.dc.html",
-    "R01States.dc.html"
+    "R01States.dc.html",
+    "R02ReviewDocument.dc.html",
+    "R02States.dc.html"
   ],
   "pages": [
     {
