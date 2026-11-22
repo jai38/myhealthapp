@@ -125,3 +125,15 @@ Canvas page "Landing page": board **L01** (desktop 1440, light; props `theme` li
 - Contact: gradient card "Questions about Ayoreni?" with a mailto button for the temporary support address from Phase 5 task 18. Footer: logo, "Ayoreni helps you keep track of your health. It doesn’t replace your doctor’s advice.", © 2026 Ayoreni.
 - Not used, by rule: "never miss a dose", HIPAA/DPDP, zero-knowledge, encryption strengths, "certified", package scanning, a waitlist.
 
+## Flow 5 · Add Health Record & prescription journey (S-RX-01 → S-RX-05)
+Requirements: the owner's post-Welcome update of 2026-11-22 (document classification v1.0, medication reconciliation v1.0, verification & recovery v1.0). Specs live in `specs/`, one screen at a time; each is reviewed and approved before the next.
+
+**Decisions, 2026-11-22 (owner: "go with recommendations")**
+- D-RX-1 · Patient on S-RX-01: fixed "For: You · <name>" line; no selector until family/caregiver access exists.
+- D-RX-2 · "Records to Review" (RX-VER-09) is approved as one conditional row in the notice area under the hero on S05/S06 Today, shown only when the count of unique pending documents is above 0. Adds to the locked screens; nothing else on them changes. To be drawn when the verification screens are designed.
+- D-RX-3 · Generated doctor PDF reports live in Records → Documents with their own "Report" label (not one of the nine document categories, never Pending Verification).
+- D-RX-4 · The new specifications plus the locked baseline are treated as complete for this flow; the Master Blueprint and 40-change register aren't needed unless they touch document upload.
+
+### S-RX-01 · Add Health Record — SPEC REVIEW 2026-11-22
+Spec: `specs/S-RX-01-add-health-record.md`. Visual design after the spec is approved.
+
