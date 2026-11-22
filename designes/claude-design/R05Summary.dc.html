@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-05 Completion summary</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.r05{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.r05.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.r05 *{box-sizing:border-box;margin:0}
+.r05 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.r05 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.r05 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.r05 .sic{display:flex;gap:6px;align-items:center}
+.r05 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.r05 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.r05 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.r05 .mini img{width:30px}
+.r05 .main{position:absolute;top:122px;left:20px;width:362px}
+.r05 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.r05.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.r05 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.r05 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.r05 .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.r05:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.r05 .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.r05 .row+.row{border-top:1px solid var(--hair)}
+.r05 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.r05 .mb{background:var(--btint);color:var(--act)}.r05 .ms{background:var(--ttint);color:var(--tl)}
+.r05 .rx{flex:1;min-width:0}.r05 .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.r05 .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.r05 .chev{color:var(--t3);flex:none}
+.r05 .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.r05 .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.r05 .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.r05 .note svg{flex:none;margin-top:2px}.r05 .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.r05 .n-info{background:var(--infob);color:var(--info)}.r05 .n-err{background:var(--errb);color:var(--err)}.r05 .n-amb{background:var(--ambb);color:var(--amb)}.r05 .n-ok{background:var(--okb);color:var(--ok)}
+.r05 .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.r05 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.r05.dark .btn{box-shadow:none}
+.r05 .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.r05 .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.r05 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.r05 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.r05 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.r05 .bx svg{display:none}.r05 .ck.on .bx{background:var(--act);border-color:var(--act)}.r05 .ck.on .bx svg{display:block}
+.r05 .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.r05.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.r05 .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.r05{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.r05.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.r05 .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.r05 .done{height:44px;padding:0 6px;border:0;background:none;color:var(--act);font-family:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.r05 .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.r05 .hd{display:flex;gap:14px;align-items:center}
+.r05 .hi{font-size:28px;font-weight:800;width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.r05 .hi.ok{background:var(--tkb);color:var(--tk)}.r05 .hi.am{background:var(--ambb);color:var(--amb)}
+.r05 .hl{font-size:24px;line-height:29px;font-weight:700;letter-spacing:-.025em}
+.r05 .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--t2);font-variant-numeric:tabular-nums}
+.r05 .chip{font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px}
+.r05 .c-v{background:var(--tkb);color:var(--tk)}.r05 .c-p{background:var(--ambb);color:var(--amb)}.r05 .c-u{background:var(--upb);color:var(--up)}
+.r05 .gt{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin:16px 4px 6px}
+.r05 .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.r05:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.r05 .ln{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;font-size:14px;line-height:19px}
+.r05 .ln+.ln{border-top:1px solid var(--hair)}
+.r05 .li{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:-1px}
+.r05 .li.g{background:var(--tkb);color:var(--tk)}.r05 .li.b{background:var(--btint);color:var(--act)}.r05 .li.y{background:var(--upb);color:var(--up)}.r05 .li.a{background:var(--ambb);color:var(--amb)}.r05 .li.r{background:var(--errb);color:var(--err)}
+.r05 .ln b{font-weight:600}.r05 .ln small{display:block;color:var(--t2);font-size:13px;margin-top:1px;font-variant-numeric:tabular-nums}
+.r05 .gc.fail{background:var(--errb);border-color:transparent;box-shadow:none;outline:0}
+.r05 .fh{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px}
+.r05 .fh p{font-size:14px;line-height:19px;color:var(--t1)}.r05 .fh p b{display:block;color:var(--err);font-size:15px}
+.r05 .rb{flex:none;height:38px;padding:0 16px;border-radius:999px;border:0;background:var(--err);color:#fff;font-family:inherit;font-size:14px;font-weight:700}
+.r05.dark .rb{color:#2A0A0D}
+.r05 .rem{margin-top:16px;border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:14px}
+.r05 .rem p{font-size:15px;font-weight:600}.r05 .rem small{display:block;font-size:13px;color:var(--t2);font-weight:400;margin-top:2px}
+.r05 .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.r05 .op{height:36px;padding:0 13px;border-radius:999px;border:1.5px solid var(--fbd);background:var(--field);color:var(--t1);font-family:inherit;font-size:14px;font-weight:600}
+.r05 .rset{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--btint);font-size:14px;font-weight:600;color:var(--t1);font-variant-numeric:tabular-nums}
+.r05 .rset span{display:flex;gap:14px}.r05 .rset a{color:var(--act);text-decoration:none;font-size:14px}
+.r05 .lk{color:var(--act);font-weight:600;text-decoration:none}
+.r05 .cta{bottom:30px;padding-top:24px;z-index:5}
+.r05 .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.r05 .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>10:21</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><div style="width: 56px"></div><span class="ttl">Summary</span><button class="done" type="button">Done</button></div>
+<div class="scroll">
+<div class="hd"><span class="{{hiCls}}">{{hIcon}}</span><div><p class="hl">{{headline}}</p><div class="meta"><span class="{{chipCls}}">{{chipText}}</span><span>{{metaText}}</span></div></div></div>
+
+<sc-if value="{{isFailed}}" hint-placeholder-val="{{ false }}">
+<p class="gt">Didn’t finish</p><div class="gc fail"><div class="fh"><p><b>1 change didn’t finish</b>Metformin: twice a day. Everything else is saved.</p><button class="rb" type="button">Retry</button></div></div>
+</sc-if>
+
+<p class="gt">Record</p><div class="gc">
+<sc-for list="{{recLines}}" as="l" hint-placeholder-count="1"><div class="ln"><span class="{{l.cls}}">{{l.i}}</span><div><b>{{l.t}}</b><small>{{l.s}}</small></div></div></sc-for>
+</div>
+
+<sc-if value="{{showMeds}}" hint-placeholder-val="{{ true }}">
+<p class="gt">Medicines</p><div class="gc">
+<sc-for list="{{medLines}}" as="l" hint-placeholder-count="3"><div class="ln"><span class="{{l.cls}}">{{l.i}}</span><div><b>{{l.t}}</b><small>{{l.s}}</small></div></div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{showRem}}" hint-placeholder-val="{{ false }}">
+<p class="gt">Reminders</p><div class="gc">
+<sc-if value="{{notifOff}}" hint-placeholder-val="{{ false }}"><div class="ln"><span class="li a">!</span><div><b>Notifications are off on this phone</b><small>Tracking is on, but you won’t get alerts. <a class="lk" href="#settings">Open Settings</a></small></div></div></sc-if>
+<sc-if value="{{notifOn}}" hint-placeholder-val="{{ true }}"><div class="ln"><span class="li g">✓</span><div><b>Reminders on</b><small>Metformin 8:00 AM, 9:00 PM · Telmisartan 8:00 AM (unchanged)</small></div></div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{showRemCard}}" hint-placeholder-val="{{ false }}">
+<div class="rem"><p>Remind me to finish checking<small>One reminder, only if you want it.</small></p>
+<sc-if value="{{remUnset}}" hint-placeholder-val="{{ true }}"><div class="opts"><button class="op" type="button">Tomorrow</button><button class="op" type="button">In 3 Days</button><button class="op" type="button">In 1 Week</button><button class="op" type="button">Choose a Date</button></div></sc-if>
+<sc-if value="{{remSet}}" hint-placeholder-val="{{ false }}"><div class="rset">Set for Tue 25 Nov, 10:15 AM<span><a href="#change">Change</a><a href="#remove">Remove</a></span></div></sc-if>
+</div>
+</sc-if>
+</div>
+<div class="cta"><button class="btn" type="button">{{primary}}</button><sc-if value="{{hasSecondary}}" hint-placeholder-val="{{ true }}"><button class="btn2" type="button">{{secondary}}</button></sc-if></div>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["done","partial","reminderset","recordonly","reading","failed","notifoff","other"],"default":"done"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'done';
+    const G = '\u2713';
+    const ok = { cls: 'li g', i: G }, link = { cls: 'li b', i: '\u2194' }, ch = { cls: 'li b', i: '\u21bb' }, nr = { cls: 'li y', i: '\u25cb' }, pend = { cls: 'li a', i: '!' };
+    const partial = s === 'partial' || s === 'reminderset';
+    let headline = 'Prescription saved', chipCls = 'chip c-v', chipText = 'Verified', hiCls = 'hi ok', hIcon = 'ok';
+    let recLines = [{ ...ok, t: 'Saved to Records', s: 'Verified · all details checked' }];
+    let medLines = [
+      { ...link, t: 'Linked · Telmisartan 40 mg', s: 'To your current medicine · no new reminders' },
+      { ...ch, t: 'Changed · Metformin 500 mg', s: 'Twice a day from 22 Nov · earlier history kept' }
+    ];
+    let primary = 'View Medicines', secondary = 'View Record', hasSecondary = true, showMeds = true, showRem = true, showRemCard = false;
+    if (partial) {
+      chipCls = 'chip c-p'; chipText = 'Partially Verified';
+      recLines = [{ ...ok, t: 'Saved to Records', s: 'Partially Verified' }, { ...pend, t: '1 detail still to check', s: 'Vitamin D3 · strength' }];
+      medLines = medLines.concat([{ ...nr, t: 'Not ready · Vitamin D3', s: 'Strength not verified · stays in the record' }]);
+      showRemCard = true; secondary = 'Finish Checking';
+    }
+    if (s === 'recordonly') {
+      recLines = [{ ...ok, t: 'Saved to Records', s: 'Verified · kept as a record only' }];
+      medLines = [{ ...nr, t: 'No changes to your medicines', s: 'Metformin and Telmisartan stay as they are' }];
+      showRem = false; primary = 'View Record'; hasSecondary = false;
+    }
+    if (s === 'reading') {
+      chipCls = 'chip c-u'; chipText = 'Unverified'; hiCls = 'hi am'; hIcon = 'clk';
+      recLines = [{ ...ok, t: 'Original saved to Records', s: 'Unverified · nothing checked yet' }, { ...pend, t: 'We’re still reading this document', s: 'It’ll be in Records to Review when it’s ready to check.' }];
+      showMeds = false; showRem = false; showRemCard = true; primary = 'View Record'; hasSecondary = false;
+    }
+    if (s === 'failed') {
+      headline = 'Prescription saved. Some changes didn’t finish.'; hiCls = 'hi am'; hIcon = 'al';
+      medLines = [{ ...link, t: 'Linked · Telmisartan 40 mg', s: 'To your current medicine · no new reminders' }];
+      showRem = false; primary = 'View Record'; secondary = 'Done'; 
+    }
+    if (s === 'notifoff') { }
+    if (s === 'other') {
+      headline = 'Lab report saved';
+      recLines = [{ ...ok, t: 'Saved to Records', s: 'Verified · Blood test · City Diagnostics' }];
+      showMeds = false; showRem = false; primary = 'View Record'; hasSecondary = false;
+    }
+    const icons = { ok: '\u2713', clk: '\u25f7', al: '!' };
+    return {
+      rootCls: 'r05' + (t === 'dark' ? ' dark' : ''),
+      headline, chipCls, chipText, hiCls, hIcon: icons[hIcon],
+      metaText: s === 'other' ? '18 Nov 2026 · 1 page' : '12 Oct 2026 · Dr. Meera Iyer · 1 page',
+      isFailed: s === 'failed', recLines, medLines, showMeds, showRem,
+      notifOff: s === 'notifoff', notifOn: s !== 'notifoff',
+      showRemCard, remSet: s === 'reminderset', remUnset: s !== 'reminderset',
+      primary, secondary, hasSecondary
+    };
+  }
+}
+</script>
+</body>
+</html>
