@@ -146,3 +146,6 @@ Spec: `specs/S-RX-03-confirm-and-verify.md` (approved with all recommendations).
 ### S-RX-04 · Medication Reconciliation & Optional Scheduling — LOCKED 2026-11-22 (spec and design approved)
 Spec: `specs/S-RX-04-reconcile-and-schedule.md` (approved with all recommendations). Canvas: board R04 with state boards R04 A (list and decisions) and R04 B (setup, tests, confirm).
 
+### S-RX-05 · Completion Summary — SPEC REVIEW 2026-11-22
+Spec: `specs/S-RX-05-completion-summary.md`. Visual design after the spec is approved.
+
