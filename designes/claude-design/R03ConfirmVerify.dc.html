@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 Confirm and verify</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.r03{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.r03.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.r03 *{box-sizing:border-box;margin:0}
+.r03 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.r03 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.r03 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.r03 .sic{display:flex;gap:6px;align-items:center}
+.r03 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.r03 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.r03 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.r03 .mini img{width:30px}
+.r03 .main{position:absolute;top:122px;left:20px;width:362px}
+.r03 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.r03.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.r03 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.r03 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.r03 .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.r03:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.r03 .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.r03 .row+.row{border-top:1px solid var(--hair)}
+.r03 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.r03 .mb{background:var(--btint);color:var(--act)}.r03 .ms{background:var(--ttint);color:var(--tl)}
+.r03 .rx{flex:1;min-width:0}.r03 .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.r03 .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.r03 .chev{color:var(--t3);flex:none}
+.r03 .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.r03 .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.r03 .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.r03 .note svg{flex:none;margin-top:2px}.r03 .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.r03 .n-info{background:var(--infob);color:var(--info)}.r03 .n-err{background:var(--errb);color:var(--err)}.r03 .n-amb{background:var(--ambb);color:var(--amb)}.r03 .n-ok{background:var(--okb);color:var(--ok)}
+.r03 .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.r03 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.r03.dark .btn{box-shadow:none}
+.r03 .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.r03 .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.r03 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.r03 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.r03 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.r03 .bx svg{display:none}.r03 .ck.on .bx{background:var(--act);border-color:var(--act)}.r03 .ck.on .bx svg{display:block}
+.r03 .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.r03.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.r03 .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.r03{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.r03.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.r03 .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.r03 .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;cursor:pointer}
+.r03 .main{top:112px}
+.r03 .paper{width:150px;height:196px;border-radius:6px;background:#FFFFFF;box-shadow:0 10px 26px rgba(20,60,120,.18);padding:16px 14px;position:relative;overflow:hidden}
+.r03.dark .paper{background:#EEF2F7;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+.r03 .paper i{display:block;height:5px;border-radius:3px;background:#D5DEEA;margin-bottom:9px}
+.r03 .paper i:first-child{width:58%;background:#8FA8C9;height:7px;margin-bottom:14px}
+.r03 .paper i:nth-child(3){width:78%}.r03 .paper i:nth-child(5){width:52%}.r03 .paper i:nth-child(7){width:66%}
+.r03 .scan{position:absolute;left:0;right:0;top:46%;height:3px;background:linear-gradient(90deg,transparent,#2E90FF,#20D7C5,transparent);box-shadow:0 0 14px rgba(46,144,255,.6)}
+.r03 .center{position:absolute;top:180px;left:20px;width:362px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.r03 .center h1{margin-top:30px}
+.r03 .dots{display:flex;gap:8px;margin-top:22px}
+.r03 .dots span{width:9px;height:9px;border-radius:50%;background:var(--act);opacity:.35}
+.r03 .dots span:nth-child(2){opacity:.7}.r03 .dots span:nth-child(3){opacity:1}
+.r03 .bad{width:72px;height:72px;border-radius:22px;background:var(--errb);color:var(--err);display:flex;align-items:center;justify-content:center;margin-top:24px}
+.r03 .sug{margin-top:22px;border-radius:24px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:18px;display:flex;gap:16px;align-items:center}
+.r03:not(.dark) .sug{outline:1px solid var(--hair);outline-offset:-1px}
+.r03 .sug .paper{width:84px;height:110px;padding:10px 9px;flex:none}
+.r03 .sug .paper i{height:3px;margin-bottom:6px}
+.r03 .stag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--act);background:var(--btint);padding:4px 9px;border-radius:999px}
+.r03 .stype{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.r03 .stype .mi{width:40px;height:40px}
+.r03 .shint{font-size:14px;line-height:20px;color:var(--t2);margin-top:6px}
+.r03 .split{margin-top:14px;border-radius:18px;background:var(--card);border:1px solid var(--bd);padding:4px 14px}
+.r03 .split .row{min-height:56px}
+.r03 .pg{font-size:13px;font-weight:600;color:var(--t2);width:78px;flex:none;font-variant-numeric:tabular-nums}
+.r03 .scroll{position:absolute;top:112px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.r03 .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.r03 .prog p{font-size:14px;font-weight:600}.r03 .prog p span{color:var(--amb)}
+.r03 .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}
+.r03 .pbar i{display:block;height:100%;width:40%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.r03 .gh{display:flex;justify-content:space-between;align-items:baseline;margin:20px 4px 8px}
+.r03 .gt{font-size:17px;font-weight:700;letter-spacing:-.015em}
+.r03 .gc{font-size:13px;color:var(--t2)}
+.r03 .gcard{border-radius:20px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.r03:not(.dark) .gcard{outline:1px solid var(--hair);outline-offset:-1px}
+.r03 .kv{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;font-size:14px;line-height:20px}
+.r03 .kv+.kv{border-top:1px solid var(--hair)}
+.r03 .kv span{color:var(--t2)}.r03 .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.r03 .gfoot{display:flex;justify-content:flex-end;padding:8px 10px 10px;border-top:1px solid var(--hair)}
+.r03 .mini{height:36px;padding:0 16px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.r03 .item{display:flex;gap:12px;align-items:center;width:100%;min-height:70px;padding:12px 12px 12px 14px;border:0;background:none;font-family:inherit;text-align:left;color:var(--t1);cursor:pointer}
+.r03 .item+.item{border-top:1px solid var(--hair)}
+.r03 .ix{flex:1;min-width:0}.r03 .in{font-size:16px;font-weight:600;letter-spacing:-.01em}.r03 .id{font-size:13px;color:var(--t2);margin-top:2px;font-variant-numeric:tabular-nums}
+.r03 .badges{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.r03 .bd{font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;background:var(--btint);color:var(--act)}
+.r03 .bd.rx{background:var(--errb);color:var(--err)}
+.r03 .chip{flex:none;font-size:12px;font-weight:600;border-radius:999px;padding:5px 9px;white-space:nowrap}
+.r03 .c-ok{background:var(--tkb);color:var(--tk)}.r03 .c-nc{background:var(--upb);color:var(--up)}.r03 .c-at{background:var(--ambb);color:var(--amb)}.r03 .c-uv{background:var(--errb);color:var(--err)}
+.r03 .cta{bottom:34px;padding-top:24px;z-index:5}
+.r03 .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-34px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.r03 .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.r03.dark .scrim{background:rgba(0,0,0,.55)}
+.r03 .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 36px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.r03.dark .sheet{background:#0C1B2D}
+.r03 .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.r03 .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.r03 .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.r03 .tlist{margin-top:12px}
+.r03 .trow{display:flex;align-items:center;gap:12px;min-height:50px;padding:4px 0;border-top:1px solid var(--hair);font-size:15px}
+.r03 .trow:first-child{border-top:0}
+.r03 .trow .mi{width:32px;height:32px;border-radius:9px}
+.r03 .trow b{font-weight:600;display:block}.r03 .trow small{font-size:12px;color:var(--t2)}
+.r03 .src{border-radius:14px;background:#FFFFFF;border:1px solid var(--hair);padding:12px 14px;font:500 17px/1.4 Georgia,serif;color:#33445E;position:relative}
+.r03.dark .src{background:#EEF2F7}
+.r03 .src mark{background:rgba(245,165,36,.28);color:inherit;border-radius:4px;padding:0 3px;outline:2px solid rgba(245,165,36,.8)}
+.r03 .src small{position:absolute;right:10px;top:8px;font:600 11px 'Plus Jakarta Sans',sans-serif;color:#5B6B7F}
+.r03 .aw{font-size:13px;color:var(--t2);margin:10px 2px 4px}
+.r03 .aw b{color:var(--t1);font-weight:600}
+.r03 .flds{border-radius:16px;border:1px solid var(--hair);overflow:hidden;margin-top:8px}
+.r03 .fl{display:flex;align-items:center;gap:10px;padding:9px 12px;min-height:50px}
+.r03 .fl+.fl{border-top:1px solid var(--hair)}
+.r03 .fl .k{width:112px;flex:none;font-size:13px;color:var(--t2)}
+.r03 .fl .v{flex:1;font-size:15px;font-weight:600}
+.r03 .fl .v small{display:block;font-size:11px;font-weight:500;color:var(--t3);margin-top:1px}
+.r03 .fl.warn{background:var(--ambb)}
+.r03 .fl.warn .v{color:var(--amb)}
+.r03 .more{display:flex;justify-content:space-between;align-items:center;padding:12px;font-size:14px;font-weight:600;color:var(--act)}
+.r03 .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.r03 .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.r03 .btn2.red{color:var(--err)}
+.r03 .fine{font-size:12px;line-height:17px;color:var(--t2);text-align:center}
+.r03 .cmp{display:flex;gap:12px;margin-top:16px}
+.r03 .cmp>div{flex:1;border-radius:16px;background:var(--off);padding:12px;text-align:center}
+.r03 .cmp .paper{width:70px;height:92px;margin:0 auto;padding:9px 8px}
+.r03 .cmp .paper i{height:3px;margin-bottom:5px}
+.r03 .cmp p{font-size:12px;line-height:17px;color:var(--t2);margin-top:8px;font-variant-numeric:tabular-nums}
+.r03 .cmp p b{display:block;font-size:13px;color:var(--t1)}
+.r03 .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.r03 .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}
+.r03 .pl+.pl{border-top:1px solid var(--hair)}
+.r03 .pl .s{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;font-size:12px;font-weight:700}
+.r03 .s.ok{background:var(--tkb);color:var(--tk)}.r03 .s.uv{background:var(--errb);color:var(--err)}.r03 .s.nc{background:var(--upb);color:var(--up)}
+.r03 .pl span{flex:1}.r03 .pl small{color:var(--t2);font-size:12px}
+.r03 .alert{position:absolute;left:46px;width:310px;top:300px;z-index:31;border-radius:22px;background:rgba(255,255,255,.97);backdrop-filter:blur(30px);text-align:center;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.r03.dark .alert{background:rgba(22,40,62,.97)}
+.r03 .alert .aic{width:48px;height:48px;border-radius:15px;background:var(--ambb);color:var(--amb);display:flex;align-items:center;justify-content:center;margin:20px auto 0}
+.r03 .alert .at{font-size:17px;font-weight:700;padding:12px 18px 4px}
+.r03 .alert .ab{font-size:14px;line-height:20px;color:var(--t2);padding:0 18px 18px}
+.r03 .alert button{display:block;width:100%;height:48px;border:0;border-top:1px solid var(--hair);background:none;font-family:inherit;font-size:17px;cursor:pointer;color:var(--act)}
+.r03 .alert .b1{font-weight:600}.r03 .alert .dz{color:var(--err)}
+.r03 .bfield{display:flex;flex-direction:column;gap:6px;padding:12px 14px}
+.r03 .bfield+.bfield{border-top:1px solid var(--hair)}
+.r03 .bfield label{font-size:13px;color:var(--t2);font-weight:500}
+.r03 .bfield .in2{height:46px;border-radius:12px;background:var(--field);border:1.5px solid var(--fbd);display:flex;align-items:center;padding:0 12px;font-size:16px;font-weight:500;color:var(--t1)}
+.r03 .bfield .in2.ph{color:var(--t3);font-weight:400}
+.r03 .tchip{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 12px 6px 8px;border-radius:999px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);font-size:14px;font-weight:600}
+.r03 .tchip .mi{width:26px;height:26px;border-radius:8px}
+.r03 .tchip a{color:var(--act);font-size:13px;margin-left:4px;text-decoration:none}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>10:15</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<sc-if value="{{isReading}}" hint-placeholder-val="{{ true }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Add Health Record</span><div style="width: 44px"></div></div>
+<div class="center"><div class="paper"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span class="scan"></span></div>
+<h1>Reading your document…</h1><p class="sub">This usually takes under a minute, but it can take a few minutes.</p><div class="dots" aria-hidden="true"><span></span><span></span><span></span></div></div>
+<div class="cta"><button class="btn alt" type="button">Save and Check Later</button><p class="fine" style="margin-top: 8px">Choose the document type, and we’ll save the original now and finish reading in the background.</p></div>
+</sc-if>
+<sc-if value="{{isFailed}}" hint-placeholder-val="{{ false }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Add Health Record</span><div style="width: 44px"></div></div>
+<div class="center"><div class="bad"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg></div><h1>We couldn’t read this document</h1><p class="sub">You can still save the original and add the details yourself later. Nothing has been guessed.</p></div>
+<div class="cta"><button class="btn" type="button">Try Again</button><button class="btn2" type="button">Save Without Reading</button></div>
+</sc-if>
+<sc-if value="{{isTypeView}}" hint-placeholder-val="{{ false }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Add Health Record</span><div style="width: 44px"></div></div>
+<div class="main">
+<h1>What kind of document is this?</h1><p class="sub">Check the type before you look at the details.</p>
+<sc-if value="{{isMixed}}" hint-placeholder-val="{{ false }}">
+<div class="note n-info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><div><b>This file may contain 2 documents</b>Save them as separate records, or keep them together. Your original file is kept whole either way.</div></div>
+<div class="split"><div class="row"><span class="pg">Pages 1–2</span><span class="mi ms" style="width: 32px; height: 32px; border-radius: 9px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h3a2 2 0 010 4H9v-7M11.5 15l3 4"></path></svg></span><div class="rx"><div class="rt" style="font-size: 16px">Prescription</div></div></div><div class="row"><span class="pg">Page 3</span><span class="mi mb" style="width: 32px; height: 32px; border-radius: 9px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span><div class="rx"><div class="rt" style="font-size: 16px">Medical Bills & Receipts</div></div></div></div>
+</sc-if>
+<sc-if value="{{showSug}}" hint-placeholder-val="{{ true }}">
+<div class="sug"><div class="paper"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div><span class="stag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"></path></svg>Suggested by Ayoreni</span><p class="stype"><span class="mi ms"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h3a2 2 0 010 4H9v-7M11.5 15l3 4"></path></svg></span>Prescription</p><p class="shint">We found 3 medicines and 1 test. You’ll check them next.</p></div></div>
+</sc-if>
+</div>
+<sc-if value="{{showSug}}" hint-placeholder-val="{{ true }}"><div class="cta"><button class="btn" type="button">Confirm Type</button><button class="btn2" type="button">Change Type</button></div></sc-if>
+<sc-if value="{{isMixed}}" hint-placeholder-val="{{ false }}"><div class="cta"><button class="btn" type="button">Save as 2 Records</button><button class="btn2" type="button">Keep as 1 Record</button></div></sc-if>
+</sc-if>
+<sc-if value="{{isCheck}}" hint-placeholder-val="{{ false }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check what we read</span><button class="orig" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Original</button></div>
+<div class="scroll">
+<div class="prog"><p>2 of 5 items checked · <span>1 needs attention</span></p><div class="pbar"><i></i></div></div>
+<div class="gh"><span class="gt">Document details</span><span class="chip c-nc">Needs check</span></div>
+<div class="gcard"><div class="kv"><span>Name on document</span><b>Ananya Sharma</b></div><div class="kv"><span>Document date</span><b>12 Oct 2026</b></div><div class="kv"><span>Doctor</span><b>Dr. Meera Iyer</b></div><div class="kv"><span>Clinic</span><b>Sunrise Diabetes Clinic</b></div><div class="gfoot"><button class="mini" type="button">Confirm Details</button></div></div>
+<div class="gh"><span class="gt">Medicines</span><span class="gc">3 found</span></div>
+<div class="gcard">
+<button class="item" type="button"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><span class="in">Metformin</span><span class="id" style="display: block">500 mg tablet · 1 twice a day</span></span><span class="chip c-ok">✓ Confirmed</span></button>
+<button class="item" type="button"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><span class="in">Telmisartan</span><span class="id" style="display: block">40 mg tablet · 1 once a day</span><span class="badges"><span class="bd">Already in your medicines</span></span></span><span class="chip c-ok">✓ Confirmed</span></button>
+<button class="item" type="button"><span class="mi ms"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><span class="in">Vitamin D3</span><span class="id" style="display: block">Strength unclear · 1 once a day</span></span><span class="chip c-at">! Needs attention</span></button>
+</div>
+<div class="gh"><span class="gt">Tests & follow-ups</span><span class="gc">1 found</span></div>
+<div class="gcard"><button class="item" type="button"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L5 19a1.5 1.5 0 001.3 2h11.4a1.5 1.5 0 001.3-2L14 9V3"></path></svg></span><span class="ix"><span class="in">HbA1c test</span><span class="id" style="display: block">“Repeat HbA1c after 3 months”</span></span><span class="chip c-nc">Needs check</span></button></div>
+</div>
+<div class="cta"><button class="btn" type="button">Save &amp; Continue to Medicines</button><button class="btn2" type="button">Save Record Only</button></div>
+</sc-if>
+<sc-if value="{{isBasic}}" hint-placeholder-val="{{ false }}">
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check the details</span><button class="orig" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>Original</button></div>
+<div class="main">
+<span class="tchip"><span class="mi mb"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L5 19a1.5 1.5 0 001.3 2h11.4a1.5 1.5 0 001.3-2L14 9V3"></path><path d="M7.5 15h9"></path></svg></span>Laboratory Report<a href="#change">Change</a></span>
+<div class="gcard" style="margin-top: 16px">
+<div class="bfield"><label>Title</label><div class="in2">Blood test</div></div>
+<div class="bfield"><label>Document date</label><div class="in2">18 Nov 2026</div></div>
+<div class="bfield"><label>Provider · optional</label><div class="in2">City Diagnostics</div></div>
+<div class="bfield"><label>Notes · optional</label><div class="in2 ph">Add a note</div></div>
+</div>
+<div class="note n-info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5h.01"></path></svg><div>Detailed reading for lab reports is coming later. Your original is saved exactly as it is.</div></div>
+</div>
+<div class="cta"><button class="btn" type="button">Save Record</button></div>
+</sc-if>
+<sc-if value="{{isPicker}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Choose document type"><div class="grab"></div><p class="sht">Choose document type</p>
+<div class="tlist"><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi ms"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h3a2 2 0 010 4H9v-7M11.5 15l3 4"></path></svg></span><span style="flex: 1"><b>Prescription</b><small>Medicines and advice from a doctor</small></span><span class="stag">Suggested</span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L5 19a1.5 1.5 0 001.3 2h11.4a1.5 1.5 0 001.3-2L14 9V3"></path><path d="M7.5 15h9"></path></svg></span><span style="flex: 1"><b>Laboratory Report</b><small>Blood, urine and other test results</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="M8 15l3-4 2 3 2-2 3 3"></path></svg></span><span style="flex: 1"><b>Imaging & Diagnostic Report</b><small>X-ray, MRI, scan, ECG</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h5"></path></svg></span><span style="flex: 1"><b>Doctor Consultation & Clinical Notes</b><small>Visit summary, referral, opinion</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"></rect><path d="M12 9v6M9 12h6"></path></svg></span><span style="flex: 1"><b>Hospitalization & Procedure Records</b><small>Discharge summary, surgery notes</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi ms"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2l4 4M15 5l4 4M5 15l-3 3 4 4 3-3M8.5 11.5l4 4M17 7L7 17"></path></svg></span><span style="flex: 1"><b>Vaccination & Immunization Record</b><small>Vaccine card or certificate</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6M9 12h6"></path></svg></span><span style="flex: 1"><b>Medical Bills & Receipts</b><small>Hospital, pharmacy or lab bills</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3c0 6 10 6 10 12s-10 6-10 6M17 3c0 6-10 6-10 12s10 6 10 6"></path><path d="M8 7h8M8 17h8"></path></svg></span><span style="flex: 1"><b>Genetic & Genomic Report</b><small>DNA and genetic tests · kept private</small></span></button><button class="trow" type="button" style="width: 100%; border-left: 0; border-right: 0; border-bottom: 0; background: none; font-family: inherit; text-align: left; color: var(--t1)"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><circle cx="12" cy="14" r="1"></circle><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle></svg></span><span style="flex: 1"><b>Other Medical Document</b><small>Certificates and anything else</small></span></button></div></div>
+</sc-if>
+<sc-if value="{{isItem}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check Vitamin D3"><div class="grab"></div>
+<p class="sht">Vitamin D3</p>
+<div class="src" style="margin-top: 12px"><small>Page 1</small>Cap. Vit D3 <mark>60K / 6K?</mark> — 1 OD × 8 wk</div>
+<p class="aw">As written: <b>“Cap. Vit D3 60K — 1 OD × 8 wk”</b></p>
+<div class="flds">
+<div class="fl"><span class="k">Medicine</span><span class="v">Vitamin D3<small>Read by Ayoreni</small></span></div>
+<div class="fl warn"><span class="k">Strength</span><span class="v">We couldn’t read this clearly<small style="color: var(--amb)">Tap to enter what the prescription says</small></span></div>
+<div class="fl"><span class="k">Form</span><span class="v">Capsule<small>Read by Ayoreni</small></span></div>
+<div class="fl"><span class="k">Amount each time</span><span class="v">1 capsule<small>Read by Ayoreni</small></span></div>
+<div class="fl"><span class="k">How often</span><span class="v">“1 OD”<small>Tap to confirm what this means</small></span></div>
+<div class="fl"><span class="k">For how long</span><span class="v">8 weeks<small>Read by Ayoreni</small></span></div>
+</div>
+<div class="more">More details <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></div>
+<div class="sbtns"><button class="btn off" type="button" aria-disabled="true">Confirm</button><p class="fine">Enter or mark the strength first.</p><button class="btn alt" type="button">Unable to Verify</button><button class="btn2 red" type="button">Remove from This Record</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isDup}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Possible duplicate"><div class="grab"></div>
+<p class="sht">This looks like a document you’ve already saved</p><p class="shs">Compare them before you save. Nothing is deleted or merged.</p>
+<div class="cmp"><div><div class="paper"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p><b>This upload</b>Dated 12 Oct 2026<br>Dr. Meera Iyer · 1 page</p></div><div><div class="paper"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p><b>Saved 14 Oct</b>Dated 12 Oct 2026<br>Dr. Meera Iyer · 1 page</p></div></div>
+<div class="sbtns"><button class="btn" type="button">Open Saved Record</button><button class="btn alt" type="button">It’s an Updated Copy</button><button class="btn2" type="button">It’s a Different Document</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some details aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some details aren’t checked yet</p><p class="shs">2 of 3 medicines confirmed. You can save now and finish the rest later.</p>
+<div class="plist">
+<div class="pl"><span class="s ok">✓</span><span>Metformin</span><small>Confirmed</small></div>
+<div class="pl"><span class="s ok">✓</span><span>Telmisartan</span><small>Confirmed</small></div>
+<div class="pl"><span class="s uv">!</span><span>Vitamin D3 · strength</span><small>Unable to Verify</small></div>
+<div class="pl"><span class="s nc">○</span><span>Document details, HbA1c test</span><small>Not checked</small></div>
+</div>
+<div class="sbtns"><button class="btn" type="button">Continue with 2 Confirmed Medicines</button><button class="btn alt" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isMismatch}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="alert" role="alertdialog" aria-label="This may be someone else’s document"><div class="aic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path></svg></div><p class="at">This may be someone else’s document</p><p class="ab">It shows “R. Mehta”. For now you can only save your own documents.</p><button class="b1" type="button">It’s Mine</button><button class="dz" type="button">Not Mine</button></div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["reading","failed","type","picker","mixed","check","item","duplicate","pending","mismatch","basic"],"default":"type"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'type';
+    const typeView = s === 'type' || s === 'picker' || s === 'mixed';
+    const check = s === 'check' || s === 'item' || s === 'duplicate' || s === 'pending' || s === 'mismatch';
+    return {
+      rootCls: 'r03' + (t === 'dark' ? ' dark' : ''),
+      isReading: s === 'reading', isFailed: s === 'failed',
+      isTypeView: typeView, isMixed: s === 'mixed', showSug: s === 'type' || s === 'picker',
+      isPicker: s === 'picker', isCheck: check, isBasic: s === 'basic',
+      isItem: s === 'item', isDup: s === 'duplicate', isPending: s === 'pending', isMismatch: s === 'mismatch'
+    };
+  }
+}
+</script>
+</body>
+</html>

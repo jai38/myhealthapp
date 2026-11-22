@@ -209,6 +209,27 @@
       "w": 3592,
       "h": 2064,
       "title": "S-RX-02 · States (light / dark)"
+    },
+    "R03ConfirmVerify.dc.html": {
+      "x": 0,
+      "y": 32820,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 · Confirm Classification & Verify Information"
+    },
+    "R03StatesA.dc.html": {
+      "x": 482,
+      "y": 32820,
+      "w": 2266,
+      "h": 2064,
+      "title": "S-RX-03 · States A · reading and document type (light / dark)"
+    },
+    "R03StatesB.dc.html": {
+      "x": 482,
+      "y": 35004,
+      "w": 2708,
+      "h": 2064,
+      "title": "S-RX-03 · States B · check and save (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -313,6 +334,13 @@
       "text": "Flow 5 · S-RX-02 Review Your Document · LOCKED (spec and design approved 22 Nov)",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t13": {
+      "x": 0,
+      "y": 32560,
+      "text": "Flow 5 · S-RX-03 Confirm Classification & Verify Information · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3190
     }
   },
   "order": [
@@ -344,7 +372,10 @@
     "R01AddHealthRecord.dc.html",
     "R01States.dc.html",
     "R02ReviewDocument.dc.html",
-    "R02States.dc.html"
+    "R02States.dc.html",
+    "R03ConfirmVerify.dc.html",
+    "R03StatesA.dc.html",
+    "R03StatesB.dc.html"
   ],
   "pages": [
     {

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 states B: check and save</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 2708px; height: 2064px; box-sizing: border-box; padding: 48px; background: #E9EEF4; font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; display: flex; flex-direction: column; gap: 56px">
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <div style="font-size: 22px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em">Light</div>
+    <div style="display: flex; gap: 40px">
+      <sc-for list="{{light}}" as="it" hint-placeholder-count="6">
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 402px">
+          <div style="font-size: 15px; line-height: 24px; font-weight: 600; color: #5B6B7F">{{it.label}}</div>
+          <div style="width: 402px; height: 874px; border-radius: 44px; overflow: hidden; box-shadow: 0 20px 50px rgba(20,60,120,0.16)">
+            <dc-import name="R03ConfirmVerify" theme="{{it.theme}}" state="{{it.state}}" hint-size="402px,874px"></dc-import>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <div style="font-size: 22px; line-height: 32px; font-weight: 700; letter-spacing: -0.02em">Dark</div>
+    <div style="display: flex; gap: 40px">
+      <sc-for list="{{dark}}" as="it" hint-placeholder-count="6">
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 402px">
+          <div style="font-size: 15px; line-height: 24px; font-weight: 600; color: #5B6B7F">{{it.label}}</div>
+          <div style="width: 402px; height: 874px; border-radius: 44px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.30)">
+            <dc-import name="R03ConfirmVerify" theme="{{it.theme}}" state="{{it.state}}" hint-size="402px,874px"></dc-import>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2708,"height":2064}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const states = [{"state": "check", "label": "3C \u00b7 Check what we read"}, {"state": "item", "label": "Check one item \u00b7 unclear strength"}, {"state": "duplicate", "label": "Look-alike found before saving"}, {"state": "pending", "label": "Some details aren\u2019t checked yet"}, {"state": "mismatch", "label": "Name differs from profile"}, {"state": "basic", "label": "Other types \u00b7 basic details"}];
+    return {
+      light: states.map((s) => ({ ...s, theme: 'light' })),
+      dark: states.map((s) => ({ ...s, theme: 'dark' }))
+    };
+  }
+}
+</script>
+</body>
+</html>
