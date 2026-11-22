@@ -2,7 +2,7 @@
 
 Paste this at the start of a development session.
 
-> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Git tag `design-locked-2026-11-22`. Changes to these need the owner's approval. Not in the baseline (in review): M02 Medication Details, landing page.
+> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Baseline commit `8c62eb0` on `designes/initial-upload`. Changes to these need the owner's approval. Not in the baseline (in review): M02 Medication Details, landing page.
 
 ## 1. Where things are
 - **Design source of truth:** Claude Design canvas — https://claude.ai/artifact/7f6T8pLUF6V4CTzCKeYmU9 (private until the owner shares it).
