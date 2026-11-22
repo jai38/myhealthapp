@@ -230,6 +230,27 @@
       "w": 2708,
       "h": 2064,
       "title": "S-RX-03 · States B · check and save (light / dark)"
+    },
+    "R04Reconcile.dc.html": {
+      "x": 0,
+      "y": 37428,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-04 · Medication Reconciliation & Optional Scheduling"
+    },
+    "R04StatesA.dc.html": {
+      "x": 482,
+      "y": 37428,
+      "w": 2266,
+      "h": 2064,
+      "title": "S-RX-04 · States A · list and decisions (light / dark)"
+    },
+    "R04StatesB.dc.html": {
+      "x": 482,
+      "y": 39612,
+      "w": 1824,
+      "h": 2064,
+      "title": "S-RX-04 · States B · setup, tests, confirm (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -341,6 +362,13 @@
       "text": "Flow 5 · S-RX-03 Confirm Classification & Verify Information · LOCKED (spec and design approved 22 Nov)",
       "kind": "title1",
       "maxW": 3190
+    },
+    "t14": {
+      "x": 0,
+      "y": 37168,
+      "text": "Flow 5 · S-RX-04 Medication Reconciliation & Optional Scheduling · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 2748
     }
   },
   "order": [
@@ -375,7 +403,10 @@
     "R02States.dc.html",
     "R03ConfirmVerify.dc.html",
     "R03StatesA.dc.html",
-    "R03StatesB.dc.html"
+    "R03StatesB.dc.html",
+    "R04Reconcile.dc.html",
+    "R04StatesA.dc.html",
+    "R04StatesB.dc.html"
   ],
   "pages": [
     {

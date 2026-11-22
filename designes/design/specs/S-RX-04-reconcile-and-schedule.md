@@ -1,6 +1,6 @@
 # S-RX-04 · Medication Reconciliation & Optional Scheduling — functional specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-22 · **Stage:** 4 of 5 (S-RX-01 → S-RX-02 → S-RX-03 → **S-RX-04** → S-RX-05). Conditional: skipped when there is nothing to reconcile.
+**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-04 with recommendations"; all PROPOSED items and OPEN-1–7 recommendations accepted) · design REVIEW · **Date:** 2026-11-22 · **Stage:** 4 of 5 (S-RX-01 → S-RX-02 → S-RX-03 → **S-RX-04** → S-RX-05). Conditional: skipped when there is nothing to reconcile.
 **Sources:** Continuation brief §6–§7; Medication Reconciliation v1.0 §3–§10 incl. all RX-MAT-01–20 workflows, safeguards and MAT-AC criteria, §8.1 final review, §8.2 lifecycle; Verification & Recovery v1.0 RX-VER-03, 05, 06; v0.3 workflow review §6 (reference only). Locked: S-RX-01–03, M-rules in S06/S07 (dose statuses), visual baseline `8c62eb0`. Related, in review: M02 Medication Details.
 **Labels:** APPROVED · DECIDED · PROPOSED (needs approval) · OPEN.
 
