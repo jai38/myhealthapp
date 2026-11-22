@@ -150,3 +150,9 @@ Spec: `specs/S-RX-04-reconcile-and-schedule.md` (approved with all recommendatio
 Spec: `specs/S-RX-05-completion-summary.md` (approved with all recommendations). Canvas: boards R05 and R05 States.
 
 **Flow 5 (Add Health Record journey, S-RX-01 → S-RX-05) — COMPLETE and LOCKED 2026-11-22.** Next per the owner's plan: Laboratory Report extraction specification (category 2).
+
+## Document categories · extraction specifications
+
+### DOC-02 · Laboratory Report — SPEC v0.1 REVIEW 2026-11-22
+Spec: `specs/DOC-02-laboratory-report-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.1 (lab review in view 3C), which needs its own approval before design.
+
