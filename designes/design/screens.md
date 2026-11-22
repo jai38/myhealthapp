@@ -3,6 +3,8 @@
 Status: LOCKED = approved by the user; REVIEW = shown, awaiting approval.
 Design system: `colour-shape-spec.md` (Calm Glass v4 + Apple-style type, locked 2026-11-16).
 
+> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Git tag `design-locked-2026-11-22`. Changes to these need the owner's approval. Not in the baseline (in review): M02 Medication Details, landing page.
+
 ## Flow 1 · Sign in / Sign up
 Mobile Number → OTP → (existing user: Today) / (new user: Create Your Account → Your Health Profile incl. allergies → Welcome/first-time Today)
 
