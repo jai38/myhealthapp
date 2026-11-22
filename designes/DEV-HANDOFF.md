@@ -31,6 +31,7 @@ Paste this at the start of a development session.
 | A01 App lock · A02 Recovery code · A03 New-device check · A04 Under 18 | Locked 2026-11-21 | see `screens.md` Flow 3 |
 | M02 Medication Details | In review (owner handling) | active, manual, paused, stopped, inactive |
 | S-RX-01 Add Health Record | Locked 2026-11-22 (spec `designes/design/specs/S-RX-01-add-health-record.md`) | empty, photos, pdf, preparing, cameraoff, fileerror, offline, discard |
+| S-RX-02 Review Your Document | Locked 2026-11-22 (spec `designes/design/specs/S-RX-02-review-your-document.md`) | ready, flagged, pdf, uploading, duplicate, failed, offline, remove |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 

@@ -1,6 +1,6 @@
 # S-RX-02 · Review Your Document — functional specification
 
-**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-02 with recommendations"; all PROPOSED items and OPEN-1–5 recommendations accepted) · design REVIEW · **Date:** 2026-11-22 · **Stage:** 2 of 5 (S-RX-01 → **S-RX-02** → S-RX-03 → S-RX-04 → S-RX-05).
+**Status:** APPROVED 2026-11-22 (owner: "approve S-RX-02 with recommendations"; all PROPOSED items and OPEN-1–5 recommendations accepted) · design APPROVED 2026-11-22 (canvas boards R02 and R02 States) · LOCKED · **Date:** 2026-11-22 · **Stage:** 2 of 5 (S-RX-01 → **S-RX-02** → S-RX-03 → S-RX-04 → S-RX-05).
 **Sources:** Continuation brief §6 (stage S-RX-02); Medication Reconciliation v1.0 §5 (stage table), §6 (document duplicate layer); Document Classification v1.0 CLR-05, CLR-07, §5; Verification & Recovery v1.0 §2 (save what is available); v0.3 workflow review §4, §8 (reference only); v0.1 draft §3, §7, §12 (reference only); `api.md` documents upload. Locked: S-RX-01 (`specs/S-RX-01-add-health-record.md`), visual baseline `8c62eb0`.
 **Labels:** APPROVED = in the approved specifications · DECIDED = owner decision already recorded · PROPOSED = my recommendation, needs approval · OPEN = needs a decision or backend/specialist input.
 
