@@ -349,6 +349,20 @@
       "w": 3592,
       "h": 2064,
       "title": "S-RX-03 v1.5 · Vaccination review states (light / dark)"
+    },
+    "R03BillReview.dc.html": {
+      "x": 0,
+      "y": 52252,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 v1.6 · Medical bill & receipt review"
+    },
+    "R03BStates.dc.html": {
+      "x": 482,
+      "y": 52252,
+      "w": 3150,
+      "h": 2064,
+      "title": "S-RX-03 v1.6 · Bill review states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -516,6 +530,13 @@
       "text": "S-RX-03 v1.5 · Vaccination & immunization review (adds to the locked S-RX-03) · spec APPROVED · design APPROVED 2026-11-23 · LOCKED",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t22": {
+      "x": 0,
+      "y": 51992,
+      "text": "S-RX-03 v1.6 · Medical bill & receipt review (adds to the locked S-RX-03) · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3632
     }
   },
   "order": [
@@ -567,7 +588,9 @@
     "R03HospitalReview.dc.html",
     "R03HStates.dc.html",
     "R03VaccineReview.dc.html",
-    "R03VStates.dc.html"
+    "R03VStates.dc.html",
+    "R03BillReview.dc.html",
+    "R03BStates.dc.html"
   ],
   "pages": [
     {

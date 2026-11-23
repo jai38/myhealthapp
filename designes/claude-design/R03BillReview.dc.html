@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.6 Bill review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.bl{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.bl.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.bl *{box-sizing:border-box;margin:0}
+.bl .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.bl .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.bl .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.bl .sic{display:flex;gap:6px;align-items:center}
+.bl .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.bl .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.bl .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.bl .mini img{width:30px}
+.bl .main{position:absolute;top:122px;left:20px;width:362px}
+.bl .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.bl.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.bl h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.bl .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.bl .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.bl:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.bl .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.bl .row+.row{border-top:1px solid var(--hair)}
+.bl .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.bl .mb{background:var(--btint);color:var(--act)}.bl .ms{background:var(--ttint);color:var(--tl)}
+.bl .rx{flex:1;min-width:0}.bl .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.bl .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.bl .chev{color:var(--t3);flex:none}
+.bl .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.bl .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.bl .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.bl .note svg{flex:none;margin-top:2px}.bl .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.bl .n-info{background:var(--infob);color:var(--info)}.bl .n-err{background:var(--errb);color:var(--err)}.bl .n-amb{background:var(--ambb);color:var(--amb)}.bl .n-ok{background:var(--okb);color:var(--ok)}
+.bl .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.bl .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.bl.dark .btn{box-shadow:none}
+.bl .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.bl .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.bl .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.bl .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.bl .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.bl .bx svg{display:none}.bl .ck.on .bx{background:var(--act);border-color:var(--act)}.bl .ck.on .bx svg{display:block}
+.bl .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.bl.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.bl .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.bl{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.bl.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.bl .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.bl .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.bl .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.bl .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.bl .prog p{font-size:14px;font-weight:600}.bl .prog p span{color:var(--amb)}
+.bl .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.bl .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.bl .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.bl .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.bl .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.bl .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.bl .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.bl .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.bl:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.bl .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.bl .kv+.kv{border-top:1px solid var(--hair)}.bl .kv span{color:var(--t2)}.bl .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.bl .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.bl .it+.it{border-top:1px solid var(--hair)}
+.bl .ix{flex:1;min-width:0}.bl .ix b{display:block;font-size:15px;font-weight:600}.bl .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.bl .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.bl .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.bl .ri.ok{background:var(--tkb);color:var(--tk)}.bl .ri.nc{background:var(--upb);color:var(--up)}.bl .ri.at{background:var(--ambb);color:var(--amb)}
+.bl .mi{width:34px;height:34px;border-radius:10px}
+.bl .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.bl .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.bl .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.bl .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.bl .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.bl .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.bl .cta{bottom:30px;padding-top:24px;z-index:5}
+.bl .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.bl .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.bl.dark .scrim{background:rgba(0,0,0,.55)}
+.bl .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.bl.dark .sheet{background:#0C1B2D}
+.bl .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.bl .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.bl .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.bl .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.bl .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.bl .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.bl .lk b{display:block;font-size:16px}.bl .lk small{font-size:13px;color:var(--t2)}
+.bl .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.bl .ck small{display:block;font-size:12px;color:var(--t2)}
+.bl .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.bl .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.bl .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.bl .pl+.pl{border-top:1px solid var(--hair)}
+.bl .pl span{flex:1}.bl .pl small{color:var(--t2);font-size:12px}
+
+.bl .tot{padding:14px 14px 12px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.bl .tot span{display:block;font-size:12px;font-weight:600;color:var(--t2)}
+.bl .tot b{display:block;font-size:30px;line-height:36px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.bl .tot b.unc{font-size:24px;color:var(--amb)}
+.bl .tot .ri{margin-bottom:8px}
+.bl .flag{margin:0 14px 12px;padding:11px 12px;border-radius:14px;background:var(--ambb);font-size:13px;line-height:18px}
+.bl .flag b{display:block;color:var(--amb);font-size:13px;margin-bottom:2px}
+.bl .flag .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.bl .flag .acts button{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--card);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.bl .ln{display:flex;gap:10px;width:100%;padding:9px 14px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left;align-items:flex-start}
+.bl .ln+.ln{border-top:1px solid var(--hair)}
+.bl .ln .d{flex:1;min-width:0;font-size:14px;font-weight:500}.bl .ln .d small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.bl .ln .a{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bl .more{display:block;width:100%;padding:11px 14px;border:0;border-top:1px solid var(--hair);background:none;font-family:inherit;font-size:14px;font-weight:700;color:var(--act);text-align:left}
+.bl .mask a{font-size:13px;font-weight:700;color:var(--act);text-decoration:none;margin-left:6px}
+.bl .crop{margin-top:12px;border-radius:12px;background:#FFFFFF;border:1px solid var(--hair);padding:10px 12px;font:500 14px/1.5 'Courier New',monospace;color:#33445E;position:relative}
+.bl.dark .crop{background:#EEF2F7}
+.bl .crop small{position:absolute;right:10px;top:6px;font:600 11px 'Plus Jakarta Sans',sans-serif;color:#5B6B7F}
+.bl .flds{border-radius:16px;border:1px solid var(--hair);overflow:hidden;margin-top:10px}
+.bl .f{display:flex;align-items:center;gap:10px;padding:8px 12px;min-height:44px}.bl .f+.f{border-top:1px solid var(--hair)}
+.bl .f .k{width:96px;flex:none;font-size:13px;color:var(--t2)}.bl .f .v{flex:1;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.bl .f a{font-size:13px;font-weight:600;color:var(--act);text-decoration:none}
+.bl .pair{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.bl .pr{padding:11px 14px}.bl .pr+.pr{border-top:1px solid var(--hair)}
+.bl .pr span{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2)}
+.bl .pr b{display:block;font-size:16px;margin-top:2px}.bl .pr small{font-size:13px;color:var(--t2)}
+.bl .foot{font-size:12px;line-height:17px;color:var(--t2);margin-top:10px}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">{{ttl}}</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<div class="prog"><p>{{progTxt}} · <span>1 needs attention</span></p><div class="pbar"><i></i></div></div>
+<p class="disc">This is a bill as written. It shows charges, not the care you received.</p>
+<div class="gh"><span class="gt">Bill details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><div class="kv"><span>Provider</span><b>{{prov}}</b></div><div class="kv"><span>Bill date</span><b>{{bdate}}</b></div><div class="kv"><span>Name on document</span><b>Ananya Sharma</b></div><div class="kv"><span>Bill number</span><b>{{bno}}<span class="tg">{{btype}}</span></b></div></div>
+<div class="gh"><span class="gt">Amounts<small>As printed</small></span></div>
+<sc-if value="{{isHosp}}" hint-placeholder-val="{{ true }}"><div class="gc"><div class="tot"><div><span>Total as printed</span><b>₹1,23,450.00</b></div><span class="ri nc">○</span></div>
+<div class="kv"><span>Paid</span><b>₹1,00,000.00</b></div><div class="kv"><span>Balance due</span><b>₹23,450.00</b></div><div class="kv"><span>Insurer / TPA share</span><b>₹80,000.00</b></div><div class="kv"><span>Discount</span><b>₹2,500.00</b></div></div><div class="gh"><span class="gt">Line items<small>42 lines</small></span><button class="mini" type="button">Confirm All Lines</button></div>
+<div class="gc"><button class="ln" type="button"><span class="d">Room rent — Twin sharing<small>4 days × ₹4,500</small></span><span class="a">₹18,000.00</span></button><button class="ln" type="button"><span class="d">Cath lab charges<small>1</small></span><span class="a">₹35,000.00</span></button><button class="ln" type="button"><span class="d">Consultation — Dr. R. Menon<small>5 visits × ₹1,200</small></span><span class="a">₹6,000.00</span></button><button class="ln" type="button"><span class="d">Pharmacy (IP)<small>As billed</small></span><span class="a">₹21,640.00</span></button><button class="ln" type="button"><span class="d">Laboratory<small>As billed</small></span><span class="a">₹8,920.00</span></button><button class="more" type="button">Show All 42 Lines</button></div>
+<div class="gh"><span class="gt">Payment</span></div>
+<div class="gc"><div class="kv"><span>Mode</span><b>Cashless — insurer · UPI</b></div><div class="kv"><span>Policy number</span><b class="mask">•••• 7712<a href="#">Show</a></b></div></div></sc-if>
+<sc-if value="{{isTotal}}" hint-placeholder-val="{{ false }}"><div class="gc"><div class="tot"><div><span>Total as printed</span><b>₹1,23,450.00</b></div><span class="ri at">!</span></div>
+<div class="flag"><b>⚠ Check the total</b>The lines on this bill don’t seem to add up to the total printed. Compare with the original.<div class="acts"><button type="button">View Original</button><button type="button">Total Is Correct</button><button type="button">Edit Total</button></div></div>
+<div class="kv"><span>Paid</span><b>₹1,00,000.00</b></div><div class="kv"><span>Balance due</span><b>₹23,450.00</b></div></div><div class="gh"><span class="gt">Line items<small>42 lines</small></span><button class="mini" type="button">Confirm All Lines</button></div>
+<div class="gc"><button class="ln" type="button"><span class="d">Room rent — Twin sharing<small>4 days × ₹4,500</small></span><span class="a">₹18,000.00</span></button><button class="ln" type="button"><span class="d">Cath lab charges<small>1</small></span><span class="a">₹35,000.00</span></button><button class="ln" type="button"><span class="d">Consultation — Dr. R. Menon<small>5 visits × ₹1,200</small></span><span class="a">₹6,000.00</span></button><button class="ln" type="button"><span class="d">Pharmacy (IP)<small>As billed</small></span><span class="a">₹21,640.00</span></button><button class="ln" type="button"><span class="d">Laboratory<small>As billed</small></span><span class="a">₹8,920.00</span></button><button class="more" type="button">Show All 42 Lines</button></div>
+<div class="gh"><span class="gt">Payment</span></div>
+<div class="gc"><div class="kv"><span>Mode</span><b>Cashless — insurer · UPI</b></div><div class="kv"><span>Policy number</span><b class="mask">•••• 7712<a href="#">Show</a></b></div></div></sc-if>
+<sc-if value="{{isPh}}" hint-placeholder-val="{{ false }}"><div class="gc"><div class="tot"><div><span>Total as printed</span><b>₹1,284.00</b></div><span class="ri ok">✓</span></div><div class="kv"><span>Discount</span><b>₹142.00</b></div><div class="kv"><span>GST (included)</span><b>₹61.14</b></div></div>
+<div class="gh"><span class="gt">Line items<small>6 lines · billed, not prescribed</small></span><button class="mini" type="button">Confirm All Lines</button></div>
+<div class="gc"><button class="ln" type="button"><span class="d">Clopidogrel 75 Tab<small>Qty 30 · Batch CL2291 · Exp 08/28</small></span><span class="a">₹312.00</span></button><button class="ln" type="button"><span class="d">Atorvastatin 40 Tab<small>Qty 30 · Batch AT7710 · Exp 03/28</small></span><span class="a">₹486.00</span></button><button class="ln" type="button"><span class="d">Dolo 650 Tab<small>Qty 15 · Batch D6501 · Exp 11/27</small></span><span class="a">₹34.00</span></button><button class="ln" type="button"><span class="d">Pantoprazole 40 Tab<small>Qty 15 · Batch PN4402 · Exp 01/28</small></span><span class="a">₹128.00</span></button><button class="ln" type="button"><span class="d">ORS sachet<small>Qty 4 · Batch OR118 · Exp 06/27</small></span><span class="a">₹88.00</span></button><button class="more" type="button">Show All 6 Lines</button></div>
+<div class="gh"><span class="gt">Payment</span></div><div class="gc"><div class="kv"><span>Mode</span><b>UPI</b></div></div></sc-if>
+</div>
+<div class="cta"><button class="btn" type="button">Save Record</button></div>
+<sc-if value="{{isItem}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check this line"><div class="grab"></div>
+<p class="sht">Check this line</p><p class="shs">Compare with the line from your bill.</p>
+<div class="crop"><small>Page 2 · line 3</small>CONSULTATION-DR R MENON   5 x 1200   6,000.00</div>
+<div class="flds"><div class="f"><span class="k">Description</span><span class="v">Consultation — Dr. R. Menon</span><a href="#">Edit</a></div><div class="f"><span class="k">Quantity</span><span class="v">5 × ₹1,200.00</span><a href="#">Edit</a></div><div class="f"><span class="k">Amount</span><span class="v">₹6,000.00</span><a href="#">Edit</a></div></div>
+<div class="sbtns"><button class="btn" type="button">Confirm</button><button class="btn2" type="button">Unable to Verify</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some items aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some items aren’t checked yet</p><p class="shs">3 of 5 items checked · total needs checking. You can save now and finish later.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>Bill details</span><small>Confirmed</small></div><div class="pl"><span class="ri ok">✓</span><span>Paid and balance</span><small>Confirmed</small></div><div class="pl"><span class="ri at">!</span><span>Total</span><small>Check the total</small></div><div class="pl"><span class="ri nc">○</span><span>42 line items</span><small>Not checked</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Link to a record"><div class="grab"></div>
+<p class="sht">Is this the bill for your hospital stay at Apollo Hospital, 3–7 Nov?</p>
+<div class="pair"><div class="pr"><span>This bill</span><b>Final bill · ₹1,23,450</b><small>Apollo Hospital · 7 Nov 2026</small></div><div class="pr"><span>Your record</span><b>Hospital stay</b><small>Apollo Hospital · 3–7 Nov 2026</small></div></div>
+<p class="foot">Linking shows the bill with this record. It doesn’t change anything in it.</p>
+<div class="sbtns"><button class="btn" type="button">Link</button><button class="btn alt" type="button">Not the Same</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isRcpt}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Link this receipt"><div class="grab"></div>
+<p class="sht">Is this a payment for your Apollo Hospital bill of 7 Nov?</p>
+<div class="pair"><div class="pr"><span>This receipt</span><b>Receipt · ₹23,450</b><small>Apollo Hospital · 12 Nov 2026 · Bill IPB-24-5521</small></div><div class="pr"><span>Your bill</span><b>Final bill · ₹1,23,450</b><small>Apollo Hospital · 7 Nov 2026 · IPB-24-5521</small></div></div>
+<p class="foot">The receipt is listed under the bill. Ayoreni doesn’t add up payments.</p>
+<div class="sbtns"><button class="btn" type="button">Link</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["review","total","pharmacy","item","pending","link","receipt"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    const ph = s === 'pharmacy';
+    return {
+      rootCls: 'bl' + (t === 'dark' ? ' dark' : ''),
+      isHosp: ['review', 'item', 'link', 'receipt'].includes(s),
+      isTotal: s === 'total' || s === 'pending', isPh: ph,
+      isItem: s === 'item', isPending: s === 'pending', isLink: s === 'link', isRcpt: s === 'receipt',
+      ttl: 'Check your bill',
+      progTxt: ph ? '4 of 5 items checked' : '3 of 5 items checked',
+      prov: ph ? 'Wellness Pharmacy, Indiranagar' : 'Apollo Hospital',
+      bdate: ph ? '8 Nov 2026' : '7 Nov 2026',
+      bno: ph ? 'CM-88214' : 'IPB-24-5521',
+      btype: ph ? 'Cash memo' : 'Final bill'
+    };
+  }
+}
+</script>
+</body>
+</html>
