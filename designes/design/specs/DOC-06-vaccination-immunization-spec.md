@@ -1,6 +1,6 @@
 # DOC-06 · Vaccination & Immunization Record — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-06 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-06 with recommendations"; all PROPOSED items and the recommendations for DOC06-OD-01–07 accepted; sensitive-vaccine list in DOC06-OD-06 still needs legal review before release) (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-06 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-06: vaccine certificate, immunization card, administration record; "keep administration date, product/details and source"); Verification & Recovery v1.0 (DOC-06 items: "vaccine identity, administration evidence and dates"); **RX-MAT-19 / MAT-AC-19** (order ≠ administration; "Administration Reported" vs "Administration Documented"; an order never enters completed immunization history; scheduling never marks administration); VF-033, MF-QA18; MF-D01–08, B1–B5; locked S-RX-01–05, S-RX-03 v1.1–v1.4, S-RX-04 v1.1; DOC-02–05 v1.0 patterns.
 **Labels:** APPROVED · PROPOSED (needs your approval) · OPEN.
 **Approval boundary:** product behaviour only; no clinical rule set and no vaccination schedule.

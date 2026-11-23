@@ -181,5 +181,5 @@ Change spec: `specs/S-RX-04-v1.1-stop-hold.md`. Adds the change-instruction grou
 Change spec: `specs/S-RX-03-v1.4-hospital-review.md`. Replaces only the Hospitalization part of view 3C and adds the hospital after-save sheets; everything else in S-RX-03 v1.0–v1.3 stays as locked.
 
 
-### DOC-06 · Vaccination & Immunization Record — SPEC v1.0 REVIEW 2026-11-23
+### DOC-06 · Vaccination & Immunization Record — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-06-vaccination-immunization-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.5 (vaccination review in view 3C), which needs its own approval before design.
