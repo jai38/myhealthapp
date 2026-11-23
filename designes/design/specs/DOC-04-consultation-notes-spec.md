@@ -1,6 +1,6 @@
-# DOC-04 · Doctor Consultation & Clinical Notes — Extraction & Verification Specification v0.1
+# DOC-04 · Doctor Consultation & Clinical Notes — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW DRAFT v0.1 (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-04 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-04 with recommendations"; all PROPOSED items and the recommendations for DOC04-OD-01–06 accepted; legal review in DOC04-OD-05 still required before release) (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-04 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-04: "OPD visit summary, specialist opinion, referral, consultation notes — record clinical encounter information and related links where verified"; CLR-01, 02, 04, 05, 06, 07, 09); Verification & Recovery v1.0 (DOC-04 items: "consultation details, documented observation or advice"); MF-D01–08, B1–B5, RX-MAT-01–20 (for any medicines); locked S-RX-01–05, S-RX-03 v1.1 and v1.2; DOC-02 and DOC-03 v1.0 patterns.
 **Labels:** APPROVED · PROPOSED (needs your approval) · OPEN.
 **Approval boundary:** product behaviour only; no clinical rule set.
