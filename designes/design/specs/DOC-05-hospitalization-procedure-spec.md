@@ -1,6 +1,6 @@
-# DOC-05 · Hospitalization & Procedure Records — Extraction & Verification Specification v0.1
+# DOC-05 · Hospitalization & Procedure Records — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW DRAFT v0.1 (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-05 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-05 with recommendations"; all PROPOSED items and the recommendations for DOC05-OD-01–08 accepted; legal review in DOC05-OD-05 still required before release) (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-05 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-05: discharge summary, admission summary, surgery/procedure note, hospital records; "can contain medicines, investigations, diagnoses and recommended follow-ups"; CLR-02; QA-DOC-02 "no course or reminder auto-activates"); Verification & Recovery v1.0 (DOC-05 items: "admission/discharge details, procedure, discharge instructions"); MF-D01–08, B1–B5, RX-MAT-01–20 (esp. 04, 05, 07, 08, 09, 10, 13, 14, 18); locked S-RX-01–05 and S-RX-03 v1.1–v1.3; DOC-02/03/04 v1.0 patterns.
 **Labels:** APPROVED · PROPOSED (needs your approval) · OPEN.
 **Approval boundary:** product behaviour only; no clinical rule set.

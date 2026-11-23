@@ -171,6 +171,6 @@ Spec: `specs/DOC-04-consultation-notes-spec.md` (functional; no screens). Approv
 ### S-RX-03 v1.3 · Consultation & clinical notes review — LOCKED 2026-11-23 (spec and design approved; canvas boards R03C and R03C States)
 Change spec: `specs/S-RX-03-v1.3-consultation-review.md`. Replaces only the Consultation part of view 3C and adds the consultation after-save sheets; everything else in S-RX-03 v1.0–v1.2 stays as locked.
 
-### DOC-05 · Hospitalization & Procedure Records — SPEC v0.1 REVIEW 2026-11-23
+### DOC-05 · Hospitalization & Procedure Records — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-05-hospitalization-procedure-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.4 (hospital review) and S-RX-04 v1.1 ("Summary says stop / hold"), each needing its own approval before design.
 
