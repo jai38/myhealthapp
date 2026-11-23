@@ -293,6 +293,20 @@
       "w": 3592,
       "h": 2064,
       "title": "S-RX-03 v1.2 · Imaging review states (light / dark)"
+    },
+    "R03ConsultReview.dc.html": {
+      "x": 3350,
+      "y": 37500,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 v1.3 · Consultation & clinical notes review"
+    },
+    "R03CStates.dc.html": {
+      "x": 3832,
+      "y": 37500,
+      "w": 3150,
+      "h": 2064,
+      "title": "S-RX-03 v1.3 · Consultation review states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -432,6 +446,13 @@
       "text": "S-RX-03 v1.2 · Imaging & diagnostic review · LOCKED (spec and design approved 23 Nov)",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t18": {
+      "x": 3350,
+      "y": 37260,
+      "text": "S-RX-03 v1.3 · Consultation & clinical notes review · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3632
     }
   },
   "order": [
@@ -475,7 +496,9 @@
     "R03LabReview.dc.html",
     "R03LStates.dc.html",
     "R03ImagingReview.dc.html",
-    "R03IStates.dc.html"
+    "R03IStates.dc.html",
+    "R03ConsultReview.dc.html",
+    "R03CStates.dc.html"
   ],
   "pages": [
     {
