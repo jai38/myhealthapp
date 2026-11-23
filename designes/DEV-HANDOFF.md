@@ -37,6 +37,7 @@ Paste this at the start of a development session.
 | S-RX-03 v1.2 Imaging & diagnostic review (replaces the imaging part of 3C) | Locked 2026-11-23 (spec `designes/design/specs/S-RX-03-v1.2-imaging-review.md`; rules in `DOC-03-imaging-diagnostic-report-spec.md`) | review, side, unclear, ecg, findings, pending, recs, condition |
 | S-RX-03 v1.3 Consultation & clinical notes review (replaces the consultation part of 3C) | Locked 2026-11-23 (spec `designes/design/specs/S-RX-03-v1.3-consultation-review.md`; rules in `DOC-04-consultation-notes-spec.md`) | review, unclear, notes, pending, vitals, condition, samevisit |
 | S-RX-04 Medication Reconciliation & Optional Scheduling | Locked 2026-11-22 (spec `designes/design/specs/S-RX-04-reconcile-and-schedule.md`) | list, compare, taking, reaction, finish, setup, change, tests, confirm |
+| S-RX-04 v1.1 "Summary says stop / hold" (adds to S-RX-04) | Locked 2026-11-23 (spec `designes/design/specs/S-RX-04-v1.1-stop-hold.md`) | list, disagree, which, stop, pause, confirm |
 | S-RX-05 Completion Summary | Locked 2026-11-22 (spec `designes/design/specs/S-RX-05-completion-summary.md`) | done, partial, reminderset, recordonly, reading, failed, notifoff, other |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
