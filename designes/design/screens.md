@@ -201,3 +201,6 @@ Change spec: `specs/S-RX-03-v1.7-genetic-restricted-review.md`. Replaces only th
 
 ### DOC-09 · Other Medical Document — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-09-other-medical-document-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.8 ("Other" review in view 3C), which needs its own approval before design.
+
+### S-RX-03 v1.8 · Other medical document review — SPEC REVIEW 2026-11-23
+Change spec: `specs/S-RX-03-v1.8-other-document-review.md`. Replaces only the Other part of view 3C (the last type still on the v1.0 basic-details form) and adds the other after-save sheets; everything else in S-RX-03 v1.0–v1.7 stays as locked.
