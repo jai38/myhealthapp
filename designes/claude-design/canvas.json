@@ -279,6 +279,20 @@
       "w": 3150,
       "h": 2064,
       "title": "S-RX-03 v1.1 · Lab review states (light / dark)"
+    },
+    "R03ImagingReview.dc.html": {
+      "x": 3350,
+      "y": 35160,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 v1.2 · Imaging & diagnostic review"
+    },
+    "R03IStates.dc.html": {
+      "x": 3832,
+      "y": 35160,
+      "w": 3592,
+      "h": 2064,
+      "title": "S-RX-03 v1.2 · Imaging review states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -411,6 +425,13 @@
       "text": "S-RX-03 v1.1 · Lab report review · LOCKED (spec and design approved 23 Nov)",
       "kind": "title1",
       "maxW": 3632
+    },
+    "t17": {
+      "x": 3350,
+      "y": 34920,
+      "text": "S-RX-03 v1.2 · Imaging & diagnostic review · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 4074
     }
   },
   "order": [
@@ -452,7 +473,9 @@
     "R05Summary.dc.html",
     "R05States.dc.html",
     "R03LabReview.dc.html",
-    "R03LStates.dc.html"
+    "R03LStates.dc.html",
+    "R03ImagingReview.dc.html",
+    "R03IStates.dc.html"
   ],
   "pages": [
     {

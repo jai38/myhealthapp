@@ -1,6 +1,6 @@
 # S-RX-03 v1.2 · Imaging & diagnostic report review — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0 (2026-11-22) and v1.1 (2026-11-23) for **Imaging & Diagnostic Reports only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.2 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0 (2026-11-22) and v1.1 (2026-11-23) for **Imaging & Diagnostic Reports only**.
 **Reason:** owner decision IMG-OD-01 (DOC-03 v1.0, approved 2026-11-23).
 **Sources:** DOC-03 v1.0 §3–§10 (APPROVED); S-RX-03 v1.0 and v1.1 (locked); RX-VER-01–06, 12 (APPROVED); CLR-04, 05, 06, 07 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.

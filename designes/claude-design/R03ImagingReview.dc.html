@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.2 Imaging review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ir{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.ir.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.ir *{box-sizing:border-box;margin:0}
+.ir .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.ir .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.ir .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.ir .sic{display:flex;gap:6px;align-items:center}
+.ir .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.ir .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.ir .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.ir .mini img{width:30px}
+.ir .main{position:absolute;top:122px;left:20px;width:362px}
+.ir .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.ir.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.ir h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.ir .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.ir .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.ir:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.ir .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.ir .row+.row{border-top:1px solid var(--hair)}
+.ir .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.ir .mb{background:var(--btint);color:var(--act)}.ir .ms{background:var(--ttint);color:var(--tl)}
+.ir .rx{flex:1;min-width:0}.ir .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.ir .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.ir .chev{color:var(--t3);flex:none}
+.ir .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.ir .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.ir .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.ir .note svg{flex:none;margin-top:2px}.ir .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.ir .n-info{background:var(--infob);color:var(--info)}.ir .n-err{background:var(--errb);color:var(--err)}.ir .n-amb{background:var(--ambb);color:var(--amb)}.ir .n-ok{background:var(--okb);color:var(--ok)}
+.ir .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.ir .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.ir.dark .btn{box-shadow:none}
+.ir .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.ir .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.ir .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.ir .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.ir .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.ir .bx svg{display:none}.ir .ck.on .bx{background:var(--act);border-color:var(--act)}.ir .ck.on .bx svg{display:block}
+.ir .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.ir.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.ir .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.ir{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.ir.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.ir .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.ir .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.ir .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.ir .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.ir .prog p{font-size:14px;font-weight:600}.ir .prog p span{color:var(--amb)}
+.ir .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.ir .pbar i{display:block;height:100%;width:50%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.ir .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.ir .gh{display:flex;justify-content:space-between;align-items:center;margin:16px 4px 8px}
+.ir .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.ir .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.ir .mini{height:34px;padding:0 13px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.ir .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.ir:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.ir .kv{display:flex;justify-content:space-between;gap:12px;padding:9px 14px;font-size:14px}
+.ir .kv+.kv{border-top:1px solid var(--hair)}.ir .kv span{color:var(--t2)}.ir .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.ir .kv.warn{background:var(--ambb)}.ir .kv.warn b{color:var(--amb)}
+.ir .imp{padding:14px}
+.ir .imp .q{font:500 15px/1.55 Georgia,serif;color:var(--t1)}
+.ir .imp .src{display:block;font-size:12px;color:var(--act);font-weight:600;margin-top:8px;text-decoration:none}
+.ir .imp.unc{background:var(--ambb)}
+.ir .acts{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px}
+.ir .ab{height:36px;padding:0 13px;border-radius:999px;border:1.5px solid var(--fbd);background:var(--field);color:var(--t1);font-family:inherit;font-size:13px;font-weight:600}
+.ir .ab.p{border-color:var(--act);color:var(--act)}
+.ir .ab.off{color:var(--t3)}
+.ir .coll{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;font-size:15px;font-weight:600;width:100%;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.ir .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.ir .rec{display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:14px}
+.ir .rec+.rec{border-top:1px solid var(--hair)}
+.ir .rec .q{flex:1;font-style:italic}
+.ir .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.ir .ri.ok{background:var(--tkb);color:var(--tk)}.ir .ri.nc{background:var(--upb);color:var(--up)}.ir .ri.at{background:var(--ambb);color:var(--amb)}
+.ir .para{padding:12px 14px;font:400 14px/1.6 Georgia,serif;color:var(--t1);border-top:1px solid var(--hair)}
+.ir .para a{display:block;font:600 12px 'Plus Jakarta Sans',sans-serif;color:var(--act);text-decoration:none;margin-top:4px}
+.ir .pic{display:flex;gap:10px;align-items:center;padding:12px 14px;font-size:14px;font-weight:600}
+.ir .ecg{width:70px;height:40px;border-radius:8px;background:#FFF6F6;border:1px solid #F3C9C9;flex:none;overflow:hidden}
+.ir .cta{bottom:30px;padding-top:24px;z-index:5}
+.ir .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.ir .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.ir.dark .scrim{background:rgba(0,0,0,.55)}
+.ir .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.ir.dark .sheet{background:#0C1B2D}
+.ir .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.ir .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.ir .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.ir .crop{border-radius:12px;background:#FFFFFF;border:1px solid var(--hair);padding:10px 12px;font:500 14px/1.5 'Courier New',monospace;color:#33445E;margin-top:10px;position:relative}
+.ir.dark .crop{background:#EEF2F7}
+.ir .crop mark{background:rgba(245,165,36,.28);color:inherit;border-radius:3px;padding:0 2px;outline:2px solid rgba(245,165,36,.8)}
+.ir .crop small{position:absolute;right:10px;top:6px;font:600 11px 'Plus Jakarta Sans',sans-serif;color:#5B6B7F}
+.ir .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.ir .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.ir .pick{display:flex;gap:8px;margin-top:14px}
+.ir .pick button{flex:1;height:48px;border-radius:14px;border:1.5px solid var(--fbd);background:var(--field);font-family:inherit;font-size:16px;font-weight:600;color:var(--t1)}
+.ir .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.ir .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.ir .pl+.pl{border-top:1px solid var(--hair)}
+.ir .pl span{flex:1}.ir .pl small{color:var(--t2);font-size:12px}
+.ir .rc{margin-top:14px;border-radius:16px;border:1px solid var(--hair);padding:12px 14px}
+.ir .rc .q{font-style:italic;font-size:15px}
+.ir .rc .ex{font-size:13px;color:var(--t2);margin-top:6px}
+.ir .rc .acts{padding:12px 0 0}
+.ir .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.ir .lk b{display:block;font-size:16px}.ir .lk small{font-size:13px;color:var(--t2)}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>10:40</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check your report</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<div class="prog"><p>{{progText}} · <span>{{progLeft}}</span></p><div class="pbar"><i></i></div></div>
+<p class="disc">This is your report as written. Ayoreni doesn’t interpret it.</p>
+<sc-if value="{{isMri}}" hint-placeholder-val="{{ true }}">
+<div class="gh"><span class="gt">Report details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><div class="kv"><span>Test</span><b>MRI · Lumbar spine (plain)</b></div><div class="{{sideCls}}"><span>Side</span><b>{{sideText}}</b></div><div class="kv"><span>Study date</span><b>12 Oct 2026</b></div><div class="kv"><span>Centre</span><b>Lifeline Imaging</b></div><div class="kv"><span>Name on report</span><b>Ananya Sharma</b></div></div>
+<div class="gh"><span class="gt">Impression<small>As written by the reporting doctor</small></span><span class="{{impIcon}}">{{impMark}}</span></div>
+<div class="gc"><div class="{{impCls}}"><p class="q">{{impText}}</p><a class="src" href="#p2">Page 2 · view in original</a></div>
+<div class="acts"><button class="ab p" type="button">Confirm Text</button><button class="ab" type="button">Edit</button><button class="ab" type="button">Unable to Verify</button></div></div>
+<div class="gh"><span class="gt">Findings &amp; history</span></div>
+<div class="gc">
+<sc-if value="{{findOpen}}" hint-placeholder-val="{{ false }}"><div class="coll" style="cursor: default"><span>Findings<small>Optional to check</small></span><button class="mini" type="button">Confirm Text</button></div>
+<div class="para">Lumbar lordosis is maintained. Disc desiccation is seen at L4-5 and L5-S1 levels.<a href="#p1">Page 1</a></div>
+<div class="para">At L4-5, a diffuse disc bulge with a left paracentral protrusion is seen, indenting the thecal sac and abutting the left traversing L5 nerve root.<a href="#p1">Page 1</a></div>
+<div class="para">Vertebral bodies show normal height and marrow signal. Conus ends at L1.<a href="#p2">Page 2</a></div></sc-if>
+<sc-if value="{{findClosed}}" hint-placeholder-val="{{ true }}"><button class="coll" type="button"><span>Findings<small>3 paragraphs · optional to check</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button></sc-if>
+</div>
+<div class="gh"><span class="gt">Recommendations</span></div>
+<div class="gc"><div class="rec"><span class="q">“Clinical correlation and follow-up MRI in 6 months.”</span><span class="ri nc">○</span></div></div>
+</sc-if>
+<sc-if value="{{isEcg}}" hint-placeholder-val="{{ false }}">
+<div class="gh"><span class="gt">Report details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><div class="kv"><span>Test</span><b>ECG · 12-lead</b></div><div class="kv"><span>Side</span><b style="color: var(--t3); font-weight: 500">Not on report</b></div><div class="kv"><span>Study date</span><b>20 Nov 2026, 9:42 AM</b></div><div class="kv"><span>Centre</span><b>Sunrise Clinic</b></div></div>
+<div class="gh"><span class="gt">Impression</span></div>
+<div class="gc"><div class="imp"><p style="font-size: 15px; font-weight: 600">No impression on this report</p><p class="disc" style="margin: 4px 0 0">Is that right?</p></div><div class="acts"><button class="ab p" type="button">That’s Right</button><button class="ab" type="button">There Is One</button></div></div>
+<div class="gh"><span class="gt">Printed by the ECG machine<small>Word for word · optional to check</small></span></div>
+<div class="gc"><div class="imp"><p class="q" style="font-family: 'Courier New', monospace; font-size: 14px">Sinus rhythm. Rate 78 bpm. PR 160 ms. QRS 88 ms. QTc 412 ms.</p></div></div>
+<div class="gh"><span class="gt">Pictures and notes</span></div>
+<div class="gc"><button class="pic" type="button" style="width: 100%; border: 0; background: none; font-family: inherit; color: var(--t1); text-align: left"><span class="ecg"><svg width="70" height="40" viewBox="0 0 70 40" aria-hidden="true"><path d="M0 22h10l3-8 4 16 3-20 4 12h12l3-6 4 10 3-14 4 10h20" fill="none" stroke="#C0392B" stroke-width="1.4"></path></svg></span><span style="flex: 1">Pictures in this report · 1<small style="display: block; font-size: 12px; font-weight: 500; color: var(--t2)">Opens the original · not analysed</small></span></button>
+<div class="rec" style="background: var(--ambb)"><span class="q" style="font-style: normal"><b>Handwritten note</b> · “? repeat after 1 wk”</span><span class="ri at">!</span></div></div>
+</sc-if>
+</div>
+<div class="cta"><button class="btn" type="button">Save Record</button><button class="btn2" type="button">Save &amp; Verify Later</button></div>
+<sc-if value="{{isSide}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Which side does the report say?"><div class="grab"></div>
+<p class="sht">Which side does the report say?</p><p class="shs">The report isn’t consistent. Choose what it says, or leave it unverified.</p>
+<div class="crop"><small>Page 1 · header</small>MRI <mark>RIGHT</mark> LUMBAR SPINE</div>
+<div class="crop"><small>Page 1 · findings</small>…<mark>left</mark> paracentral protrusion… abutting the <mark>left</mark> traversing L5…</div>
+<div class="pick"><button type="button">Left</button><button type="button">Right</button><button type="button">Both</button></div>
+<div class="sbtns"><button class="btn alt" type="button">Unable to Verify</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some checks aren’t done yet"><div class="grab"></div>
+<p class="sht">Some checks aren’t done yet</p><p class="shs">3 of 4 checks done. You can save now and finish later.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>Report details</span><small>Confirmed</small></div><div class="pl"><span class="ri ok">✓</span><span>Recommendation</span><small>Confirmed</small></div><div class="pl"><span class="ri at">!</span><span>Impression</span><small>Not checked</small></div><div class="pl"><span class="ri nc">○</span><span>Findings</span><small>Optional</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isRecs}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="The report recommends"><div class="grab"></div>
+<p class="sht">The report recommends</p><p class="shs">Your report is saved. Add what you want to keep track of. Nothing is booked for you.</p>
+<div class="rc"><p class="q">“Follow-up MRI in 6 months.”</p><p class="ex">Already in your plan · MRI lumbar spine, 12 Apr 2027</p>
+<div class="acts"><button class="ab p" type="button">Link to This Plan</button><button class="ab" type="button">Record Only</button></div></div>
+<div class="sbtns"><button class="btn" type="button">Continue</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isCond}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Link to your condition"><div class="grab"></div>
+<p class="sht">Link it to your condition?</p><p class="shs">This report mentions back pain. You already have this condition in your records.</p>
+<div class="lk"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-7-11a4 4 0 017-2.6A4 4 0 0119 10c0 6.6-7 11-7 11z"></path></svg></span><div><b>Back pain</b><small>Your condition · since Aug 2026</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Link</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["review","side","unclear","ecg","findings","pending","recs","condition"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    const unclear = s === 'unclear';
+    const conflict = s === 'side';
+    return {
+      rootCls: 'ir' + (t === 'dark' ? ' dark' : ''),
+      isMri: s !== 'ecg', isEcg: s === 'ecg',
+      progText: s === 'ecg' ? '1 of 3 checks done' : '2 of 4 checks done',
+      progLeft: s === 'ecg' ? 'handwritten note to check' : 'Impression still to check',
+      sideCls: 'kv' + (conflict || s === 'review' ? '' : '') + (conflict ? ' warn' : ''),
+      sideText: conflict ? 'Needs check — the report isn’t consistent' : 'Left',
+      impCls: 'imp' + (unclear ? ' unc' : ''),
+      impText: unclear ? 'L4-5 disc protrusion with [unclear] of the left L5 nerve root. We couldn’t read one word clearly; check it against the original.' : 'L4-5 diffuse disc bulge with left paracentral protrusion abutting the left traversing L5 nerve root. Early degenerative changes at L5-S1.',
+      impIcon: 'ri ' + (unclear ? 'at' : 'nc'), impMark: unclear ? '!' : '○',
+      findOpen: s === 'findings', findClosed: s !== 'findings',
+      isSide: conflict, isPending: s === 'pending', isRecs: s === 'recs', isCond: s === 'condition'
+    };
+  }
+}
+</script>
+</body>
+</html>
