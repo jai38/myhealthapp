@@ -159,3 +159,6 @@ Spec: `specs/DOC-02-laboratory-report-spec.md` (functional; no screens). Approvi
 ### S-RX-03 v1.1 · Lab report review — LOCKED 2026-11-23 (spec and design approved; canvas boards R03L and R03L States)
 Change spec: `specs/S-RX-03-v1.1-lab-review.md`. Replaces only the Laboratory Report part of view 3C in the locked S-RX-03 v1.0 and adds the planned-test link sheet after saving; everything else in S-RX-03 stays as locked.
 
+### DOC-03 · Imaging & Diagnostic Report — SPEC v0.1 REVIEW 2026-11-23
+Spec: `specs/DOC-03-imaging-diagnostic-report-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.2 (imaging review in view 3C), which needs its own approval before design.
+
