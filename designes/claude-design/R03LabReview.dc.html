@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.1 Lab report review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.lr{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.lr.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.lr *{box-sizing:border-box;margin:0}
+.lr .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.lr .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.lr .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.lr .sic{display:flex;gap:6px;align-items:center}
+.lr .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.lr .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.lr .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.lr .mini img{width:30px}
+.lr .main{position:absolute;top:122px;left:20px;width:362px}
+.lr .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.lr.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.lr h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.lr .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.lr .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.lr:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.lr .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.lr .row+.row{border-top:1px solid var(--hair)}
+.lr .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.lr .mb{background:var(--btint);color:var(--act)}.lr .ms{background:var(--ttint);color:var(--tl)}
+.lr .rx{flex:1;min-width:0}.lr .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.lr .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.lr .chev{color:var(--t3);flex:none}
+.lr .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.lr .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.lr .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.lr .note svg{flex:none;margin-top:2px}.lr .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.lr .n-info{background:var(--infob);color:var(--info)}.lr .n-err{background:var(--errb);color:var(--err)}.lr .n-amb{background:var(--ambb);color:var(--amb)}.lr .n-ok{background:var(--okb);color:var(--ok)}
+.lr .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.lr .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.lr.dark .btn{box-shadow:none}
+.lr .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.lr .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.lr .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.lr .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.lr .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.lr .bx svg{display:none}.lr .ck.on .bx{background:var(--act);border-color:var(--act)}.lr .ck.on .bx svg{display:block}
+.lr .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.lr.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.lr .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.lr{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.lr.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.lr .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.lr .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.lr .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.lr .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.lr .prog p{font-size:14px;font-weight:600}.lr .prog p span{color:var(--amb)}
+.lr .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.lr .pbar i{display:block;height:100%;width:22%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.lr .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.lr .gh{display:flex;justify-content:space-between;align-items:center;margin:16px 4px 8px}
+.lr .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.lr .gt small{font-size:13px;font-weight:500;color:var(--t2);margin-left:6px}
+.lr .mini{height:34px;padding:0 13px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.lr .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.lr:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.lr .kv{display:flex;justify-content:space-between;gap:12px;padding:9px 14px;font-size:14px}
+.lr .kv+.kv{border-top:1px solid var(--hair)}.lr .kv span{color:var(--t2)}.lr .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.lr .rw{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:58px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left;cursor:pointer}
+.lr .rw+.rw{border-top:1px solid var(--hair)}
+.lr .rw.unc{background:var(--ambb)}
+.lr .rn{flex:1;min-width:0}.lr .rn b{font-size:15px;font-weight:600;display:block}.lr .rn small{display:block;font-size:12px;color:var(--t2);margin-top:2px}
+.lr .rn small.am{color:var(--amb);font-weight:600}
+.lr .rv{text-align:right;font-variant-numeric:tabular-nums}.lr .rv b{font-size:15px;font-weight:700}.lr .rv small{display:block;font-size:12px;color:var(--t2)}
+.lr .fl{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-top:4px}
+.lr .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.lr .ri.ok{background:var(--tkb);color:var(--tk)}.lr .ri.nc{background:var(--upb);color:var(--up)}.lr .ri.at{background:var(--ambb);color:var(--amb)}
+.lr .sens{color:var(--t2);font-size:14px}.lr .sens a{color:var(--act);font-weight:600;text-decoration:none;margin-left:6px}
+.lr .blk{padding:12px 14px;font-size:13px;line-height:19px;color:var(--t1)}
+.lr .tbl{display:grid;grid-template-columns:1fr 60px;gap:4px 10px;margin-top:8px;font-size:13px;font-variant-numeric:tabular-nums}
+.lr .tbl span:nth-child(even){font-weight:700;text-align:center}
+.lr .cta{bottom:30px;padding-top:24px;z-index:5}
+.lr .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.lr .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.lr.dark .scrim{background:rgba(0,0,0,.55)}
+.lr .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.lr.dark .sheet{background:#0C1B2D}
+.lr .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.lr .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.lr .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.lr .src{border-radius:14px;background:#FFFFFF;border:1px solid var(--hair);padding:12px 14px;font:500 15px/1.5 'Courier New',monospace;color:#33445E;position:relative;margin-top:12px}
+.lr.dark .src{background:#EEF2F7}
+.lr .src mark{background:rgba(245,165,36,.28);color:inherit;border-radius:4px;padding:0 3px;outline:2px solid rgba(245,165,36,.8)}
+.lr .src small{position:absolute;right:10px;top:6px;font:600 11px 'Plus Jakarta Sans',sans-serif;color:#5B6B7F}
+.lr .flds{border-radius:16px;border:1px solid var(--hair);overflow:hidden;margin-top:12px}
+.lr .f{display:flex;align-items:center;gap:10px;padding:9px 12px;min-height:48px}
+.lr .f+.f{border-top:1px solid var(--hair)}
+.lr .f .k{width:110px;flex:none;font-size:13px;color:var(--t2)}.lr .f .v{flex:1;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.lr .f .v small{display:block;font-size:11px;font-weight:500;color:var(--t3)}
+.lr .f.warn{background:var(--ambb)}.lr .f.warn .v{color:var(--amb)}
+.lr .f a{font-size:13px;font-weight:600;color:var(--act);text-decoration:none}
+.lr .prev{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--off);font-size:14px}
+.lr .prev a{color:var(--act);font-weight:600;text-decoration:none;font-size:14px}
+.lr .crit{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--ambb);font-size:14px;line-height:20px;color:var(--t1)}
+.lr .crit b{display:block;color:var(--amb)}
+.lr .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.lr .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.lr .btn2.red{color:var(--err)}
+.lr .fine{font-size:12px;line-height:17px;color:var(--t2);text-align:center}
+.lr .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.lr .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.lr .pl+.pl{border-top:1px solid var(--hair)}
+.lr .pl span{flex:1}.lr .pl small{color:var(--t2);font-size:12px}
+.lr .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.lr .lk b{display:block;font-size:16px}.lr .lk small{font-size:13px;color:var(--t2)}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>10:30</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<sc-if value="{{isList}}" hint-placeholder-val="{{ true }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check your results</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<div class="prog"><p>4 of 18 results checked · <span>2 need attention</span></p><div class="pbar"><i></i></div></div>
+<p class="disc">These are your lab’s results and ranges. Ayoreni doesn’t interpret them.</p>
+<div class="gh"><span class="gt">Report details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><div class="kv"><span>Lab</span><b>City Diagnostics</b></div><div class="kv"><span>Name on report</span><b>Ananya Sharma</b></div><div class="kv"><span>Collected</span><b>18 Nov 2026, 8:10 AM</b></div><div class="kv"><span>Reported</span><b>18 Nov 2026, 6:40 PM</b></div></div>
+<div class="gh"><span class="gt">Lipid Profile<small>6 results</small></span><button class="mini" type="button">Confirm 5 Clear Results</button></div>
+<div class="gc">
+<button class="rw" type="button"><span class="rn"><b>Total Cholesterol</b><small class="">Range &lt; 200</small></span><span class="rv"><b>212</b><small>mg/dL</small><span class="fl">↑ H · from the lab</span></span><span class="ri nc">○</span></button>
+<button class="rw" type="button"><span class="rn"><b>HDL Cholesterol</b><small class="">Range &gt; 40</small></span><span class="rv"><b>46</b><small>mg/dL</small></span><span class="ri nc">○</span></button>
+<button class="rw unc" type="button"><span class="rn"><b>LDL Cholesterol</b><small class="am">We couldn’t read this clearly</small></span><span class="rv"><b>1?8</b><small>mg/dL</small></span><span class="ri at">!</span></button>
+<button class="rw" type="button"><span class="rn"><b>Triglycerides</b><small class="">Range &lt; 150</small></span><span class="rv"><b>168</b><small>mg/dL</small><span class="fl">↑ H · from the lab</span></span><span class="ri nc">○</span></button>
+</div>
+<div class="gh"><span class="gt">Diabetes<small>2 results</small></span></div>
+<div class="gc">
+<button class="rw" type="button"><span class="rn"><b>HbA1c</b><small class="">Range 4.0 – 5.6 · Previous (printed): 7.8 %</small></span><span class="rv"><b>7.1</b><small>%</small><span class="fl">↑ H · from the lab</span></span><span class="ri ok">✓</span></button>
+<button class="rw" type="button"><span class="rn"><span class="sens">Sensitive result<a href="#show">Show</a></span></span><span class="ri nc">○</span></button>
+</div>
+</div>
+<div class="cta"><button class="btn" type="button">Save Record</button><button class="btn2" type="button">Save &amp; Verify Later</button></div></sc-if>
+<sc-if value="{{isNarr}}" hint-placeholder-val="{{ false }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check your results</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<div class="prog"><p>12 of 14 results checked · <span>2 need attention</span></p><div class="pbar"><i style="width: 86%"></i></div></div>
+<p class="disc">These are your lab’s results and ranges. Ayoreni doesn’t interpret them.</p>
+<div class="gh"><span class="gt">Kidney Function<small>3 results</small></span></div>
+<div class="gc">
+<button class="rw unc" type="button"><span class="rn"><b>S. Creatinine</b><small class="am">Marked critical by the lab</small></span><span class="rv"><b>3.9</b><small>mg/dL</small><span class="fl">! Critical · from the lab</span></span><span class="ri at">!</span></button>
+<button class="rw" type="button"><span class="rn"><b>Blood Urea</b><small class="">Range 15 – 40</small></span><span class="rv"><b>62</b><small>mg/dL</small><span class="fl">↑ H · from the lab</span></span><span class="ri ok">✓</span></button>
+</div>
+<div class="gh"><span class="gt">Urine Culture &amp; Sensitivity<small>1 block</small></span><button class="mini" type="button">Confirm Text</button></div>
+<div class="gc"><div class="blk"><b>Organism isolated:</b> E. coli, &gt;10⁵ CFU/mL
+<div class="tbl"><span>Nitrofurantoin</span><span>S</span><span>Ciprofloxacin</span><span>R</span><span>Amikacin</span><span>S</span></div>
+<p class="disc" style="margin: 10px 0 0">Kept exactly as printed. Ayoreni doesn’t suggest medicines from this.</p></div></div>
+</div>
+<div class="cta"><button class="btn" type="button">Save Record</button><button class="btn2" type="button">Save &amp; Verify Later</button></div></sc-if>
+<sc-if value="{{isUnclear}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check LDL Cholesterol"><div class="grab"></div><p class="sht">LDL Cholesterol</p>
+<div class="src"><small>Page 1</small>LDL CHOLESTEROL   <mark>1?8</mark>   mg/dL   &lt;100</div>
+<div class="flds">
+<div class="f"><span class="k">Test name</span><span class="v">LDL Cholesterol<small>Read by Ayoreni</small></span></div>
+<div class="f warn"><span class="k">Result</span><span class="v">We couldn’t read this clearly<small style="color: var(--amb)">Tap to enter what the report says</small></span></div>
+<div class="f"><span class="k">Unit</span><span class="v">mg/dL<small>Read by Ayoreni</small></span><a href="#na">Not on report</a></div>
+<div class="f"><span class="k">Range</span><span class="v">&lt; 100<small>As printed</small></span><a href="#na">Not on report</a></div>
+<div class="f"><span class="k">Flag from the lab</span><span class="v">None printed<small>No flag is added by Ayoreni</small></span></div>
+</div>
+<div class="sbtns"><button class="btn off" type="button" aria-disabled="true">Confirm</button><p class="fine">Enter or mark the result first.</p><button class="btn alt" type="button">Unable to Verify</button><button class="btn2 red" type="button">Remove from This Record</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPrev}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check HbA1c"><div class="grab"></div><p class="sht">HbA1c</p>
+<div class="src"><small>Page 2</small>HbA1c   7.1 %   4.0-5.6   H   Prev: 7.8 % (12 Aug 26)</div>
+<div class="flds">
+<div class="f"><span class="k">Result</span><span class="v">7.1<small>As printed</small></span></div>
+<div class="f"><span class="k">Unit</span><span class="v">%<small>As printed</small></span></div>
+<div class="f"><span class="k">Range</span><span class="v">4.0 – 5.6<small>As printed</small></span></div>
+<div class="f"><span class="k">Flag from the lab</span><span class="v">↑ H · High<small>Printed by the lab</small></span></div>
+</div>
+<div class="prev"><span>Previous (printed): <b>7.8 %</b> · 12 Aug 2026</span><a href="#add">Add as Separate Result</a></div>
+<p class="disc">The previous value stays as text unless you add it.</p>
+<div class="sbtns"><button class="btn" type="button">Confirm</button><button class="btn2" type="button">Unable to Verify</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isCrit}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check S. Creatinine"><div class="grab"></div><p class="sht">S. Creatinine</p>
+<div class="src"><small>Page 1</small>S. CREATININE   3.9   mg/dL   0.6-1.1   ** CRITICAL – informed to Dr **</div>
+<div class="crit"><b>The lab marked this result as critical.</b>Contact your doctor if you haven’t already.<br><span style="color: var(--t2); font-size: 13px">Lab’s note: “CRITICAL – informed to Dr”</span></div>
+<div class="flds">
+<div class="f"><span class="k">Result</span><span class="v">3.9<small>As printed</small></span></div>
+<div class="f"><span class="k">Unit</span><span class="v">mg/dL<small>As printed</small></span></div>
+<div class="f"><span class="k">Range</span><span class="v">0.6 – 1.1<small>As printed</small></span></div>
+</div>
+<div class="sbtns"><button class="btn" type="button">Confirm</button><button class="btn2" type="button">Unable to Verify</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some results aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some results aren’t checked yet</p><p class="shs">16 of 18 results checked. Checked results go to Health Measurements now; the rest stay on the record.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>16 results</span><small>Checked</small></div><div class="pl"><span class="ri at">!</span><span>LDL Cholesterol</span><small>Unable to Verify</small></div><div class="pl"><span class="ri nc">○</span><span>1 sensitive result</span><small>Not checked</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Is this the result for your HbA1c test?"><div class="grab"></div>
+<p class="sht">Is this the result for your HbA1c test?</p><p class="shs">Your report is saved. Linking marks the planned test as done with this result.</p>
+<div class="lk"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6L5 19a1.5 1.5 0 001.3 2h11.4a1.5 1.5 0 001.3-2L14 9V3"></path></svg></span><div><b>HbA1c test</b><small>Planned from your 12 Oct prescription · result here: 7.1 % (18 Nov)</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Yes, Link Result</button><button class="btn2" type="button">No</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["review","unclear","previous","narrative","critical","pending","link"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    return {
+      rootCls: 'lr' + (t === 'dark' ? ' dark' : ''),
+      isList: ['review', 'unclear', 'previous', 'pending', 'link'].includes(s),
+      isNarr: s === 'narrative' || s === 'critical',
+      isUnclear: s === 'unclear', isPrev: s === 'previous', isCrit: s === 'critical', isPending: s === 'pending', isLink: s === 'link'
+    };
+  }
+}
+</script>
+</body>
+</html>
