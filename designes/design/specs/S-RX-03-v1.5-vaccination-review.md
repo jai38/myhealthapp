@@ -1,6 +1,6 @@
 # S-RX-03 v1.5 · Vaccination & immunization record review — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.4 for **Vaccination & Immunization Records only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.5 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.4 for **Vaccination & Immunization Records only**.
 **Reason:** owner decision DOC06-OD-01 (DOC-06 v1.0, approved 2026-11-23).
 **Sources:** DOC-06 v1.0 §3–§11 (APPROVED); S-RX-03 v1.0 (item sheet, save boundary, Not-your-document), v1.2 (recommendations sheet), v1.4 (allergy sheet pattern) — locked; RX-MAT-19 / MAT-AC-19; RX-VER-01–06, 12; CLR-02, 04, 06, 07 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
