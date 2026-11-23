@@ -1,6 +1,6 @@
 # S-RX-03 v1.1 · Lab report review — change specification
 
-**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.1 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked `specs/S-RX-03-confirm-and-verify.md` (v1.0, 2026-11-22) for **Laboratory Reports only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.1 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design APPROVED 2026-11-23 (canvas boards R03L and R03L States) · LOCKED · **Date:** 2026-11-23 · **Changes:** the locked `specs/S-RX-03-confirm-and-verify.md` (v1.0, 2026-11-22) for **Laboratory Reports only**.
 **Reason:** owner decision LAB-OD-01 (DOC-02 v1.0, approved 2026-11-23).
 **Sources:** DOC-02 v1.0 §3–§13 (APPROVED); S-RX-03 v1.0 (locked); RX-VER-01–06, 12 (APPROVED); CLR-03, 05, 06, 07 (APPROVED).
 **Labels:** APPROVED (in DOC-02 or S-RX-03 v1.0) · PROPOSED (new here, needs approval) · OPEN.
