@@ -1,6 +1,6 @@
 # S-RX-03 v1.8 · Other medical document review — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.7 for **Other Medical Documents only**. With v1.8, every one of the nine types has its own view 3C; the v1.0 "basic details" form is no longer used by any type.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.8 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted; v1.0 basic-details form retired) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.7 for **Other Medical Documents only**. With v1.8, every one of the nine types has its own view 3C; the v1.0 "basic details" form is no longer used by any type.
 **Reason:** owner decision DOC09-OD-01 (DOC-09 v1.0, approved 2026-11-23).
 **Sources:** DOC-09 v1.0 §3–§11 (APPROVED); S-RX-03 v1.0 (type picker, item sheet, save boundary, Not-your-document, look-alike sheet), v1.5/v1.6 (link sheet), v1.7 (keep-restricted sheet) — locked; CLR-06, CLR-08, CLR-09, QA-DOC-09 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.

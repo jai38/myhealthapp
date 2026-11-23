@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.8 Other document review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ot{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.ot.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.ot *{box-sizing:border-box;margin:0}
+.ot .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.ot .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.ot .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.ot .sic{display:flex;gap:6px;align-items:center}
+.ot .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.ot .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.ot .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.ot .mini img{width:30px}
+.ot .main{position:absolute;top:122px;left:20px;width:362px}
+.ot .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.ot.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.ot h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.ot .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.ot .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.ot:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.ot .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.ot .row+.row{border-top:1px solid var(--hair)}
+.ot .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.ot .mb{background:var(--btint);color:var(--act)}.ot .ms{background:var(--ttint);color:var(--tl)}
+.ot .rx{flex:1;min-width:0}.ot .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.ot .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.ot .chev{color:var(--t3);flex:none}
+.ot .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.ot .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.ot .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.ot .note svg{flex:none;margin-top:2px}.ot .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.ot .n-info{background:var(--infob);color:var(--info)}.ot .n-err{background:var(--errb);color:var(--err)}.ot .n-amb{background:var(--ambb);color:var(--amb)}.ot .n-ok{background:var(--okb);color:var(--ok)}
+.ot .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.ot .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.ot.dark .btn{box-shadow:none}
+.ot .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.ot .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.ot .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.ot .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.ot .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.ot .bx svg{display:none}.ot .ck.on .bx{background:var(--act);border-color:var(--act)}.ot .ck.on .bx svg{display:block}
+.ot .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.ot.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.ot .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.ot{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.ot.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.ot .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.ot .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.ot .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.ot .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.ot .prog p{font-size:14px;font-weight:600}.ot .prog p span{color:var(--amb)}
+.ot .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.ot .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.ot .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.ot .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.ot .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.ot .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.ot .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.ot .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.ot:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.ot .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.ot .kv+.kv{border-top:1px solid var(--hair)}.ot .kv span{color:var(--t2)}.ot .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.ot .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.ot .it+.it{border-top:1px solid var(--hair)}
+.ot .ix{flex:1;min-width:0}.ot .ix b{display:block;font-size:15px;font-weight:600}.ot .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.ot .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.ot .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.ot .ri.ok{background:var(--tkb);color:var(--tk)}.ot .ri.nc{background:var(--upb);color:var(--up)}.ot .ri.at{background:var(--ambb);color:var(--amb)}
+.ot .mi{width:34px;height:34px;border-radius:10px}
+.ot .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.ot .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.ot .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.ot .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.ot .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.ot .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.ot .cta{bottom:30px;padding-top:24px;z-index:5}
+.ot .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.ot .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.ot.dark .scrim{background:rgba(0,0,0,.55)}
+.ot .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.ot.dark .sheet{background:#0C1B2D}
+.ot .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.ot .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.ot .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.ot .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.ot .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.ot .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.ot .lk b{display:block;font-size:16px}.ot .lk small{font-size:13px;color:var(--t2)}
+.ot .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.ot .ck small{display:block;font-size:12px;color:var(--t2)}
+.ot .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.ot .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.ot .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.ot .pl+.pl{border-top:1px solid var(--hair)}
+.ot .pl span{flex:1}.ot .pl small{color:var(--t2);font-size:12px}
+
+.ot .ttlrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ot .ttlrow a{font-size:12px;font-weight:700;color:var(--act);text-decoration:none}
+.ot .mask a{font-size:13px;font-weight:700;color:var(--act);text-decoration:none;margin-left:6px}
+.ot .foot{font-size:12px;line-height:17px;color:var(--t2);padding:0 14px 12px}
+.ot .may{margin-top:12px;padding:13px 14px;border-radius:18px;background:var(--btint);font-size:14px;line-height:20px}
+.ot .may b{display:block;font-size:15px;margin-bottom:2px}
+.ot .may .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.ot .may .acts button{height:36px;padding:0 14px;border-radius:999px;border:0;font-family:inherit;font-size:14px;font-weight:700}
+.ot .may .p{background:linear-gradient(135deg,#006AE6,#0058E8);color:#fff}
+.ot .may .s{background:var(--card);color:var(--act)}
+.ot .unr{margin-top:4px;padding:14px;border-radius:18px;background:var(--ambb);font-size:14px;line-height:20px}
+.ot .unr b{display:block;color:var(--amb);font-size:15px;margin-bottom:2px}
+.ot .lab{font-size:13px;font-weight:600;color:var(--t2);margin:16px 4px 6px}
+.ot .inp{height:52px;border-radius:16px;border:1.5px solid var(--act);background:var(--field);display:flex;align-items:center;padding:0 14px;font-size:16px;color:var(--t3)}
+.ot .inp.q{border:1px solid var(--fbd)}
+.ot .retake{display:block;margin:14px 4px 0;font-size:14px;font-weight:700;color:var(--act);text-decoration:none}
+.ot .hint2{text-align:center;font-size:12px;color:var(--t2);margin-bottom:6px}
+.ot .opt{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;font-size:16px;border-bottom:1px solid var(--hair)}
+.ot .opt b{color:var(--act);font-size:16px}
+.ot .pair{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.ot .pr{padding:11px 14px}.ot .pr+.pr{border-top:1px solid var(--hair)}
+.ot .pr span{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2)}
+.ot .pr b{display:block;font-size:16px;margin-top:2px}.ot .pr small{font-size:13px;color:var(--t2)}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check your document</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<sc-if value="{{isRev}}" hint-placeholder-val="{{ true }}"><div class="prog"><p>{{progTxt}}</p><div class="pbar"><i></i></div></div>
+<p class="disc">This document is kept as written. Ayoreni doesn’t act on what it says.</p><sc-if value="{{isMay}}" hint-placeholder-val="{{ false }}"><div class="may"><b>This may be a prescription.</b>It lists medicines with doses. Checking it as a prescription lets you choose what to track.<div class="acts"><button class="p" type="button">Check as Prescription</button><button class="s" type="button">Keep as Other</button></div></div></sc-if>
+<div class="gh"><span class="gt">Details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><small>Title</small><span class="ttlrow"><b>{{title}}</b><span class="tg" style="margin-left: 0">{{sub}}</span><a href="#">Change</a></span></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><small>Name on document</small><b>Ananya Sharma</b></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><small>Date</small><b>{{date}}</b></span><span class="ri nc">○</span></button><button class="it" type="button"><span class="ix"><small>Issuer</small><b>{{issuer}}</b></span><span class="ri ok">✓</span></button></div>
+<div class="gh"><span class="gt">From the document<small>As written</small></span></div>
+<div class="gc"><sc-if value="{{isCert}}" hint-placeholder-val="{{ true }}"><div class="kv"><span>Period</span><b>“Rest advised from 24 to 28 Nov 2026”</b></div><div class="kv"><span>Purpose</span><b>“For office”</b></div></sc-if><sc-if value="{{isBg}}" hint-placeholder-val="{{ false }}"><div class="kv"><span>Blood group</span><b>B+ (as printed)</b></div></sc-if><sc-if value="{{isMay}}" hint-placeholder-val="{{ false }}"><div class="kv"><span>Note</span><b>Medicines are kept as text until you choose</b></div></sc-if></div>
+<div class="gh"><span class="gt">Reference numbers</span></div>
+<div class="gc"><div class="kv"><span>{{refLbl}}</span><b class="mask">•••• 2207<a href="#">Show</a></b></div></div>
+<div class="gh"><span class="gt">Text from the document</span></div>
+<div class="gc"><div class="coll"><span>Page text<small>Optional to check</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></div><p class="foot">Kept as text. Nothing here is added to your medicines or results.</p></div></sc-if>
+<sc-if value="{{isUnr}}" hint-placeholder-val="{{ false }}"><div class="unr"><b>Ayoreni couldn’t read this document.</b>You can still keep it. Give it a name so you can find it later.</div>
+<p class="lab">Title</p><div class="inp">e.g. Old clinic letter</div>
+<p class="lab">Date (add if you know it)</p><div class="inp q">Date unknown</div>
+<a class="retake" href="#">Retake Photo</a></sc-if>
+</div>
+<div class="cta"><sc-if value="{{isUnr}}" hint-placeholder-val="{{ false }}"><p class="hint2">Add a name to save</p></sc-if><button class="{{saveCls}}" type="button" aria-disabled="{{saveDis}}">Save Record</button></div>
+<sc-if value="{{isSub}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Kind of document"><div class="grab"></div>
+<p class="sht">What kind of document?</p>
+<div style="margin-top: 8px"><div class="opt">Medical certificate<b>✓</b></div><div class="opt">Insurance document</div><div class="opt">Disability certificate</div><div class="opt">ID or blood group card</div><div class="opt">Care instructions</div><div class="opt">Consent or referral</div><div class="opt" style="border-bottom: 0">Other</div></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some details aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some details aren’t checked yet</p><p class="shs">3 of 4 details checked · date not checked. You can save now and finish later.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>Title, name, issuer</span><small>Confirmed</small></div><div class="pl"><span class="ri nc">○</span><span>Date</span><small>Not checked</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isLink}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Link to a record"><div class="grab"></div>
+<p class="sht">Is this related to your visit with Dr. Meera Iyer on 20 Nov?</p>
+<div class="pair"><div class="pr"><span>This document</span><b>Medical certificate</b><small>Dr. Meera Iyer · 20 Nov 2026</small></div><div class="pr"><span>Your record</span><b>Consultation</b><small>Dr. Meera Iyer · 20 Nov 2026</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Link</button><button class="btn alt" type="button">Not the Same</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isBlood}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Blood group"><div class="grab"></div>
+<p class="sht">Your profile says O+. This card says B+.</p><p class="shs">Nothing changes unless you choose.</p>
+<div class="pair"><div class="pr"><span>Health profile</span><b>O+</b><small>Added by you · Aug 2026</small></div><div class="pr"><span>Blood group card</span><b>B+</b><small>City Blood Bank · 3 Mar 2019</small></div></div>
+<div class="sbtns"><button class="btn alt" type="button">Keep O+</button><button class="btn alt" type="button">Use B+</button><button class="btn2" type="button">Decide Later</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["review","subtype","maybe","unreadable","pending","link","bloodgroup"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    const unr = s === 'unreadable', bg = s === 'bloodgroup', may = s === 'maybe';
+    return {
+      rootCls: 'ot' + (t === 'dark' ? ' dark' : ''),
+      isRev: !unr, isUnr: unr, isMay: may,
+      isSub: s === 'subtype', isPending: s === 'pending', isLink: s === 'link', isBlood: bg,
+      saveCls: unr ? 'btn off' : 'btn', saveDis: unr ? 'true' : 'false',
+      progTxt: '3 of 4 details checked',
+      title: bg ? 'Blood Group Card' : may ? 'Treatment Advice' : 'Medical Certificate',
+      sub: bg ? 'ID or blood group card' : may ? 'Other' : 'Medical certificate',
+      date: bg ? '3 Mar 2019' : '20 Nov 2026',
+      issuer: bg ? 'City Blood Bank' : 'Dr. Meera Iyer, Iyer Clinic',
+      refLbl: bg ? 'Card no.' : 'Certificate no.',
+      isCert: !bg && !may && !unr, isBg: bg
+    };
+  }
+}
+</script>
+</body>
+</html>
