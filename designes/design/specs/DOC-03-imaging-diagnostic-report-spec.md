@@ -1,6 +1,6 @@
-# DOC-03 · Imaging & Diagnostic Report — Extraction & Verification Specification v0.1
+# DOC-03 · Imaging & Diagnostic Report — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW DRAFT v0.1 (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-03 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-03 with recommendations"; all PROPOSED items and the recommendations for IMG-OD-01–08 accepted; legal review in IMG-OD-05 and clinical review in IMG-OD-03 still required before release) (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-03 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-03 scope: "diagnostic report or interpretation; any underlying imaging files require separate implementation scope validation"; CLR-04 one report, many conditions; CLR-05, 06, 07, 09; open item 3 on image-only files); Verification & Recovery v1.0 (RX-VER-01–14; DOC-03 items are "investigation metadata, documented findings or impression"); five-layer principle (MF-D01, by analogy); B1, B2, B5; locked S-RX-01–05 and S-RX-03 v1.1; DOC-02 v1.0 patterns (no interpretation, verbatim text, dates, sensitive results, planned-test link).
 **Labels:** APPROVED · PROPOSED (needs your approval) · OPEN.
 **Approval boundary:** product behaviour only; no clinical rule set, vendor or thresholds.
