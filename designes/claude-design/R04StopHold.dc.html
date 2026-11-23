@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-04 v1.1 Stop and hold</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.sh4{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.sh4.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.sh4 *{box-sizing:border-box;margin:0}
+.sh4 .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.sh4 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.sh4 .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.sh4 .sic{display:flex;gap:6px;align-items:center}
+.sh4 .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.sh4 .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.sh4 .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.sh4 .mini img{width:30px}
+.sh4 .main{position:absolute;top:122px;left:20px;width:362px}
+.sh4 .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.sh4.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.sh4 h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.sh4 .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.sh4 .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.sh4:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.sh4 .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.sh4 .row+.row{border-top:1px solid var(--hair)}
+.sh4 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.sh4 .mb{background:var(--btint);color:var(--act)}.sh4 .ms{background:var(--ttint);color:var(--tl)}
+.sh4 .rx{flex:1;min-width:0}.sh4 .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.sh4 .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.sh4 .chev{color:var(--t3);flex:none}
+.sh4 .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.sh4 .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.sh4 .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.sh4 .note svg{flex:none;margin-top:2px}.sh4 .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.sh4 .n-info{background:var(--infob);color:var(--info)}.sh4 .n-err{background:var(--errb);color:var(--err)}.sh4 .n-amb{background:var(--ambb);color:var(--amb)}.sh4 .n-ok{background:var(--okb);color:var(--ok)}
+.sh4 .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.sh4 .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.sh4.dark .btn{box-shadow:none}
+.sh4 .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.sh4 .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.sh4 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.sh4 .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.sh4 .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.sh4 .bx svg{display:none}.sh4 .ck.on .bx{background:var(--act);border-color:var(--act)}.sh4 .ck.on .bx svg{display:block}
+.sh4 .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.sh4.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.sh4 .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.sh4{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.sh4.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.sh4 .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.sh4 .saved{height:30px;padding:0 10px;border-radius:999px;background:var(--tkb);color:var(--tk);font-size:12px;font-weight:700;display:flex;align-items:center}
+.sh4 .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.sh4 .lead{font-size:15px;line-height:21px;color:var(--t2)}.sh4 .lead b{color:var(--t1)}
+.sh4 .gh{display:flex;justify-content:space-between;align-items:baseline;margin:16px 4px 8px}
+.sh4 .gt{font-size:17px;font-weight:700;letter-spacing:-.015em}.sh4 .gc{font-size:13px;color:var(--t2)}
+.sh4 .mc{border-radius:20px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:14px;margin-bottom:10px}
+.sh4:not(.dark) .mc{outline:1px solid var(--hair);outline-offset:-1px}
+.sh4 .mh{display:flex;gap:12px;align-items:flex-start}
+.sh4 .mx{flex:1;min-width:0}.sh4 .mn{font-size:17px;font-weight:600;letter-spacing:-.015em}.sh4 .md{font-size:13px;color:var(--t2);margin-top:2px;font-variant-numeric:tabular-nums}
+.sh4 .st{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px;background:var(--ambb);color:var(--amb)}
+.sh4 .ins{margin-top:8px;padding:9px 11px;border-radius:12px;background:var(--off);font-size:13px;line-height:18px;color:var(--t2)}
+.sh4 .ins q{font-style:italic;color:var(--t1);font-weight:600;quotes:"“" "”"}
+.sh4 .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.sh4 .ab{height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--fbd);background:var(--field);color:var(--t1);font-family:inherit;font-size:14px;font-weight:600}
+.sh4 .ab.p{border-color:var(--act);color:var(--act)}
+.sh4 .dec{display:flex;justify-content:space-between;margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--btint);font-size:14px;font-weight:600;color:var(--act)}
+.sh4 .dec a{color:var(--act);text-decoration:none}
+.sh4 .info{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--off);font-size:13px;line-height:18px;color:var(--t2);margin-bottom:10px}
+.sh4 .info b{color:var(--t1)}
+.sh4 .foot{font-size:13px;color:var(--t2);margin:4px 4px 0}
+.sh4 .cta{bottom:30px;padding-top:24px;z-index:5}
+.sh4 .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.sh4 .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.sh4.dark .scrim{background:rgba(0,0,0,.55)}
+.sh4 .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.sh4.dark .sheet{background:#0C1B2D}
+.sh4 .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.sh4 .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.sh4 .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.sh4 .opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--fbd);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.sh4 .opt small{display:block;font-size:12px;color:var(--t2)}
+.sh4 .rad{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--t3);flex:none}
+.sh4 .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.sh4 .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.sh4 .sec{border-radius:20px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);overflow:hidden;margin-top:8px}
+.sh4:not(.dark) .sec{outline:1px solid var(--hair);outline-offset:-1px}
+.sh4 .wl{display:flex;gap:10px;align-items:flex-start;padding:10px 14px;font-size:14px;line-height:20px}
+.sh4 .wl+.wl{border-top:1px solid var(--hair)}
+.sh4 .wi{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:var(--btint);color:var(--act);margin-top:-1px}
+.sh4 .wi.g{background:var(--tkb);color:var(--tk)}
+.sh4 .kv{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;font-size:14px}
+.sh4 .kv+.kv{border-top:1px solid var(--hair)}.sh4 .kv span{color:var(--t2)}.sh4 .kv b{font-weight:600;text-align:right}
+.sh4 .kv small{display:block;font-size:12px;color:var(--t3);font-weight:500;text-align:right}
+.sh4 .cg{margin-top:12px}.sh4 .cgt{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--t2);margin:0 4px 6px}
+.sh4 .cl{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;font-size:14px;line-height:20px}
+.sh4 .cl+.cl{border-top:1px solid var(--hair)}
+.sh4 .ci{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.sh4 .cl b{font-weight:600;display:block}.sh4 .cl small{color:var(--t2);font-size:13px;font-variant-numeric:tabular-nums}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:05</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<sc-if value="{{isList}}" hint-placeholder-val="{{ true }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Review Medicines</span><span class="saved">✓ Saved</span></div>
+<div class="scroll">
+<p class="lead">Choose what to do with each medicine. <b>Nothing changes until you confirm.</b></p>
+<div class="gh"><span class="gt">Changes to your current medicines</span><span class="gc">2</span></div>
+<div class="mc"><div class="mh"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><div class="mx"><p class="mn">Aspirin 75 mg</p><p class="md">Now: 1 once a day, 9:00 PM · active</p><span class="st"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"></path></svg>{{aspLabel}}</span></div></div>
+<p class="ins"><q>Stop Aspirin</q> · Apollo Hospital discharge summary, 7 Nov 2026</p>
+<sc-if value="{{isDis}}" hint-placeholder-val="{{ false }}"><p class="ins" style="margin-top: 6px">The same summary also lists <b>Aspirin 75 mg once a day</b> under discharge medicines. Check with your doctor which applies.</p>
+<div class="acts"><button class="ab" type="button">Keep Existing</button><button class="ab" type="button">Record Only</button><button class="ab" type="button">Decide Later</button><button class="ab p" type="button">I’ve Checked with My Doctor</button></div></sc-if>
+<sc-if value="{{notDis}}" hint-placeholder-val="{{ true }}"><div class="acts"><button class="ab" type="button">Keep Existing</button><button class="ab p" type="button">Review Stop</button><button class="ab" type="button">Record Only</button><button class="ab" type="button">Decide Later</button></div></sc-if>
+</div>
+<div class="mc"><div class="mh"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><div class="mx"><p class="mn">Metformin 500 mg</p><p class="md">Now: 1 twice a day · active</p><span class="st"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6v12M15 6v12"></path></svg>Summary says hold</span></div></div>
+<p class="ins"><q>Hold Metformin until review</q> · Apollo Hospital discharge summary, 7 Nov 2026</p>
+<div class="dec"><span>Will pause from 23 Nov</span><a href="#change">Change</a></div></div>
+<div class="info"><span>ⓘ</span><span><b>“Stop Pantoprazole”</b> · not in your medicines · kept in the record</span></div>
+<p class="foot">Medicines that aren’t on this summary stay as they are.</p>
+</div>
+<div class="cta"><button class="btn" type="button">Review Changes</button></div></sc-if>
+<sc-if value="{{isRv}}" hint-placeholder-val="{{ false }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">{{rvTitle}}</span><span class="saved">✓ Saved</span></div>
+<div class="scroll">
+<p class="mn" style="font-size: 24px; line-height: 30px; font-weight: 700">{{rvHead}}</p>
+<div class="gh"><span class="gt">What the summary says</span><a class="gc" href="#page" style="color: var(--act); font-weight: 600; text-decoration: none">View page</a></div>
+<div class="sec"><div class="wl" style="font-style: italic; font-weight: 600">“{{rvQuote}}”</div><div class="wl" style="font-size: 13px; color: var(--t2)">Apollo Hospital discharge summary, 7 Nov 2026</div></div>
+<div class="gh"><span class="gt">What will happen</span></div>
+<div class="sec"><sc-for list="{{happen}}" as="h" hint-placeholder-count="4"><div class="wl"><span class="{{h.c}}">{{h.i}}</span><span>{{h.t}}</span></div></sc-for></div>
+<div class="sec" style="margin-top: 14px"><div class="kv"><span>From</span><b style="color: var(--act)">23 Nov 2026<small>Summary dated 7 Nov</small></b></div><div class="kv"><span>Reason</span><b>As per Apollo Hospital discharge summary, 7 Nov 2026<small>Optional · you can edit it</small></b></div></div>
+</div>
+<div class="cta"><button class="btn" type="button">Add to Plan</button><button class="btn2" type="button">Cancel</button></div></sc-if>
+<sc-if value="{{isConf}}" hint-placeholder-val="{{ false }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Confirm</span><span class="saved">✓ Saved</span></div>
+<div class="scroll">
+<p class="mn" style="font-size: 26px; line-height: 32px; font-weight: 700">Confirm your changes</p>
+<p class="lead" style="margin-top: 4px">Check each change. Nothing else is changed.</p>
+<div class="cg"><p class="cgt">Will stop</p><div class="sec" style="margin-top: 0"><div class="cl"><span class="ci" style="background: var(--errb); color: var(--err)">✕</span><div><b>Aspirin 75 mg</b><small>From 23 Nov · reminders off · history kept</small></div></div></div></div>
+<div class="cg"><p class="cgt">Will pause</p><div class="sec" style="margin-top: 0"><div class="cl"><span class="ci" style="background: var(--ambb); color: var(--amb)">❚❚</span><div><b>Metformin 500 mg</b><small>From 23 Nov · won’t restart by itself</small></div></div></div></div>
+<div class="cg"><p class="cgt">Will start tracking</p><div class="sec" style="margin-top: 0"><div class="cl"><span class="ci" style="background: var(--btint); color: var(--act)">+</span><div><b>Clopidogrel 75 mg</b><small>1 once a day from 23 Nov · reminder 9:00 PM</small></div></div></div></div>
+<div class="cg"><p class="cgt">Keeping as is</p><div class="sec" style="margin-top: 0"><div class="cl"><span class="ci" style="background: var(--upb); color: var(--up)">=</span><div><b>Atorvastatin 20 mg</b><small>The summary said stop; you chose to keep it</small></div></div></div></div>
+</div>
+<div class="cta"><button class="btn" type="button">Confirm 3 Changes</button><button class="btn2" type="button">Back to Medicines</button></div></sc-if>
+<sc-if value="{{isWhich}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Which medicine does this mean?"><div class="grab"></div>
+<p class="sht">Which medicine does this mean?</p><p class="shs">The summary says “Stop Ecosprin”. Choose one of your medicines, or None of These.</p>
+<button class="opt" type="button"><span class="rad"></span><span>Aspirin 75 mg<small>Active · 1 once a day</small></span></button>
+<button class="opt" type="button"><span class="rad"></span><span>Atorvastatin 20 mg<small>Active · 1 at night</small></span></button>
+<button class="opt" type="button"><span class="rad"></span><span>Telmisartan 40 mg<small>Active · 1 once a day</small></span></button>
+<button class="opt" type="button"><span class="rad"></span><span>None of These<small>Keep it in the record only</small></span></button>
+<div class="sbtns"><button class="btn off" type="button" aria-disabled="true">Continue</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["list","disagree","which","stop","pause","confirm"],"default":"list"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'list';
+    const pause = s === 'pause';
+    const happen = pause
+      ? [{ c: 'wi', i: '❚❚', t: 'Reminders for Metformin pause' }, { c: 'wi', i: '−', t: 'No doses on Today while paused' }, { c: 'wi g', i: '✓', t: 'Your history stays as it is' }, { c: 'wi', i: '!', t: 'It won’t restart by itself — you resume it when your doctor says' }]
+      : [{ c: 'wi', i: '✕', t: 'Reminders for Aspirin stop' }, { c: 'wi', i: '−', t: 'Future doses are removed from Today' }, { c: 'wi g', i: '✓', t: 'Your history stays, including doses you logged' }, { c: 'wi', i: '+', t: 'You can start it again later as a new course' }];
+    return {
+      rootCls: 'sh4' + (t === 'dark' ? ' dark' : ''),
+      isList: s === 'list' || s === 'disagree' || s === 'which', isDis: s === 'disagree', notDis: s !== 'disagree',
+      aspLabel: s === 'disagree' ? 'Instructions disagree' : 'Summary says stop',
+      isWhich: s === 'which', isRv: s === 'stop' || pause, isConf: s === 'confirm',
+      rvTitle: pause ? 'Review Pause' : 'Review Stop',
+      rvHead: pause ? 'Pause Metformin?' : 'Stop tracking Aspirin?',
+      rvQuote: pause ? 'Hold Metformin until review' : 'Stop Aspirin',
+      happen
+    };
+  }
+}
+</script>
+</body>
+</html>

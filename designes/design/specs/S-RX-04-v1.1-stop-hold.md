@@ -1,6 +1,6 @@
 # S-RX-04 v1.1 · "Summary says stop / hold" — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked `specs/S-RX-04-reconcile-and-schedule.md` (v1.0, 2026-11-22).
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-04 v1.1 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked `specs/S-RX-04-reconcile-and-schedule.md` (v1.0, 2026-11-22).
 **Reason:** owner decision DOC05-OD-02 (DOC-05 v1.0, approved 2026-11-23).
 **Sources:** DOC-05 v1.0 §5 (APPROVED); S-RX-04 v1.0 (locked); RX-MAT-07 (no automatic restart), RX-MAT-16 (conflicts), RX-MAT-18 (omission is not a stop; explicit lifecycle actions only), B3, B4, §8.1–§8.2 lifecycle (APPROVED); `api.md` pause/discontinue routes.
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.

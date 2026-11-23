@@ -307,6 +307,20 @@
       "w": 3150,
       "h": 2064,
       "title": "S-RX-03 v1.3 · Consultation review states (light / dark)"
+    },
+    "R04StopHold.dc.html": {
+      "x": 0,
+      "y": 44460,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-04 v1.1 · Summary says stop / hold"
+    },
+    "R04SStates.dc.html": {
+      "x": 482,
+      "y": 44460,
+      "w": 2708,
+      "h": 2064,
+      "title": "S-RX-04 v1.1 · Stop / hold states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -453,6 +467,13 @@
       "text": "S-RX-03 v1.3 · Consultation & clinical notes review · LOCKED (spec and design approved 23 Nov)",
       "kind": "title1",
       "maxW": 3632
+    },
+    "t19": {
+      "x": 0,
+      "y": 44200,
+      "text": "S-RX-04 v1.1 · “Summary says stop / hold” (adds to the locked S-RX-04) · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3190
     }
   },
   "order": [
@@ -498,7 +519,9 @@
     "R03ImagingReview.dc.html",
     "R03IStates.dc.html",
     "R03ConsultReview.dc.html",
-    "R03CStates.dc.html"
+    "R03CStates.dc.html",
+    "R04StopHold.dc.html",
+    "R04SStates.dc.html"
   ],
   "pages": [
     {
