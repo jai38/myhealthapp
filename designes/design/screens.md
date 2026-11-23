@@ -168,3 +168,6 @@ Change spec: `specs/S-RX-03-v1.2-imaging-review.md`. Replaces only the Imaging &
 ### DOC-04 · Doctor Consultation & Clinical Notes — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-04-consultation-notes-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.3 (consultation review in view 3C), which needs its own approval before design.
 
+### S-RX-03 v1.3 · Consultation & clinical notes review — SPEC REVIEW 2026-11-23
+Change spec: `specs/S-RX-03-v1.3-consultation-review.md`. Replaces only the Consultation part of view 3C and adds the consultation after-save sheets; everything else in S-RX-03 v1.0–v1.2 stays as locked.
+
