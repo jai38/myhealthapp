@@ -204,3 +204,8 @@ Spec: `specs/DOC-09-other-medical-document-spec.md` (functional; no screens). Ap
 
 ### S-RX-03 v1.8 · Other medical document review — SPEC APPROVED 2026-11-23 · design APPROVED 2026-11-23 · LOCKED (canvas boards R03O and R03O States)
 Change spec: `specs/S-RX-03-v1.8-other-document-review.md`. Replaces only the Other part of view 3C (the last type still on the v1.0 basic-details form) and adds the other after-save sheets; everything else in S-RX-03 v1.0–v1.7 stays as locked.
+
+## Flow 6 · Records → Documents
+
+### R-DOC-01 · Documents list — SPEC REVIEW 2026-11-23
+Spec: `specs/R-DOC-01-documents-list.md`. Primary filters All | Pending Verification | Verified (RX-VER-07–11), secondary filter sheet, search, special rows (restricted, waiting to upload, reading), states. Approving it leads to its visual design, then R-DOC-02 Record detail.
