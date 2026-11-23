@@ -190,5 +190,5 @@ Change spec: `specs/S-RX-03-v1.5-vaccination-review.md`. Replaces only the Vacci
 ### DOC-07 · Medical Bills & Receipts — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-07-medical-bills-receipts-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.6 (bill review in view 3C), which needs its own approval before design.
 
-### S-RX-03 v1.6 · Medical bill & receipt review — SPEC APPROVED 2026-11-23 · design REVIEW (canvas boards R03B and R03B States)
+### S-RX-03 v1.6 · Medical bill & receipt review — SPEC APPROVED 2026-11-23 · design APPROVED 2026-11-23 · LOCKED (canvas boards R03B and R03B States)
 Change spec: `specs/S-RX-03-v1.6-bill-review.md`. Replaces only the Bills part of view 3C and adds the bill after-save sheets; everything else in S-RX-03 v1.0–v1.5 stays as locked.

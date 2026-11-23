@@ -1,6 +1,6 @@
 # S-RX-03 v1.6 · Medical bill & receipt review — change specification
 
-**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.6 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.5 for **Medical Bills & Receipts only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.6 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design APPROVED 2026-11-23 (canvas boards R03B and R03B States) · LOCKED · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.5 for **Medical Bills & Receipts only**.
 **Reason:** owner decision DOC07-OD-01 (DOC-07 v1.0, approved 2026-11-23).
 **Sources:** DOC-07 v1.0 §3–§11 (APPROVED); S-RX-03 v1.0 (item sheet, save boundary, mixed-file split, Not-your-document), v1.5 (link sheet, updated-copy pattern) — locked; RX-VER-01–06, 12; CLR-02, 04, 05, 06, 07 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
