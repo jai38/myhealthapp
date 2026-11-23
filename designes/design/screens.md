@@ -165,3 +165,6 @@ Spec: `specs/DOC-03-imaging-diagnostic-report-spec.md` (functional; no screens).
 ### S-RX-03 v1.2 · Imaging & diagnostic report review — LOCKED 2026-11-23 (spec and design approved; canvas boards R03I and R03I States)
 Change spec: `specs/S-RX-03-v1.2-imaging-review.md`. Replaces only the Imaging & Diagnostic part of view 3C and adds the imaging after-save sheets; everything else in S-RX-03 v1.0/v1.1 stays as locked.
 
+### DOC-04 · Doctor Consultation & Clinical Notes — SPEC v0.1 REVIEW 2026-11-23
+Spec: `specs/DOC-04-consultation-notes-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.3 (consultation review in view 3C), which needs its own approval before design.
+
