@@ -153,6 +153,6 @@ Spec: `specs/S-RX-05-completion-summary.md` (approved with all recommendations).
 
 ## Document categories · extraction specifications
 
-### DOC-02 · Laboratory Report — SPEC v0.1 REVIEW 2026-11-22
+### DOC-02 · Laboratory Report — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-02-laboratory-report-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.1 (lab review in view 3C), which needs its own approval before design.
 

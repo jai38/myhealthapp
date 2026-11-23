@@ -1,6 +1,6 @@
-# DOC-02 · Laboratory Report — Extraction & Verification Specification v0.1
+# DOC-02 · Laboratory Report — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW DRAFT v0.1 (functional specification; no screens, no code) · **Date:** 2026-11-22 · **Category:** DOC-02 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-02 with recommendations"; all PROPOSED items and the recommendations for LAB-OD-01–08 accepted; specialist reviews in LAB-OD-04/05/06 still required before release) (functional specification; no screens, no code) · **Date:** 2026-11-22 · **Category:** DOC-02 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-02, CLR-01, 03, 04, 05, 06, 07, 09); Verification & Recovery v1.0 (RX-VER-01–14, universal across categories); the five-layer data principle (MF-D01, applied here by analogy); B1, B2, B5; the locked S-RX-01–05 journey. Roadmap (`ayoreni-docs`): Phase 19 "Lab results and trends", Phase 11 measurements, Phase 18 tests and follow-ups, D11 (file limits), D13 (trend analytes by allow-list), D20 (data location), D21 (values, units and dates always confirmed), D27 (test completion with or without result).
 **Labels:** APPROVED = already approved elsewhere and applied here · PROPOSED = new in this draft, needs your approval · OPEN = needs your decision or specialist/legal/technical input.
 **Approval boundary:** approving this draft approves product behaviour, not a clinical rule set, an analyte catalogue, a vendor or thresholds.
