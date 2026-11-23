@@ -1,6 +1,6 @@
 # S-RX-03 v1.3 · Consultation & clinical notes review — change specification
 
-**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.3 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0, v1.1 and v1.2 for **Doctor Consultation & Clinical Notes only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.3 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design APPROVED 2026-11-23 (canvas boards R03C and R03C States) · LOCKED · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0, v1.1 and v1.2 for **Doctor Consultation & Clinical Notes only**.
 **Reason:** owner decision DOC04-OD-02 (DOC-04 v1.0, approved 2026-11-23).
 **Sources:** DOC-04 v1.0 §1–§10 (APPROVED); S-RX-03 v1.0 (medicine cards, eligibility §11, save §10), v1.2 (recommendations sheet) — locked; S-RX-04 (locked); RX-VER-01–06, 12; CLR-02, 04, 06, 07 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
