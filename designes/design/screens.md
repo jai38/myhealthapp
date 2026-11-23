@@ -192,3 +192,6 @@ Spec: `specs/DOC-07-medical-bills-receipts-spec.md` (functional; no screens). Ap
 
 ### S-RX-03 v1.6 · Medical bill & receipt review — SPEC APPROVED 2026-11-23 · design APPROVED 2026-11-23 · LOCKED (canvas boards R03B and R03B States)
 Change spec: `specs/S-RX-03-v1.6-bill-review.md`. Replaces only the Bills part of view 3C and adds the bill after-save sheets; everything else in S-RX-03 v1.0–v1.5 stays as locked.
+
+### DOC-08 · Genetic & Genomic Report — SPEC v1.0 REVIEW 2026-11-23
+Spec: `specs/DOC-08-genetic-genomic-report-spec.md` (functional; no screens; release gated on privacy/legal review). Approving it leads to S-RX-03 v1.7 (restricted review in view 3C), which needs its own approval before design.
