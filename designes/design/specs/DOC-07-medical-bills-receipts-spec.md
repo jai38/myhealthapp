@@ -1,6 +1,6 @@
 # DOC-07 · Medical Bills & Receipts — Extraction & Verification Specification v1.0
 
-**Status:** REVIEW (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-07 of the nine approved document types.
+**Status:** APPROVED v1.0 2026-11-23 (owner: "approve DOC-07 with recommendations"; all PROPOSED items and the recommendations for DOC07-OD-01–08 accepted; sensitive-content rule in §9 still follows the pending legal review) (functional specification; no screens, no code) · **Date:** 2026-11-23 · **Category:** DOC-07 of the nine approved document types.
 **Builds on (APPROVED):** Document Classification v1.0 (DOC-07: hospital, consultation, pharmacy and laboratory bills/receipts; "a financial document is not proof that the billed treatment was administered or a medicine taken"; "treat medical bills as evidence of charges/payments, not of ingestion, administration, or completed care"; CLR-05 mixed-PDF split; QA-DOC-05, QA-DOC-07); Verification & Recovery v1.0 (DOC-07 items: "provider, invoice date, billed service, amount"); MF-D01–08, B1–B5; RX-MAT-19 principle; locked S-RX-01–05, S-RX-03 v1.1–v1.5, S-RX-04 v1.1; DOC-02–06 v1.0 patterns.
 **Labels:** APPROVED · PROPOSED (needs your approval) · OPEN.
 **Approval boundary:** product behaviour only; no tax, insurance-claim or financial advice.

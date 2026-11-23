@@ -187,5 +187,5 @@ Spec: `specs/DOC-06-vaccination-immunization-spec.md` (functional; no screens). 
 ### S-RX-03 v1.5 · Vaccination & immunization record review — SPEC APPROVED 2026-11-23 · design APPROVED 2026-11-23 · LOCKED (canvas boards R03V and R03V States)
 Change spec: `specs/S-RX-03-v1.5-vaccination-review.md`. Replaces only the Vaccination part of view 3C and adds the vaccination after-save sheets; everything else in S-RX-03 v1.0–v1.4 stays as locked.
 
-### DOC-07 · Medical Bills & Receipts — SPEC v1.0 REVIEW 2026-11-23
+### DOC-07 · Medical Bills & Receipts — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-07-medical-bills-receipts-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.6 (bill review in view 3C), which needs its own approval before design.
