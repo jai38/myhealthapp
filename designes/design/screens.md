@@ -177,6 +177,6 @@ Spec: `specs/DOC-05-hospitalization-procedure-spec.md` (functional; no screens).
 ### S-RX-04 v1.1 · "Summary says stop / hold" — LOCKED 2026-11-23 (spec and design approved; canvas boards R04S and R04S States)
 Change spec: `specs/S-RX-04-v1.1-stop-hold.md`. Adds the change-instruction group, matching sheet, Review stop/pause view and 4D groups; everything else in S-RX-04 v1.0 stays as locked.
 
-### S-RX-03 v1.4 · Hospitalization & procedure records review — SPEC APPROVED 2026-11-23 · design REVIEW (canvas boards R03H and R03H States)
+### S-RX-03 v1.4 · Hospitalization & procedure records review — SPEC APPROVED 2026-11-23 · design APPROVED 2026-11-23 · LOCKED (canvas boards R03H and R03H States)
 Change spec: `specs/S-RX-03-v1.4-hospital-review.md`. Replaces only the Hospitalization part of view 3C and adds the hospital after-save sheets; everything else in S-RX-03 v1.0–v1.3 stays as locked.
 
