@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.7 Genetic restricted review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.gn{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.gn.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.gn *{box-sizing:border-box;margin:0}
+.gn .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.gn .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.gn .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.gn .sic{display:flex;gap:6px;align-items:center}
+.gn .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.gn .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.gn .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.gn .mini img{width:30px}
+.gn .main{position:absolute;top:122px;left:20px;width:362px}
+.gn .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.gn.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.gn h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.gn .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.gn .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.gn:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.gn .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.gn .row+.row{border-top:1px solid var(--hair)}
+.gn .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.gn .mb{background:var(--btint);color:var(--act)}.gn .ms{background:var(--ttint);color:var(--tl)}
+.gn .rx{flex:1;min-width:0}.gn .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.gn .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.gn .chev{color:var(--t3);flex:none}
+.gn .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.gn .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.gn .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.gn .note svg{flex:none;margin-top:2px}.gn .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.gn .n-info{background:var(--infob);color:var(--info)}.gn .n-err{background:var(--errb);color:var(--err)}.gn .n-amb{background:var(--ambb);color:var(--amb)}.gn .n-ok{background:var(--okb);color:var(--ok)}
+.gn .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.gn .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.gn.dark .btn{box-shadow:none}
+.gn .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.gn .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.gn .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.gn .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.gn .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.gn .bx svg{display:none}.gn .ck.on .bx{background:var(--act);border-color:var(--act)}.gn .ck.on .bx svg{display:block}
+.gn .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.gn.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.gn .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.gn{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.gn.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.gn .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.gn .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.gn .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.gn .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.gn .prog p{font-size:14px;font-weight:600}.gn .prog p span{color:var(--amb)}
+.gn .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.gn .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.gn .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.gn .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.gn .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.gn .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.gn .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.gn .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.gn:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.gn .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.gn .kv+.kv{border-top:1px solid var(--hair)}.gn .kv span{color:var(--t2)}.gn .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.gn .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.gn .it+.it{border-top:1px solid var(--hair)}
+.gn .ix{flex:1;min-width:0}.gn .ix b{display:block;font-size:15px;font-weight:600}.gn .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.gn .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.gn .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.gn .ri.ok{background:var(--tkb);color:var(--tk)}.gn .ri.nc{background:var(--upb);color:var(--up)}.gn .ri.at{background:var(--ambb);color:var(--amb)}
+.gn .mi{width:34px;height:34px;border-radius:10px}
+.gn .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.gn .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.gn .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.gn .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.gn .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.gn .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.gn .cta{bottom:30px;padding-top:24px;z-index:5}
+.gn .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.gn .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.gn.dark .scrim{background:rgba(0,0,0,.55)}
+.gn .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.gn.dark .sheet{background:#0C1B2D}
+.gn .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.gn .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.gn .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.gn .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.gn .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.gn .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.gn .lk b{display:block;font-size:16px}.gn .lk small{font-size:13px;color:var(--t2)}
+.gn .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.gn .ck small{display:block;font-size:12px;color:var(--t2)}
+.gn .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.gn .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.gn .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.gn .pl+.pl{border-top:1px solid var(--hair)}
+.gn .pl span{flex:1}.gn .pl small{color:var(--t2);font-size:12px}
+
+.gn .top .ttl{display:flex;align-items:center;gap:6px}
+.gn .rn{display:flex;gap:12px;margin-top:2px;padding:13px 14px;border-radius:18px;background:var(--btint);font-size:14px;line-height:20px}
+.gn .rn b{display:block;font-size:15px;margin-bottom:2px}
+.gn .rn .mi{background:var(--card);color:var(--act);flex:none}
+.gn .rn p+p{margin-top:6px;font-weight:600}
+.gn .mask a{font-size:13px;font-weight:700;color:var(--act);text-decoration:none;margin-left:6px}
+.gn .stay{display:flex;gap:8px;align-items:center;margin:10px 4px 0;font-size:13px;color:var(--t2);font-weight:600}
+.gn .help{font-size:13px;line-height:19px;color:var(--t2);margin:14px 4px 0}
+.gn .crop{margin-top:12px;border-radius:12px;background:#FFFFFF;border:1px solid var(--hair);padding:10px 12px;font:500 14px/1.5 'Courier New',monospace;color:#33445E;position:relative}
+.gn.dark .crop{background:#EEF2F7}
+.gn .crop small{position:absolute;right:10px;top:6px;font:600 11px 'Plus Jakarta Sans',sans-serif;color:#5B6B7F}
+.gn .flds{border-radius:16px;border:1px solid var(--hair);overflow:hidden;margin-top:10px}
+.gn .f{display:flex;align-items:center;gap:10px;padding:8px 12px;min-height:44px}
+.gn .f .k{width:96px;flex:none;font-size:13px;color:var(--t2)}.gn .f .v{flex:1;font-size:15px;font-weight:600}
+.gn .f a{font-size:13px;font-weight:600;color:var(--act);text-decoration:none}
+.gn .tt{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px;border-radius:16px;border:2px solid var(--act);background:var(--field)}
+.gn .tt b{display:block;font-size:16px}.gn .tt small{font-size:13px;color:var(--t2)}
+.gn .tt .tg{margin-left:auto;background:var(--btint);color:var(--act)}
+.gn .kr{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.gn .kr div{display:flex;gap:12px;align-items:center;padding:12px 14px;font-size:15px;font-weight:500}
+.gn .kr div+div{border-top:1px solid var(--hair)}
+.gn .kr .mi{width:32px;height:32px;border-radius:10px;background:var(--btint);color:var(--act);flex:none}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg> Check your report details</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll"><div class="prog"><p>{{progTxt}}</p><div class="pbar"><i></i></div></div>
+<div class="rn" style="margin-top: 12px"><span class="mi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg></span><div><p><b>This is a genetic report.</b>It will be kept restricted: hidden from lists and search, left out of sharing, and opened only with Face ID or your passcode.</p><sc-if value="{{isPre}}" hint-placeholder-val="{{ false }}"><p>Ayoreni never shows or saves the baby’s sex.</p></sc-if></div></div>
+<p class="disc">Ayoreni doesn’t read or explain the results. Only the details below are saved.</p>
+<div class="gh"><span class="gt">Report details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><small>Name on document</small><b>{{who}}</b></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><small>Report date</small><b>12 Oct 2026</b></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><small>Laboratory</small><b>{{lab}}</b></span><span class="ri nc">○</span></button><button class="it" type="button"><span class="ix"><small>Test name, as printed</small><b>{{test}}</b></span><span class="ri nc">○</span></button>
+<div class="kv"><span>Ordering doctor</span><b>{{doc}}</b></div><div class="kv"><span>Report ID</span><b class="mask">•••• 3390<a href="#">Show</a></b></div><div class="kv"><span>Report type</span><b><span class="tg" style="margin-left: 0">Final</span></b></div></div>
+<p class="stay"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg> Results stay only in your original report.</p>
+<p class="help">If you have questions about this report, ask the doctor or counsellor who ordered it.</p></div>
+<div class="cta"><button class="btn" type="button">Save Restricted Record</button></div>
+<sc-if value="{{isType}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Document type"><div class="grab"></div>
+<p class="sht">What kind of document is this?</p><p class="shs">This looks like a genetic report. It will be kept restricted.</p>
+<div class="tt"><span class="mi mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3c0 6 12 6 12 12M18 3c0 3-2 4.5-4.5 5.5M6 21c0-3 2-4.5 4.5-5.5M18 21c0-6-12-6-12-12M8 6h8M8 18h8"></path></svg></span><div><b>Genetic &amp; Genomic Report</b><small>Kept restricted</small></div><span class="tg">Suggested</span></div>
+<div class="sbtns"><button class="btn" type="button">Continue</button><button class="btn2" type="button">Choose Another Type</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isItem}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Check this detail"><div class="grab"></div>
+<p class="sht">Check this detail</p><p class="shs">Compare with the header of your report.</p>
+<div class="crop"><small>Page 1 · header</small>TEST: PHARMACOGENOMIC PANEL</div>
+<div class="flds"><div class="f"><span class="k">Test name</span><span class="v">Pharmacogenomic Panel</span><a href="#">Edit</a></div></div>
+<div class="sbtns"><button class="btn" type="button">Confirm</button><button class="btn2" type="button">Unable to Verify</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some details aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some details aren’t checked yet</p><p class="shs">2 of 4 details checked. You can save now and finish later. The record stays restricted.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>Name and report date</span><small>Confirmed</small></div><div class="pl"><span class="ri nc">○</span><span>Laboratory and test name</span><small>Not checked</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isKeep}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Keep this record restricted?"><div class="grab"></div>
+<p class="sht">Keep this record restricted?</p><p class="shs">It looked like a genetic report. If you remove the restriction, its contents may be read like other records.</p>
+<div class="sbtns"><button class="btn" type="button">Keep Restricted</button><button class="btn alt" type="button">Remove Restriction</button><button class="btn2" type="button">Cancel</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isKept}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Kept restricted"><div class="grab"></div>
+<p class="sht">Kept restricted</p>
+<div class="kr"><div><span class="mi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.1A9.8 9.8 0 0112 5c6 0 10 7 10 7a17 17 0 01-3.2 3.9M6.1 6.1C3.5 7.9 2 12 2 12s4 7 10 7a9.6 9.6 0 004.1-.9"></path></svg></span>Hidden from your records list and search</div><div><span class="mi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2"></path><path d="M9 9v1M15 9v1M12 9v4h-1M9 16c1.7 1.2 4.3 1.2 6 0"></path></svg></span>Opens only with Face ID or your passcode</div><div><span class="mi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13"></path><path d="M3 3l18 18"></path></svg></span>Left out of sharing, exports and your emergency card</div></div>
+<div class="sbtns"><button class="btn" type="button">Done</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["type","review","item","pending","keep","kept","prenatal"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    const pre = s === 'prenatal';
+    return {
+      rootCls: 'gn' + (t === 'dark' ? ' dark' : ''),
+      isType: s === 'type', isItem: s === 'item', isPending: s === 'pending', isKeep: s === 'keep', isKept: s === 'kept', isPre: pre,
+      progTxt: s === 'kept' ? '4 of 4 details checked' : '2 of 4 details checked',
+      who: 'Ananya Sharma',
+      lab: pre ? 'Genome Diagnostics, Bengaluru' : 'Genome Diagnostics, Bengaluru',
+      test: pre ? 'Prenatal Screening Test' : 'Pharmacogenomic Panel',
+      doc: pre ? 'Dr. S. Kulkarni' : 'Dr. R. Menon'
+    };
+  }
+}
+</script>
+</body>
+</html>

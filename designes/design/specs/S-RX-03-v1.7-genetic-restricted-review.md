@@ -1,6 +1,6 @@
 # S-RX-03 v1.7 · Genetic & genomic report — restricted review — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.6 for **Genetic & Genomic Reports only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.7 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted; release still gated on privacy/legal review) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.6 for **Genetic & Genomic Reports only**.
 **Reason:** owner decision DOC08-OD-01 (DOC-08 v1.0, approved 2026-11-23). Release gated on privacy/legal review (DOC08-OD-08).
 **Sources:** DOC-08 v1.0 §2–§11 (APPROVED); S-RX-03 v1.0 (type step, save boundary, Not-your-document, look-alike sheet) — locked; A01 App lock (device authentication) — locked; CLR-08, QA-DOC-08, VER-AC-10.5, VER-E2E-13 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN · LEGAL GATE.

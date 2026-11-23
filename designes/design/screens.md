@@ -196,5 +196,5 @@ Change spec: `specs/S-RX-03-v1.6-bill-review.md`. Replaces only the Bills part o
 ### DOC-08 · Genetic & Genomic Report — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations; release gated on privacy/legal review)
 Spec: `specs/DOC-08-genetic-genomic-report-spec.md` (functional; no screens; release gated on privacy/legal review). Approving it leads to S-RX-03 v1.7 (restricted review in view 3C), which needs its own approval before design.
 
-### S-RX-03 v1.7 · Genetic & genomic report restricted review — SPEC REVIEW 2026-11-23
+### S-RX-03 v1.7 · Genetic & genomic report restricted review — SPEC APPROVED 2026-11-23 · design REVIEW (canvas boards R03G and R03G States)
 Change spec: `specs/S-RX-03-v1.7-genetic-restricted-review.md`. Replaces only the Genetic part of view 3C, adds the keep-restricted and kept-restricted sheets; everything else in S-RX-03 v1.0–v1.6 stays as locked. Release gated on privacy/legal review.

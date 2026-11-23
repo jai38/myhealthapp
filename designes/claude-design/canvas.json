@@ -363,6 +363,20 @@
       "w": 3150,
       "h": 2064,
       "title": "S-RX-03 v1.6 · Bill review states (light / dark)"
+    },
+    "R03GeneticReview.dc.html": {
+      "x": 0,
+      "y": 54936,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 v1.7 · Genetic & genomic restricted review"
+    },
+    "R03GStates.dc.html": {
+      "x": 482,
+      "y": 54936,
+      "w": 3150,
+      "h": 2064,
+      "title": "S-RX-03 v1.7 · Genetic review states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -537,6 +551,13 @@
       "text": "S-RX-03 v1.6 · Medical bill & receipt review (adds to the locked S-RX-03) · spec APPROVED · design APPROVED 2026-11-23 · LOCKED",
       "kind": "title1",
       "maxW": 3632
+    },
+    "t23": {
+      "x": 0,
+      "y": 54676,
+      "text": "S-RX-03 v1.7 · Genetic & genomic restricted review (adds to the locked S-RX-03) · spec APPROVED, design IN REVIEW · release gated on legal review",
+      "kind": "title1",
+      "maxW": 3632
     }
   },
   "order": [
@@ -590,7 +611,9 @@
     "R03VaccineReview.dc.html",
     "R03VStates.dc.html",
     "R03BillReview.dc.html",
-    "R03BStates.dc.html"
+    "R03BStates.dc.html",
+    "R03GeneticReview.dc.html",
+    "R03GStates.dc.html"
   ],
   "pages": [
     {
