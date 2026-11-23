@@ -162,3 +162,6 @@ Change spec: `specs/S-RX-03-v1.1-lab-review.md`. Replaces only the Laboratory Re
 ### DOC-03 · Imaging & Diagnostic Report — SPEC v1.0 APPROVED 2026-11-23 (with all recommendations)
 Spec: `specs/DOC-03-imaging-diagnostic-report-spec.md` (functional; no screens). Approving it leads to S-RX-03 v1.2 (imaging review in view 3C), which needs its own approval before design.
 
+### S-RX-03 v1.2 · Imaging & diagnostic report review — SPEC REVIEW 2026-11-23
+Change spec: `specs/S-RX-03-v1.2-imaging-review.md`. Replaces only the Imaging & Diagnostic part of view 3C and adds the imaging after-save sheets; everything else in S-RX-03 v1.0/v1.1 stays as locked.
+
