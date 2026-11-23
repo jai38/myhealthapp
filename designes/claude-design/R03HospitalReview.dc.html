@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S-RX-03 v1.4 Hospital review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.hr{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.hr.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.hr *{box-sizing:border-box;margin:0}
+.hr .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.hr .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.hr .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.hr .sic{display:flex;gap:6px;align-items:center}
+.hr .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.hr .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.hr .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.hr .mini img{width:30px}
+.hr .main{position:absolute;top:122px;left:20px;width:362px}
+.hr .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.hr.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.hr h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.hr .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.hr .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.hr:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.hr .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.hr .row+.row{border-top:1px solid var(--hair)}
+.hr .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.hr .mb{background:var(--btint);color:var(--act)}.hr .ms{background:var(--ttint);color:var(--tl)}
+.hr .rx{flex:1;min-width:0}.hr .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.hr .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.hr .chev{color:var(--t3);flex:none}
+.hr .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.hr .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.hr .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.hr .note svg{flex:none;margin-top:2px}.hr .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.hr .n-info{background:var(--infob);color:var(--info)}.hr .n-err{background:var(--errb);color:var(--err)}.hr .n-amb{background:var(--ambb);color:var(--amb)}.hr .n-ok{background:var(--okb);color:var(--ok)}
+.hr .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.hr .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.hr.dark .btn{box-shadow:none}
+.hr .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.hr .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.hr .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.hr .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.hr .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.hr .bx svg{display:none}.hr .ck.on .bx{background:var(--act);border-color:var(--act)}.hr .ck.on .bx svg{display:block}
+.hr .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.hr.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.hr .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.hr{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.hr.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.hr .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.hr .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.hr .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.hr .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.hr .prog p{font-size:14px;font-weight:600}.hr .prog p span{color:var(--amb)}
+.hr .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.hr .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.hr .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.hr .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.hr .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.hr .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.hr .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.hr .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.hr:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.hr .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.hr .kv+.kv{border-top:1px solid var(--hair)}.hr .kv span{color:var(--t2)}.hr .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.hr .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.hr .it+.it{border-top:1px solid var(--hair)}
+.hr .ix{flex:1;min-width:0}.hr .ix b{display:block;font-size:15px;font-weight:600}.hr .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.hr .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.hr .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.hr .ri.ok{background:var(--tkb);color:var(--tk)}.hr .ri.nc{background:var(--upb);color:var(--up)}.hr .ri.at{background:var(--ambb);color:var(--amb)}
+.hr .mi{width:34px;height:34px;border-radius:10px}
+.hr .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.hr .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.hr .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.hr .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.hr .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.hr .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.hr .cta{bottom:30px;padding-top:24px;z-index:5}
+.hr .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.hr .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.hr.dark .scrim{background:rgba(0,0,0,.55)}
+.hr .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.hr.dark .sheet{background:#0C1B2D}
+.hr .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.hr .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.hr .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.hr .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.hr .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.hr .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.hr .lk b{display:block;font-size:16px}.hr .lk small{font-size:13px;color:var(--t2)}
+.hr .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.hr .ck small{display:block;font-size:12px;color:var(--t2)}
+.hr .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.hr .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.hr .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.hr .pl+.pl{border-top:1px solid var(--hair)}
+.hr .pl span{flex:1}.hr .pl small{color:var(--t2);font-size:12px}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl">Check your hospital summary</span><button class="orig" type="button"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg> Original</button></div>
+<div class="scroll">
+<sc-if value="{{isTop}}" hint-placeholder-val="{{ true }}">
+<div class="prog"><p>4 of 9 items checked · <span>1 needs attention</span></p><div class="pbar"><i></i></div></div>
+<p class="disc">This is your hospital’s summary as written. Ayoreni doesn’t interpret it.</p>
+<div class="gh"><span class="gt">Stay details</span><button class="mini" type="button">Confirm Details</button></div>
+<div class="gc"><div class="kv"><span>Hospital</span><b>Apollo Hospital · Cardiology</b></div><div class="kv"><span>Admitted</span><b>3 Nov 2026</b></div><div class="kv"><span>Discharged</span><b>7 Nov 2026</b></div><div class="kv"><span>Name on document</span><b>Ananya Sharma</b></div><div class="kv"><span>IP number</span><b>IP-24-118392</b></div></div>
+<div class="gh"><span class="gt">Diagnoses<small>Written by Apollo Hospital · 7 Nov 2026</small></span></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><b>Unstable angina<span class="tg">Final</span></b><small>As written</small></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><b>Type 2 diabetes mellitus<span class="tg">Secondary</span></b><small>As written</small></span><span class="ri nc">○</span></button></div>
+<div class="gh"><span class="gt">Procedures</span></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><b>Coronary angiography</b><small>4 Nov 2026 · Dr. R. Menon</small></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><b>PTCA with stent to LAD</b><small>5 Nov 2026 · Dr. R. Menon</small></span><span class="ri nc">○</span></button></div></sc-if>
+<sc-if value="{{isLower}}" hint-placeholder-val="{{ false }}"><div class="gh"><span class="gt">Discharge medicines</span><span class="gc" style="font-size: 13px; color: var(--t2)">4</span></div>
+<div class="gc"><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Clopidogrel 75 mg</b><small>Tablet · 1 once a day</small></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Atorvastatin 40 mg</b><small>Tablet · 1 at night</small></span><span class="ri nc">○</span></button></div>
+<div class="gh"><span class="gt">Medicine changes</span></div>
+<div class="gc"><div class="chg">⚠ Changes your current medicines — you’ll decide next</div><button class="it" type="button"><span class="ix"><b>“Stop Aspirin”</b><small>As written</small></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="ix"><b>“Hold Metformin until review”</b><small>As written</small></span><span class="ri nc">○</span></button></div>
+<div class="gh"><span class="gt">Allergies recorded in hospital<small>Documented by Apollo Hospital</small></span></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><b>“Allergic to Penicillin — rash”</b><small>As written</small></span><span class="ri nc">○</span></button></div>
+<div class="gh"><span class="gt">Follow-ups</span></div>
+<div class="gc"><button class="it" type="button"><span class="ix"><b>“Review in cardiology OPD after 1 week”</b><small>As written</small></span><span class="ri nc">○</span></button></div>
+<div class="gh"><span class="gt">Warning signs, as written by the hospital<small>Optional · no alerts from Ayoreni</small></span></div>
+<div class="gc"><p class="warn">Come back immediately if chest pain, breathlessness, bleeding from the groin site or fainting.</p></div></sc-if>
+<sc-if value="{{isNotes}}" hint-placeholder-val="{{ false }}"><div class="gh"><span class="gt">Notes</span></div>
+<div class="gc"><div class="coll"><span>Notes<small>Optional to check</small></span><button class="mini" type="button">Confirm Text</button></div>
+<div class="para"><b>Course in hospital</b>Admitted with chest pain. Angiography showed 90% LAD stenosis. PTCA with DES to LAD done on 5/11. Post-procedure stable.</div>
+<div class="para"><b>Investigations</b>Trop I 0.8 ng/mL · HbA1c 7.4% · LDL 142 mg/dL (kept as text)</div>
+<div class="para"><b>Implant</b>Drug-eluting stent · Xience Sierra · 3.0 × 23 mm · Lot 1234567</div></div></sc-if>
+</div>
+<div class="cta"><button class="btn" type="button">Save &amp; Continue to Medicines</button><button class="btn2" type="button">Save Record Only</button></div>
+<sc-if value="{{isPending}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Some items aren’t checked yet"><div class="grab"></div>
+<p class="sht">Some items aren’t checked yet</p><p class="shs">7 of 9 items checked. You can save now and finish later.</p>
+<div class="plist"><div class="pl"><span class="ri ok">✓</span><span>Stay, diagnoses, procedures</span><small>Confirmed</small></div><div class="pl"><span class="ri ok">✓</span><span>3 discharge medicines, 2 changes</span><small>Confirmed</small></div><div class="pl"><span class="ri at">!</span><span>Atorvastatin · strength</span><small>Unable to Verify</small></div><div class="pl"><span class="ri nc">○</span><span>Follow-up</span><small>Not checked</small></div></div>
+<div class="sbtns"><button class="btn" type="button">Continue with Confirmed Medicines</button><button class="btn alt" type="button">Save &amp; Verify Later</button><button class="btn2" type="button">Keep Checking</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isAllergy}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Add to your allergies"><div class="grab"></div>
+<p class="sht">{{alTitle}}</p><p class="shs">{{alSub}}</p>
+<div class="lk"><span class="mi" style="background: var(--errb); color: var(--err)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"></path><path d="M12 9v4M12 16h.01"></path></svg></span><div><b>Penicillin</b><small>{{alCard}}</small></div></div>
+<div class="sbtns"><button class="btn" type="button">{{alBtn}}</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isStay}}" hint-placeholder-val="{{ false }}">
+<div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Link to your hospital stay"><div class="grab"></div>
+<p class="sht">Link these to your hospital stay?</p><p class="shs">Apollo Hospital · 3–7 Nov 2026. Each document stays separate.</p>
+<button class="ck" type="button"><span class="bx"></span><span>Lab report · City Diagnostics<small>4 Nov 2026</small></span></button>
+<button class="ck" type="button"><span class="bx"></span><span>Operation note · Apollo Hospital<small>5 Nov 2026</small></span></button>
+<div class="sbtns"><button class="btn off" type="button" aria-disabled="true">Link Selected</button><button class="btn2" type="button">Not Now</button></div>
+</div>
+</sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["review","changes","notes","pending","allergy","allergyexists","samestay"],"default":"review"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'review';
+    const exists = s === 'allergyexists';
+    return {
+      rootCls: 'hr' + (t === 'dark' ? ' dark' : ''),
+      isTop: ['review', 'pending', 'allergy', 'allergyexists', 'samestay'].includes(s),
+      isLower: s === 'changes', isNotes: s === 'notes',
+      isPending: s === 'pending', isAllergy: s === 'allergy' || exists, isStay: s === 'samestay',
+      alTitle: exists ? 'Penicillin is already in your allergies' : 'Add it to your allergies?',
+      alSub: exists ? 'Link this hospital record to it, so both sources are kept. Nothing is duplicated.' : 'The hospital recorded an allergy to Penicillin (“rash”). Nothing is added unless you choose.',
+      alCard: exists ? 'In your allergies since Aug 2026 · added by you' : 'Will be labelled “Documented by Apollo Hospital · 5 Nov 2026”',
+      alBtn: exists ? 'Link This Record' : 'Add'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # S-RX-03 v1.4 · Hospitalization & procedure records review — change specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.3 for **Hospitalization & Procedure Records only**.
+**Status:** APPROVED 2026-11-23 (owner: "approve S-RX-03 v1.4 with recommendations"; all PROPOSED items and OPEN-1–3 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Changes:** the locked S-RX-03 v1.0–v1.3 for **Hospitalization & Procedure Records only**.
 **Reason:** owner decision DOC05-OD-01 (DOC-05 v1.0, approved 2026-11-23).
 **Sources:** DOC-05 v1.0 §3–§10 (APPROVED); S-RX-03 v1.0 (medicine cards, eligibility, save), v1.2 (recommendations sheet), v1.3 (condition and same-visit sheets) — locked; S-RX-04 v1.0 and v1.1 (stop/hold) — locked; RX-VER-01–06, 12; CLR-02, 04, 06, 07 (APPROVED).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.

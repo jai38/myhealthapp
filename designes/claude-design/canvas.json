@@ -321,6 +321,20 @@
       "w": 2708,
       "h": 2064,
       "title": "S-RX-04 v1.1 · Stop / hold states (light / dark)"
+    },
+    "R03HospitalReview.dc.html": {
+      "x": 0,
+      "y": 46884,
+      "w": 402,
+      "h": 874,
+      "title": "S-RX-03 v1.4 · Hospitalization & procedure review"
+    },
+    "R03HStates.dc.html": {
+      "x": 482,
+      "y": 46884,
+      "w": 3150,
+      "h": 2064,
+      "title": "S-RX-03 v1.4 · Hospital review states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -474,6 +488,13 @@
       "text": "S-RX-04 v1.1 · “Summary says stop / hold” (adds to the locked S-RX-04) · LOCKED (spec and design approved 23 Nov)",
       "kind": "title1",
       "maxW": 3190
+    },
+    "t20": {
+      "x": 0,
+      "y": 46624,
+      "text": "S-RX-03 v1.4 · Hospitalization & procedure review (adds to the locked S-RX-03) · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3632
     }
   },
   "order": [
@@ -521,7 +542,9 @@
     "R03ConsultReview.dc.html",
     "R03CStates.dc.html",
     "R04StopHold.dc.html",
-    "R04SStates.dc.html"
+    "R04SStates.dc.html",
+    "R03HospitalReview.dc.html",
+    "R03HStates.dc.html"
   ],
   "pages": [
     {
