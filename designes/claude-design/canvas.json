@@ -454,6 +454,27 @@
       "w": 2708,
       "h": 2064,
       "title": "R-00 · Records home states (light / dark)"
+    },
+    "M02v11Details.dc.html": {
+      "x": 0,
+      "y": 71040,
+      "w": 402,
+      "h": 1640,
+      "title": "M02 v1.1 · Medication Details (full scroll)"
+    },
+    "M02v11States.dc.html": {
+      "x": 482,
+      "y": 71040,
+      "w": 2266,
+      "h": 3596,
+      "title": "M02 v1.1 · New states (light / dark, full scroll)"
+    },
+    "M02v11Sheets.dc.html": {
+      "x": 482,
+      "y": 74836,
+      "w": 1382,
+      "h": 2064,
+      "title": "M02 v1.1 · Start Taking, setup and stop sheets (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -670,6 +691,13 @@
       "text": "Flow 6 · R-00 Records home · spec APPROVED · design APPROVED 2026-11-24 · LOCKED",
       "kind": "title1",
       "maxW": 3190
+    },
+    "t29": {
+      "x": 0,
+      "y": 70780,
+      "text": "M02 v1.1 · Medication Details revised (replaces the v1.0 boards above where they differ) · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 2748
     }
   },
   "order": [
@@ -736,7 +764,10 @@
     "S06RStates.dc.html",
     "S05RecordsReview.dc.html",
     "R00RecordsHome.dc.html",
-    "R00States.dc.html"
+    "R00States.dc.html",
+    "M02v11Details.dc.html",
+    "M02v11States.dc.html",
+    "M02v11Sheets.dc.html"
   ],
   "pages": [
     {

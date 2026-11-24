@@ -116,7 +116,7 @@ Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · 
 - **Manage** (active / paused): Edit Reminder Times; Pause Medicine or Resume Medicine; Mark as Completed; Stop Medicine (red, asks for an optional reason, then `discontinue`). Footnote "Stopping or completing keeps the medicine and its history in your records." Completed/stopped medicines show no Manage card (the API can't restart them).
 - Decisions: names and dates in the design are mock data; the build uses the synthetic set ("Asha Test", "Testmed A 500 mg").
 
-### M02 v1.1 · Medication Details revised — SPEC REVIEW 2026-11-24
+### M02 v1.1 · Medication Details revised — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards M02 v1.1, M02 v1.1 States, M02 v1.1 Sheets)
 Spec: `specs/M02-v1.1-medication-details.md`. Aligns the in-review M02 with the locked S-RX-04 v1.0/v1.1 and R-DOC-02: Start Taking via Sheet U → 4B; Sources card; Review stop/pause; Start a New Course; as-needed; reaction on record; corrected-record banner. Approving leads to the v1.1 design, then M02 is locked as a whole.
 
 ## Side track L · Landing page — REVIEW 2026-11-21 (owner)
