@@ -45,6 +45,7 @@ Paste this at the start of a development session.
 | S-RX-04 v1.1 "Summary says stop / hold" (adds to S-RX-04) | Locked 2026-11-23 (spec `designes/design/specs/S-RX-04-v1.1-stop-hold.md`) | list, disagree, which, stop, pause, confirm |
 | S-RX-05 Completion Summary | Locked 2026-11-22 (spec `designes/design/specs/S-RX-05-completion-summary.md`) | done, partial, reminderset, recordonly, reading, failed, notifoff, other |
 | R-DOC-01 Documents list (Records → Documents) | Locked 2026-11-24 (spec `designes/design/specs/R-DOC-01-documents-list.md`) | all, pending, filter, search, restricted, pendingempty, offline, first |
+| R-DOC-02 Record detail | Locked 2026-11-24; delete retention gated on legal review (spec `designes/design/specs/R-DOC-02-record-detail.md`) | partial, verified, edit, affected, reminder, changetype, delete, restricted |
 
 Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 
