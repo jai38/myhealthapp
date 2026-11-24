@@ -116,6 +116,9 @@ Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · 
 - **Manage** (active / paused): Edit Reminder Times; Pause Medicine or Resume Medicine; Mark as Completed; Stop Medicine (red, asks for an optional reason, then `discontinue`). Footnote "Stopping or completing keeps the medicine and its history in your records." Completed/stopped medicines show no Manage card (the API can't restart them).
 - Decisions: names and dates in the design are mock data; the build uses the synthetic set ("Asha Test", "Testmed A 500 mg").
 
+### M02 v1.1 · Medication Details revised — SPEC REVIEW 2026-11-24
+Spec: `specs/M02-v1.1-medication-details.md`. Aligns the in-review M02 with the locked S-RX-04 v1.0/v1.1 and R-DOC-02: Start Taking via Sheet U → 4B; Sources card; Review stop/pause; Start a New Course; as-needed; reaction on record; corrected-record banner. Approving leads to the v1.1 design, then M02 is locked as a whole.
+
 ## Side track L · Landing page — REVIEW 2026-11-21 (owner)
 Canvas page "Landing page": board **L01** (desktop 1440, light; props `theme` light/dark, `layout` desktop/phone) and **L02** (phone 360 light and dark, desktop dark). Brief: `ayoreni-docs` `docs/phases/landing-brief.md`. Replaces the old MyHealth page in `jai38/MyHealth`.
 - Build as static HTML + CSS, Calm Glass v4 tokens with the 2026-11-19 contrast values, Plus Jakarta Sans. One breakpoint: the `phone` layout below 720 px (single column, 16 px gutter, full-width buttons). No tracking scripts, no forms, no download link.
