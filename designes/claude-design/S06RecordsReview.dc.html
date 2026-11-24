@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S06 v1.1 Today with Records to Review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.s06{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--tl:#007358;--btint:#E4F0FC;--ttint:#E6F8F3;--div:#E7EEF5;
+--tk:#097539;--tkb:#E3F5EA;--up:#5B6B7F;--upb:#EEF2F7;--nc:#9A5B00;--ncb:#FFF1DB;--sp:#007358;--spb:#E6F8F3;
+--nav:rgba(255,255,255,.80);--navsh:0 10px 30px rgba(20,60,120,.14);--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--island:#000;--home:#0F172A;
+width:402px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.s06.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--tl:#20D7C5;--btint:rgba(46,144,255,.14);--ttint:rgba(32,215,197,.12);--div:rgba(255,255,255,.06);
+--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--up:#B7C4D6;--upb:rgba(255,255,255,.07);--nc:#F5B84A;--ncb:rgba(245,184,74,.14);--sp:#20D7C5;--spb:rgba(32,215,197,.12);
+--nav:rgba(12,27,45,.84);--navsh:0 10px 30px rgba(0,0,0,.45);--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.s06 *{box-sizing:border-box;margin:0}
+.s06 .mesh{position:absolute;border-radius:50%;filter:blur(48px);pointer-events:none}
+.s06 .sbar{position:absolute;top:0;left:0;width:402px;height:54px;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font-size:17px;font-weight:600;font-family:-apple-system,'SF Pro Text',sans-serif;color:var(--t1)}
+.s06 .sbar:before{content:"";position:absolute;inset:0;background:linear-gradient(var(--bg) 60%,transparent);z-index:-1}
+.s06 .island{position:absolute;left:50%;top:11px;transform:translateX(-50%);width:126px;height:37px;border-radius:20px;background:var(--island)}
+.s06 .sic{display:flex;gap:6px;align-items:center}
+.s06 .wrap{position:relative;padding:62px 16px 130px}
+.s06.phone .wrap{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto}
+.s06 .hd{display:flex;align-items:center;justify-content:space-between;height:44px;margin-bottom:14px}
+.s06 .br{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:.22em;font-size:15px}
+.s06 .br img{width:48px;height:auto}
+.s06 .ib{display:flex;gap:10px}
+.s06 .icb{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;position:relative;color:var(--t1);cursor:pointer}
+.s06 .dot{position:absolute;right:11px;top:10px;width:8px;height:8px;border-radius:50%;background:#FF091B;border:1.5px solid var(--bg)}
+.s06 .gr{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.s06 .gs{font-size:16px;font-weight:400;color:var(--t2);margin:4px 0 20px;letter-spacing:-.005em}
+.s06 .hero{border-radius:28px;padding:22px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,#0058E6 0%,#0068EE 55%,#00B894 135%);box-shadow:0 14px 30px rgba(0,96,252,.26);margin-bottom:26px}
+.s06.dark .hero{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 14px 34px rgba(0,96,252,.22)}
+.s06 .hero:before{content:"";position:absolute;right:-50px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(108,231,216,.55),transparent 65%)}
+.s06 .hero:after{content:"";position:absolute;inset:0;border-radius:28px;border:1px solid rgba(255,255,255,.28);background:linear-gradient(180deg,rgba(255,255,255,.14),transparent 45%)}
+.s06 .hr{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between}
+.s06 .hl{font-size:13px;font-weight:600;opacity:.85;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase}
+.s06 .hb{font-size:34px;line-height:40px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.s06 .hs{font-size:15px;font-weight:400;opacity:.92;margin-top:4px}
+.s06 .hpill{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12px;font-weight:600;background:rgba(0,20,70,.18);border:1px solid rgba(255,255,255,.32);border-radius:999px;padding:6px 11px}
+.s06 .sh{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}
+.s06 .st{font-size:20px;font-weight:700;letter-spacing:-.02em;display:flex;gap:8px;align-items:center}
+.s06 .st svg{color:var(--t2)}
+.s06 .cnt{font-size:13px;font-weight:500;color:var(--t3)}
+.s06 .gc{border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);margin-bottom:22px;overflow:hidden}
+.s06:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.s06 .row{display:flex;gap:12px;align-items:center;padding:14px 10px 14px 14px;min-height:68px}
+.s06 .row+.row{border-top:1px solid var(--div)}
+.s06 .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.s06 .mb{background:var(--btint);color:var(--act)}.s06 .ms{background:var(--ttint);color:var(--tl)}
+.s06 .mx{flex:1;min-width:0}
+.s06 .mn{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em;display:flex;gap:6px;align-items:center}
+.s06 .md{white-space:nowrap;font-size:14px;font-weight:400;color:var(--t2);font-variant-numeric:tabular-nums;margin-top:1px}
+.s06 .tag{display:inline-block;margin-top:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:2px 8px;background:var(--spb);color:var(--sp)}
+.s06 .rt{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.s06 .chip{font-size:12px;font-weight:600;border-radius:999px;padding:5px 10px;display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.s06 .c-tk{background:var(--tkb);color:var(--tk)}.s06 .c-up{background:var(--upb);color:var(--up)}.s06 .c-nc{background:var(--ncb);color:var(--nc)}
+.s06 .c-due{background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 4px 10px rgba(0,96,252,.3)}
+.s06 .sub{font-size:12px;font-weight:400;color:var(--t3);font-variant-numeric:tabular-nums}
+.s06 .more{color:var(--t3);width:24px;display:flex;justify-content:center}
+.s06 .mt{width:calc(100% - 28px);border:0;font-family:inherit;cursor:pointer;margin:0 14px 14px;height:48px;border-radius:999px;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;font-size:17px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 14px rgba(0,96,252,.28)}
+.s06.dark .mt{box-shadow:none}
+.s06 .ap{padding:16px 16px 12px;display:flex;gap:14px;align-items:center}
+.s06 .apx{flex:1}.s06 .apn{font-size:17px;font-weight:600;letter-spacing:-.015em}.s06 .apl{font-size:14px;font-weight:400;color:var(--t2);margin-top:1px}
+.s06 .apd{display:flex;gap:8px;margin-top:8px}
+.s06 .apd span{font-size:12px;font-weight:600;background:var(--btint);color:var(--t1);border-radius:999px;padding:4px 10px;font-variant-numeric:tabular-nums}
+.s06 .lnk{font-size:15px;font-weight:600;color:var(--act);padding:4px 16px 16px;display:block;text-decoration:none}
+.s06 .qa{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.s06 .tile{border-radius:18px;padding:16px 14px;display:flex;gap:12px;align-items:center;font-size:15px;font-weight:600;line-height:19px;letter-spacing:-.01em;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.s06 .nav{position:absolute;left:16px;width:370px;bottom:30px;height:68px;border-radius:34px;background:var(--nav);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);box-shadow:var(--navsh);display:flex;justify-content:space-around;align-items:center;font-size:10.5px;font-weight:600;color:var(--t3);z-index:20;letter-spacing:.01em}
+.s06 .tab{display:flex;flex-direction:column;align-items:center;gap:3px}
+.s06 .tab .pl{padding:5px 16px;border-radius:999px;display:flex}
+.s06 .tab.a{color:var(--act)}.s06 .tab.a .pl{background:var(--btint)}
+.s06 .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:21}
+.s06 .toast{position:absolute;left:16px;width:370px;bottom:112px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.s06.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.s06 .toast .tk{width:28px;height:28px;border-radius:50%;background:#22C55E;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+.s06 .toast b{font-weight:600}.s06 .toast .tx{flex:1;line-height:19px}
+.s06 .toast .un{border:0;background:none;padding:0;font-family:inherit;font-size:15px;cursor:pointer;font-weight:700;color:#6CB4FF}
+.s06.dark .toast .un{color:var(--act)}
+.s06 .rvw{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:12px 14px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);font-family:inherit;color:var(--t1);text-align:left;margin:-10px 0 22px}
+.s06 .rvw .ri{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--btint);color:var(--act)}
+.s06 .rvw .rt2{flex:1;min-width:0}.s06 .rvw b{display:block;font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.01em}
+.s06 .rvw small{display:block;font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.s06 .rvw .cv{color:var(--t3);flex:none}
+</style>
+</helmet>
+<div class="{{rootCls}}" style="height: {{rootH}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -110px; top: -80px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -140px; top: 460px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -120px; top: 860px; background: var(--m2)"></div>
+<div class="mesh" style="width: 260px; height: 260px; left: -120px; top: 1300px; background: var(--m1)"></div>
+
+<div class="wrap">
+<div class="hd"><div class="br"><img src="/_blob/e4f41c853a2d63dfe718d8db35175a37" alt="">AYORENI</div>
+<div class="ib"><button class="icb" type="button" aria-label="Search"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button>
+<button class="icb" type="button" aria-label="Notifications, 1 new"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10 21a2 2 0 004 0"></path></svg><span class="dot"></span></button></div></div>
+
+<p class="gr">Good afternoon, Ananya 👋</p>
+<p class="gs">Stay on track with your health today.</p>
+
+<div class="hero"><div class="hr"><div><p class="hl">Today's Medications</p><p class="hb">{{takenText}}</p><p class="hs">{{nextText}}</p>
+<span class="hpill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4M12 16h.01"></path></svg>1 needs confirming</span></div>
+<svg width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="{{pct}} of today's doses taken"><circle cx="48" cy="48" r="39" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="10"></circle><circle cx="48" cy="48" r="39" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-dasharray="{{dash}}" transform="rotate(-90 48 48)"></circle><text x="48" y="54" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="Plus Jakarta Sans">{{pct}}</text></svg></div></div>
+
+<sc-if value="{{showRv}}" hint-placeholder-val="{{ true }}"><button class="rvw" type="button" aria-label="Records to Review, {{rvSub}}"><span class="ri"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 13l2 2 4-4"></path></svg></span><span class="rt2"><b>Records to Review</b><small>{{rvSub}}</small></span><span class="cv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span></button></sc-if>
+<div class="sh"><span class="st"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Morning</span><span class="cnt">3 medicines</span></div>
+<div class="gc">
+<div class="row"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></div><div class="mx"><div class="mn">Metformin</div><div class="md">500 mg · 1 tablet · 8:00 AM</div></div><div class="rt"><span class="chip c-tk">✓ Taken</span><span class="sub">at 8:12 AM</span></div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+<div class="row"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></div><div class="mx"><div class="mn">Telmisartan</div><div class="md">40 mg · 1 tablet · 8:00 AM</div></div><div class="rt"><span class="chip c-tk">✓ Taken</span><span class="sub">at 8:20 AM</span></div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+<div class="row"><div class="mi ms"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3c4 4 6 7 6 10a6 6 0 01-12 0c0-3 2-6 6-10z"></path></svg></div><div class="mx"><div class="mn">Vitamin D3</div><div class="md">1000 IU · 9:00 AM</div><span class="tag">Supplement</span></div><div class="rt"><span class="chip c-nc">? Not confirmed</span><span class="sub">Tap to update</span></div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+</div>
+
+<div class="sh"><span class="st"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v2M5.6 5.6l1.4 1.4M3 12h2M19 12h2M17 7l1.4-1.4"></path><path d="M7 16a5 5 0 0110 0"></path><path d="M3 20h18"></path></svg>Afternoon</span><span class="cnt">1 medicine</span></div>
+<div class="gc">
+<div class="row"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></div><div class="mx"><div class="mn">Amlodipine</div><div class="md">5 mg · 1 tablet · 1:00 PM</div></div>
+<div class="rt">
+<sc-if value="{{isDue}}" hint-placeholder-val="{{ true }}"><span class="chip c-due">● Due now</span></sc-if>
+<sc-if value="{{isToast}}" hint-placeholder-val="{{ false }}"><span class="chip c-tk">✓ Taken</span><span class="sub">at 1:42 PM</span></sc-if>
+</div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+<sc-if value="{{isDue}}" hint-placeholder-val="{{ true }}"><button class="mt" type="button"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>Mark as Taken</button></sc-if>
+</div>
+
+<div class="sh"><span class="st"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"></path></svg>Evening</span><span class="cnt">2 medicines</span></div>
+<div class="gc">
+<div class="row"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></div><div class="mx"><div class="mn">Metformin</div><div class="md">500 mg · 1 tablet · 8:00 PM</div></div><div class="rt"><span class="chip c-up">Upcoming</span></div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+<div class="row"><div class="mi ms"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3c4 4 6 7 6 10a6 6 0 01-12 0c0-3 2-6 6-10z"></path></svg></div><div class="mx"><div class="mn">Omega-3</div><div class="md">1 capsule · 9:00 PM</div><span class="tag">Supplement</span></div><div class="rt"><span class="chip c-up">Upcoming</span></div><span class="more" aria-hidden="true"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="1.6"></circle><circle cx="2" cy="8" r="1.6"></circle><circle cx="2" cy="14" r="1.6"></circle></svg></span></div>
+</div>
+
+<div class="sh"><span class="st">Upcoming Appointment</span></div>
+<div class="gc"><div class="ap"><div class="mi mb" style="width: 48px; height: 48px; border-radius: 14px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></div><div class="apx"><div class="apn">Dr. Meera Iyer</div><div class="apl">Follow-up consultation · Endocrinology</div><div class="apd"><span>Thu, 20 Nov</span><span>11:30 AM</span></div></div></div><a class="lnk" href="#appointment">View Details ›</a></div>
+
+<div class="sh"><span class="st">Quick Actions</span></div>
+<div class="qa">
+<div class="tile"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"></path><path d="M4 16v4h16v-4"></path></svg></div>Upload<br>Record</div>
+<div class="tile"><div class="mi ms"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></div>Add<br>Medication</div>
+<div class="tile"><div class="mi mb"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></div>Add<br>Appointment</div>
+<div class="tile"><div class="mi ms"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"></path></svg></div>Add<br>Reading</div>
+</div>
+</div>
+
+<div class="sbar" aria-hidden="true"><span>1:42</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+
+<sc-if value="{{isToast}}" hint-placeholder-val="{{ false }}">
+<div class="toast" role="status"><span class="tk"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg></span><span class="tx"><b>Amlodipine</b> marked as taken at 1:42 PM</span><button class="un" type="button">Undo</button></div>
+</sc-if>
+
+<nav class="nav">
+<div class="tab a"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"></path></svg></div>Today</div>
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h7"></path></svg></div>Records</div>
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect></svg></div>Medications</div>
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg></div>Profile</div>
+</nav>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["three","one","offline","none"],"default":"three"},"viewport":{"editor":"enum","options":["full","phone"],"default":"full"},"$preview":{"width":402,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'three';
+    const vp = this.props.viewport ?? 'full';
+    const toast = false;
+    return {
+      rootCls: 's06' + (t === 'dark' ? ' dark' : '') + (vp === 'phone' ? ' phone' : ''),
+      rootH: vp === 'phone' ? '874px' : '1700px',
+      takenText: toast ? '3 of 6 taken' : '2 of 6 taken',
+      nextText: toast ? 'Next: Metformin at 8:00 PM' : 'Next: Amlodipine at 1:00 PM',
+      dash: toast ? '122.5 245' : '81.7 245',
+      pct: toast ? '50%' : '33%',
+      isDue: !toast,
+      isToast: toast,
+      showRv: s !== 'none',
+      rvSub: s === 'one' || s === 'first' ? '1 document requires verification' : s === 'offline' ? '3 documents require verification · may not be up to date' : '3 documents require verification'
+    };
+  }
+}
+</script>
+</body>
+</html>

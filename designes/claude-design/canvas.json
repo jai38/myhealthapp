@@ -419,6 +419,27 @@
       "w": 3592,
       "h": 2064,
       "title": "R-DOC-02 · Record detail states (light / dark)"
+    },
+    "S06RecordsReview.dc.html": {
+      "x": 0,
+      "y": 65672,
+      "w": 402,
+      "h": 1700,
+      "title": "S06 v1.1 · Today with Records to Review (full scroll)"
+    },
+    "S06RStates.dc.html": {
+      "x": 482,
+      "y": 65672,
+      "w": 1824,
+      "h": 2064,
+      "title": "S06 v1.1 · Records to Review states (light / dark)"
+    },
+    "S05RecordsReview.dc.html": {
+      "x": 2386,
+      "y": 65672,
+      "w": 402,
+      "h": 874,
+      "title": "S05 v1.1 · First-time Today with Records to Review"
     }
   },
   "createdOnFiles": {
@@ -621,6 +642,13 @@
       "text": "Flow 6 · R-DOC-02 Record detail · spec APPROVED · design APPROVED 2026-11-24 · LOCKED",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t27": {
+      "x": 0,
+      "y": 65412,
+      "text": "S06 v1.1 / S05 v1.1 · \"Records to Review\" row on Today (adds one row to the locked S05/S06) · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 2788
     }
   },
   "order": [
@@ -682,7 +710,10 @@
     "RD01Documents.dc.html",
     "RD01States.dc.html",
     "RD02RecordDetail.dc.html",
-    "RD02States.dc.html"
+    "RD02States.dc.html",
+    "S06RecordsReview.dc.html",
+    "S06RStates.dc.html",
+    "S05RecordsReview.dc.html"
   ],
   "pages": [
     {
