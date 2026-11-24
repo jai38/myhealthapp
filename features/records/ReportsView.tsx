@@ -19,9 +19,11 @@ import { authService } from '../../services/auth/auth-service';
 import { ReportsHero } from './ReportsHero';
 import { ReportsMetrics } from './ReportsMetrics';
 import { ReportsVault } from './ReportsVault';
+import { useTabBarClearance } from '../../design/components/Navigation/TabBarClearance';
 
 // The Records tab header and safe area are provided by RecordsScreen, so this view has no title of its own.
 export default function ReportsView() {
+  const clearance = useTabBarClearance();
   const [selectedPreset, setSelectedPreset] = useState<DateRangePreset>('ALL');
   const [loadingPreview, setLoadingPreview] = useState<boolean>(true);
   const [previewData, setPreviewData] = useState<ExportDataPayload | null>(null);
@@ -118,7 +120,10 @@ export default function ReportsView() {
 
   return (
     <View style={styles.root}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingBottom: clearance }]}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.column}>
           {downloadSuccessMessage ? (
             <View style={styles.successBanner}>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { t } from '../../design/strings';
+import { TabBarClearanceProvider } from '../../design/components/Navigation/TabBarClearance';
 import { RouterTabBar } from '../../features/shell/RouterTabBar';
 import type { RouterTabBarProps } from '../../features/shell/RouterTabBar';
 import { ScreenHeader } from '../../features/shell/ScreenHeader';
@@ -8,6 +9,7 @@ import { hiddenRouteNames, shellTabs } from '../../features/shell/tabs';
 
 export default function TabLayout() {
   return (
+    <TabBarClearanceProvider>
     <Tabs
       tabBar={(props) => <RouterTabBar {...(props as unknown as RouterTabBarProps)} />}
       screenOptions={{
@@ -15,12 +17,24 @@ export default function TabLayout() {
       }}
     >
       {shellTabs.map((tab) => (
-        <Tabs.Screen key={tab.key} name={tab.routeName} options={{ title: t(tab.titleKey) }} />
+        <Tabs.Screen
+          key={tab.key}
+          name={tab.routeName}
+          options={{
+            title: t(tab.titleKey),
+            // S06: Today's header is the logo lockup; the other tabs keep their title.
+            header:
+              tab.key === 'today'
+                ? () => <ScreenHeader title={t(tab.titleKey)} variant="brand" />
+                : ({ options }) => <ScreenHeader title={String(options.title ?? '')} />,
+          }}
+        />
       ))}
       {/* Old routes only redirect to Records. They stay out of the tab bar. */}
       {hiddenRouteNames.map((name) => (
         <Tabs.Screen key={name} name={name} options={{ href: null, headerShown: false }} />
       ))}
     </Tabs>
+    </TabBarClearanceProvider>
   );
 }

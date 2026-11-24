@@ -10,6 +10,7 @@ import { LegalTermsModal } from '../legal/LegalTermsModal';
 import { GuestProfileCard, SignedInProfileCard } from './AccountProfileCard';
 import { PrivacySection, SecuritySection } from './AccountInfoSections';
 import { SignOutSection } from './AccountSignOutSection';
+import { useTabBarClearance } from '../../design/components/Navigation/TabBarClearance';
 
 export interface AccountContentProps {
   // Change this to collapse the sign-out confirmation (the modal passes its visibility).
@@ -19,6 +20,7 @@ export interface AccountContentProps {
 }
 
 export const AccountContent: React.FC<AccountContentProps> = ({ resetKey, onSignedOut }) => {
+  const clearance = useTabBarClearance();
   const [session, setSession] = useState<UserSession | null>(authService.getSession());
   const [authModalVisible, setAuthModalVisible] = useState<boolean>(false);
   const [legalModalVisible, setLegalModalVisible] = useState<boolean>(false);
@@ -74,7 +76,7 @@ export const AccountContent: React.FC<AccountContentProps> = ({ resetKey, onSign
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: clearance }]}>
         {session ? (
           <>
             <View style={styles.section}>

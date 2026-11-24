@@ -42,44 +42,8 @@ export function TodayAsNeeded({ medications, onTookDose }: TodayAsNeededProps) {
   );
 }
 
-export interface TodayQuickActionsProps {
-  onScan: () => void;
-  onAddManual: () => void;
-  disabled?: boolean;
-}
-
-export function TodayQuickActions({ onScan, onAddManual, disabled = false }: TodayQuickActionsProps) {
-  return (
-    <View style={styles.quick} testID="today-quick-actions">
-      <Button
-        label={t('today.scanPrescription')}
-        icon="scan"
-        variant="secondary"
-        onPress={onScan}
-        disabled={disabled}
-        testID="today-quick-scan"
-      />
-      <Button
-        label={t('today.addMedicine')}
-        icon="add-circle"
-        variant="secondary"
-        onPress={onAddManual}
-        disabled={disabled}
-        testID="today-quick-add"
-      />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   section: {
     gap: space.sm,
-    marginTop: space.xl,
-  },
-  quick: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space.sm,
-    marginTop: space.xl,
   },
 });

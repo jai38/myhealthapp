@@ -71,7 +71,14 @@ type UiIcon =
   | 'document-text-outline'
   | 'medkit-outline'
   | 'clipboard-outline'
-  | 'person-circle-outline';
+  | 'person-circle-outline'
+  // v4 parts (04b task 11).
+  | 'ellipsis-vertical'
+  | 'cloud-upload-outline'
+  | 'radio-button-on'
+  | 'radio-button-off'
+  | 'add-circle-outline'
+  | 'checkmark-circle-outline';
 
 export type IconName = StatusIcon | UiIcon;
 

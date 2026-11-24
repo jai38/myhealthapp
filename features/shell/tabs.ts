@@ -1,4 +1,4 @@
-// Pure route map for the five-tab shell. No React, so it is unit-tested directly.
+// Pure route map for the four-tab shell. No React, so it is unit-tested directly.
 import { tabs } from '../../design/components/Navigation/navStyle';
 import type { TabKey } from '../../design/components/Navigation/navStyle';
 import type { IconName } from '../../design/components/Foundations/iconNames';
@@ -21,9 +21,11 @@ const ROUTE_NAMES: Record<TabKey, { routeName: string; href: string }> = {
   today: { routeName: 'index', href: '/' },
   records: { routeName: 'records', href: '/records' },
   medicines: { routeName: 'medications', href: '/medications' },
-  healthPlan: { routeName: 'health-plan', href: '/health-plan' },
   profile: { routeName: 'profile', href: '/profile' },
 };
+
+/** Health Plan keeps its route until its phase (18), out of the tab bar and linked from nowhere. */
+export const HEALTH_PLAN_HREF = '/health-plan';
 
 // Order and icons come from the design-system tab list, so the two cannot drift.
 export const shellTabs: ShellTab[] = tabs.map((tab) => ({
@@ -34,8 +36,8 @@ export const shellTabs: ShellTab[] = tabs.map((tab) => ({
   activeIcon: tab.activeIcon,
 }));
 
-// Routes that only redirect. They stay out of the tab bar.
-export const hiddenRouteNames = ['timeline', 'reports'] as const;
+// Routes outside the tab bar: two that redirect to Records, and Health Plan, kept but unlinked.
+export const hiddenRouteNames = ['timeline', 'reports', 'health-plan'] as const;
 
 export const DEFAULT_RECORDS_VIEW: RecordsView = 'timeline';
 
@@ -45,7 +47,8 @@ export function parseRecordsView(value: string | string[] | undefined): RecordsV
 }
 
 export interface RouteTarget {
-  tab: TabKey;
+  /** The tab it highlights; null for a route outside the tab bar. */
+  tab: TabKey | null;
   pathname: string;
   params?: { view: RecordsView };
 }
@@ -83,7 +86,7 @@ export function legacyRouteRedirect(path: string): RouteTarget | null {
     case '/medicines':
       return targetFor('medicines');
     case '/health-plan':
-      return targetFor('healthPlan');
+      return { tab: null, pathname: HEALTH_PLAN_HREF };
     case '/profile':
       return targetFor('profile');
     default:

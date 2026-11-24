@@ -12,14 +12,12 @@ import { contrastRatio, meetsTouchTarget, MIN_TEXT } from '../../design/contrast
 import { en, t } from '../../design/strings';
 
 describe('tabs', () => {
-  it('has five entries in order', () => {
-    expect(tabs.map((tab) => tab.key)).toEqual([
-      'today',
-      'records',
-      'medicines',
-      'healthPlan',
-      'profile',
-    ]);
+  it('has four entries in order, with no Health Plan tab (04b task 9)', () => {
+    expect(tabs.map((tab) => tab.key)).toEqual(['today', 'records', 'medicines', 'profile']);
+  });
+
+  it('labels the medicines tab "Medications"', () => {
+    expect(t('nav.medicines')).toBe('Medications');
   });
 
   it('every active icon differs from its inactive icon', () => {

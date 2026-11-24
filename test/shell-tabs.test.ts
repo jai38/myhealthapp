@@ -18,14 +18,8 @@ const tabsDir = join(__dirname, '..', 'app', '(tabs)');
 const routeFiles = readdirSync(tabsDir).map((f) => f.replace(/\.tsx$/, ''));
 
 describe('shell tab map', () => {
-  it('has the five tabs in order', () => {
-    expect(shellTabs.map((tab) => tab.key)).toEqual([
-      'today',
-      'records',
-      'medicines',
-      'healthPlan',
-      'profile',
-    ]);
+  it('has the four tabs in order', () => {
+    expect(shellTabs.map((tab) => tab.key)).toEqual(['today', 'records', 'medicines', 'profile']);
   });
 
   it('every tab has a route file, a real icon pair and a title string', () => {
@@ -35,8 +29,16 @@ describe('shell tab map', () => {
     }
   });
 
+  it('Health Plan keeps its route, out of the bar and unlinked', () => {
+    expect(routeFiles).toContain('health-plan');
+    expect(hiddenRouteNames).toContain('health-plan');
+    expect(shellTabs.some((tab) => tab.routeName === 'health-plan')).toBe(false);
+    expect(tabKeyForRoute('health-plan')).toBeNull();
+    expect(legacyRouteRedirect('/health-plan')).toEqual({ tab: null, pathname: '/health-plan' });
+  });
+
   it('old routes exist only as redirects and are hidden from the bar', () => {
-    for (const name of hiddenRouteNames) {
+    for (const name of hiddenRouteNames.filter((n) => n !== 'health-plan')) {
       expect(routeFiles).toContain(name);
       expect(shellTabs.some((tab) => tab.routeName === name)).toBe(false);
       const src = readFileSync(join(tabsDir, `${name}.tsx`), 'utf8');
@@ -83,8 +85,8 @@ describe('legacyRouteRedirect', () => {
     expect(legacyRouteRedirect('/(tabs)/medications/')?.tab).toBe('medicines');
   });
 
-  it('every mapped path lands on a tab that exists', () => {
-    for (const path of ['/', '/timeline', '/reports', '/medications', '/records', '/health-plan', '/profile']) {
+  it('every old link (/timeline, /reports, /medications) still lands on a tab that exists', () => {
+    for (const path of ['/', '/timeline', '/reports', '/medications', '/medicines', '/records', '/profile']) {
       const target = legacyRouteRedirect(path);
       expect(target).not.toBeNull();
       expect(shellTabs.some((tab) => tab.key === target?.tab)).toBe(true);

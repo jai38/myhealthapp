@@ -5,6 +5,8 @@ import { useAppFonts } from '../fonts';
 import { Screen } from '../components/Foundations/Screen';
 import { Text } from '../components/Foundations/Text';
 import { Logo } from '../components/Foundations/Logo';
+import { TokensSection } from './sections/TokensSection';
+import { GlassSection } from './sections/GlassSection';
 import { FoundationsSection } from './sections/FoundationsSection';
 import { ActionsSection } from './sections/ActionsSection';
 import { InputsSection } from './sections/InputsSection';
@@ -33,6 +35,8 @@ export function Gallery() {
         <Text variant="display">Component gallery</Text>
         <Text tone="secondary">Developer only. Not reachable in release builds.</Text>
       </View>
+      <TokensSection />
+      <GlassSection />
       <FoundationsSection />
       <ActionsSection />
       <InputsSection />

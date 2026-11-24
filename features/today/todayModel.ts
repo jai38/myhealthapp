@@ -9,8 +9,12 @@ import { doseStatusDisplay, type DoseDisplayState, type StatusDisplay } from '..
 import type { StringKey } from '../../design/strings';
 import type { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
 
-/** Minutes after the scheduled time during which an unrecorded dose is still "due now". */
-export const DUE_WINDOW_MINUTES = 60;
+/**
+ * Minutes after the scheduled time during which an unrecorded dose is still "Due now"
+ * (ST-01 status vocabulary, locked 24 November 2026). The window also ends early at the
+ * same medicine's next scheduled dose, if that comes sooner.
+ */
+export const DUE_WINDOW_MINUTES = 120;
 const MINUTE_MS = 60_000;
 
 export interface TodayDose {
@@ -34,15 +38,36 @@ function isActiveMedication(med: MedicationRecord | undefined | null): boolean {
 }
 
 /**
- * Display state for one dose.
+ * When the same medicine's next scheduled dose after `dose` starts, from `doses`, or null.
+ * It caps the Due now window (ST-01): a dose stops being due when the next one starts.
+ */
+export function nextSameMedicineMs(
+  dose: Pick<DoseLog, 'id' | 'medicationId' | 'scheduledTime'>,
+  doses: readonly Pick<DoseLog, 'id' | 'medicationId' | 'scheduledTime'>[],
+): number | null {
+  const ms = parseMs(dose.scheduledTime);
+  if (ms === null) return null;
+  let next: number | null = null;
+  for (const d of doses) {
+    if (d.id === dose.id || d.medicationId !== dose.medicationId) continue;
+    const t = parseMs(d.scheduledTime);
+    if (t !== null && t > ms && (next === null || t < next)) next = t;
+  }
+  return next;
+}
+
+/**
+ * Display state for one dose (ST-01 status vocabulary).
  * - TAKEN: `takenAt` is the user's recorded `actionTime`. If the server sent no
  *   `actionTime`, fall back to the record's own `updatedAt` (when the user's action
  *   was saved). It is never derived from the scheduled time while a record time exists.
- * - SNOOZED: reminder time is `updatedAt + snoozeMinutes` (the snooze action saved at
- *   `updatedAt`). Once that is more than the due window past, the dose is
- *   `notConfirmed`, not a stale snooze.
- * - A user-recorded MISSED (not in today's DoseStatus enum; handled defensively) is `missedByUser`.
- * - PENDING: upcoming, then dueNow for DUE_WINDOW_MINUTES, then `notConfirmed`.
+ * - A user-recorded MISSED is `missedByUser`.
+ * - PENDING: upcoming, then dueNow from the scheduled time for DUE_WINDOW_MINUTES, or
+ *   until `nextScheduledMs` (the same medicine's next dose) if that is sooner, then
+ *   `notConfirmed`.
+ * - SNOOZED has no word of its own: it follows the same time-based rule as PENDING, and
+ *   while Due now carries `remindAt` (`updatedAt + snoozeMinutes`) for the line
+ *   "Reminder again at …". A snooze never makes a dose Taken.
  * - PENDING/SNOOZED doses of a medicine that is not ACTIVE are `pausedOrStopped`
  *   (pass `med`; omit it to treat the medicine as active).
  */
@@ -50,6 +75,7 @@ export function doseDisplayStateFor(
   dose: DoseLog,
   nowMs: number,
   med?: MedicationRecord | null,
+  nextScheduledMs?: number | null,
 ): DoseDisplayState {
   const status: string = dose.status;
   const scheduledMs = parseMs(dose.scheduledTime) ?? 0;
@@ -66,17 +92,20 @@ export function doseDisplayStateFor(
 
   if (!isActiveMedication(med)) return { kind: 'pausedOrStopped' };
 
-  const windowMs = DUE_WINDOW_MINUTES * MINUTE_MS;
+  const windowEnd =
+    nextScheduledMs != null && nextScheduledMs > scheduledMs
+      ? Math.min(scheduledMs + DUE_WINDOW_MINUTES * MINUTE_MS, nextScheduledMs)
+      : scheduledMs + DUE_WINDOW_MINUTES * MINUTE_MS;
 
-  if (status === 'SNOOZED') {
-    const remindMs = (parseMs(dose.updatedAt) ?? scheduledMs) + (dose.snoozeMinutes ?? 0) * MINUTE_MS;
-    if (nowMs >= remindMs + windowMs) return { kind: 'notConfirmed', scheduledAt };
-    return { kind: 'snoozed', remindAt: new Date(remindMs) };
-  }
-
-  // PENDING (and anything unrecognised): never Taken, never Missed.
+  // PENDING, SNOOZED (and anything unrecognised): never Taken, never Missed.
   if (nowMs < scheduledMs) return { kind: 'upcoming', scheduledAt };
-  if (nowMs < scheduledMs + windowMs) return { kind: 'dueNow' };
+  if (nowMs < windowEnd) {
+    if (status === 'SNOOZED') {
+      const remindMs = (parseMs(dose.updatedAt) ?? scheduledMs) + (dose.snoozeMinutes ?? 0) * MINUTE_MS;
+      if (remindMs > nowMs) return { kind: 'dueNow', remindAt: new Date(remindMs) };
+    }
+    return { kind: 'dueNow' };
+  }
   return { kind: 'notConfirmed', scheduledAt };
 }
 
@@ -109,12 +138,20 @@ export function doseStatusDisplayFor(
   return doseStatusDisplay(state, formatTime);
 }
 
-/** Doses with their display state, sorted by time. Paused/stopped medicines are excluded. */
+/**
+ * Doses with their display state, sorted by time. Paused/stopped medicines are excluded.
+ * Each dose's Due now window is capped by the same medicine's next dose in `doses`.
+ */
 export function toTodayDoses(doses: DoseLog[], nowMs: number, medFor?: MedLookup): TodayDose[] {
   return doses
     .map((dose) => ({
       dose,
-      state: doseDisplayStateFor(dose, nowMs, medFor ? medFor(dose.medicationId) : undefined),
+      state: doseDisplayStateFor(
+        dose,
+        nowMs,
+        medFor ? medFor(dose.medicationId) : undefined,
+        nextSameMedicineMs(dose, doses),
+      ),
       scheduledMs: parseMs(dose.scheduledTime) ?? 0,
     }))
     .filter((d) => d.state.kind !== 'pausedOrStopped')
@@ -192,12 +229,17 @@ export function todayScreenState(input: {
   medications: MedicationRecord[];
   doses: DoseLog[];
   nowMs: number;
+  /**
+   * False while the first server load is still running. With nothing cached, Today then shows
+   * loading, not "Add your first medicine". Omitted means settled.
+   */
+  loadSettled?: boolean;
 }): TodayScreenState {
-  const { initialized, loadFailed, medications, doses, nowMs } = input;
+  const { initialized, loadFailed, medications, doses, nowMs, loadSettled = true } = input;
   const nothingCached = medications.length === 0 && doses.length === 0;
   if (nothingCached) {
     if (loadFailed) return 'error';
-    if (!initialized) return 'loading';
+    if (!initialized || !loadSettled) return 'loading';
   }
   if (medications.length === 0) return 'newUser';
   const items = toTodayDoses(doses, nowMs, (id) => medications.find((m) => m.id === id));

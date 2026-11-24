@@ -157,8 +157,23 @@ describe('Notification & Alarm Service - Scheduled Triggers (Expo SDK 52)', () =
     });
     expect(dueReminder?.content.title).toBe(t('notifications.dose.dueTitle'));
     expect(JSON.stringify(dueReminder?.content)).not.toContain('Metformin');
-    expect(dueReminder?.content.body).toContain('Take with breakfast');
     expect(dueReminder?.content.body).toContain('08:30');
+  });
+
+  it('PRIVACY (ST-01): the lock screen is generic: "Time for your medicine", no name, no instructions, no Taken action', async () => {
+    await scheduleMedicationReminder('med-private', 'Testmed A 500 mg', '08:30', 'Take after food, for the infection');
+    expect(t('notifications.dose.dueTitle')).toBe('Time for your medicine');
+    for (const suffix of ['-adv', '-due']) {
+      const call = scheduledCalls.find((c) => c.identifier?.endsWith(suffix));
+      expect(call).toBeDefined();
+      const shown = `${call?.content.title} ${call?.content.body}`;
+      expect(shown).not.toContain('Testmed');
+      expect(shown).not.toMatch(/after food|infection/i);
+      expect(call?.content.body).toBe('Scheduled for 08:30.');
+      // No action buttons at all, so nothing on the lock screen can record a dose.
+      expect(call?.content.categoryIdentifier).toBeUndefined();
+      expect(JSON.stringify(call?.content)).not.toMatch(/TAKEN|take_action|markTaken/i);
+    }
   });
 
   it('with no instructions the body says only the scheduled time, never a made-up instruction', async () => {

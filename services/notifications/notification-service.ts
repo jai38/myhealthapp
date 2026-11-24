@@ -103,15 +103,18 @@ export async function requestNotificationPermissions(): Promise<boolean> {
  * Schedules daily recurring notifications for a specific medication dose time:
  * 1. 15-minute advance reminder
  * 2. Exact dose-time alarm
- * Text is generic (no medicine name) so nothing health-related shows on the lock screen.
+ * Text is generic, so nothing health-related shows on the lock screen (ST-01 section 5 and
+ * M02): "Time for your medicine", with no medicine name, instructions, status or count.
+ * There is no opt-in for names yet, so it is always generic. There is no Taken action:
+ * tapping opens the app on the dose, where only an explicit tap records it (rule 14).
  * 
  * Uses Expo DailyTriggerInput { type: 'daily', hour, minute } to ensure notifications
  * repeat daily at the scheduled clock time rather than firing immediately.
  * 
  * @param medicationId Unique medication ID
- * @param medicationName Name of medicine (e.g. "Amoxicillin")
+ * @param medicationName Not shown on the notification (kept for a later opt-in)
  * @param timeString 24-hr time string (e.g. "08:00" or "20:30")
- * @param instructions Dosage instructions (e.g. "Take after food with water")
+ * @param instructions Not shown: free text can reveal health details on the lock screen
  */
 export async function scheduleMedicationReminder(
   medicationId: string,
@@ -152,11 +155,12 @@ export async function scheduleMedicationReminder(
       advanceHour = (advanceHour - 1 + 24) % 24;
     }
 
-    // Lock-screen text is generic: no medicine name, and no instruction the prescription did not give.
-    const trimmedInstructions = instructions?.trim();
-    const doseBody = trimmedInstructions
-      ? t('notifications.dose.bodyWithInstructions', { time: timeString, instructions: trimmedInstructions })
-      : t('notifications.dose.body', { time: timeString });
+    // Lock-screen text is generic (ST-01): no medicine name and no instructions, which are
+    // free text and can reveal health details. `medicationName` and `instructions` stay
+    // unused until the person can opt in to names.
+    void medicationName;
+    void instructions;
+    const doseBody = t('notifications.dose.body', { time: timeString });
 
     const dailyTriggerType =
       Notifications.SchedulableTriggerInputTypes?.DAILY || 'daily';
@@ -179,7 +183,8 @@ export async function scheduleMedicationReminder(
       },
     }).catch(() => {});
 
-    // 2. Exact dose-time alert (Take, Skip, Snooze)
+    // 2. Exact dose-time alert. No action buttons, so no Taken from the notification;
+    //    a tap opens the app on the dose.
     const notifId = await Notifications.scheduleNotificationAsync({
       identifier: `${baseIdentifier}-due`,
       content: {

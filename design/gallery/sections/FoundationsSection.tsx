@@ -13,20 +13,11 @@ import {
 import type { IconProps, MedicineForm } from '../../components/Foundations';
 import { color, radius, space } from '../../tokens';
 import type { TextTone } from '../../tokens';
+import { textStyles } from '../../typography';
 import type { TextStyleName } from '../../typography';
 import { GallerySection, GalleryItem } from '../GallerySection';
 
-const TEXT_VARIANTS: TextStyleName[] = [
-  'display',
-  'title1',
-  'title2',
-  'title3',
-  'body',
-  'bodyStrong',
-  'callout',
-  'caption',
-  'overline',
-];
+const TEXT_VARIANTS = Object.keys(textStyles) as TextStyleName[];
 
 const TEXT_TONES: TextTone[] = ['primary', 'secondary', 'tertiary', 'link'];
 
@@ -37,9 +28,15 @@ export function FoundationsSection() {
     <GallerySection title="Foundations" testID="gallery-foundations">
       {TEXT_VARIANTS.map((variant) => (
         <GalleryItem key={variant} label={variant}>
-          <Text variant={variant}>Asha Rao, Paracetamol 500 mg</Text>
+          <Text variant={variant}>Asha Test, Testmed A 500 mg</Text>
         </GalleryItem>
       ))}
+
+      <GalleryItem label="tabular figures">
+        <Text variant="title3" tabular>
+          8:05 AM · 10:30 PM · 1 of 3 taken
+        </Text>
+      </GalleryItem>
 
       {TEXT_TONES.map((tone) => (
         <GalleryItem key={tone} label={`tone: ${tone}`}>
