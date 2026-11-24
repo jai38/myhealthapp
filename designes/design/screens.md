@@ -210,6 +210,9 @@ Change spec: `specs/S-RX-03-v1.8-other-document-review.md`. Replaces only the Ot
 
 ## Flow 6 · Records → Documents
 
+### R-00 · Records home — SPEC REVIEW 2026-11-24
+Spec: `specs/R-00-records-home.md`. Records tab landing: Medical Timeline · Documents · Medical Conditions · Health Measurements (approved order), Recently added (3), + Add Record; no verification filters (RX-VER-07). Unbuilt sections shown as "Coming soon".
+
 ### R-DOC-01 · Documents list — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards RD01 and RD01 States)
 Spec: `specs/R-DOC-01-documents-list.md`. Primary filters All | Pending Verification | Verified (RX-VER-07–11), secondary filter sheet, search, special rows (restricted, waiting to upload, reading), states. Approving it leads to its visual design, then R-DOC-02 Record detail.
 
