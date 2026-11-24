@@ -210,7 +210,7 @@ Change spec: `specs/S-RX-03-v1.8-other-document-review.md`. Replaces only the Ot
 
 ## Flow 6 · Records → Documents
 
-### R-00 · Records home — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards R00 and R00 States)
+### R-00 · Records home — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards R00 and R00 States)
 Spec: `specs/R-00-records-home.md`. Records tab landing: Medical Timeline · Documents · Medical Conditions · Health Measurements (approved order), Recently added (3), + Add Record; no verification filters (RX-VER-07). Unbuilt sections shown as "Coming soon".
 
 ### R-DOC-01 · Documents list — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards RD01 and RD01 States)
