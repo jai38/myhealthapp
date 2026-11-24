@@ -38,6 +38,7 @@ export const en = {
   'status.upcoming': 'Upcoming · {time}',
   'status.dueNow': 'Due now',
   'status.snoozed': 'Reminder at {time}',
+  'status.reminderAgain': 'Reminder again at {time}',
   'status.taken': 'Taken at {time}',
   'status.skipped': 'Skipped',
   'status.missedByUser': 'Missed',
@@ -646,9 +647,8 @@ export const en = {
   'medicines.manual.addedWithoutReminders': '"{name}" has been saved to your medications list.',
   // Reminder notifications. Generic on purpose: no medicine name on the lock screen.
   'notifications.dose.advanceTitle': 'A medicine is due in 15 minutes',
-  'notifications.dose.dueTitle': 'Time for a medicine',
+  'notifications.dose.dueTitle': 'Time for your medicine',
   'notifications.dose.body': 'Scheduled for {time}.',
-  'notifications.dose.bodyWithInstructions': 'Scheduled for {time}. {instructions}',
   'notifications.snooze.title': 'Snooze ended',
   'notifications.snooze.body': 'Your {minutes}-minute snooze has ended. Open the app to record your dose.',
 

@@ -53,8 +53,12 @@ describe('getAdherenceForDate', () => {
       [med],
       [dose('08:00', 'TAKEN'), dose('12:00', 'PENDING'), dose('18:00', 'PENDING'), dose('22:00', 'PENDING')],
     );
+    // 19:30: 12:00 is past its window (Not confirmed); 18:00 is still Due now (2 hours, ST-01);
+    // 22:00 is upcoming. None counts as missed.
     const a = medicationStore.getAdherenceForDate('2026-10-10', at('19:30'));
-    expect(a).toMatchObject({ taken: 1, skipped: 0, notConfirmed: 2, upcoming: 1, total: 4, percentage: 100 });
+    expect(a).toMatchObject({ taken: 1, skipped: 0, notConfirmed: 1, upcoming: 2, total: 4, percentage: 100 });
+    const later = medicationStore.getAdherenceForDate('2026-10-10', at('20:01'));
+    expect(later).toMatchObject({ notConfirmed: 2, upcoming: 1, percentage: 100 });
   });
 
   it('percentage covers recorded doses only (taken, skipped, user-marked missed)', async () => {
@@ -73,10 +77,15 @@ describe('getAdherenceForDate', () => {
     expect(a).toMatchObject({ taken: 0, notConfirmed: 2, total: 2 });
   });
 
-  it('a dose inside its due window is upcoming, not not-confirmed', async () => {
+  it('a dose inside its 2-hour due window is upcoming, not not-confirmed (ST-01)', async () => {
     await medicationStore.syncFromServer([med], [dose('08:00', 'PENDING')]);
-    expect(medicationStore.getAdherenceForDate('2026-10-10', at('08:30'))).toMatchObject({ upcoming: 1, notConfirmed: 0 });
-    expect(medicationStore.getAdherenceForDate('2026-10-10', at('09:30'))).toMatchObject({ upcoming: 0, notConfirmed: 1 });
+    expect(medicationStore.getAdherenceForDate('2026-10-10', at('09:59'))).toMatchObject({ upcoming: 1, notConfirmed: 0 });
+    expect(medicationStore.getAdherenceForDate('2026-10-10', at('10:01'))).toMatchObject({ upcoming: 0, notConfirmed: 1 });
+  });
+
+  it("the window ends at the same medicine's next dose (ST-01)", async () => {
+    await medicationStore.syncFromServer([med], [dose('08:00', 'PENDING'), dose('09:00', 'PENDING')]);
+    expect(medicationStore.getAdherenceForDate('2026-10-10', at('09:01'))).toMatchObject({ upcoming: 1, notConfirmed: 1 });
   });
 
   it('leaves out doses of paused medicines', async () => {

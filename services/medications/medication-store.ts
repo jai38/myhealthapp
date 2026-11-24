@@ -6,7 +6,7 @@ import {
   cancelSnoozeRemindersForMedication,
   dismissDeliveredNotificationsForMedication,
 } from '../notifications/notification-service';
-import { doseDisplayStateFor } from '../../features/today/todayModel';
+import { doseDisplayStateFor, nextSameMedicineMs } from '../../features/today/todayModel';
 
 export interface AdherenceCounts {
   taken: number;
@@ -467,7 +467,12 @@ class MedicationStore {
       percentage: null,
     };
     for (const dose of this.getDosesForDate(dateString)) {
-      const state = doseDisplayStateFor(dose, nowMs, this.getMedicationById(dose.medicationId));
+      const state = doseDisplayStateFor(
+        dose,
+        nowMs,
+        this.getMedicationById(dose.medicationId),
+        nextSameMedicineMs(dose, this.doses),
+      );
       switch (state.kind) {
         case 'taken':
           counts.taken++;
@@ -484,7 +489,7 @@ class MedicationStore {
         case 'pausedOrStopped':
           continue;
         default:
-          // upcoming, dueNow, snoozed: still awaiting the patient.
+          // upcoming, dueNow: still awaiting the patient.
           counts.upcoming++;
       }
       counts.total++;

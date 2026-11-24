@@ -101,7 +101,7 @@ describe('S06 view model (todayView)', () => {
 
   it('Mark as Taken goes under the earliest Due now dose only, never an upcoming or Not confirmed one', () => {
     const due = groupTodayDoses(
-      [dose({ id: 'nc', scheduledTime: at(8) }), dose({ id: 'due', scheduledTime: at(10) }), dose({ id: 'due2', scheduledTime: at(10, 15) })],
+      [dose({ id: 'nc', scheduledTime: at(8) }), dose({ id: 'due', scheduledTime: at(10) }), dose({ id: 'due2', medicationId: 'm2', scheduledTime: at(10, 15) })],
       nowAt(10, 30),
       () => med(),
     );

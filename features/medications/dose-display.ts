@@ -3,19 +3,28 @@
 // formats it, so an unrecorded past dose shows "Not confirmed", never Taken.
 import type { StatusDisplay } from '../../design/status';
 import type { DoseLog, MedicationRecord } from '../../services/medications/medication-service';
-import { doseDisplayStateFor, doseStatusDisplayFor } from '../today/todayModel';
+import { doseDisplayStateFor, doseStatusDisplayFor, nextSameMedicineMs } from '../today/todayModel';
+import { medicationStore } from '../../services/medications/medication-store';
 
 export function formatDoseClock(date: Date): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-/** Status pill content for one dose. Null for a paused or stopped medicine. */
+/**
+ * Status pill content for one dose. Null for a paused or stopped medicine. The Due now
+ * window is capped by the same medicine's next dose (ST-01), from `doses` or the store.
+ */
 export function doseStatusFor(
   dose: DoseLog,
   nowMs: number,
   med?: MedicationRecord | null,
+  doses: readonly DoseLog[] = medicationStore.getAllDoses(),
 ): StatusDisplay | null {
-  return doseStatusDisplayFor(dose, doseDisplayStateFor(dose, nowMs, med), formatDoseClock);
+  return doseStatusDisplayFor(
+    dose,
+    doseDisplayStateFor(dose, nowMs, med, nextSameMedicineMs(dose, doses)),
+    formatDoseClock,
+  );
 }
 
 /**

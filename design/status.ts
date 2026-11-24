@@ -7,7 +7,9 @@ import type { StringKey } from './strings';
  */
 export type DoseDisplayState =
   | { kind: 'upcoming'; scheduledAt: Date }
-  | { kind: 'dueNow' }
+  /** `remindAt`: a snoozed dose's next reminder, shown as "Reminder again at …" (ST-01). */
+  | { kind: 'dueNow'; remindAt?: Date }
+  /** No longer produced by todayModel since ST-01 (a snooze keeps the time-based word). */
   | { kind: 'snoozed'; remindAt: Date }
   | { kind: 'taken'; takenAt: Date }
   | { kind: 'skipped' }

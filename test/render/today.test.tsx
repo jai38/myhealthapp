@@ -140,3 +140,41 @@ describe('S06 Today', () => {
     expect(screen.getByTestId(`today-row-preview-dose-tm-c-${DAY}-1300`)).not.toHaveTextContent(/Tap to update/);
   });
 });
+
+describe('ST-01 snooze line on Today', () => {
+  it('a snoozed dose shows "Due now" with "Reminder again at", and never Taken', async () => {
+    const { render } = await import('@testing-library/react-native');
+    const React = await import('react');
+    const { TodayGroupCard } = await import('../../features/today/TodayParts');
+    const dose = {
+      id: 'snz',
+      medicationId: 'm1',
+      patientProfileId: 'p1',
+      scheduledTime: new Date(2026, 10, 6, 10, 0).toISOString(),
+      status: 'SNOOZED' as const,
+      actionTime: null,
+      snoozeMinutes: 15,
+      createdAt: '2026-11-01T00:00:00.000Z',
+      updatedAt: new Date(2026, 10, 6, 10, 20).toISOString(),
+    };
+    const item = { dose, state: { kind: 'dueNow' as const, remindAt: new Date(2026, 10, 6, 10, 35) }, scheduledMs: new Date(dose.scheduledTime).getTime() };
+    await render(
+      React.createElement(TodayGroupCard, {
+        group: { part: 'morning', items: [item], taken: 0, total: 1 },
+        expanded: false,
+        onToggle: () => {},
+        medicationFor: () => null,
+        markTakenId: null,
+        markTakenDisabledReason: null,
+        onMarkTaken: () => {},
+        onOpen: () => {},
+        onMore: () => {},
+        canUpdate: () => true,
+      }),
+    );
+    const row = screen.getByTestId('today-row-snz');
+    expect(row).toHaveTextContent(/Due now/);
+    expect(row).toHaveTextContent(/Reminder again at 10:35/);
+    expect(row).not.toHaveTextContent(/Taken/);
+  });
+});

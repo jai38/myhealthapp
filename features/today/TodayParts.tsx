@@ -117,7 +117,14 @@ export function TodayGroupCard({
                 form={medicineFormFor(med?.dosageForm)}
                 state={item.state}
                 formatTime={formatTodayTime}
-                hint={item.state.kind === 'notConfirmed' && canUpdate(item) ? t('today.tapToUpdate') : undefined}
+                hint={
+                  item.state.kind === 'notConfirmed' && canUpdate(item)
+                    ? t('today.tapToUpdate')
+                    : item.state.kind === 'dueNow' && item.state.remindAt
+                      ? // ST-01: a snoozed dose keeps "Due now" and says when it reminds again.
+                        t('status.reminderAgain', { time: formatTodayTime(item.state.remindAt) })
+                      : undefined
+                }
                 onPress={() => onOpen(item)}
                 onMore={() => onMore(item)}
               />
