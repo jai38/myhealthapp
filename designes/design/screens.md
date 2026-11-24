@@ -3,7 +3,7 @@
 Status: LOCKED = approved by the user; REVIEW = shown, awaiting approval.
 Design system: `colour-shape-spec.md` (Calm Glass v4 + Apple-style type, locked 2026-11-16).
 
-> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Baseline commit `8c62eb0` on `designes/initial-upload`. Changes to these need the owner's approval. Not in the baseline (in review): M02 Medication Details, landing page.
+> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Baseline commit `8c62eb0` on `designes/initial-upload`. Changes to these need the owner's approval. Not in the baseline (in review): landing page. M02 Medication Details was locked separately on 2026-11-24 (v1.1).
 
 ## Flow 1 · Sign in / Sign up
 Mobile Number → OTP → (existing user: Today) / (new user: Create Your Account → Your Health Profile incl. allergies → Welcome/first-time Today)
@@ -102,7 +102,7 @@ Shown when S03's date of birth is under 18 (block at launch, Phase 5 P4, pending
 
 ## Flow 4 · Medications
 
-### M02 · Medication Details — REVIEW 2026-11-19
+### M02 · Medication Details — LOCKED 2026-11-24 (v1.0 as revised by v1.1; where they differ, v1.1 wins)
 Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · Medication Details" (props: theme, state, viewport full/phone) and "M02 · States". Built only from fields in `api.md` `MedicationDetail` (no invented data); quantity per dose isn't stored, so the dose line is strength · form · route.
 - States: `active` (prescribed), `manual` (added by you), `paused`, `stopped`, `inactive` (from an older prescription).
 - Nav: glass back button (to the previous tab) and a glass ⋯ button (same actions as Manage). No tab bar; this is a pushed screen.
@@ -116,7 +116,7 @@ Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · 
 - **Manage** (active / paused): Edit Reminder Times; Pause Medicine or Resume Medicine; Mark as Completed; Stop Medicine (red, asks for an optional reason, then `discontinue`). Footnote "Stopping or completing keeps the medicine and its history in your records." Completed/stopped medicines show no Manage card (the API can't restart them).
 - Decisions: names and dates in the design are mock data; the build uses the synthetic set ("Asha Test", "Testmed A 500 mg").
 
-### M02 v1.1 · Medication Details revised — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards M02 v1.1, M02 v1.1 States, M02 v1.1 Sheets)
+### M02 v1.1 · Medication Details revised — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards M02 v1.1, M02 v1.1 States, M02 v1.1 Sheets)
 Spec: `specs/M02-v1.1-medication-details.md`. Aligns the in-review M02 with the locked S-RX-04 v1.0/v1.1 and R-DOC-02: Start Taking via Sheet U → 4B; Sources card; Review stop/pause; Start a New Course; as-needed; reaction on record; corrected-record banner. Approving leads to the v1.1 design, then M02 is locked as a whole.
 
 ## Side track L · Landing page — REVIEW 2026-11-21 (owner)

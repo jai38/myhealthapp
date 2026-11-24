@@ -553,7 +553,7 @@
     "t09": {
       "kind": "title1",
       "maxW": 2748,
-      "text": "Medications · M02 Medication Details · IN REVIEW",
+      "text": "Medications · M02 Medication Details · LOCKED 2026-11-24 (v1.0 as revised by M02 v1.1 below)",
       "w": 240,
       "x": 0,
       "y": 23756
@@ -695,7 +695,7 @@
     "t29": {
       "x": 0,
       "y": 70780,
-      "text": "M02 v1.1 · Medication Details revised (replaces the v1.0 boards above where they differ) · spec APPROVED, design IN REVIEW",
+      "text": "M02 v1.1 · Medication Details revised (replaces the v1.0 boards where they differ) · spec APPROVED · design APPROVED 2026-11-24 · M02 LOCKED",
       "kind": "title1",
       "maxW": 2748
     }

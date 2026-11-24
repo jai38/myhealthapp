@@ -2,7 +2,7 @@
 
 Paste this at the start of a development session.
 
-> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Baseline commit `8c62eb0` on `designes/initial-upload`. Changes to these need the owner's approval. Not in the baseline (in review): M02 Medication Details, landing page.
+> **Locked baseline — 2026-11-22.** Frozen design and behaviour, approved by the owner: design system (Calm Glass UI v4 with the 2026-11-19 contrast fix), S01–S07 (incl. the S01/S02 WhatsApp update), A01–A04. Baseline commit `8c62eb0` on `designes/initial-upload`. Changes to these need the owner's approval. Not in the baseline (in review): landing page. M02 Medication Details was locked separately on 2026-11-24 (v1.1).
 
 ## 1. Where things are
 - **Design source of truth:** Claude Design canvas — https://claude.ai/artifact/7f6T8pLUF6V4CTzCKeYmU9 (private until the owner shares it).
@@ -30,7 +30,7 @@ Paste this at the start of a development session.
 | S07 Dose update sheet + Mark as Taken toast | Locked 2026-11-19 | ask, taken, other, skipped |
 | S01/S02 WhatsApp update (copy, Paste, no-WhatsApp state) | Locked 2026-11-21 | S01 +nowhatsapp, S02 +nowhatsapp |
 | A01 App lock · A02 Recovery code · A03 New-device check · A04 Under 18 | Locked 2026-11-21 | see `screens.md` Flow 3 |
-| M02 Medication Details | In review (owner handling) | active, manual, paused, stopped, inactive |
+| M02 Medication Details | Locked 2026-11-24 (v1.0 as revised by v1.1; spec `designes/design/specs/M02-v1.1-medication-details.md`) | active, manual, paused, stopped, inactive · v1.1: asneeded, reaction, corrected, starttaking, setup, stopsheet |
 | S-RX-01 Add Health Record | Locked 2026-11-22 (spec `designes/design/specs/S-RX-01-add-health-record.md`) | empty, photos, pdf, preparing, cameraoff, fileerror, offline, discard |
 | S-RX-02 Review Your Document | Locked 2026-11-22 (spec `designes/design/specs/S-RX-02-review-your-document.md`) | ready, flagged, pdf, uploading, duplicate, failed, offline, remove |
 | S-RX-03 Confirm Classification & Verify Information | Locked 2026-11-22 (spec `designes/design/specs/S-RX-03-confirm-and-verify.md`) | reading, failed, type, picker, mixed, check, item, duplicate, pending, mismatch, basic |
