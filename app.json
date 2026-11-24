@@ -48,7 +48,14 @@
           "icon": "./assets/notification-icon.png",
           "color": "#0A5CE6"
         }
-      ]
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Ayoreni to use Face ID to unlock the app."
+        }
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "router": {
