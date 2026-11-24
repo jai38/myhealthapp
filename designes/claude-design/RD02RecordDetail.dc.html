@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>R-DOC-02 Record detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.rd{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.rd.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.rd *{box-sizing:border-box;margin:0}
+.rd .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.rd .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.rd .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.rd .sic{display:flex;gap:6px;align-items:center}
+.rd .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.rd .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.rd .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.rd .mini img{width:30px}
+.rd .main{position:absolute;top:122px;left:20px;width:362px}
+.rd .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.rd.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.rd h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.rd .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.rd .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.rd:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.rd .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.rd .row+.row{border-top:1px solid var(--hair)}
+.rd .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.rd .mb{background:var(--btint);color:var(--act)}.rd .ms{background:var(--ttint);color:var(--tl)}
+.rd .rx{flex:1;min-width:0}.rd .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.rd .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.rd .chev{color:var(--t3);flex:none}
+.rd .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.rd .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.rd .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.rd .note svg{flex:none;margin-top:2px}.rd .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.rd .n-info{background:var(--infob);color:var(--info)}.rd .n-err{background:var(--errb);color:var(--err)}.rd .n-amb{background:var(--ambb);color:var(--amb)}.rd .n-ok{background:var(--okb);color:var(--ok)}
+.rd .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.rd .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.rd.dark .btn{box-shadow:none}
+.rd .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.rd .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.rd .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.rd .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.rd .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.rd .bx svg{display:none}.rd .ck.on .bx{background:var(--act);border-color:var(--act)}.rd .ck.on .bx svg{display:block}
+.rd .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.rd.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.rd .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.rd{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.rd.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.rd .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.rd .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.rd .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.rd .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.rd .prog p{font-size:14px;font-weight:600}.rd .prog p span{color:var(--amb)}
+.rd .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.rd .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.rd .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.rd .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.rd .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.rd .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.rd .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.rd .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.rd:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.rd .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.rd .kv+.kv{border-top:1px solid var(--hair)}.rd .kv span{color:var(--t2)}.rd .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.rd .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.rd .it+.it{border-top:1px solid var(--hair)}
+.rd .ix{flex:1;min-width:0}.rd .ix b{display:block;font-size:15px;font-weight:600}.rd .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.rd .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.rd .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.rd .ri.ok{background:var(--tkb);color:var(--tk)}.rd .ri.nc{background:var(--upb);color:var(--up)}.rd .ri.at{background:var(--ambb);color:var(--amb)}
+.rd .mi{width:34px;height:34px;border-radius:10px}
+.rd .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.rd .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.rd .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.rd .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.rd .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.rd .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.rd .cta{bottom:30px;padding-top:24px;z-index:5}
+.rd .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.rd .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.rd.dark .scrim{background:rgba(0,0,0,.55)}
+.rd .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.rd.dark .sheet{background:#0C1B2D}
+.rd .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.rd .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.rd .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.rd .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.rd .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.rd .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.rd .lk b{display:block;font-size:16px}.rd .lk small{font-size:13px;color:var(--t2)}
+.rd .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.rd .ck small{display:block;font-size:12px;color:var(--t2)}
+.rd .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.rd .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.rd .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.rd .pl+.pl{border-top:1px solid var(--hair)}
+.rd .pl span{flex:1}.rd .pl small{color:var(--t2);font-size:12px}
+
+.rd .top .ttl{display:flex;align-items:center;gap:8px;font-size:17px}
+.rd .top .ttl .tile{width:30px;height:30px;border-radius:9px;background:var(--btint);color:var(--act);display:flex;align-items:center;justify-content:center}
+.rd .more{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--t1);display:flex;align-items:center;justify-content:center}
+.rd .strip{display:flex;gap:8px;margin-top:2px}
+.rd .pg{width:64px;height:84px;border-radius:10px;background:#FFFFFF;border:1px solid var(--hair);box-shadow:0 4px 12px rgba(20,60,120,.10);padding:9px 8px;display:flex;flex-direction:column;gap:5px;flex:none}
+.rd.dark .pg{background:#EEF2F7}
+.rd .pg i{display:block;height:4px;border-radius:2px;background:#CBD5E1}.rd .pg i.s{width:60%}.rd .pg i.h{height:6px;width:70%;background:#94A3B8}
+.rd .pg.more2{align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#5B6B7F;background:var(--off)}
+.rd .stc{margin-top:12px;border-radius:20px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:14px}
+.rd .st{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px}
+.rd .st.v{background:var(--tkb);color:var(--tk)}.rd .st.p{background:var(--ambb);color:var(--amb)}
+.rd .stc p{font-size:14px;color:var(--t2);margin-top:6px}
+.rd .stc .row2{display:flex;gap:8px;margin-top:12px}
+.rd .stc .row2 .btn{position:static;flex:1;height:46px;font-size:15px}
+.rd .stc .row2 .btn2{flex:none;height:46px;padding:0 14px;font-size:14px;border-radius:999px;background:var(--btint);width:auto}
+.rd .rem{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;font-weight:600;color:var(--t1)}.rd .rem a{color:var(--act);text-decoration:none;font-weight:700}
+.rd .trk{font-size:12px;font-weight:700;color:var(--t2);white-space:nowrap}
+.rd .trk.on{color:var(--tk)}
+.rd .bnr{display:flex;gap:10px;padding:12px 14px;background:var(--ambb);font-size:13px;line-height:18px}
+.rd .bnr b{display:block;color:var(--amb);font-size:14px}
+.rd .bnr button{margin-top:8px;height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--card);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.rd .lk{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;padding:12px 14px}.rd .lk+.lk{border-top:1px solid var(--hair)}.rd .lk span{flex:1}.rd .lk small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.rd .crop{margin-top:12px;border-radius:12px;background:#FFFFFF;border:1px solid var(--hair);padding:10px 12px;font:italic 500 15px/1.45 Georgia,serif;color:#33445E;position:relative}
+.rd.dark .crop{background:#EEF2F7}
+.rd .crop small{position:absolute;right:10px;top:6px;font:600 11px 'Plus Jakarta Sans',sans-serif;font-style:normal;color:#5B6B7F}
+.rd .opts{margin-top:12px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.rd .opts div{padding:13px 14px;font-size:16px;display:flex;justify-content:space-between}.rd .opts div+div{border-top:1px solid var(--hair)}
+.rd .opts div.on{color:var(--act);font-weight:700}
+.rd .tm{display:flex;justify-content:space-between;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--off);font-size:15px}.rd .tm a{color:var(--act);font-weight:700;text-decoration:none}
+.rd .btn.red{background:#D0101F;box-shadow:none}
+.rd.dark .btn.red{background:#FF6B76;color:#07111F}
+.rd .dl2{margin-top:12px;border-radius:16px;background:var(--off);padding:4px 0}
+.rd .dl2 p{display:flex;gap:10px;padding:8px 14px;font-size:14px;line-height:20px}
+.rd .rn{display:flex;gap:12px;margin-top:12px;padding:13px 14px;border-radius:18px;background:var(--btint);font-size:14px;line-height:20px}
+.rd .rn .mi{background:var(--card);color:var(--act);flex:none}
+.rd .vo{margin-top:12px;width:100%;height:50px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:16px;font-weight:700}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div>
+<sc-if value="{{notRestr}}" hint-placeholder-val="{{ true }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl"><span class="tile"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h2.5a1.5 1.5 0 010 3H9v-5M11 14l3 3"></path></svg></span>Prescription · Dr. Rao</span><button class="more" type="button" aria-label="More"><svg width="18" height="4" viewBox="0 0 18 4" fill="currentColor" aria-hidden="true"><circle cx="2" cy="2" r="1.8"></circle><circle cx="9" cy="2" r="1.8"></circle><circle cx="16" cy="2" r="1.8"></circle></svg></button></div>
+<div class="scroll"><div class="strip"><div class="pg"><i class="h"></i><i></i><i class="s"></i><i></i><i></i><i class="s"></i></div><div class="pg"><i class="h"></i><i></i><i class="s"></i><i></i><i></i><i class="s"></i></div></div><div class="stc">
+<sc-if value="{{isPartial}}" hint-placeholder-val="{{ true }}"><span class="st p">◐ Partially Verified</span><p>{{progTxt}}</p>
+<div class="row2"><button class="btn" type="button">Continue Verification</button><button class="btn2" type="button">Remind Me</button></div>
+<sc-if value="{{hasRem}}" hint-placeholder-val="{{ false }}"><p class="rem">Reminder · Thu 27 Nov, 9:00 AM <a href="#">Change</a> <a href="#">Remove</a></p></sc-if></sc-if>
+<sc-if value="{{isVer}}" hint-placeholder-val="{{ false }}"><span class="st v">✓ Verified</span><p>All details checked · 24 Nov 2026</p></sc-if>
+</div><div class="gh"><span class="gt">What you checked<small>Prescription · Dr. Rao · 22 Nov 2026</small></span></div>
+<div class="gc"><sc-if value="{{notAffected}}" hint-placeholder-val="{{ true }}"><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Amlodipine 5 mg</b><small>Tablet · 1 in the morning</small></span><span class="ri ok">✓</span></button></sc-if><sc-if value="{{isAffected}}" hint-placeholder-val="{{ false }}"><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Amlodipine 5 mg</b><small>Tablet · 1 twice a day · changed 24 Nov</small></span><span class="ri nc">○</span></button></sc-if><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Metformin 500 mg</b><small>Tablet · 1 twice a day</small></span><span class="ri ok">✓</span></button><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Telmisartan 40 mg</b><small>Tablet · 1 in the morning</small></span><span class="ri ok">✓</span></button><sc-if value="{{isPartial}}" hint-placeholder-val="{{ true }}"><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Atorvastatin [unclear] mg</b><small>Strength not readable</small></span><span class="ri nc">○</span></button></sc-if><sc-if value="{{isVer}}" hint-placeholder-val="{{ false }}"><button class="it" type="button"><span class="mi mb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg></span><span class="ix"><b>Atorvastatin 10 mg</b><small>Tablet · 1 at night</small></span><span class="ri ok">✓</span></button></sc-if></div><div class="gh"><span class="gt">Medicines from this record</span></div>
+<div class="gc"><sc-if value="{{isAffected}}" hint-placeholder-val="{{ false }}"><div class="bnr"><span>⚠</span><div><b>Amlodipine dose changed on this record.</b>Your tracked medicine hasn’t changed. Review it to decide.<br><button type="button">Review Medicine</button></div></div></sc-if><button class="it" type="button"><span class="ix"><b>Amlodipine 5 mg</b></span><span class="trk on">Tracking · reminders on</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><button class="it" type="button"><span class="ix"><b>Metformin 500 mg</b></span><span class="trk on">Tracking · reminders on</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><button class="it" type="button"><span class="ix"><b>Telmisartan 40 mg</b></span><span class="trk">Record only</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button><sc-if value="{{isPartial}}" hint-placeholder-val="{{ true }}"><button class="it" type="button"><span class="ix"><b>Atorvastatin</b></span><span class="trk">Not ready to track</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button></sc-if></div><div class="gh"><span class="gt">Linked records</span></div>
+<div class="gc"><div class="lk"><span>Bill · Wellness Pharmacy<small>22 Nov 2026 · ₹1,284</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><div class="lk"><span>Condition · Hypertension<small>Your condition</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div></div>
+<div class="gh"><span class="gt">Copies and history</span></div>
+<div class="gc"><div class="lk"><span>History<small>{{histTxt}}</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div><div class="lk"><span>About this record<small>Added to Ayoreni 22 Nov 2026 · 2 pages</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div></div></div></sc-if>
+<sc-if value="{{isRestr}}" hint-placeholder-val="{{ false }}"><div class="top"><button class="back" type="button" aria-label="Back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button><span class="ttl"><span class="tile"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg></span>Restricted record</span><button class="more" type="button" aria-label="More"><svg width="18" height="4" viewBox="0 0 18 4" fill="currentColor" aria-hidden="true"><circle cx="2" cy="2" r="1.8"></circle><circle cx="9" cy="2" r="1.8"></circle><circle cx="16" cy="2" r="1.8"></circle></svg></button></div>
+<div class="scroll">
+<div class="rn"><span class="mi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg></span><div>Kept restricted. Ayoreni doesn’t read or explain the results. They stay only in your original report.</div></div>
+<div class="stc"><span class="st v">✓ Verified</span><p>Details checked · 12 Oct 2026</p></div>
+<div class="gh"><span class="gt">Report details</span></div>
+<div class="gc"><div class="kv"><span>Name on document</span><b>Ananya Sharma</b></div><div class="kv"><span>Report date</span><b>12 Oct 2026</b></div><div class="kv"><span>Laboratory</span><b>Genome Diagnostics</b></div><div class="kv"><span>Test name</span><b>Pharmacogenomic Panel</b></div></div>
+<button class="vo" type="button">View Original</button>
+<div class="gh"><span class="gt">History</span></div>
+<div class="gc"><div class="lk"><span>Saved and checked<small>12 Oct 2026</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></div></div>
+</div></sc-if>
+<sc-if value="{{isEdit}}" hint-placeholder-val="{{ false }}"><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Change this detail?"><div class="grab"></div>
+<p class="sht">Change this detail?</p><p class="shs">It will be marked as not checked until you confirm it again. Your tracked medicine won’t change.</p>
+<div class="crop"><small>Page 1 · line 2</small>Tab Amlodipine 5 mg  1-0-0</div>
+<div class="sbtns"><button class="btn" type="button">Change</button><button class="btn2" type="button">Cancel</button></div></div></sc-if>
+<sc-if value="{{isRemind}}" hint-placeholder-val="{{ false }}"><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Reminder"><div class="grab"></div>
+<p class="sht">Remind you to finish checking?</p><p class="shs">One reminder only. The notification won’t show what the record is.</p>
+<div class="opts"><div>Tomorrow</div><div class="on">In 3 days<span>✓</span></div><div>In 1 week</div><div>Choose a date</div></div>
+<div class="tm"><span>9:00 AM</span><a href="#">Change</a></div>
+<div class="sbtns"><button class="btn" type="button">Set Reminder</button><button class="btn2" type="button">Don’t Remind Me</button></div></div></sc-if>
+<sc-if value="{{isType}}" hint-placeholder-val="{{ false }}"><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Change type"><div class="grab"></div>
+<p class="sht">Check it as a Laboratory Report?</p><p class="shs">Ayoreni will read it again as a lab report. You’ll check its details again. Medicines you already track won’t change.</p>
+<div class="sbtns"><button class="btn" type="button">Change Type</button><button class="btn2" type="button">Cancel</button></div></div></sc-if>
+<sc-if value="{{isDel}}" hint-placeholder-val="{{ false }}"><div class="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Delete this prescription?"><div class="grab"></div>
+<p class="sht">Delete this prescription?</p><p class="shs">The original and everything you checked will be removed from Ayoreni.</p>
+<div class="dl2"><p><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect><path d="M9.5 10l4.5 4.5"></path></svg><span>Medicines you track from it <b>keep running</b>. You can stop them in Medications.</span></p><p><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"></path></svg><span>2 linked records stay. Only the link is removed.</span></p></div>
+<div class="sbtns"><button class="btn red" type="button">Delete</button><button class="btn2" type="button">Cancel</button></div></div></sc-if>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["partial","verified","edit","affected","reminder","changetype","delete","restricted"],"default":"partial"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'partial';
+    const ver = s === 'verified', aff = s === 'affected';
+    return {
+      rootCls: 'rd' + (t === 'dark' ? ' dark' : ''),
+      notRestr: s !== 'restricted', isRestr: s === 'restricted',
+      isVer: ver, isPartial: !ver,
+      progTxt: aff ? '3 of 4 checked · Amlodipine needs checking again' : '3 of 4 checked · 1 strength not readable',
+      hasRem: s === 'partial',
+      isAffected: aff, notAffected: !aff,
+      histTxt: aff ? 'Dose for Amlodipine changed 24 Nov — needs checking again' : 'Saved 22 Nov · 3 items checked 22 Nov',
+      isEdit: s === 'edit', isRemind: s === 'reminder', isType: s === 'changetype', isDel: s === 'delete'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -405,6 +405,20 @@
       "w": 3592,
       "h": 2064,
       "title": "R-DOC-01 · Documents list states (light / dark)"
+    },
+    "RD02RecordDetail.dc.html": {
+      "x": 0,
+      "y": 62988,
+      "w": 402,
+      "h": 874,
+      "title": "R-DOC-02 · Record detail"
+    },
+    "RD02States.dc.html": {
+      "x": 482,
+      "y": 62988,
+      "w": 3592,
+      "h": 2064,
+      "title": "R-DOC-02 · Record detail states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -600,6 +614,13 @@
       "text": "Flow 6 · Records → Documents · R-DOC-01 Documents list · spec APPROVED · design APPROVED 2026-11-24 · LOCKED",
       "kind": "title1",
       "maxW": 4074
+    },
+    "t26": {
+      "x": 0,
+      "y": 62728,
+      "text": "Flow 6 · R-DOC-02 Record detail · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 4074
     }
   },
   "order": [
@@ -659,7 +680,9 @@
     "R03OtherReview.dc.html",
     "R03OStates.dc.html",
     "RD01Documents.dc.html",
-    "RD01States.dc.html"
+    "RD01States.dc.html",
+    "RD02RecordDetail.dc.html",
+    "RD02States.dc.html"
   ],
   "pages": [
     {

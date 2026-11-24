@@ -210,5 +210,5 @@ Change spec: `specs/S-RX-03-v1.8-other-document-review.md`. Replaces only the Ot
 ### R-DOC-01 · Documents list — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards RD01 and RD01 States)
 Spec: `specs/R-DOC-01-documents-list.md`. Primary filters All | Pending Verification | Verified (RX-VER-07–11), secondary filter sheet, search, special rows (restricted, waiting to upload, reading), states. Approving it leads to its visual design, then R-DOC-02 Record detail.
 
-### R-DOC-02 · Record detail — SPEC REVIEW 2026-11-24
+### R-DOC-02 · Record detail — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards RD02 and RD02 States)
 Spec: `specs/R-DOC-02-record-detail.md`. Original strip, status card with Continue Verification and Remind Me to Finish, content in each type's 3C groups, medicines and tracking states, linked records, copies and history, edit (reopens verification), change type, delete, restricted view, states. Approving it leads to its visual design.
