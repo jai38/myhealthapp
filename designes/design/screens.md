@@ -63,7 +63,7 @@ Mockup: `mockups/today-calm-glass.html` (#dark for dark), PNGs `mockups/today-*.
 - One "Mark as Taken" under the Due now row; Upcoming Appointment card; Quick Actions; floating tabs.
 - Decisions: hide empty groups; max 4–5 rows per group then "Show all"; tapping Not confirmed opens dose-update sheet (Taken at time / Skipped / Missed, never automatic); all done → hero "All done for today ✓", full ring, no confetti.
 
-### S06 v1.1 / S05 v1.1 · "Records to Review" row on Today — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards S06R and S06R States)
+### S06 v1.1 / S05 v1.1 · "Records to Review" row on Today — SPEC APPROVED 2026-11-24 · design APPROVED 2026-11-24 · LOCKED (canvas boards S06R, S06R States, S05R)
 Change spec: `specs/S06-v1.1-records-to-review.md`. Adds one conditional row under the hero (D-RX-2, RX-VER-09) that opens R-DOC-01 with Pending Verification selected; nothing else on S05/S06 changes. At zero pending, Today is identical to the locked screens.
 
 ### S07 · Dose update sheet + Mark as Taken confirmation — LOCKED 2026-11-19

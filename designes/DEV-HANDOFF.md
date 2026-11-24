@@ -26,6 +26,7 @@ Paste this at the start of a development session.
 | S04 Your Health Profile | Locked | default, yes, saved, no, notsure |
 | S05 Welcome / first-time Today | Locked | incomplete, sheet, complete |
 | S06 Today (returning) | Locked | default, toast (after Mark as Taken) |
+| S06 v1.1 / S05 v1.1 "Records to Review" row (adds one conditional row under the hero) | Locked 2026-11-24 (spec `designes/design/specs/S06-v1.1-records-to-review.md`) | three, one, offline, none · S05: first, none |
 | S07 Dose update sheet + Mark as Taken toast | Locked 2026-11-19 | ask, taken, other, skipped |
 | S01/S02 WhatsApp update (copy, Paste, no-WhatsApp state) | Locked 2026-11-21 | S01 +nowhatsapp, S02 +nowhatsapp |
 | A01 App lock · A02 Recovery code · A03 New-device check · A04 Under 18 | Locked 2026-11-21 | see `screens.md` Flow 3 |
