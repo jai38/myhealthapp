@@ -1,6 +1,6 @@
 # R-DOC-01 · Documents list — screen specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-23 · **Flow:** Records → Documents.
+**Status:** APPROVED 2026-11-24 (owner: "approve R-DOC-01 with recommendations"; all PROPOSED items and R01-OD-1–8 recommendations accepted) · design REVIEW · **Date:** 2026-11-23 · **Flow:** Records → Documents.
 **Sources (APPROVED):** RX-VER-04 (three access points), **RX-VER-07** (Records → Documents; All default; Pending Verification filter; no new tab; VER-AC-07.1–07.5), **RX-VER-08** (one pending list with Unverified + Partially Verified, distinct labels and actions, progress), **RX-VER-09** (Today "Records to Review" deep link; unique-document count; patient-scoped; VER-AC-09.4, 09.6), **RX-VER-10** (secondary multi-select category filter for all nine types; optional date/provider/condition; reset; not persistent clutter; VER-AC-10.1–10.5), **RX-VER-11** (bidirectional list updates; VER-AC-11.1–11.3), RX-VER-12 (postpone without losing progress), RX-VER-13 (one canonical record everywhere); Classification v1.0 (nine categories, names); DOC-02–09 v1.0 §7 "Records" rules (dating, Bills filter, restricted rows, "Date unknown"); locked S-RX-01–05 and S-RX-03 v1.1–v1.8; locked design system (Calm Glass UI v4, 2026-11-19 contrast fix); four tabs (Today / Records / Medications / Profile).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
 

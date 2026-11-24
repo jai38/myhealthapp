@@ -391,6 +391,20 @@
       "w": 3150,
       "h": 2064,
       "title": "S-RX-03 v1.8 · Other document review states (light / dark)"
+    },
+    "RD01Documents.dc.html": {
+      "x": 0,
+      "y": 60304,
+      "w": 402,
+      "h": 874,
+      "title": "R-DOC-01 · Documents list"
+    },
+    "RD01States.dc.html": {
+      "x": 482,
+      "y": 60304,
+      "w": 3592,
+      "h": 2064,
+      "title": "R-DOC-01 · Documents list states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -579,6 +593,13 @@
       "text": "S-RX-03 v1.8 · Other medical document review (adds to the locked S-RX-03) · spec APPROVED · design APPROVED 2026-11-23 · LOCKED",
       "kind": "title1",
       "maxW": 3632
+    },
+    "t25": {
+      "x": 0,
+      "y": 60044,
+      "text": "Flow 6 · Records → Documents · R-DOC-01 Documents list · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 4074
     }
   },
   "order": [
@@ -636,7 +657,9 @@
     "R03GeneticReview.dc.html",
     "R03GStates.dc.html",
     "R03OtherReview.dc.html",
-    "R03OStates.dc.html"
+    "R03OStates.dc.html",
+    "RD01Documents.dc.html",
+    "RD01States.dc.html"
   ],
   "pages": [
     {
