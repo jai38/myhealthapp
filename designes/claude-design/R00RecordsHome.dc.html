@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>R-00 Records home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.rh{--bg:#F7FAFC;--card:rgba(255,255,255,.72);--bd:rgba(255,255,255,.95);--hair:#E7EEF5;--sh:0 8px 24px rgba(20,60,120,.08);
+--t1:#0F172A;--t2:#5B6B7F;--t3:#647387;--act:#0062DB;--err:#D0101F;--errb:rgba(208,16,31,.10);--field:#FFFFFF;--fbd:#D9E3EE;--off:#EBEFF4;--offt:#5B6B7F;
+--btint:#E4F0FC;--ttint:#E6F8F3;--tl:#007358;--ok:#097539;--okb:#E3F5EA;--info:#0060D6;--infob:#E4F0FC;--amb:#9A5B00;--ambb:#FFF1DB;
+--m1:rgba(0,128,252,.16);--m2:rgba(0,198,156,.20);--home:#0F172A;
+width:402px;height:874px;background:var(--bg);overflow:hidden;position:relative;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);-webkit-font-smoothing:antialiased}
+.rh.dark{--bg:#07111F;--card:rgba(16,37,58,.72);--bd:rgba(46,144,255,.16);--hair:rgba(46,144,255,.16);--sh:0 8px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.05);
+--t1:#F7FAFF;--t2:#B7C4D6;--t3:#8EA0B5;--act:#2E90FF;--err:#FF6B76;--errb:rgba(255,107,118,.14);--field:rgba(7,17,31,.55);--fbd:rgba(183,196,214,.22);--off:rgba(255,255,255,.08);--offt:#B7C4D6;
+--btint:rgba(46,144,255,.16);--ttint:rgba(32,215,197,.12);--tl:#20D7C5;--ok:#5FD38D;--okb:rgba(95,211,141,.14);--info:#7DB8FF;--infob:rgba(46,144,255,.14);--amb:#F5B84A;--ambb:rgba(245,184,74,.14);
+--m1:rgba(46,144,255,.20);--m2:rgba(32,215,197,.13);--home:#F7FAFF}
+.rh *{box-sizing:border-box;margin:0}
+.rh .mesh{position:absolute;border-radius:50%;filter:blur(48px)}
+.rh .sbar{position:absolute;top:0;left:0;width:402px;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 44px;font:600 17px -apple-system,sans-serif;color:var(--t1);z-index:5}
+.rh .island{position:absolute;left:138px;top:11px;width:126px;height:37px;border-radius:20px;background:#000}
+.rh .sic{display:flex;gap:6px;align-items:center}
+.rh .top{position:absolute;top:58px;left:20px;width:362px;display:flex;align-items:center;justify-content:space-between;height:44px}
+.rh .back{width:44px;height:44px;padding:0;border-radius:50%;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:var(--t1);cursor:pointer}
+.rh .mini{display:flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.22em;font-size:12px;color:var(--t2)}
+.rh .mini img{width:30px}
+.rh .main{position:absolute;top:122px;left:20px;width:362px}
+.rh .ic{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,#0058E6,#0068EE 60%,#00B894 140%);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(0,96,252,.26);margin-bottom:18px;color:#fff}
+.rh.dark .ic{box-shadow:0 0 0 1px rgba(108,231,216,.18),0 10px 22px rgba(0,96,252,.2)}
+.rh h1{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.025em}
+.rh .sub{font-size:16px;line-height:23px;color:var(--t2);margin-top:8px;letter-spacing:-.005em}
+.rh .card{margin-top:20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);padding:6px 16px}
+.rh:not(.dark) .card{outline:1px solid var(--hair);outline-offset:-1px}
+.rh .row{display:flex;gap:12px;align-items:center;min-height:64px;padding:10px 0}
+.rh .row+.row{border-top:1px solid var(--hair)}
+.rh .mi{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.rh .mb{background:var(--btint);color:var(--act)}.rh .ms{background:var(--ttint);color:var(--tl)}
+.rh .rx{flex:1;min-width:0}.rh .rt{font-size:17px;font-weight:600;line-height:22px;letter-spacing:-.015em}.rh .rs{font-size:14px;line-height:20px;color:var(--t2);margin-top:1px}
+.rh .chev{color:var(--t3);flex:none}
+.rh .tog{width:51px;height:31px;border-radius:999px;background:var(--act);position:relative;flex:none}
+.rh .tog:after{content:"";position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.rh .note{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:20px}
+.rh .note svg{flex:none;margin-top:2px}.rh .note b{display:block;font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.rh .n-info{background:var(--infob);color:var(--info)}.rh .n-err{background:var(--errb);color:var(--err)}.rh .n-amb{background:var(--ambb);color:var(--amb)}.rh .n-ok{background:var(--okb);color:var(--ok)}
+.rh .cta{position:absolute;left:20px;width:362px;bottom:40px;display:flex;flex-direction:column;gap:4px}
+.rh .btn{width:100%;border:0;padding:0;font-family:inherit;cursor:pointer;height:52px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(180deg,#006AE6,#0058E8);color:#fff;box-shadow:0 8px 18px rgba(0,96,252,.32)}
+.rh.dark .btn{box-shadow:none}
+.rh .btn.off{background:var(--off);color:var(--offt);box-shadow:none}
+.rh .btn2{width:100%;border:0;background:none;font-family:inherit;cursor:pointer;height:48px;border-radius:999px;font-size:17px;font-weight:600;color:var(--act);letter-spacing:-.01em}
+.rh .home{position:absolute;bottom:8px;left:134px;width:134px;height:5px;border-radius:3px;background:var(--home);z-index:9}
+.rh .ck{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:20px;color:var(--t1);margin-top:16px;padding:0 4px}
+.rh .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none;display:flex;align-items:center;justify-content:center;color:#fff}
+.rh .bx svg{display:none}.rh .ck.on .bx{background:var(--act);border-color:var(--act)}.rh .ck.on .bx svg{display:block}
+.rh .toast{position:absolute;left:16px;width:370px;bottom:156px;z-index:22;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,.92);color:#fff;backdrop-filter:blur(20px);box-shadow:0 12px 28px rgba(0,0,0,.25);font-size:15px}
+.rh.dark .toast{background:rgba(247,250,255,.94);color:#0F172A}
+.rh .toast .tk{width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;flex:none;color:#fff}
+
+.rh{--tk:#097539;--tkb:#E3F5EA;--upb:#EEF2F7;--up:#5B6B7F}
+.rh.dark{--tk:#5FD38D;--tkb:rgba(95,211,141,.14);--upb:rgba(255,255,255,.07);--up:#B7C4D6}
+.rh .top .ttl{font-size:17px;font-weight:600;letter-spacing:-.015em}
+.rh .orig{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--act);font-family:inherit;font-size:14px;font-weight:600}
+.rh .scroll{position:absolute;top:110px;left:0;right:0;bottom:0;overflow:hidden;padding:0 20px}
+.rh .prog{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);padding:12px 14px}
+.rh .prog p{font-size:14px;font-weight:600}.rh .prog p span{color:var(--amb)}
+.rh .pbar{height:6px;border-radius:3px;background:var(--off);margin-top:9px;overflow:hidden}.rh .pbar i{display:block;height:100%;width:44%;border-radius:3px;background:linear-gradient(90deg,#006AE6,#00B894)}
+.rh .disc{font-size:12px;line-height:17px;color:var(--t2);margin:8px 4px 0}
+.rh .gh{display:flex;justify-content:space-between;align-items:center;margin:14px 4px 7px}
+.rh .gt{font-size:16px;font-weight:700;letter-spacing:-.015em}.rh .gt small{display:block;font-size:12px;font-weight:500;color:var(--t2);margin-top:1px}
+.rh .mini{height:32px;padding:0 12px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:13px;font-weight:700}
+.rh .gc{border-radius:18px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);backdrop-filter:blur(24px);overflow:hidden}
+.rh:not(.dark) .gc{outline:1px solid var(--hair);outline-offset:-1px}
+.rh .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 14px;font-size:14px}
+.rh .kv+.kv{border-top:1px solid var(--hair)}.rh .kv span{color:var(--t2)}.rh .kv b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.rh .it{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px 10px 14px;min-height:50px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.rh .it+.it{border-top:1px solid var(--hair)}
+.rh .ix{flex:1;min-width:0}.rh .ix b{display:block;font-size:15px;font-weight:600}.rh .ix small{display:block;font-size:12px;color:var(--t2);margin-top:1px}
+.rh .tg{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--upb);color:var(--up);margin-left:6px;vertical-align:1px}
+.rh .ri{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.rh .ri.ok{background:var(--tkb);color:var(--tk)}.rh .ri.nc{background:var(--upb);color:var(--up)}.rh .ri.at{background:var(--ambb);color:var(--amb)}
+.rh .mi{width:34px;height:34px;border-radius:10px}
+.rh .chg{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12px;color:var(--amb);background:var(--ambb);font-weight:600}
+.rh .warn{padding:12px 14px;font:400 14px/1.55 Georgia,serif}
+.rh .para{padding:11px 14px;font:400 14px/1.55 Georgia,serif;border-top:1px solid var(--hair)}
+.rh .para b{font:700 12px 'Plus Jakarta Sans',sans-serif;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.rh .coll{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:15px;font-weight:600}
+.rh .coll small{display:block;font-size:12px;font-weight:500;color:var(--t2)}
+.rh .cta{bottom:30px;padding-top:24px;z-index:5}
+.rh .cta:before{content:"";position:absolute;left:-20px;right:-20px;top:-30px;bottom:-30px;background:linear-gradient(transparent,var(--bg) 32%);z-index:-1}
+.rh .scrim{position:absolute;inset:0;background:rgba(15,23,42,.36);z-index:30}
+.rh.dark .scrim{background:rgba(0,0,0,.55)}
+.rh .sheet{position:absolute;left:0;right:0;bottom:0;z-index:31;border-radius:30px 30px 0 0;background:#FFFFFF;padding:10px 20px 34px;box-shadow:0 -12px 30px rgba(0,0,0,.18)}
+.rh.dark .sheet{background:#0C1B2D}
+.rh .grab{width:38px;height:5px;border-radius:3px;background:var(--fbd);margin:0 auto 14px}
+.rh .sht{font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.02em}
+.rh .shs{font-size:15px;line-height:21px;color:var(--t2);margin-top:6px}
+.rh .sbtns{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.rh .btn.alt{background:var(--btint);color:var(--act);box-shadow:none}
+.rh .lk{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--off)}
+.rh .lk b{display:block;font-size:16px}.rh .lk small{font-size:13px;color:var(--t2)}
+.rh .ck{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;margin-top:8px;font-size:15px;width:100%;background:var(--field);font-family:inherit;color:var(--t1);text-align:left}
+.rh .ck small{display:block;font-size:12px;color:var(--t2)}
+.rh .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--t3);flex:none}
+.rh .plist{margin-top:14px;border-radius:16px;border:1px solid var(--hair);overflow:hidden}
+.rh .pl{display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px}.rh .pl+.pl{border-top:1px solid var(--hair)}
+.rh .pl span{flex:1}.rh .pl small{color:var(--t2);font-size:12px}
+
+.rh .hdr{position:absolute;top:58px;left:0;right:0;padding:0 16px;display:flex;align-items:center;gap:10px;z-index:4}
+.rh .hdr h1{flex:1;font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.02em}
+.rh .ib{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:var(--card);box-shadow:var(--sh);color:var(--t1);display:flex;align-items:center;justify-content:center;position:relative}
+.rh .ib i{position:absolute;top:6px;right:6px;min-width:16px;height:16px;border-radius:8px;background:var(--act);color:#fff;font:700 10px/16px 'Plus Jakarta Sans',sans-serif;font-style:normal;text-align:center;padding:0 4px}
+.rh .lst{position:absolute;top:112px;left:0;right:0;bottom:0;overflow:hidden;padding:0 16px}
+.rh .seg{display:flex;padding:3px;border-radius:999px;background:var(--off);gap:2px}
+.rh .seg button{flex:1;height:36px;border:0;border-radius:999px;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--t2);white-space:nowrap;padding:0 6px}
+.rh .seg button.on{background:var(--card);color:var(--t1);box-shadow:0 2px 8px rgba(20,60,120,.12)}
+.rh.dark .seg button.on{background:rgba(255,255,255,.12)}
+.rh .seg button b{display:inline-block;min-width:18px;height:18px;border-radius:9px;background:var(--ambb);color:var(--amb);font-size:11px;line-height:18px;margin-left:4px;padding:0 5px}
+.rh .chips{display:flex;gap:6px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.rh .chp{height:30px;padding:0 10px;border-radius:999px;background:var(--btint);color:var(--act);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.rh .chips a{font-size:13px;font-weight:700;color:var(--act);text-decoration:none;margin-left:4px}
+.rh .ctx{font-size:13px;color:var(--t2);margin:10px 4px 0}
+.rh .mon{font-size:13px;font-weight:700;color:var(--t2);letter-spacing:.02em;margin:16px 4px 7px}
+.rh .rw{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:10px 12px 10px 12px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.rh .rw+.rw{border-top:1px solid var(--hair)}
+.rh .rw.new{background:var(--btint)}
+.rh .tile{width:40px;height:40px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--btint);color:var(--act)}
+.rh .tile.lk{background:var(--off);color:var(--t2)}
+.rh .rx2{flex:1;min-width:0}
+.rh .rx2 b{display:block;font-size:15px;font-weight:600;line-height:20px}
+.rh .rx2 small{display:block;font-size:13px;color:var(--t2);margin-top:1px;font-variant-numeric:tabular-nums}
+.rh .st{display:inline-flex;align-items:center;gap:4px;margin-top:5px;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px}
+.rh .st.v{background:var(--tkb);color:var(--tk)}.rh .st.p{background:var(--ambb);color:var(--amb)}.rh .st.u{background:var(--upb);color:var(--up)}
+.rh .mk{font-size:11px;font-weight:700;color:var(--t2);margin-left:6px}
+.rh .act{flex:none;height:32px;padding:0 11px;border-radius:999px;border:0;background:var(--btint);color:var(--act);font-family:inherit;font-size:12px;font-weight:700;max-width:118px;line-height:14px}
+.rh .fab{position:absolute;right:16px;bottom:112px;height:48px;padding:0 18px;border-radius:999px;border:0;background:linear-gradient(135deg,#006AE6,#0058E8);color:#fff;font-family:inherit;font-size:15px;font-weight:700;box-shadow:0 10px 24px rgba(0,98,219,.32);z-index:19;display:flex;align-items:center;gap:6px}
+.rh .nav{position:absolute;left:16px;width:370px;bottom:30px;height:68px;border-radius:34px;background:var(--nav);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--bd);box-shadow:var(--navsh);display:flex;justify-content:space-around;align-items:center;font-size:10.5px;font-weight:600;color:var(--t3);z-index:20;letter-spacing:.01em}
+.rh .tab{display:flex;flex-direction:column;align-items:center;gap:3px}
+.rh .tab .pl{padding:5px 16px;border-radius:999px;display:flex}
+.rh .tab.a{color:var(--act)}.rh .tab.a .pl{background:var(--btint)}
+.rh .empty{margin-top:24px;padding:28px 20px;border-radius:22px;background:var(--card);border:1px solid var(--bd);box-shadow:var(--sh);text-align:center}
+.rh .empty .tile{margin:0 auto 12px;width:52px;height:52px;border-radius:16px}
+.rh .empty b{display:block;font-size:17px;line-height:22px}
+.rh .empty p{font-size:14px;line-height:20px;color:var(--t2);margin-top:6px}
+.rh .empty .btn{position:static;margin-top:16px;width:100%}
+.rh .ban{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--off);font-size:13px;line-height:18px;color:var(--t1)}
+.rh .ban b{font-weight:700}
+.rh .srch{display:flex;align-items:center;gap:8px;flex:1;height:44px;border-radius:999px;background:var(--field);border:1.5px solid var(--act);padding:0 14px;font-size:16px}
+.rh .srch span{flex:1}.rh .srch a{font-size:14px;font-weight:600;color:var(--act);text-decoration:none}
+.rh .cncl{font-size:15px;font-weight:600;color:var(--act)}
+.rh .fsec{font-size:13px;font-weight:700;color:var(--t2);margin:14px 0 8px}
+.rh .fch{display:flex;flex-wrap:wrap;gap:6px}
+.rh .fch span{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--fbd);font-size:13px;font-weight:600;display:inline-flex;align-items:center}
+.rh .fch span.on{background:var(--act);border-color:var(--act);color:#fff}
+.rh .frow{display:flex;gap:8px;margin-top:16px}.rh .frow .btn{flex:1}.rh .frow .btn2{flex:none;width:96px}
+.rh .fid{position:absolute;left:50%;top:330px;transform:translateX(-50%);width:200px;padding:22px 16px;border-radius:24px;background:rgba(250,250,252,.94);text-align:center;z-index:32;box-shadow:0 20px 40px rgba(0,0,0,.25);color:#0F172A}
+.rh.dark .fid{background:rgba(40,44,52,.94);color:#F7FAFF}
+.rh .fid svg{color:#0062DB}.rh .fid b{display:block;font-size:15px;margin-top:10px}.rh .fid small{font-size:12px;color:#5B6B7F}
+.rh.dark .fid small{color:#B7C4D6}
+
+.rh .seg button:nth-child(2){flex:2}
+
+.rh .hdr h1{font-size:34px;line-height:40px}
+.rh .sec{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:12px 12px 12px 14px;border:0;background:none;font-family:inherit;color:var(--t1);text-align:left}
+.rh .sec+.sec{border-top:1px solid var(--hair)}
+.rh .sec.soon{cursor:default}.rh .sec.soon .tile{background:var(--off);color:var(--t3)}.rh .sec.soon b{color:var(--t2)}
+.rh .sk{display:block;height:10px;border-radius:5px;background:var(--off);width:120px;margin-top:6px}
+.rh .see{display:block;padding:12px 4px;font-size:15px;font-weight:700;color:var(--act);text-decoration:none}
+
+</style>
+</helmet>
+<div class="{{rootCls}}">
+<div class="mesh" style="width: 300px; height: 300px; right: -120px; top: -90px; background: var(--m2)"></div>
+<div class="mesh" style="width: 280px; height: 280px; left: -150px; top: 340px; background: var(--m1)"></div>
+<div class="mesh" style="width: 260px; height: 260px; right: -130px; top: 640px; background: var(--m2)"></div>
+<div class="sbar" aria-hidden="true"><span>11:20</span><div class="island"></div>
+<div class="sic"><svg width="19" height="12" viewBox="0 0 19 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="0" width="3" height="12" rx="1"></rect></svg>
+<svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.2c2.4 0 4.6.9 6.2 2.5l1.2-1.2A10.4 10.4 0 008.5.5 10.4 10.4 0 001.1 3.5l1.2 1.2A8.7 8.7 0 018.5 2.2zm0 3.4c1.5 0 2.8.6 3.8 1.5l1.2-1.2a7 7 0 00-10 0l1.2 1.2c1-.9 2.3-1.5 3.8-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.2 6.9 9.6c.4-.4 1-.6 1.6-.6z"></path></svg>
+<svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"></rect><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"></rect><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".4"></path></svg></div></div><div class="hdr"><h1>Records</h1><button class="ib" type="button" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></button></div>
+<div class="lst" style="top: 116px">
+<sc-if value="{{isOff}}" hint-placeholder-val="{{ false }}"><div class="ban" style="margin: 0 0 8px"><b>You’re offline</b> · showing records saved on this phone.</div></sc-if>
+<sc-if value="{{isLoad}}" hint-placeholder-val="{{ false }}"><div class="gc" style="margin-top: 8px"><div class="sec soon"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 7h10M7 12h7M7 17h9"></path></svg></span><span class="rx2"><b>Medical Timeline</b><span class="sk"></span></span></div><div class="sec soon"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h7"></path></svg></span><span class="rx2"><b>Documents</b><span class="sk"></span></span></div><div class="sec soon"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"></path></svg></span><span class="rx2"><b>Medical Conditions</b><span class="sk"></span></span></div><div class="sec soon"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"></path></svg></span><span class="rx2"><b>Health Measurements</b><span class="sk"></span></span></div></div><p class="mon">Recently added</p><div class="gc"><div class="rw"><span class="tile lk"></span><span class="rx2"><span class="sk" style="width: 180px"></span><span class="sk"></span></span></div><div class="rw"><span class="tile lk"></span><span class="rx2"><span class="sk" style="width: 180px"></span><span class="sk"></span></span></div><div class="rw"><span class="tile lk"></span><span class="rx2"><span class="sk" style="width: 180px"></span><span class="sk"></span></span></div></div></sc-if>
+<sc-if value="{{notLoad}}" hint-placeholder-val="{{ true }}"><div class="gc" style="margin-top: 8px"><div class="sec soon" aria-disabled="true"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 7h10M7 12h7M7 17h9"></path></svg></span><span class="rx2"><b>Medical Timeline</b><small>Coming soon</small></span></div><button class="sec" type="button"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h7"></path></svg></span><span class="rx2"><b>Documents</b><small>{{docSub}}</small></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--t3)"><path d="M9 6l6 6-6 6"></path></svg></button><div class="sec soon" aria-disabled="true"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.5-7 10-7 10z"></path></svg></span><span class="rx2"><b>Medical Conditions</b><small>Coming soon</small></span></div><div class="sec soon" aria-disabled="true"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"></path></svg></span><span class="rx2"><b>Health Measurements</b><small>Coming soon</small></span></div></div></sc-if>
+<sc-if value="{{isDef}}" hint-placeholder-val="{{ true }}"><p class="mon">Recently added</p><div class="gc"><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h2.5a1.5 1.5 0 010 3H9v-5M11 14l3 3"></path></svg></span><span class="rx2"><b>Prescription · Dr. Rao</b><small>22 Nov 2026 · 4 medicines</small><span class="st p">◐ Partially Verified · 3 of 4 checked</span></span><span class="act">Continue Verification</span></div><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"></path><path d="M7.5 15h9"></path></svg></span><span class="rx2"><b>Lab Report · City Diagnostics</b><small>20 Nov 2026 · 12 results</small><span class="st u">○ Unverified · Not checked yet</span></span><span class="act">Verify Record</span></div><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg></span><span class="rx2"><b>Medical Certificate</b><small>20 Nov 2026 · Dr. Meera Iyer</small><span class="st v">✓ Verified</span></span></div></div><a class="see" href="#">See All Documents</a></sc-if>
+<sc-if value="{{isRestr}}" hint-placeholder-val="{{ false }}"><p class="mon">Recently added</p><div class="gc"><div class="rw" role="button" tabindex="0"><span class="tile lk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg></span><span class="rx2"><b>Restricted record</b><small>24 Nov 2026</small><span class="st u">○ Unverified · Not checked yet</span></span></div><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h2.5a1.5 1.5 0 010 3H9v-5M11 14l3 3"></path></svg></span><span class="rx2"><b>Prescription · Dr. Rao</b><small>22 Nov 2026 · 4 medicines</small><span class="st p">◐ Partially Verified · 3 of 4 checked</span></span><span class="act">Continue Verification</span></div><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3"></path><path d="M7.5 15h9"></path></svg></span><span class="rx2"><b>Lab Report · City Diagnostics</b><small>20 Nov 2026 · 12 results</small><span class="st u">○ Unverified · Not checked yet</span></span><span class="act">Verify Record</span></div></div><a class="see" href="#">See All Documents</a></sc-if>
+<sc-if value="{{isFew}}" hint-placeholder-val="{{ false }}"><p class="mon">Recently added</p><div class="gc"><div class="rw" role="button" tabindex="0"><span class="tile"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 11h2.5a1.5 1.5 0 010 3H9v-5M11 14l3 3"></path></svg></span><span class="rx2"><b>Prescription · Dr. Rao</b><small>22 Nov 2026 · 4 medicines</small><span class="st v">✓ Verified</span></span></div></div><a class="see" href="#">See All Documents</a></sc-if>
+<sc-if value="{{isFirst}}" hint-placeholder-val="{{ false }}"><div class="empty"><span class="tile"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M12 10v6M9 13h6"></path></svg></span><b>Your records will appear here</b><p>Add a prescription, report or any health record to get started.</p><button class="btn" type="button">Add Health Record</button></div></sc-if>
+</div>
+<sc-if value="{{showFab}}" hint-placeholder-val="{{ true }}"><button class="fab" type="button">+ Add Record</button></sc-if>
+<nav class="nav">
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"></path></svg></div>Today</div>
+<div class="tab a"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path></svg></div>Records</div>
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-45 12 12.5)"></rect></svg></div>Medications</div>
+<div class="tab"><div class="pl"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg></div>Profile</div>
+</nav>
+<div class="home"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"state":{"editor":"enum","options":["default","restricted","few","first","offline","loading"],"default":"default"},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.theme ?? 'light';
+    const s = this.props.state ?? 'default';
+    return {
+      rootCls: 'rh' + (t === 'dark' ? ' dark' : ''),
+      isOff: s === 'offline', isLoad: s === 'loading', notLoad: s !== 'loading',
+      isDef: s === 'default' || s === 'offline', isRestr: s === 'restricted', isFew: s === 'few', isFirst: s === 'first',
+      showFab: s !== 'first' && s !== 'loading',
+      docSub: s === 'first' ? 'Nothing yet' : s === 'few' ? '1 document' : s === 'restricted' ? '25 documents' : '24 documents'
+    };
+  }
+}
+</script>
+</body>
+</html>

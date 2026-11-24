@@ -1,6 +1,6 @@
 # R-00 · Records home — screen specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-24 · **Flow:** Records tab (first screen).
+**Status:** APPROVED 2026-11-24 (owner: "approve R-00 with recommendations"; all PROPOSED items and R00-OD-1–6 recommendations accepted) · design REVIEW · **Date:** 2026-11-24 · **Flow:** Records tab (first screen).
 **Sources (APPROVED):** four tabs Today | Records | Medications | Profile, "Timeline, Documents, Medical Conditions and Health Measurements are within Records" (post-Welcome update, latest navigation); Verification & Recovery v1.0 §5.1 hierarchy (**Records → Medical Timeline · Documents · Medical Conditions · Health Measurements**) and §5.3 ("Records landing: Medical Timeline, Documents, Medical Conditions, Health Measurements"); **RX-VER-07** ("the three primary verification filters belong on the Documents screen … not on the Records landing"); VER-AC-04.2 (Today shortcut goes to Pending, not the landing); RX-VER-13 (one canonical record); DOC-02 §10.1, DOC-04 §7.3 (only verified or explicitly added readings reach Health Measurements); brief §15 B/D (Records, Timeline); locked R-DOC-01, R-DOC-02, S06 v1.1, tab bar and header patterns (Calm Glass UI v4).
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
 

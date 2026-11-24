@@ -440,6 +440,20 @@
       "w": 402,
       "h": 874,
       "title": "S05 v1.1 · First-time Today with Records to Review"
+    },
+    "R00RecordsHome.dc.html": {
+      "x": 0,
+      "y": 68356,
+      "w": 402,
+      "h": 874,
+      "title": "R-00 · Records home"
+    },
+    "R00States.dc.html": {
+      "x": 482,
+      "y": 68356,
+      "w": 2708,
+      "h": 2064,
+      "title": "R-00 · Records home states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -649,6 +663,13 @@
       "text": "S06 v1.1 / S05 v1.1 · \"Records to Review\" row on Today (adds one row to the locked S05/S06) · spec APPROVED · design APPROVED 2026-11-24 · LOCKED",
       "kind": "title1",
       "maxW": 2788
+    },
+    "t28": {
+      "x": 0,
+      "y": 68096,
+      "text": "Flow 6 · R-00 Records home · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3190
     }
   },
   "order": [
@@ -713,7 +734,9 @@
     "RD02States.dc.html",
     "S06RecordsReview.dc.html",
     "S06RStates.dc.html",
-    "S05RecordsReview.dc.html"
+    "S05RecordsReview.dc.html",
+    "R00RecordsHome.dc.html",
+    "R00States.dc.html"
   ],
   "pages": [
     {
