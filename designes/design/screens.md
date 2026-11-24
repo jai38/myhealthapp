@@ -107,7 +107,7 @@ Shown when S03's date of birth is under 18 (block at launch, Phase 5 P4, pending
 
 ## Flow 4 · Medications
 
-### M01 · Medications list — SPEC REVIEW 2026-11-24
+### M01 · Medications list — SPEC APPROVED 2026-11-24 · design REVIEW (canvas boards M01 and M01 States)
 Spec: `specs/M01-medications-list.md`. Medications tab landing: groups Taking now · As needed · Paused · Not in your daily list · Finished (collapsed); rows open M02; words from ST-01; + Add Medication (Scan a Prescription; Add Manually later). Approving leads to its design.
 
 ### M02 · Medication Details — LOCKED 2026-11-24 (v1.0 as revised by v1.1; where they differ, v1.1 wins)

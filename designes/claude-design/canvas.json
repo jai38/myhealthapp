@@ -475,6 +475,20 @@
       "w": 1382,
       "h": 2064,
       "title": "M02 v1.1 · Start Taking, setup and stop sheets (light / dark)"
+    },
+    "M01Medications.dc.html": {
+      "x": 0,
+      "y": 77520,
+      "w": 402,
+      "h": 874,
+      "title": "M01 · Medications list"
+    },
+    "M01States.dc.html": {
+      "x": 482,
+      "y": 77520,
+      "w": 3150,
+      "h": 2064,
+      "title": "M01 · Medications list states (light / dark)"
     }
   },
   "createdOnFiles": {
@@ -698,6 +712,13 @@
       "text": "M02 v1.1 · Medication Details revised (replaces the v1.0 boards where they differ) · spec APPROVED · design APPROVED 2026-11-24 · M02 LOCKED",
       "kind": "title1",
       "maxW": 2748
+    },
+    "t30": {
+      "x": 0,
+      "y": 77260,
+      "text": "Medications · M01 Medications list · spec APPROVED, design IN REVIEW",
+      "kind": "title1",
+      "maxW": 3632
     }
   },
   "order": [
@@ -767,7 +788,9 @@
     "R00States.dc.html",
     "M02v11Details.dc.html",
     "M02v11States.dc.html",
-    "M02v11Sheets.dc.html"
+    "M02v11Sheets.dc.html",
+    "M01Medications.dc.html",
+    "M01States.dc.html"
   ],
   "pages": [
     {

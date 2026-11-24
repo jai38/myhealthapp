@@ -1,6 +1,6 @@
 # M01 · Medications list — screen specification
 
-**Status:** REVIEW (spec only; no visual design) · **Date:** 2026-11-24 · **Flow:** Medications tab (first screen).
+**Status:** APPROVED 2026-11-24 (owner: "approve M01 with recommendations"; all PROPOSED items and M01-OD-1–6 recommendations accepted) · design REVIEW · **Date:** 2026-11-24 · **Flow:** Medications tab (first screen).
 **Sources (APPROVED):** **ST-01 Status vocabulary** (locked 2026-11-24: medicine statuses, labels, flags, where each appears); **M02 v1.1** (locked: what opens from each row; Start Taking, Start a New Course, as needed, reaction, corrected); S-RX-04 v1.0/v1.1 and S-RX-05 ("View Medicines", "you can stop them in Medications"); `api.md` `GET /medications?status=` (INACTIVE · ACTIVE · PAUSED · COMPLETED · DISCONTINUED); four tabs (Today | Records | Medications | Profile); R-00 / R-DOC-01 list patterns (header, search, floating Add pill, offline, profile line); rules 10–15 (nothing becomes tracked without the person; historical prescriptions default inactive; `nameAsWritten` separate); locked tab bar and Calm Glass UI v4.
 **Labels:** APPROVED · PROPOSED (needs approval) · OPEN.
 
