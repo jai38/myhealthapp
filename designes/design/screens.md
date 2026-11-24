@@ -107,6 +107,9 @@ Shown when S03's date of birth is under 18 (block at launch, Phase 5 P4, pending
 
 ## Flow 4 · Medications
 
+### M01 · Medications list — SPEC REVIEW 2026-11-24
+Spec: `specs/M01-medications-list.md`. Medications tab landing: groups Taking now · As needed · Paused · Not in your daily list · Finished (collapsed); rows open M02; words from ST-01; + Add Medication (Scan a Prescription; Add Manually later). Approving leads to its design.
+
 ### M02 · Medication Details — LOCKED 2026-11-24 (v1.0 as revised by v1.1; where they differ, v1.1 wins)
 Opens when a medicine row is tapped (Today, Medications). Canvas boards "M02 · Medication Details" (props: theme, state, viewport full/phone) and "M02 · States". Built only from fields in `api.md` `MedicationDetail` (no invented data); quantity per dose isn't stored, so the dose line is strength · form · route.
 - States: `active` (prescribed), `manual` (added by you), `paused`, `stopped`, `inactive` (from an older prescription).
