@@ -63,7 +63,7 @@ Flow 1 = S01–S05 (sign in / sign up), Flow 2 = S06–S07 (Today).
 
 ## 4. Locked product rules
 - Tabs: Today, Records, Medications, Profile.
-- Dose statuses: Taken, Due now, Upcoming, Not confirmed, Missed. Missed is never automatic.
+- Dose statuses: Taken, Due now, Upcoming, Not confirmed, Missed, Skipped. Missed and Skipped are set only by the person. Full status vocabulary (doses, medicines, documents, tracking; Due now window; snooze; course end; notification actions): `designes/design/specs/ST-01-status-vocabulary.md`, locked 2026-11-24.
 - Mark as Taken logs the current time instantly; toast "<Medicine> marked as taken at <time>" with Undo (~5 s); hero count and ring update.
 - Not confirmed → dose update sheet: Yes (as scheduled / just now / other time, not in the future), Skipped (optional reason), Missed. Only updates the log, not the schedule.
 - Allergies live in S04 Health Profile (Yes / No known allergies / I'm not sure). Profile has 9 sections.

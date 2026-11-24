@@ -54,6 +54,11 @@ Mockup: `mockups/s05-welcome-today.html` (#light|#dark - incomplete|sheet|comple
 
 **Flow 1 (Sign in / Sign up) — COMPLETE 2026-11-16.**
 
+## Shared · Status vocabulary
+
+### ST-01 · Status vocabulary — LOCKED 2026-11-24 (owner: "approve status recommendations")
+Spec: `specs/ST-01-status-vocabulary.md`. One list of dose, medicine, document and tracking words, where each appears, and four decisions: Due now lasts 2 h (or until the same medicine's next dose); snooze has no status word ("Reminder again at …"); a course auto-completes after the end date the person set (M02 offers Extend Course); reminder notifications have only Snooze 15 min, no Taken button. Every screen follows it.
+
 ## Flow 2 · Today (returning user)
 
 ### S06 · Today — LOCKED 2026-11-16
