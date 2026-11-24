@@ -81,9 +81,10 @@ export const AccountContent: React.FC<AccountContentProps> = ({ resetKey, onSign
           <>
             <View style={styles.section}>
               <SignedInProfileCard
-                initials={getInitials(session.fullName, session.email)}
+                initials={getInitials(session.fullName, session.email ?? '')}
                 displayName={session.fullName || t('profile.verifiedFallbackName')}
-                email={session.email}
+                // A phone account (Phase 5) has no login email: show its number.
+                email={session.email ?? session.phone ?? ''}
               />
             </View>
 

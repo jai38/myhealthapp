@@ -97,7 +97,7 @@ async function signInForTest(s: UserSession) {
       },
     }),
   } as Response);
-  await authService.login(s.email, 'synthetic-password');
+  await authService.login(s.email ?? '', 'synthetic-password');
 }
 
 describe('the auth gate never renders patient data after expiry', () => {
