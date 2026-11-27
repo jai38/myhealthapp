@@ -8,10 +8,20 @@ import {
   environmentFingerprint,
   resolveApiBaseUrl,
 } from '../config/environment';
+import { secureStorage } from './secure-storage';
 
 export interface UserSession {
   userId: string;
-  email: string;
+  /** Email sign-in only. Phone accounts (Phase 5) have no login email. */
+  email?: string;
+  /** Phone sign-in only: E.164, e.g. "+919876543210". */
+  phone?: string;
+  /** How the session was made. Missing on sessions saved before Phase 5: email. */
+  kind?: 'email' | 'phone';
+  /** Phone sessions: false until S03 is done (health-data routes answer 403 until then). */
+  profileComplete?: boolean;
+  /** Phone sessions: 'pending' until S03, A01 and A02 are finished (the gate keeps the flow up). */
+  onboarding?: 'pending' | 'done';
   fullName?: string;
   patientProfileId: string;
   accessToken: string;
@@ -20,9 +30,20 @@ export interface UserSession {
 }
 
 const STORAGE_KEYS = {
+  /** Legacy: the access token in plain storage. Cleared; tokens live in secure storage now. */
   TOKEN: '@myhealthapp/auth_token',
+  /** The session without its tokens. */
   SESSION: '@myhealthapp/user_session',
+  /** Access and refresh tokens, in secure storage (Phase 5 task 11). */
+  SECRETS: '@myhealthapp/session_tokens',
 } as const;
+
+type SessionTokens = Pick<UserSession, 'accessToken' | 'refreshToken'>;
+
+function withoutTokens(session: UserSession): Omit<UserSession, 'accessToken' | 'refreshToken'> {
+  const { accessToken: _a, refreshToken: _r, ...rest } = session;
+  return rest;
+}
 
 // In-memory fallback for Node.js test runners where native storage is unavailable
 const memoryStorage = new Map<string, string>();
@@ -110,6 +131,7 @@ class AuthService {
     if (previous === current) return;
     if (previous !== null) {
       for (const key of ENV_SCOPED_STORAGE_KEYS) await safeStorage.removeItem(key);
+      await secureStorage.removeItem(STORAGE_KEYS.SECRETS);
       try {
         await cancelAllMedicationReminders();
       } catch {
@@ -125,7 +147,17 @@ class AuthService {
       const raw = await safeStorage.getItem(STORAGE_KEYS.SESSION);
       if (raw) {
         // A cached session is kept even when its token is old, so an offline patient still gets in.
-        this.currentSession = JSON.parse(raw);
+        const stored = JSON.parse(raw) as UserSession;
+        if (stored.accessToken) {
+          // Saved before tokens moved to secure storage: move them there now.
+          await this.writeSession(stored);
+          this.currentSession = stored;
+        } else {
+          const secretsRaw = await secureStorage.getItem(STORAGE_KEYS.SECRETS);
+          const secrets = secretsRaw ? (JSON.parse(secretsRaw) as SessionTokens) : null;
+          // Without its tokens a session is no use: treat it as signed out.
+          this.currentSession = secrets?.accessToken ? { ...stored, ...secrets } : null;
+        }
         this.notifyListeners();
       }
     } catch {
@@ -249,20 +281,64 @@ class AuthService {
     return userSession;
   }
 
+  /** Tokens to secure storage, the rest of the session to plain storage. */
+  private async writeSession(session: UserSession): Promise<void> {
+    const tokens: SessionTokens = { accessToken: session.accessToken, refreshToken: session.refreshToken };
+    await secureStorage.setItem(STORAGE_KEYS.SECRETS, JSON.stringify(tokens));
+    await safeStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(withoutTokens(session)));
+    await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
+  }
+
+  private async clearStoredSession(): Promise<void> {
+    await secureStorage.removeItem(STORAGE_KEYS.SECRETS);
+    await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
+    await safeStorage.removeItem(STORAGE_KEYS.SESSION);
+  }
+
   private async saveSession(session: UserSession): Promise<void> {
     this.currentSession = session;
     this.endReason = null;
-    await safeStorage.setItem(STORAGE_KEYS.TOKEN, session.accessToken);
-    await safeStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
+    await this.writeSession(session);
     // A sign-out during the writes above must not leave this session on disk.
     if (this.currentSession !== session) {
-      if (this.currentSession === null) {
-        await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
-        await safeStorage.removeItem(STORAGE_KEYS.SESSION);
-      }
+      if (this.currentSession === null) await this.clearStoredSession();
       return;
     }
     this.notifyListeners();
+  }
+
+  /**
+   * Phase 5: a phone sign-in (POST /auth/otp/verify or /auth/second-factor, then GET /auth/me).
+   * Only reachable behind the dev switch until the phone routes are live.
+   */
+  async signInWithPhone(input: {
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: number;
+    userId: string;
+    patientProfileId: string;
+    phone?: string;
+    fullName?: string;
+    profileComplete: boolean;
+    onboarding: 'pending' | 'done';
+  }): Promise<UserSession> {
+    const session: UserSession = { kind: 'phone', ...input };
+    await this.saveSession(session);
+    return session;
+  }
+
+  /** Phase 5: the sign-in flow is finished (S03, A01, A02 as needed); the app opens. */
+  async finishOnboarding(): Promise<void> {
+    const current = this.currentSession;
+    if (!current) return;
+    await this.saveSession({ ...current, onboarding: 'done' });
+  }
+
+  /** Phase 5: S03 is done, so the account may use the health-data routes. */
+  async markProfileComplete(fullName?: string): Promise<void> {
+    const current = this.currentSession;
+    if (!current) return;
+    await this.saveSession({ ...current, profileComplete: true, fullName: fullName ?? current.fullName });
   }
 
   /**
@@ -351,8 +427,7 @@ class AuthService {
     this.currentSession = null;
     this.endReason = reason;
     this.notifyListeners();
-    await safeStorage.removeItem(STORAGE_KEYS.TOKEN);
-    await safeStorage.removeItem(STORAGE_KEYS.SESSION);
+    await this.clearStoredSession();
   }
 }
 

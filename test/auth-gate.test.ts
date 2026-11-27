@@ -97,7 +97,7 @@ async function signInForTest(s: UserSession) {
       },
     }),
   } as Response);
-  await authService.login(s.email, 'synthetic-password');
+  await authService.login(s.email ?? '', 'synthetic-password');
 }
 
 describe('the auth gate never renders patient data after expiry', () => {
@@ -185,5 +185,15 @@ describe('the auth gate never renders patient data after expiry', () => {
     await signInForTest(makeSession());
     expect(authService.getEndReason()).toBeNull();
     expect(authService.getSession()).not.toBeNull();
+  });
+});
+
+describe('Phase 5 onboarding gate', () => {
+  it('keeps a phone session in the sign-in flow until onboarding is done', () => {
+    expect(authGateState({ initialized: true, session: { kind: 'phone', onboarding: 'pending' }, endReason: null })).toBe('onboarding');
+    expect(authGateState({ initialized: true, session: { kind: 'phone', onboarding: 'done' }, endReason: null })).toBe('signedIn');
+    // Email sessions and sessions saved before Phase 5 are unaffected.
+    expect(authGateState({ initialized: true, session: { kind: 'email' }, endReason: null })).toBe('signedIn');
+    expect(authGateState({ initialized: true, session: {}, endReason: null })).toBe('signedIn');
   });
 });

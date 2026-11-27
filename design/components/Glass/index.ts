@@ -19,7 +19,7 @@ export { QuickActionTile } from './QuickActionTile';
 export type { QuickActionTileProps } from './QuickActionTile';
 export { RadioOptionRow } from './RadioOptionRow';
 export type { RadioOptionRowProps } from './RadioOptionRow';
-export { TimeWheel } from './TimeWheel';
+export { TimeWheel, WheelColumn } from './TimeWheel';
 export type { TimeWheelProps } from './TimeWheel';
 export { NoticeSlot } from './NoticeSlot';
 export type { NoticeSlotProps } from './NoticeSlot';

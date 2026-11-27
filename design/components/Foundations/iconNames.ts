@@ -78,7 +78,14 @@ type UiIcon =
   | 'radio-button-on'
   | 'radio-button-off'
   | 'add-circle-outline'
-  | 'checkmark-circle-outline';
+  | 'checkmark-circle-outline'
+  // Phase 5 sign-in and account security.
+  | 'chatbubble-ellipses-outline'
+  | 'copy-outline'
+  | 'finger-print'
+  | 'shield-outline'
+  | 'lock-closed'
+  | 'happy-outline';
 
 export type IconName = StatusIcon | UiIcon;
 
