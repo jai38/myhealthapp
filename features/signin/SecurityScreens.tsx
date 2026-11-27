@@ -2,7 +2,7 @@
 // code, A03 new-device check, A04 under 18. Views only: the flow container and the app-lock
 // gate own the state and the calls.
 import React from 'react';
-import { StyleSheet, Switch, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { GlassCard, PrimaryButton } from '../../design/components/Glass';
 import { Icon } from '../../design/components/Foundations/Icon';
 import type { IconName } from '../../design/components/Foundations/iconNames';
@@ -216,7 +216,7 @@ export function A02Show({
           {t('a02.fieldLabel')}
         </Text>
         {/* Selectable, so it can be copied by hand too. Never logged or sent anywhere. */}
-        <Text variant="title1" tabular selectable align="center" style={{ color: c.text.primary, letterSpacing: 1 }} testID="a02-code">
+        <Text variant="title2" tabular selectable align="center" numberOfLines={1} style={{ color: c.text.primary, letterSpacing: 1 }} testID="a02-code">
           {code ?? '····-····-····-····'}
         </Text>
         <PrimaryButton testID="a02-copy" label={t('a02.copy')} icon="copy-outline" onPress={onCopy} disabled={!code} />
@@ -324,20 +324,24 @@ export function A03Check({
 }) {
   const { color: c } = useTheme();
   const Option = ({ testID, icon, title, detail, onPress }: { testID: string; icon: IconName; title: string; detail: string; onPress: () => void }) => (
-    <GlassCard style={styles.optionCard}>
-      <View style={styles.optionRow}>
-        <View style={[styles.rowIcon, { backgroundColor: c.bg.tintBlue }]}>
-          <Icon name={icon} size="md" color={c.action.blue} />
+    <Pressable testID={testID} accessibilityRole="button" accessibilityLabel={title} accessibilityHint={detail} onPress={onPress}>
+      <GlassCard style={styles.optionCard}>
+        <View style={styles.optionRow}>
+          <View style={[styles.rowIcon, { backgroundColor: c.bg.tintBlue }]}>
+            <Icon name={icon} size="md" color={c.action.blue} />
+          </View>
+          <View style={styles.rowWords}>
+            <Text variant="title3" style={{ color: c.text.primary }}>
+              {title}
+            </Text>
+            <Text variant="caption" style={{ color: c.text.secondary }}>
+              {detail}
+            </Text>
+          </View>
+          <Icon name="chevron-forward" size="md" color={c.text.tertiary} />
         </View>
-        <View style={styles.rowWords}>
-          <LinkButton testID={testID} label={title} onPress={onPress} />
-          <Text variant="caption" style={{ color: c.text.secondary }}>
-            {detail}
-          </Text>
-        </View>
-        <Icon name="chevron-forward" size="md" color={c.text.tertiary} />
-      </View>
-    </GlassCard>
+      </GlassCard>
+    </Pressable>
   );
   return (
     <SigninLayout testID="a03-check" footer={<LinkButton testID="a03-support" label={t('a03.neither')} onPress={onContactSupport} />}>

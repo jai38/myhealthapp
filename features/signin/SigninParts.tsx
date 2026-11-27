@@ -272,9 +272,10 @@ const styles = StyleSheet.create({
   backButton: { width: 44, height: 44, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'transparent' },
   lockup: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   heroIcon: { alignSelf: 'center', width: 72, height: 72, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginTop: space.md },
-  fieldWrap: { gap: space.xs },
-  fieldRow: { flexDirection: 'row', gap: space.sm },
-  field: { flex: 1, height: 52, borderRadius: radius.input, borderWidth: 1.5, paddingHorizontal: space.lg, fontSize: 17 },
+  fieldWrap: { gap: space.xs, alignSelf: 'stretch' },
+  fieldRow: { flexDirection: 'row', gap: space.sm, alignSelf: 'stretch' },
+  // minWidth 0: on web an input otherwise keeps its default width and runs past the card.
+  field: { flex: 1, minWidth: 0, height: 52, borderRadius: radius.input, borderWidth: 1.5, paddingHorizontal: space.lg, fontSize: 17 },
   errorRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   check: { flexDirection: 'row', alignItems: 'flex-start', gap: space.md, minHeight: size.touchMin, paddingVertical: space.sm },
   box: { width: 22, height: 22, borderRadius: 7, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },

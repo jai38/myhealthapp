@@ -2,7 +2,7 @@
 // the new-phone path (A03 → A02 enter) and app lock. Synthetic numbers only.
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { SigninFlow } from '../../features/signin/SigninFlow';
 import type { SigninDeps } from '../../features/signin/SigninFlow';
 import { AppLockGate } from '../../features/signin/AppLockGate';
@@ -206,5 +206,26 @@ describe('A01 app lock gate', () => {
     await fireEvent.press(screen.getByTestId('a01-try-again'));
     await waitFor(() => expect(screen.queryByTestId('app-lock-screen')).toBeNull());
     expect(screen.getByTestId('health-data')).toHaveTextContent('Testmed A 500 mg');
+  });
+});
+
+describe('sign-in preview states', () => {
+  it('every state renders in light and dark', async () => {
+    const { SigninPreview, SIGNIN_PREVIEW_NAMES } = await import('../../features/dev-preview/SigninPreview');
+    expect(SIGNIN_PREVIEW_NAMES.length).toBeGreaterThanOrEqual(30);
+    const rootFor = (state: string) =>
+      state.startsWith('s01') ? 's01'
+      : state.startsWith('s02') ? 's02'
+      : state.startsWith('s03') ? 's03'
+      : state === 'a02-copied' ? 'a02-show'
+      : state === 'a02-wrong' ? 'a02-enter'
+      : state;
+    for (const theme of ['light', 'dark'] as const) {
+      for (const state of SIGNIN_PREVIEW_NAMES) {
+        await render(<SigninPreview state={state} theme={theme} />);
+        expect(screen.queryByTestId(rootFor(state)), `${theme} ${state}`).not.toBeNull();
+        await cleanup();
+      }
+    }
   });
 });
