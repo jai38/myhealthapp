@@ -21,7 +21,8 @@ const ROW = 44;
 const VISIBLE = 5;
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
-function Column({
+/** One scrolling column of a wheel (hours, minutes, or a date's day, month and year). */
+export function WheelColumn({
   items,
   selected,
   label,
@@ -104,7 +105,7 @@ export function TimeWheel({ value, onChange, max, formatHour = pad2, testID }: T
 
   return (
     <View testID={testID} style={styles.wheel}>
-      <Column
+      <WheelColumn
         items={hours}
         selected={hour}
         label={t('wheel.hour')}
@@ -113,7 +114,7 @@ export function TimeWheel({ value, onChange, max, formatHour = pad2, testID }: T
         testID={testID && `${testID}-hour`}
       />
       <Text variant="title3">:</Text>
-      <Column
+      <WheelColumn
         items={minutes}
         selected={minute}
         label={t('wheel.minute')}
