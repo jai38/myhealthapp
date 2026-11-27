@@ -90,7 +90,7 @@ describe('secure session storage on a phone', () => {
     await auth.waitForInitialization();
     const s = await auth.signInWithPhone({
       accessToken: 'p-access', refreshToken: 'p-refresh', expiresAt: Date.now() + 900_000,
-      userId: 'usr_2', patientProfileId: 'pat_2', phone: '+919876543210', profileComplete: false,
+      userId: 'usr_2', patientProfileId: 'pat_2', phone: '+919876543210', profileComplete: false, onboarding: 'pending',
     });
     expect(s).toMatchObject({ kind: 'phone', phone: '+919876543210', profileComplete: false });
     expect(s.email).toBeUndefined();

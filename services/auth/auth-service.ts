@@ -20,6 +20,8 @@ export interface UserSession {
   kind?: 'email' | 'phone';
   /** Phone sessions: false until S03 is done (health-data routes answer 403 until then). */
   profileComplete?: boolean;
+  /** Phone sessions: 'pending' until S03, A01 and A02 are finished (the gate keeps the flow up). */
+  onboarding?: 'pending' | 'done';
   fullName?: string;
   patientProfileId: string;
   accessToken: string;
@@ -318,10 +320,18 @@ class AuthService {
     phone?: string;
     fullName?: string;
     profileComplete: boolean;
+    onboarding: 'pending' | 'done';
   }): Promise<UserSession> {
     const session: UserSession = { kind: 'phone', ...input };
     await this.saveSession(session);
     return session;
+  }
+
+  /** Phase 5: the sign-in flow is finished (S03, A01, A02 as needed); the app opens. */
+  async finishOnboarding(): Promise<void> {
+    const current = this.currentSession;
+    if (!current) return;
+    await this.saveSession({ ...current, onboarding: 'done' });
   }
 
   /** Phase 5: S03 is done, so the account may use the health-data routes. */

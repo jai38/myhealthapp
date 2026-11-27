@@ -14,6 +14,9 @@ import { ErrorBoundary } from '../features/system/ErrorBoundary';
 import { ConnectivityBanner } from '../features/system/ConnectivityBanner';
 import { ConnectivityProvider } from '../services/network/useConnectivity';
 import { AppStatusGate } from '../features/app-status/AppStatusGate';
+import { SigninFlow } from '../features/signin/SigninFlow';
+import { AppLockGate } from '../features/signin/AppLockGate';
+import { isPhoneSignInEnabled } from '../services/config/phoneSignIn';
 import { useAppStatus } from '../features/app-status/useAppStatus';
 import { medicineOpenTarget } from '../features/shell/tabs';
 import { isGalleryEnabled, isGalleryPath } from '../design/gallery/galleryGuard';
@@ -92,8 +95,13 @@ function RootLayoutContent() {
     );
   }
 
-  // Signed out or expired: the signed-in tree below is not rendered at all, so no patient data can show.
+  // Signed out, expired, or a phone account still finishing sign-up (Phase 5 'onboarding'): the
+  // signed-in tree below is not rendered at all, so no patient data can show. The WhatsApp sign-in
+  // flow replaces the email screen only behind the dev switch (backend PR #12 isn't live). It sits
+  // at the same place in this tree for 'signedOut' and 'onboarding', so saving the phone session
+  // part-way through sign-up doesn't remount it.
   if (gate !== 'signedIn') {
+    const phoneSignIn = isPhoneSignInEnabled() || gate === 'onboarding';
     return (
       <SafeAreaProvider key="signedOut">
         <StatusBar style="dark" />
@@ -102,7 +110,11 @@ function RootLayoutContent() {
             <ConnectivityBanner />
             <View style={styles.appBody}>
               <ErrorBoundary>
-                <AuthScreen sessionEnded={showsSessionEndedNote(gate)} />
+                {phoneSignIn ? (
+                  <SigninFlow resume={gate === 'onboarding'} />
+                ) : (
+                  <AuthScreen sessionEnded={showsSessionEndedNote(gate)} />
+                )}
               </ErrorBoundary>
             </View>
           </ConnectivityProvider>
@@ -120,17 +132,20 @@ function RootLayoutContent() {
           <ConnectivityBanner />
           <View style={styles.appBody}>
             <ErrorBoundary>
-              <Stack
-                screenOptions={{
-                  headerStyle: { backgroundColor: color.bg.card },
-                  headerTintColor: color.text.primary,
-                  headerTitleStyle: { fontWeight: '600' },
-                  contentStyle: { backgroundColor: color.bg.screen },
-                  headerShadowVisible: false,
-                }}
-              >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
+              {/* App lock (Phase 5 A01): off unless the person turned it on. */}
+              <AppLockGate>
+                <Stack
+                  screenOptions={{
+                    headerStyle: { backgroundColor: color.bg.card },
+                    headerTintColor: color.text.primary,
+                    headerTitleStyle: { fontWeight: '600' },
+                    contentStyle: { backgroundColor: color.bg.screen },
+                    headerShadowVisible: false,
+                  }}
+                >
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                </Stack>
+              </AppLockGate>
             </ErrorBoundary>
           </View>
         </ConnectivityProvider>

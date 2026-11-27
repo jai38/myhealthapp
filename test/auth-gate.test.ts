@@ -187,3 +187,13 @@ describe('the auth gate never renders patient data after expiry', () => {
     expect(authService.getSession()).not.toBeNull();
   });
 });
+
+describe('Phase 5 onboarding gate', () => {
+  it('keeps a phone session in the sign-in flow until onboarding is done', () => {
+    expect(authGateState({ initialized: true, session: { kind: 'phone', onboarding: 'pending' }, endReason: null })).toBe('onboarding');
+    expect(authGateState({ initialized: true, session: { kind: 'phone', onboarding: 'done' }, endReason: null })).toBe('signedIn');
+    // Email sessions and sessions saved before Phase 5 are unaffected.
+    expect(authGateState({ initialized: true, session: { kind: 'email' }, endReason: null })).toBe('signedIn');
+    expect(authGateState({ initialized: true, session: {}, endReason: null })).toBe('signedIn');
+  });
+});

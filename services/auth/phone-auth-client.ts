@@ -98,6 +98,15 @@ const AccountSchema = z.object({
 });
 export type Account = z.infer<typeof AccountSchema>;
 
+const MeSchema = z.object({
+  userId: z.string(),
+  patientProfileId: z.string(),
+  fullName: z.string().optional(),
+  phone: z.string().optional(),
+  profileComplete: z.boolean().optional(),
+});
+export type Me = z.infer<typeof MeSchema>;
+
 export interface DeviceInfo {
   installId: string;
   name: string;
@@ -160,6 +169,10 @@ export const phoneAuthClient = {
   /** A02 "enter", on a new phone. */
   secondFactor(secondFactorToken: string, recoveryCode: string, doFetch?: Fetch): Promise<SignedIn> {
     return call('/auth/second-factor', { method: 'POST', body: { secondFactorToken, recoveryCode } }, SignedInSchema, doFetch);
+  },
+  /** Who the new tokens belong to (verify returns tokens only). */
+  me(token: string, doFetch?: Fetch): Promise<Me> {
+    return call('/auth/me', { method: 'GET', token }, MeSchema, doFetch);
   },
   account(token: string, doFetch?: Fetch): Promise<Account> {
     return call('/auth/account', { method: 'GET', token }, AccountSchema, doFetch);

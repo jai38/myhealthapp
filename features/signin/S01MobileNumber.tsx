@@ -10,7 +10,7 @@ import { t } from '../../design/strings';
 import { canContinueS01, formatIndianMobile } from './signinModel';
 import { BrandBlock, CheckRow, ErrorNote, Field, InfoNote, Lead, SigninLayout } from './SigninParts';
 
-export type S01Status = 'idle' | 'sending' | 'invalid' | 'noInternet' | 'rateLimited' | 'unavailable' | 'noWhatsapp';
+export type S01Status = 'idle' | 'sending' | 'invalid' | 'noInternet' | 'rateLimited' | 'unavailable' | 'noWhatsapp' | 'failed';
 
 export interface S01Props {
   /** Digits only, at most 10. */
@@ -89,6 +89,11 @@ export function S01MobileNumber({ phone, onPhoneChange, termsAccepted, onToggleT
         {status === 'rateLimited' ? (
           <View style={styles.note}>
             <ErrorNote testID="s01-rate-limited" body={t('s01.rateLimited')} />
+          </View>
+        ) : null}
+        {status === 'failed' ? (
+          <View style={styles.note}>
+            <ErrorNote testID="s01-failed" body={t('s02.sendFailed')} />
           </View>
         ) : null}
         {status === 'unavailable' ? (

@@ -3,10 +3,16 @@
 
 export type SessionEndReason = 'signedOut' | 'expired';
 
-export type AuthGateState = 'restoring' | 'signedOut' | 'expired' | 'signedIn';
+/**
+ * `onboarding`: a phone session (Phase 5) that hasn't finished S03, A01 and A02 yet. It stays in
+ * the sign-in flow; patient data is still reachable only from `signedIn`.
+ */
+export type AuthGateState = 'restoring' | 'signedOut' | 'expired' | 'onboarding' | 'signedIn';
 
 export interface SessionLike {
   expiresAt?: number;
+  kind?: 'email' | 'phone';
+  onboarding?: 'pending' | 'done';
 }
 
 // Refresh the access token when it is this close to its expiry, or past it.
@@ -43,6 +49,7 @@ export interface AuthGateInput {
 export function authGateState({ initialized, session, endReason }: AuthGateInput): AuthGateState {
   if (!initialized) return 'restoring';
   if (!session) return endReason === 'expired' ? 'expired' : 'signedOut';
+  if (session.kind === 'phone' && session.onboarding === 'pending') return 'onboarding';
   return 'signedIn';
 }
 
